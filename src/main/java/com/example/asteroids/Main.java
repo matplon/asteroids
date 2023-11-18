@@ -52,7 +52,6 @@ public class Main extends Application {
     public void start(Stage stage){
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0/FPS), actionEvent -> {
             player.updatePosition(FPS, WIDTH, HEIGHT); // Update player's position
-            System.out.println(player);
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
