@@ -43,7 +43,16 @@ public class Player extends Polygon {
         return (y1+y2+y3)/3;
     }
 
-    public void updatePosition(double FPS){
+    private void moveVertices(){
+        getPoints().setAll(centerX+(4.0/3)*radius*Math.cos(Math.toRadians(angle)), centerY-(4.0/3)*radius*Math.sin(Math.toRadians(angle)),
+                centerX-radius*((2.0/3)*Math.cos(Math.toRadians(angle))+Math.sin(Math.toRadians(angle))),
+                centerY+radius*((2.0/3)*Math.sin(Math.toRadians(angle))-Math.cos(Math.toRadians(angle))),
+                centerX-radius*((2.0/3)*Math.cos(Math.toRadians(angle))-Math.sin(Math.toRadians(angle))),
+                centerY+radius*((2.0/3)*Math.sin(Math.toRadians(angle))+Math.cos(Math.toRadians(angle))));
+
+    }
+
+    public void updatePosition(double FPS, double WINDOW_WIDTH, double WINDOW_HEIGHT){
         if(isThrusting){
             velocity.setX(velocity.getX()+THRUST*Math.cos(Math.toRadians(angle))/FPS);  // Update X component of velocity
             velocity.setY(velocity.getY()-THRUST*Math.sin(Math.toRadians(angle))/FPS);  // Update Y component of velocity
@@ -52,11 +61,22 @@ public class Player extends Polygon {
             velocity.setX(velocity.getX()-FRICTION*velocity.getX()/FPS);    // Apply friction to X component of velocity
             velocity.setY(velocity.getY()-FRICTION*velocity.getY()/FPS);    // Apply friction to Y component of velocity
         }
-        setTranslateX(getTranslateX()+velocity.getX()); // Update the vertices' X coordinates
-        setTranslateY(getTranslateY()+velocity.getY()); // Update the vertices' Y coordinates
-        centerX = getCenterX();
-        centerY = getCenterY();
+        centerX += velocity.getX();
+        centerY += velocity.getY();
         rotate();   // Apply rotation to the ship
+        if(centerX < 0 - radius){
+            centerX = WINDOW_WIDTH + radius;
+        }
+        else if(centerX > WINDOW_WIDTH + radius){
+            centerX = 0 - radius;
+        }
+        if(centerY < 0 - radius){
+            centerY = WINDOW_HEIGHT + radius;
+        }
+        else if(centerY > WINDOW_HEIGHT + radius){
+            centerY = 0 - radius;
+        }
+        moveVertices();
     }
 
     public void accelerate(){
@@ -79,12 +99,7 @@ public class Player extends Polygon {
         rotation = 0;
     }
 
-    public void rotate(){
+    private void rotate(){
         angle += rotation;
-        getPoints().setAll(centerX+(4.0/3)*radius*Math.cos(Math.toRadians(angle)), centerY-(4.0/3)*radius*Math.sin(Math.toRadians(angle)),  // Rotate the nose of the ship
-                centerX-radius*((2.0/3)*Math.cos(Math.toRadians(angle))+Math.sin(Math.toRadians(angle))),   // Rotate the rear of the ship
-                centerY+radius*((2.0/3)*Math.sin(Math.toRadians(angle))-Math.cos(Math.toRadians(angle))),
-                centerX-radius*((2.0/3)*Math.cos(Math.toRadians(angle))-Math.sin(Math.toRadians(angle))),
-                centerY+radius*((2.0/3)*Math.sin(Math.toRadians(angle))+Math.cos(Math.toRadians(angle))));
     }
 }
