@@ -11,14 +11,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.IOException;
 
 public class Main extends Application {
 
     final int WIDTH = 1800;
     final int HEIGHT = 900;
-    final int FPS = 30;
-    final double CENTERX = WIDTH/2, CENTERY = HEIGHT/2;
+    final double FPS = 30;
+    final double CENTERX = (double) WIDTH /2, CENTERY = (double) HEIGHT /2;
     final double RADIUS = 15;
 
     AnchorPane root;
@@ -50,8 +49,8 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000/FPS), actionEvent -> {
+    public void start(Stage stage){
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0/FPS), actionEvent -> {
             player.updatePosition(FPS); // Update player's position
         }));
         timeline.setCycleCount(Animation.INDEFINITE);

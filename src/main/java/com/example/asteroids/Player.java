@@ -1,15 +1,16 @@
 package com.example.asteroids;
 
-import javafx.collections.ObservableList;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 
 public class Player extends Polygon {
     private final double ROTATION_SPEED = 360;    // Degrees/second
     private final double THRUST = 5;    // Pixels/second
     private final double FRICTION = 0.7;    // Coefficient of friction
-    private double centerX, centerY, angle, rotation, radius;
+    private double centerX;
+    private double centerY;
+    private double angle;
+    private double rotation;
+    private final double radius;
     private Vector velocity;
     private boolean isThrusting = false;
 
@@ -28,7 +29,21 @@ public class Player extends Polygon {
         this.velocity = new Vector(0, 0, angle);
     }
 
-    public void updatePosition(int FPS){
+    public double getCenterX(){
+        double x1 = getPoints().get(0);
+        double x2 = getPoints().get(2);
+        double x3 = getPoints().get(4);
+        return (x1+x2+x3)/3;
+    }
+
+    public double getCenterY(){
+        double y1 = getPoints().get(1);
+        double y2 = getPoints().get(3);
+        double y3 = getPoints().get(5);
+        return (y1+y2+y3)/3;
+    }
+
+    public void updatePosition(double FPS){
         if(isThrusting){
             velocity.setX(velocity.getX()+THRUST*Math.cos(Math.toRadians(angle))/FPS);  // Update X component of velocity
             velocity.setY(velocity.getY()-THRUST*Math.sin(Math.toRadians(angle))/FPS);  // Update Y component of velocity
@@ -39,6 +54,8 @@ public class Player extends Polygon {
         }
         setTranslateX(getTranslateX()+velocity.getX()); // Update the vertices' X coordinates
         setTranslateY(getTranslateY()+velocity.getY()); // Update the vertices' Y coordinates
+        centerX = getCenterX();
+        centerY = getCenterY();
         rotate();   // Apply rotation to the ship
     }
 
@@ -50,11 +67,11 @@ public class Player extends Polygon {
         isThrusting = false;
     }
 
-    public void setRotationRight(int FPS){
+    public void setRotationRight(double FPS){
         rotation = -ROTATION_SPEED/FPS;
     }
 
-    public void setRotationLeft(int FPS){
+    public void setRotationLeft(double FPS){
         rotation = ROTATION_SPEED/FPS;
     }
 
