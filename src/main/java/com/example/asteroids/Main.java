@@ -46,6 +46,9 @@ public class Main extends Application {
             if(keyEvent.getCode() == KeyCode.UP) player.stopAcceleration(); // Stop thrusting forward
             if(keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.LEFT) player.stopRotation(); // Stop rotating
         });
+        Asteroid asteroid = new Asteroid(300, 300, 0, 0, 15, 45);
+        asteroid.setStroke(Color.WHITE);
+        root.getChildren().add(asteroid);
     }
 
     @Override
