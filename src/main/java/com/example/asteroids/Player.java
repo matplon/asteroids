@@ -1,6 +1,7 @@
 package com.example.asteroids;
 
 import javafx.scene.shape.Polygon;
+import javafx.scene.transform.Rotate;
 
 public class Player extends Polygon {
     private final double ROTATION_SPEED = 360;    // Degrees/second
@@ -43,16 +44,9 @@ public class Player extends Polygon {
         return (y1+y2+y3)/3;
     }
 
-    private void moveVertices(){
-        getPoints().setAll(centerX+(4.0/3)*radius*Math.cos(Math.toRadians(angle)), centerY-(4.0/3)*radius*Math.sin(Math.toRadians(angle)),
-                centerX-radius*((2.0/3)*Math.cos(Math.toRadians(angle))+Math.sin(Math.toRadians(angle))),
-                centerY+radius*((2.0/3)*Math.sin(Math.toRadians(angle))-Math.cos(Math.toRadians(angle))),
-                centerX-radius*((2.0/3)*Math.cos(Math.toRadians(angle))-Math.sin(Math.toRadians(angle))),
-                centerY+radius*((2.0/3)*Math.sin(Math.toRadians(angle))+Math.cos(Math.toRadians(angle))));
-
-    }
-
     public void updatePosition(double FPS, double WINDOW_WIDTH, double WINDOW_HEIGHT){
+        updateAngle();   // Apply the rotation to the "angle" variable
+        rotate(-rotation);   // Rotate the ship
         if(isThrusting){
             velocity.setX(velocity.getX()+THRUST*Math.cos(Math.toRadians(angle))/FPS);  // Update X component of velocity
             velocity.setY(velocity.getY()-THRUST*Math.sin(Math.toRadians(angle))/FPS);  // Update Y component of velocity
@@ -61,9 +55,12 @@ public class Player extends Polygon {
             velocity.setX(velocity.getX()-FRICTION*velocity.getX()/FPS);    // Apply friction to X component of velocity
             velocity.setY(velocity.getY()-FRICTION*velocity.getY()/FPS);    // Apply friction to Y component of velocity
         }
-        centerX += velocity.getX();
-        centerY += velocity.getY();
-        rotate();   // Apply rotation to the ship
+        centerX = getCenterX();
+        centerY = getCenterY();
+        for (int i = 0; i < getPoints().size(); i+=2) {
+            getPoints().set(i, getPoints().get(i)+velocity.getX()); // Apply velocity to the X coordinate of the vertex
+            getPoints().set(i+1, getPoints().get(i+1)+velocity.getY()); // Apply velocity to the Y coordinate of the vertex
+        }
         if(centerX < 0 - radius){
             centerX = WINDOW_WIDTH + radius;
         }
@@ -76,7 +73,28 @@ public class Player extends Polygon {
         else if(centerY > WINDOW_HEIGHT + radius){
             centerY = 0 - radius;
         }
-        moveVertices();
+    }
+
+    private void rotate(double angle) {
+        double centerX1 = getCenterX();
+        double centerY1 = getCenterY();
+
+        // Convert angle to radians
+        double radianAngle = Math.toRadians(angle);
+
+        // Apply rotation to each point
+        for (int i = 0; i < getPoints().size(); i += 2) {
+            double x = getPoints().get(i);
+            double y = getPoints().get(i + 1);
+
+            // Perform rotation
+            double rotatedX = centerX1 + (x - centerX1) * Math.cos(radianAngle) - (y - centerY1) * Math.sin(radianAngle);
+            double rotatedY = centerY1 + (x - centerX1) * Math.sin(radianAngle) + (y - centerY1) * Math.cos(radianAngle);
+
+            // Update the coordinates
+            getPoints().set(i, rotatedX);
+            getPoints().set(i + 1, rotatedY);
+        }
     }
 
     public void accelerate(){
@@ -92,14 +110,14 @@ public class Player extends Polygon {
     }
 
     public void setRotationLeft(double FPS){
-        rotation = ROTATION_SPEED/FPS;
+        rotation = +ROTATION_SPEED/FPS;
     }
 
     public void stopRotation(){
         rotation = 0;
     }
 
-    private void rotate(){
+    private void updateAngle(){
         angle += rotation;
     }
 }
