@@ -20,6 +20,7 @@ public class Main extends Application {
     final double CENTERX = (double) WIDTH /2, CENTERY = (double) HEIGHT /2;
     final double RADIUS = 15;
 
+
     AnchorPane root;
     Scene scene;
 
@@ -46,6 +47,7 @@ public class Main extends Application {
             if(keyEvent.getCode() == KeyCode.UP) player.stopAcceleration(); // Stop thrusting forward
             if(keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.LEFT) player.stopRotation(); // Stop rotating
         });
+
     }
 
     @Override
