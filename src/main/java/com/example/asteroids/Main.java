@@ -50,6 +50,10 @@ public class Main extends Application {
 
     }
 
+    public void gameLogic(){
+
+    }
+
     @Override
     public void start(Stage stage){
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0/FPS), actionEvent -> {

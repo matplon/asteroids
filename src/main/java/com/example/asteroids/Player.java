@@ -30,6 +30,8 @@ public class Player extends Polygon {
         this.velocity = new Vector(0, 0, angle);
     }
 
+
+
     public double getCenterX(){
         double x1 = getPoints().get(0);
         double x2 = getPoints().get(2);
