@@ -51,7 +51,7 @@ public class Particle extends Polygon {
         for (int i = 0; i < getPoints().size(); i+=2) {
             sum+=getPoints().get(i);
         }
-        return sum/getPoints().size()/2;
+        return sum/(getPoints().size()/2);
     }
 
     public double getCenterY(){
@@ -59,7 +59,7 @@ public class Particle extends Polygon {
         for (int i = 1; i < getPoints().size(); i+=2) {
             sum+=getPoints().get(i);
         }
-        return sum/getPoints().size()/2;
+        return sum/(getPoints().size()/2);
     }
 
     public void updatePosition(double FPS, double WINDOW_WIDTH, double WINDOW_HEIGHT){
@@ -73,23 +73,36 @@ public class Particle extends Polygon {
             velocity.setX(velocity.getX()-FRICTION*velocity.getX()/FPS);    // Apply friction to X component of velocity
             velocity.setY(velocity.getY()-FRICTION*velocity.getY()/FPS);    // Apply friction to Y component of velocity
         }
-        centerX = getCenterX();
-        centerY = getCenterY();
         for (int i = 0; i < getPoints().size(); i+=2) {
             getPoints().set(i, getPoints().get(i)+velocity.getX()); // Apply velocity to the X coordinate of the vertex
             getPoints().set(i+1, getPoints().get(i+1)+velocity.getY()); // Apply velocity to the Y coordinate of the vertex
         }
+        centerX = getCenterX();
+        centerY = getCenterY();
         if(centerX < 0 - radius){
             centerX = WINDOW_WIDTH + radius;
+
+            for (int i = 0; i < getPoints().size(); i+=2) {
+                getPoints().set(i, WINDOW_WIDTH+getPoints().get(i));
+            }
         }
         else if(centerX > WINDOW_WIDTH + radius){
             centerX = 0 - radius;
+            for (int i = 0; i < getPoints().size(); i+=2) {
+                getPoints().set(i, -getPoints().get(i));
+            }
         }
         if(centerY < 0 - radius){
             centerY = WINDOW_HEIGHT + radius;
+            for (int i = 1; i < getPoints().size(); i+=2) {
+                getPoints().set(i, WINDOW_HEIGHT+getPoints().get(i));
+            }
         }
         else if(centerY > WINDOW_HEIGHT + radius){
             centerY = 0 - radius;
+            for (int i = 1; i < getPoints().size(); i+=2) {
+                getPoints().set(i, -getPoints().get(i));
+            }
         }
     }
 

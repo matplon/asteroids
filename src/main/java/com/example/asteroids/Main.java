@@ -73,9 +73,10 @@ public class Main extends Application {
     public void start(Stage stage){
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0/FPS), actionEvent -> {
             player.updatePosition(FPS, WIDTH, HEIGHT); // Update player's position
-            for (int i = 0; i < asteroids.size(); i++) {
-                asteroids.get(i).updatePosition(FPS, WIDTH, HEIGHT);
-            }
+            System.out.println(player);
+//            for (int i = 0; i < asteroids.size(); i++) {
+//                asteroids.get(i).updatePosition(FPS, WIDTH, HEIGHT);
+//            }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
