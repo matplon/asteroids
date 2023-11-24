@@ -60,7 +60,7 @@ public class Main extends Application {
         asteroids = new ArrayList<>();
 
         for (int i = 0; i < ASTEROID_COUNT; i++) {
-            asteroids.add(new Particle(Math.random() * WIDTH, Math.random() * HEIGHT, Math.random() * 15, Math.random() * 6, Math.random() * 15,
+            asteroids.add(new Particle(Math.random() * WIDTH, Math.random() * HEIGHT, Math.random() * 150, Math.random() * 6, Math.random() * 15,
                     Math.random() * 360 - 180, false));
             asteroids.get(i).setStroke(Color.WHITE);
             root.getChildren().add(asteroids.get(i));
@@ -78,11 +78,11 @@ public class Main extends Application {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0/FPS), actionEvent -> {
             player.updatePosition(FPS, WIDTH, HEIGHT); // Update player's position
             if(!isSafe.get()) {
-                Circle circle = new Circle(WIDTH / 2, HEIGHT / 2, 1);
+                Circle circle = new Circle(WIDTH / 2, HEIGHT / 2, 10);
                 boolean newSafe = true;
                 for (int i = 0; i < asteroids.size(); i++) {
-                    if(!asteroids.get(i).intersects(player.getLayoutBounds())){
-                        if(asteroids.get(i).intersects(player.getLayoutBounds())){
+                    if(!asteroids.get(i).intersects(circle.getBoundsInLocal())){
+                        if(asteroids.get(i).intersects(circle.getBoundsInLocal())){
                             newSafe = false;
                         }
                     }
@@ -98,16 +98,17 @@ public class Main extends Application {
             }
             for (int i = 0; i < asteroids.size(); i++) {
                 asteroids.get(i).updatePosition(FPS, WIDTH, HEIGHT);
-                if(asteroids.get(i).intersects(player.getLayoutBounds())){
+                if(asteroids.get(i).intersects(player.getBoundsInLocal())){
                     HP--;
                     root.getChildren().remove(player);
                     if(HP<=0){
 
-                    }else{
+                    }
+                    else{
                         isSafe.set(false);
-                        }
                     }
                 }
+            }
 
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
