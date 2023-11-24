@@ -8,12 +8,13 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class Main extends Application {
@@ -25,12 +26,14 @@ public class Main extends Application {
     final double RADIUS = 15;
     final double ASTEROID_COUNT = 6;
 
+    int HP = 3;
+
 
     AnchorPane root;
     Scene scene;
 
     Particle player;
-    List<Particle> asteroids;
+    public List<Particle> asteroids;
 
 
     public void init(){
@@ -71,12 +74,41 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage){
+        AtomicBoolean isSafe = new AtomicBoolean(true);
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0/FPS), actionEvent -> {
             player.updatePosition(FPS, WIDTH, HEIGHT); // Update player's position
-            System.out.println(player);
-//            for (int i = 0; i < asteroids.size(); i++) {
-//                asteroids.get(i).updatePosition(FPS, WIDTH, HEIGHT);
-//            }
+            if(!isSafe.get()) {
+                Circle circle = new Circle(WIDTH / 2, HEIGHT / 2, 1);
+                boolean newSafe = true;
+                for (int i = 0; i < asteroids.size(); i++) {
+                    if(!asteroids.get(i).intersects(player.getLayoutBounds())){
+                        if(asteroids.get(i).intersects(player.getLayoutBounds())){
+                            newSafe = false;
+                        }
+                    }
+                }
+                if(newSafe){
+                    System.out.println("lol");
+                    isSafe.set(true);
+                    player = new Particle(WIDTH/2,HEIGHT/2,RADIUS,0,true);
+                    player.setFill(Color.TRANSPARENT);
+                    player.setStroke(Color.WHITE);
+                    root.getChildren().add(player);
+                }
+            }
+            for (int i = 0; i < asteroids.size(); i++) {
+                asteroids.get(i).updatePosition(FPS, WIDTH, HEIGHT);
+                if(asteroids.get(i).intersects(player.getLayoutBounds())){
+                    HP--;
+                    root.getChildren().remove(player);
+                    if(HP<=0){
+
+                    }else{
+                        isSafe.set(false);
+                        }
+                    }
+                }
+
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();

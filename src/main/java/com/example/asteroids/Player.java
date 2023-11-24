@@ -75,6 +75,7 @@ public class Player extends Polygon {
         else if(centerY > WINDOW_HEIGHT + radius){
             centerY = 0 - radius;
         }
+
     }
 
     private void rotate(double angle) {
