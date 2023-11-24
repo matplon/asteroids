@@ -81,7 +81,6 @@ public class Particle extends Polygon {
         centerY = getCenterY();
         if(centerX < 0 - radius){
             centerX = WINDOW_WIDTH + radius;
-
             for (int i = 0; i < getPoints().size(); i+=2) {
                 getPoints().set(i, WINDOW_WIDTH+getPoints().get(i));
             }
@@ -89,7 +88,7 @@ public class Particle extends Polygon {
         else if(centerX > WINDOW_WIDTH + radius){
             centerX = 0 - radius;
             for (int i = 0; i < getPoints().size(); i+=2) {
-                getPoints().set(i, -getPoints().get(i));
+                getPoints().set(i, getPoints().get(i)-WINDOW_WIDTH);
             }
         }
         if(centerY < 0 - radius){
@@ -101,7 +100,7 @@ public class Particle extends Polygon {
         else if(centerY > WINDOW_HEIGHT + radius){
             centerY = 0 - radius;
             for (int i = 1; i < getPoints().size(); i+=2) {
-                getPoints().set(i, -getPoints().get(i));
+                getPoints().set(i, getPoints().get(i)-WINDOW_HEIGHT);
             }
         }
     }
