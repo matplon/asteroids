@@ -24,7 +24,8 @@ public class Main extends Application {
     AnchorPane root;
     Scene scene;
 
-    Player player;
+    Particle player;
+    List
 
 
     public void init(){
@@ -32,7 +33,7 @@ public class Main extends Application {
         scene = new Scene(root, WIDTH, HEIGHT);
         scene.setFill(Color.BLACK);
 
-        player = new Player(CENTERX, CENTERY, RADIUS, 0);
+        player = new Particle(CENTERX, CENTERY, RADIUS, 0, true);
         player.setFill(Color.TRANSPARENT);
         player.setStroke(Color.WHITE);
         root.getChildren().add(player);
