@@ -9,11 +9,16 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -35,16 +40,48 @@ public class Main extends Application {
     Particle player;
     public List<Particle> asteroids;
 
+    public List<Double> SVGconverter(String filepath){
+        List<Double> list = new ArrayList<>();
+        try{
+            Scanner scanner = new Scanner(new File(filepath));
+            while(scanner.hasNextLine()){
+                String nextLine = scanner.nextLine();
+                String leftRemoved = nextLine.replaceAll("^\\s+", "");
+                nextLine = leftRemoved.replaceAll("\\s+$", "");
+                if(nextLine.startsWith("d=")){
+                    String subString = nextLine.substring(5, nextLine.length()-3);
+                    String[] li = subString.split(" ");
+                    for (int i = 0; i < li.length; i++) {
+                        String[] lili = li[i].split(",");
+                        list.add(Double.parseDouble(lili[0]));
+                        list.add(Double.parseDouble(lili[1]));
+                    }
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+
 
     public void init(){
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
         scene.setFill(Color.BLACK);
 
+        System.out.println((SVGconverter("C:\\Users\\Computer Science\\Downloads\\asteroidVar2.svg")));
+
+        Polygon polygon = new Polygon();
+        polygon.getPoints().setAll(SVGconverter("C:\\Users\\Computer Science\\Downloads\\asteroidVar2.svg"));
+        polygon.setStroke(Color.WHITE);
+        root.getChildren().add(polygon);
+
         player = new Particle(CENTERX, CENTERY, RADIUS, 0, true);
         player.setFill(Color.TRANSPARENT);
         player.setStroke(Color.WHITE);
-        root.getChildren().add(player);
+//        root.getChildren().add(player);
 
         scene.setOnKeyPressed(keyEvent -> {
             if(keyEvent.getCode() == KeyCode.UP) player.accelerate();   // Thrust forward
@@ -59,12 +96,12 @@ public class Main extends Application {
 
         asteroids = new ArrayList<>();
 
-        for (int i = 0; i < ASTEROID_COUNT; i++) {
-            asteroids.add(new Particle(Math.random() * WIDTH, Math.random() * HEIGHT, Math.random() * 150, Math.random() * 6, Math.random() * 15,
-                    Math.random() * 360 - 180, false));
-            asteroids.get(i).setStroke(Color.WHITE);
-            root.getChildren().add(asteroids.get(i));
-        }
+//        for (int i = 0; i < ASTEROID_COUNT; i++) {
+//            asteroids.add(new Particle(Math.random() * WIDTH, Math.random() * HEIGHT, Math.random() * 150, Math.random() * 6, Math.random() * 15,
+//                    Math.random() * 360 - 180, false));
+//            asteroids.get(i).setStroke(Color.WHITE);
+//            root.getChildren().add(asteroids.get(i));
+//        }
 
     }
 
