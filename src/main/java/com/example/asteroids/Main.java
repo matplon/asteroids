@@ -26,8 +26,8 @@ public class Main extends Application {
     final static int WIDTH = 1800;
     final static int HEIGHT = 900;
     final static double FPS = 30;
-    final double RADIUS = 15;
     final int INIT_ASTEROID_COUNT = 15;
+    final double FRICTION = 0.7;
 
     static AtomicBoolean isAlive = new AtomicBoolean(true);
 
@@ -83,11 +83,11 @@ public class Main extends Application {
         scene.setFill(Color.BLACK);
 
 
-        player = new Particle(SVGconverter("C:\\Users\\plonc\\IdeaProjects\\demo\\asteroids\\asteroidVar2.svg"), 0, true);
+        player = new Particle(SVGconverter("C:\\Users\\plonc\\IdeaProjects\\demo\\asteroids\\asteroidVar2.svg"), 0, 0, 0, FRICTION);
+        player.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
         player.setFill(Color.TRANSPARENT);
         player.setStroke(Color.WHITE);
         root.getChildren().add(player);
-        player.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
 
 
         scene.setOnKeyPressed(keyEvent -> {
@@ -105,17 +105,17 @@ public class Main extends Application {
 
         asteroids = new ArrayList<>();
 
-        for (int i = 0; i < INIT_ASTEROID_COUNT; i++) {
-            asteroids.add(new Particle(Math.random() * WIDTH, Math.random() * HEIGHT, Math.random() * 150, Math.random() * 6, Math.random() * 20,
-                    Math.random() * 360 - 180, false));
-            asteroids.get(i).setStroke(Color.WHITE);
-            root.getChildren().add(asteroids.get(i));
-        }
+//        for (int i = 0; i < INIT_ASTEROID_COUNT; i++) {
+//            asteroids.add();
+//            asteroids.get(i).setStroke(Color.WHITE);
+//            root.getChildren().add(asteroids.get(i));
+//        }
     }
 
     @Override
     public void start(Stage stage) {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
+            System.out.println(player);
             player.updatePosition(); // Update player's position
             if (!isAlive.get()) {  // If the player is dead
                 Circle circle = new Circle((double) WIDTH / 2, (double) HEIGHT / 2, 75);    // Safe zone
@@ -127,7 +127,8 @@ public class Main extends Application {
                 }
                 if (newSafe) {  // If no asteroids in the spawn zone
                     isAlive.set(true);
-                    player = new Particle((double) WIDTH / 2, (double) HEIGHT / 2, RADIUS, 0, true);
+                    player = new Particle(SVGconverter("C:\\Users\\plonc\\IdeaProjects\\demo\\asteroids\\asteroidVar2.svg"), 0, 0, 0, FRICTION);
+                    player.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
                     player.setFill(Color.TRANSPARENT);
                     player.setStroke(Color.WHITE);
                     root.getChildren().add(player);

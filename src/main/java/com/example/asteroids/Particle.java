@@ -9,7 +9,7 @@ public class Particle extends Polygon {
 
     private final double ROTATION_SPEED = 360;    // Degrees/second
     private final double THRUST = 5;    // Pixels/second
-    private final double FRICTION = 0.7;    // Coefficient of friction
+    private double friction;    // Coefficient of friction
     private double centerX;
     private double centerY;
     private double angle;
@@ -17,53 +17,20 @@ public class Particle extends Polygon {
     private final double radius;
     private Vector velocity;
     private boolean isThrusting = false;
-    private boolean isPlayer = false;
     final double FPS = Main.FPS;
     final double WINDOW_WIDTH = Main.WIDTH;
     final double WINDOW_HEIGHT = Main.HEIGHT;
 
-    public Particle(double centerX, double centerY, double radius, double angle, boolean isPlayer) {
-        super(centerX + (4.0 / 3) * radius * Math.cos(Math.toRadians(angle)), centerY - (4.0 / 3) * radius * Math.sin(Math.toRadians(angle)),   // Nose of the ship
-                centerX - radius * ((2.0 / 3) * Math.cos(Math.toRadians(angle)) + Math.sin(Math.toRadians(angle))),   // Rear left X
-                centerY + radius * ((2.0 / 3) * Math.sin(Math.toRadians(angle)) - Math.cos(Math.toRadians(angle))),   // Rear left Y
-                centerX - radius * ((2.0 / 3) * Math.cos(Math.toRadians(angle)) - Math.sin(Math.toRadians(angle))),   // Rear right X
-                centerY + radius * ((2.0 / 3) * Math.sin(Math.toRadians(angle)) + Math.cos(Math.toRadians(angle)))    // Rear right Y
-        );
-        this.centerX = centerX;
-        this.centerY = centerY;
-        this.angle = angle;
-        this.rotation = 0;
-        this.radius = radius;
-        this.velocity = new Vector(0, 0, angle);
-        this.isPlayer = isPlayer;
-    }
-
-    public Particle(double centerX, double centerY, double radius, double rotation, double velocity, double angle, boolean isPlayer) {
-        super(centerX + Math.cos(Math.toRadians(angle)) * radius, centerY + Math.sin(Math.toRadians(angle)) * radius
-                , centerX + Math.cos(Math.toRadians(angle)) * radius, centerY - Math.sin(Math.toRadians(angle)) * radius,
-                centerX - Math.cos(Math.toRadians(angle)) * radius, centerY - Math.sin(Math.toRadians(angle)) * radius,
-                centerX - Math.cos(Math.toRadians(angle)) * radius, centerY + Math.sin(Math.toRadians(angle)) * radius
-        );
-        this.centerX = centerX;
-        this.centerY = centerY;
-        this.angle = angle;
-        this.velocity = new Vector(velocity, angle);
-        this.radius = radius;
-        this.rotation = rotation;
-        this.isPlayer = isPlayer;
-    }
-
-    public Particle(List<Double> points, double angle, boolean isPlayer) {
+    public Particle(List<Double> points, double angle, double rotation, double velocity, double friction) {
         super();
         getPoints().setAll(points);
         this.centerX = getCenterX();
         this.centerY = getCenterY();
         this.radius = getRadius();
-        System.out.println(radius);
         this.angle = angle;
-        this.rotation = 0;
-        this.velocity = new Vector(0, 0, angle);
-        this.isPlayer = isPlayer;
+        this.rotation = rotation;
+        this.velocity = new Vector(velocity, angle);
+        this.friction = friction;
     }
 
     public double getCenterX() {    // Mean average of the X coordinates
@@ -121,9 +88,9 @@ public class Particle extends Polygon {
         if (isThrusting) {
             velocity.setX(velocity.getX() + THRUST * Math.cos(Math.toRadians(angle)) / FPS);  // Update X component of velocity
             velocity.setY(velocity.getY() - THRUST * Math.sin(Math.toRadians(angle)) / FPS);  // Update Y component of velocity
-        } else if (isPlayer) {
-            velocity.setX(velocity.getX() - FRICTION * velocity.getX() / FPS);    // Apply friction to X component of velocity
-            velocity.setY(velocity.getY() - FRICTION * velocity.getY() / FPS);    // Apply friction to Y component of velocity
+        } else {
+            velocity.setX(velocity.getX() - friction * velocity.getX() / FPS);    // Apply friction to X component of velocity
+            velocity.setY(velocity.getY() - friction * velocity.getY() / FPS);    // Apply friction to Y component of velocity
         }
         for (int i = 0; i < getPoints().size(); i += 2) {
             getPoints().set(i, getPoints().get(i) + velocity.getX()); // Apply velocity to the X coordinate of the vertex
