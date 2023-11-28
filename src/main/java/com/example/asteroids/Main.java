@@ -72,7 +72,6 @@ public class Main extends Application {
         scene = new Scene(root, WIDTH, HEIGHT);
         scene.setFill(Color.BLACK);
 
-        System.out.println((SVGconverter("C:\\Users\\Computer Science\\Downloads\\asteroidVar2.svg")));
 
         player = new Particle(CENTERX, CENTERY, RADIUS, 0, true);
         player.setFill(Color.TRANSPARENT);
@@ -132,9 +131,10 @@ public class Main extends Application {
             }
             for (int i = 0; i < asteroids.size(); i++) {
                 asteroids.get(i).updatePosition(FPS, WIDTH, HEIGHT);
-                if (Shape.intersect(player, asteroids.get(i)).getLayoutBounds().getWidth() != -1) {
+                if (Shape.intersect(player, asteroids.get(i)).getLayoutBounds().getWidth() != -1 && root.getChildren().contains(player)) {
                     HP--;
                     root.getChildren().remove(player);
+                    System.out.println(HP);
                     if (HP <= 0) {
 
                     } else {
