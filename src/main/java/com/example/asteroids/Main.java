@@ -140,6 +140,7 @@ public class Main extends Application {
                     } else {
                         wasNotKilled.set(false);
                     }
+                    //fssfs
                 }
             }
 
