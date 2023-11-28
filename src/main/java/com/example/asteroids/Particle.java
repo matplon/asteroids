@@ -2,6 +2,9 @@ package com.example.asteroids;
 
 import javafx.scene.shape.Polygon;
 
+import java.util.List;
+import java.util.Random;
+
 public class Particle extends Polygon {
 
     private final double ROTATION_SPEED = 360;    // Degrees/second
@@ -15,12 +18,16 @@ public class Particle extends Polygon {
     private Vector velocity;
     private boolean isThrusting = false;
     private boolean isPlayer = false;
-    public Particle(double centerX, double centerY, double radius, double angle, boolean isPlayer){
-        super(centerX+(4.0/3)*radius*Math.cos(Math.toRadians(angle)), centerY-(4.0/3)*radius*Math.sin(Math.toRadians(angle)),   // Nose of the ship
-                centerX-radius*((2.0/3)*Math.cos(Math.toRadians(angle))+Math.sin(Math.toRadians(angle))),   // Rear left X
-                centerY+radius*((2.0/3)*Math.sin(Math.toRadians(angle))-Math.cos(Math.toRadians(angle))),   // Rear left Y
-                centerX-radius*((2.0/3)*Math.cos(Math.toRadians(angle))-Math.sin(Math.toRadians(angle))),   // Rear right X
-                centerY+radius*((2.0/3)*Math.sin(Math.toRadians(angle))+Math.cos(Math.toRadians(angle)))    // Rear right Y
+    final double FPS = Main.FPS;
+    final double WINDOW_WIDTH = Main.WIDTH;
+    final double WINDOW_HEIGHT = Main.HEIGHT;
+
+    public Particle(double centerX, double centerY, double radius, double angle, boolean isPlayer) {
+        super(centerX + (4.0 / 3) * radius * Math.cos(Math.toRadians(angle)), centerY - (4.0 / 3) * radius * Math.sin(Math.toRadians(angle)),   // Nose of the ship
+                centerX - radius * ((2.0 / 3) * Math.cos(Math.toRadians(angle)) + Math.sin(Math.toRadians(angle))),   // Rear left X
+                centerY + radius * ((2.0 / 3) * Math.sin(Math.toRadians(angle)) - Math.cos(Math.toRadians(angle))),   // Rear left Y
+                centerX - radius * ((2.0 / 3) * Math.cos(Math.toRadians(angle)) - Math.sin(Math.toRadians(angle))),   // Rear right X
+                centerY + radius * ((2.0 / 3) * Math.sin(Math.toRadians(angle)) + Math.cos(Math.toRadians(angle)))    // Rear right Y
         );
         this.centerX = centerX;
         this.centerY = centerY;
@@ -31,9 +38,9 @@ public class Particle extends Polygon {
         this.isPlayer = isPlayer;
     }
 
-    public Particle(double centerX, double centerY, double radius, double rotation, double velocity, double angle, boolean isPlayer){
+    public Particle(double centerX, double centerY, double radius, double rotation, double velocity, double angle, boolean isPlayer) {
         super(centerX + Math.cos(Math.toRadians(angle)) * radius, centerY + Math.sin(Math.toRadians(angle)) * radius
-                ,centerX + Math.cos(Math.toRadians(angle)) * radius, centerY - Math.sin(Math.toRadians(angle)) * radius,
+                , centerX + Math.cos(Math.toRadians(angle)) * radius, centerY - Math.sin(Math.toRadians(angle)) * radius,
                 centerX - Math.cos(Math.toRadians(angle)) * radius, centerY - Math.sin(Math.toRadians(angle)) * radius,
                 centerX - Math.cos(Math.toRadians(angle)) * radius, centerY + Math.sin(Math.toRadians(angle)) * radius
         );
@@ -46,61 +53,104 @@ public class Particle extends Polygon {
         this.isPlayer = isPlayer;
     }
 
-    public double getCenterX(){
-        double sum = 0;
-        for (int i = 0; i < getPoints().size(); i+=2) {
-            sum+=getPoints().get(i);
-        }
-        return sum/(getPoints().size()/2);
+    public Particle(List<Double> points, double angle, boolean isPlayer) {
+        super();
+        getPoints().setAll(points);
+        this.centerX = getCenterX();
+        this.centerY = getCenterY();
+        this.radius = getRadius();
+        System.out.println(radius);
+        this.angle = angle;
+        this.rotation = 0;
+        this.velocity = new Vector(0, 0, angle);
+        this.isPlayer = isPlayer;
     }
 
-    public double getCenterY(){
+    public double getCenterX() {    // Mean average of the X coordinates
         double sum = 0;
-        for (int i = 1; i < getPoints().size(); i+=2) {
-            sum+=getPoints().get(i);
+        for (int i = 0; i < getPoints().size(); i += 2) {
+            sum += getPoints().get(i);
         }
-        return sum/(getPoints().size()/2);
+        return sum / ((double) getPoints().size() / 2);
     }
 
-    public void updatePosition(double FPS, double WINDOW_WIDTH, double WINDOW_HEIGHT){
-        updateAngle();   // Apply the rotation to the "angle" variable
-        rotate(-rotation);   // Rotate the ship
-        if(isThrusting){
-            velocity.setX(velocity.getX()+THRUST*Math.cos(Math.toRadians(angle))/FPS);  // Update X component of velocity
-            velocity.setY(velocity.getY()-THRUST*Math.sin(Math.toRadians(angle))/FPS);  // Update Y component of velocity
+    public double getCenterY() {    // Mean average of the Y coordinates
+        double sum = 0;
+        for (int i = 1; i < getPoints().size(); i += 2) {
+            sum += getPoints().get(i);
         }
-        else if(isPlayer){
-            velocity.setX(velocity.getX()-FRICTION*velocity.getX()/FPS);    // Apply friction to X component of velocity
-            velocity.setY(velocity.getY()-FRICTION*velocity.getY()/FPS);    // Apply friction to Y component of velocity
+        return sum / ((double) getPoints().size() / 2);
+    }
+
+    public double getRadius() { // Calculate radius by finding the furthest coordinate
+        double maxOffset = 0;
+        for (int i = 2; i < getPoints().size(); i += 2) {
+            maxOffset = Math.max(maxOffset, Math.sqrt(Math.pow(centerX - getPoints().get(i), 2) + Math.pow(centerY - getPoints().get(i + 1), 2)));
         }
-        for (int i = 0; i < getPoints().size(); i+=2) {
-            getPoints().set(i, getPoints().get(i)+velocity.getX()); // Apply velocity to the X coordinate of the vertex
-            getPoints().set(i+1, getPoints().get(i+1)+velocity.getY()); // Apply velocity to the Y coordinate of the vertex
+        return maxOffset;
+    }
+
+    public void moveTo(double newCenterX, double newCenterY) {
+        // Calculate new point coordinates
+        for (int i = 0; i < getPoints().size(); i += 2) {
+            double newX = newCenterX + getPoints().get(i) - centerX;
+            double newY = newCenterY + getPoints().get(i+1) - centerY;
+            getPoints().set(i, newX);
+            getPoints().set(i+1, newY);
         }
         centerX = getCenterX();
         centerY = getCenterY();
-        if(centerX < 0 - radius){
+    }
+
+    public void hyperSpace(){
+        Random random = new Random();
+        int randomEvenInteger = random.nextInt((62 / 2) + 1) * 2;   // Random even number from 0 to 62
+        if(randomEvenInteger >= Main.asteroids.size() + 44){
+            Main.explode();
+        }
+        else{
+            centerX = getCenterX();
+            centerY = getCenterY();
+            moveTo(Math.random()*WINDOW_WIDTH, Math.random()*WINDOW_HEIGHT);    // Teleport
+        }
+    }
+
+    public void updatePosition() {
+        updateAngle();   // Apply the rotation to the "angle" variable
+        rotate(-rotation);   // Rotate the ship
+        if (isThrusting) {
+            velocity.setX(velocity.getX() + THRUST * Math.cos(Math.toRadians(angle)) / FPS);  // Update X component of velocity
+            velocity.setY(velocity.getY() - THRUST * Math.sin(Math.toRadians(angle)) / FPS);  // Update Y component of velocity
+        } else if (isPlayer) {
+            velocity.setX(velocity.getX() - FRICTION * velocity.getX() / FPS);    // Apply friction to X component of velocity
+            velocity.setY(velocity.getY() - FRICTION * velocity.getY() / FPS);    // Apply friction to Y component of velocity
+        }
+        for (int i = 0; i < getPoints().size(); i += 2) {
+            getPoints().set(i, getPoints().get(i) + velocity.getX()); // Apply velocity to the X coordinate of the vertex
+            getPoints().set(i + 1, getPoints().get(i + 1) + velocity.getY()); // Apply velocity to the Y coordinate of the vertex
+        }
+        centerX = getCenterX();
+        centerY = getCenterY();
+        if (centerX < 0 - radius) { // Goes off to the left of the screen
             centerX = WINDOW_WIDTH + radius;
-            for (int i = 0; i < getPoints().size(); i+=2) {
-                getPoints().set(i, WINDOW_WIDTH+2*radius+getPoints().get(i));
+            for (int i = 0; i < getPoints().size(); i += 2) {
+                getPoints().set(i, WINDOW_WIDTH + 2 * radius + getPoints().get(i));
             }
-        }
-        else if(centerX > WINDOW_WIDTH + radius){
+        } else if (centerX > WINDOW_WIDTH + radius) {   // // Goes off to the right of the screen
             centerX = 0 - radius;
-            for (int i = 0; i < getPoints().size(); i+=2) {
-                getPoints().set(i, getPoints().get(i)-WINDOW_WIDTH-2*radius);
+            for (int i = 0; i < getPoints().size(); i += 2) {
+                getPoints().set(i, getPoints().get(i) - WINDOW_WIDTH - 2 * radius);
             }
         }
-        if(centerY < 0 - radius){
+        if (centerY < 0 - radius) { // Goes off above of the screen
             centerY = WINDOW_HEIGHT + radius;
-            for (int i = 1; i < getPoints().size(); i+=2) {
-                getPoints().set(i, WINDOW_HEIGHT+2*radius+getPoints().get(i));
+            for (int i = 1; i < getPoints().size(); i += 2) {
+                getPoints().set(i, WINDOW_HEIGHT + 2 * radius + getPoints().get(i));
             }
-        }
-        else if(centerY > WINDOW_HEIGHT + radius){
+        } else if (centerY > WINDOW_HEIGHT + radius) {  // Goes off below of the screen
             centerY = 0 - radius;
-            for (int i = 1; i < getPoints().size(); i+=2) {
-                getPoints().set(i, getPoints().get(i)-WINDOW_HEIGHT-2*radius);
+            for (int i = 1; i < getPoints().size(); i += 2) {
+                getPoints().set(i, getPoints().get(i) - WINDOW_HEIGHT - 2 * radius);
             }
         }
     }
@@ -127,27 +177,27 @@ public class Particle extends Polygon {
         }
     }
 
-    public void accelerate(){
+    public void accelerate() {
         isThrusting = true;
     }
 
-    public void stopAcceleration(){
+    public void stopAcceleration() {
         isThrusting = false;
     }
 
-    public void setRotationRight(double FPS){
-        rotation = -ROTATION_SPEED/FPS;
+    public void setRotationRight() {
+        rotation = -ROTATION_SPEED / FPS;
     }
 
-    public void setRotationLeft(double FPS){
-        rotation = +ROTATION_SPEED/FPS;
+    public void setRotationLeft() {
+        rotation = ROTATION_SPEED / FPS;
     }
 
-    public void stopRotation(){
+    public void stopRotation() {
         rotation = 0;
     }
 
-    private void updateAngle(){
+    private void updateAngle() {
         angle += rotation;
     }
 }
