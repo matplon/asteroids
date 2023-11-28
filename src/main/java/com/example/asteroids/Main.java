@@ -60,7 +60,7 @@ public class Main extends Application {
         asteroids = new ArrayList<>();
 
         for (int i = 0; i < ASTEROID_COUNT; i++) {
-            asteroids.add(new Particle(Math.random() * WIDTH, Math.random() * HEIGHT, Math.random() * 15, Math.random() * 6, Math.random() * 15,
+            asteroids.add(new Particle(Math.random() * WIDTH, Math.random() * HEIGHT, Math.random() * 150, Math.random() * 6, Math.random() * 15,
                     Math.random() * 360 - 180, false));
             asteroids.get(i).setStroke(Color.WHITE);
             root.getChildren().add(asteroids.get(i));
@@ -78,11 +78,11 @@ public class Main extends Application {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0/FPS), actionEvent -> {
             player.updatePosition(FPS, WIDTH, HEIGHT); // Update player's position
             if(!isSafe.get()) {
-                Circle circle = new Circle(WIDTH / 2, HEIGHT / 2, 1);
+                Circle circle = new Circle(WIDTH / 2, HEIGHT / 2, 50);
                 boolean newSafe = true;
                 for (int i = 0; i < asteroids.size(); i++) {
-                    if(!asteroids.get(i).intersects(player.getLayoutBounds())){
-                        if(asteroids.get(i).intersects(player.getLayoutBounds())){
+                    if(!asteroids.get(i).intersects(circle.getLayoutBounds())){
+                        if(asteroids.get(i).intersects(circle.getLayoutBounds())){
                             newSafe = false;
                         }
                     }
@@ -94,6 +94,7 @@ public class Main extends Application {
                     player.setFill(Color.TRANSPARENT);
                     player.setStroke(Color.WHITE);
                     root.getChildren().add(player);
+                    System.out.println(HP);
                 }
             }
             for (int i = 0; i < asteroids.size(); i++) {

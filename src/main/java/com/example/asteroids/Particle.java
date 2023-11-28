@@ -82,25 +82,25 @@ public class Particle extends Polygon {
         if(centerX < 0 - radius){
             centerX = WINDOW_WIDTH + radius;
             for (int i = 0; i < getPoints().size(); i+=2) {
-                getPoints().set(i, WINDOW_WIDTH+getPoints().get(i));
+                getPoints().set(i, WINDOW_WIDTH+2*radius+getPoints().get(i));
             }
         }
         else if(centerX > WINDOW_WIDTH + radius){
             centerX = 0 - radius;
             for (int i = 0; i < getPoints().size(); i+=2) {
-                getPoints().set(i, getPoints().get(i)-WINDOW_WIDTH);
+                getPoints().set(i, getPoints().get(i)-WINDOW_WIDTH-2*radius);
             }
         }
         if(centerY < 0 - radius){
             centerY = WINDOW_HEIGHT + radius;
             for (int i = 1; i < getPoints().size(); i+=2) {
-                getPoints().set(i, WINDOW_HEIGHT+getPoints().get(i));
+                getPoints().set(i, WINDOW_HEIGHT+2*radius+getPoints().get(i));
             }
         }
         else if(centerY > WINDOW_HEIGHT + radius){
             centerY = 0 - radius;
             for (int i = 1; i < getPoints().size(); i+=2) {
-                getPoints().set(i, getPoints().get(i)-WINDOW_HEIGHT);
+                getPoints().set(i, getPoints().get(i)-WINDOW_HEIGHT-2*radius);
             }
         }
     }
