@@ -49,7 +49,18 @@
        is_visible="true"
        mode="free"
        discard_orig_path="false"
-       fuse_paths="false"
+       fuse_paths="true"
+       oposite_fuse="false" />
+    <inkscape:path-effect
+       effect="mirror_symmetry"
+       start_point="107.7229,129.24402"
+       end_point="107.7229,158.41898"
+       center_point="107.7229,143.8315"
+       id="path-effect98-1-2"
+       is_visible="true"
+       mode="free"
+       discard_orig_path="false"
+       fuse_paths="true"
        oposite_fuse="false" />
   </defs>
   <sodipodi:namedview
@@ -60,7 +71,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.47158032"
-     inkscape:cx="-101.42857"
+     inkscape:cx="-356.95238"
      inkscape:cy="788.57143"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -78,7 +89,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -87,12 +98,12 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       transform="translate(-23.564384,-29.807486)"
+       transform="translate(-70.693153,-53.371872)"
        style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 107.7229,129.24402 H 90.891195 L 98.184934,144.39256 V 158.41898 L 100.99022,156.17475 V 145.51467 L 106.24239,154.6117 Z M 107.7229,129.24402 H 124.5546 L 117.26087,144.39256 V 158.41898 L 114.45558,156.17475 V 145.51467 L 109.20341,154.6117 Z"
+       d="M 107.7229,129.24402 H 90.891195 L 98.184934,144.39256 V 158.41898 L 100.99022,156.17475 V 145.51467 L 106.24239,154.6117 107.7229,129.24402 109.20341,154.6117 114.45558,145.51467 V 156.17475 L 117.26087,158.41898 V 144.39256 L 124.5546,129.24402 Z"
        id="path96"
        inkscape:connector-curvature="0"
-       inkscape:path-effect="#path-effect98-1"
+       inkscape:path-effect="#path-effect98-1-2"
        inkscape:original-d="M 107.7229,129.24402 H 90.891195 L 98.184934,144.39256 V 158.41898 L 100.99022,156.17475 V 145.51467 L 106.24239,154.6117 Z" />
   </g>
 </svg>
