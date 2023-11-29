@@ -85,7 +85,7 @@ public class Main extends Application {
         scene.setFill(Color.BLACK);
 
 
-        player = new Particle(SVGconverter(shipFilePath), 0, 0, 0, FRICTION);
+        player = new Particle(SVGconverter(shipFilePath), -90, 0, 0, FRICTION);
         player.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
         player.setFill(Color.TRANSPARENT);
         player.setStroke(Color.WHITE);
@@ -129,7 +129,7 @@ public class Main extends Application {
                 }
                 if (newSafe) {  // If no asteroids in the spawn zone
                     isAlive.set(true);
-                    player = new Particle(SVGconverter(shipFilePath), 0, 0, 0, FRICTION);
+                    player = new Particle(SVGconverter(shipFilePath), -90, 0, 0, FRICTION);
                     player.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
                     player.setFill(Color.TRANSPARENT);
                     player.setStroke(Color.WHITE);
