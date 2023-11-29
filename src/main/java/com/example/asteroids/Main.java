@@ -12,13 +12,11 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.util.Pair;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -26,17 +24,21 @@ public class Main extends Application {
 
     final static int WIDTH = 1800;
     final static int HEIGHT = 900;
-    final static double FPS = 30;
+    final static double FPS = 60;
     final int INIT_ASTEROID_COUNT = 15;
     final double FRICTION = 0.7;
+    final double BULLET_SPEED = 30;
+    final double MAX_BULLET_DISTANCE = BULLET_SPEED * FPS * 0.5;
+
 
     static AtomicBoolean isAlive = new AtomicBoolean(true);
-    List<Particle> bullets = new ArrayList<>();
-
+    List<Particle> playerBullets = new ArrayList<>();
+    HashMap<Particle, Double> bulletsDistanceCovered = new HashMap();
     String shipFilePath = "ship1.svg";
 
 
     static int HP = 3;
+    boolean canShoot = true;
 
 
     static AnchorPane root;
@@ -53,12 +55,14 @@ public class Main extends Application {
     public void gameOver() {
         System.out.println("Game Over");
     }
+
     public void bullet(Particle particle) {
         List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 4.0, 2.4, 4.0, 2.4, 1.0);
-        Particle bullet = new Particle(points, -particle.getAngle(), 0, 10, 0);
+        Particle bullet = new Particle(points, -particle.getAngle(), 0, BULLET_SPEED, 0);
         bullet.setFill(Color.WHITE);
-        bullet.moveTo(particle.getCenterX(), particle.getCenterY());
-        bullets.add(bullet);
+        bullet.moveTo(particle.getCenterX() + particle.getRadius() * Math.cos(Math.toRadians(-particle.getAngle())), particle.getCenterY() + particle.getRadius() * Math.sin(Math.toRadians(-particle.getAngle())));
+        playerBullets.add(bullet);
+        bulletsDistanceCovered.put(bullet, 0.0);
 
         root.getChildren().add(bullet);
     }
@@ -106,14 +110,21 @@ public class Main extends Application {
             if (keyEvent.getCode() == KeyCode.UP) player.accelerate();   // Thrust forward
             if (keyEvent.getCode() == KeyCode.RIGHT) player.setRotationRight();   // Rotate right
             if (keyEvent.getCode() == KeyCode.LEFT) player.setRotationLeft(); // Rotate left
-            if (keyEvent.getCode() == KeyCode.E) player.hyperSpace();   // Teleport (chance of exploding colliding with an asteroid)
-            if (keyEvent.getCode() == KeyCode.X) bullet(player);
+            if (keyEvent.getCode() == KeyCode.E)
+                player.hyperSpace();   // Teleport (chance of exploding colliding with an asteroid)
+            if (keyEvent.getCode() == KeyCode.X && canShoot && playerBullets.size()<=3){
+                canShoot = false;
+                bullet(player);
+            }
         });
 
         scene.setOnKeyReleased(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.UP) player.stopAcceleration(); // Stop thrusting forward
             if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.LEFT)
                 player.stopRotation(); // Stop rotating
+            if(keyEvent.getCode() == KeyCode.X){
+                canShoot = true;
+            }
         });
 
         asteroids = new ArrayList<>();
@@ -129,9 +140,19 @@ public class Main extends Application {
     public void start(Stage stage) {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
             player.updatePosition(); // Update player's position
-            for (int i = 0; i < bullets.size(); i++) {
-                bullets.get(i).updatePosition();
-                System.out.println(bullets.get(i));
+
+            for (int i = 0; i < playerBullets.size(); i++) {
+                double currentDistance = bulletsDistanceCovered.get(playerBullets.get(i));
+                bulletsDistanceCovered.remove(playerBullets.get(i));
+                playerBullets.get(i).updatePosition();
+                bulletsDistanceCovered.put(playerBullets.get(i), currentDistance + BULLET_SPEED);
+            }
+            for (int i = 0; i < playerBullets.size(); i++) {
+                if(bulletsDistanceCovered.get(playerBullets.get(i))>MAX_BULLET_DISTANCE){
+                    root.getChildren().remove(playerBullets.get(i));
+                    bulletsDistanceCovered.remove(playerBullets.get(i));
+                    playerBullets.remove(playerBullets.get(i));
+                }
             }
 
             if (!isAlive.get()) {  // If the player is dead

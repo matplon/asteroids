@@ -61,24 +61,23 @@ public class Particle extends Polygon {
         // Calculate new point coordinates
         for (int i = 0; i < getPoints().size(); i += 2) {
             double newX = newCenterX + getPoints().get(i) - centerX;
-            double newY = newCenterY + getPoints().get(i+1) - centerY;
+            double newY = newCenterY + getPoints().get(i + 1) - centerY;
             getPoints().set(i, newX);
-            getPoints().set(i+1, newY);
+            getPoints().set(i + 1, newY);
         }
         centerX = getCenterX();
         centerY = getCenterY();
     }
 
-    public void hyperSpace(){
+    public void hyperSpace() {
         Random random = new Random();
         int randomEvenInteger = random.nextInt((62 / 2) + 1) * 2;   // Random even number from 0 to 62
-        if(randomEvenInteger >= Main.asteroids.size() + 44){
+        if (randomEvenInteger >= Main.asteroids.size() + 44) {
             Main.explode();
-        }
-        else{
+        } else {
             centerX = getCenterX();
             centerY = getCenterY();
-            moveTo(Math.random()*WINDOW_WIDTH, Math.random()*WINDOW_HEIGHT);    // Teleport
+            moveTo(Math.random() * WINDOW_WIDTH, Math.random() * WINDOW_HEIGHT);    // Teleport
         }
     }
 
