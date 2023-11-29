@@ -13,11 +13,34 @@
    height="297mm"
    viewBox="0 0 210 297"
    version="1.1"
-   id="svg26"
+   id="svg8"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   sodipodi:docname="asteroidVar2.svg">
+   sodipodi:docname="ship1.svg">
   <defs
-     id="defs20" />
+     id="defs2">
+    <inkscape:path-effect
+       effect="mirror_symmetry"
+       start_point="73.762626,101.76957"
+       end_point="73.762626,154.28535"
+       center_point="73.762626,128.02746"
+       id="path-effect26"
+       is_visible="true"
+       mode="free"
+       discard_orig_path="false"
+       fuse_paths="false"
+       oposite_fuse="false" />
+    <inkscape:path-effect
+       effect="mirror_symmetry"
+       start_point="73.762626,101.76957"
+       end_point="73.762626,154.28535"
+       center_point="73.762626,128.02746"
+       id="path-effect26-7"
+       is_visible="true"
+       mode="free"
+       discard_orig_path="false"
+       fuse_paths="false"
+       oposite_fuse="false" />
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -25,9 +48,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.58"
-     inkscape:cx="97.413793"
-     inkscape:cy="560"
+     inkscape:zoom="0.66"
+     inkscape:cx="236.17917"
+     inkscape:cy="639.18561"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -37,14 +60,14 @@
      inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
-     id="metadata23">
+     id="metadata5">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -53,9 +76,12 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
+       transform="translate(34.47601,39.541009)"
        style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 34.901324,84.456172 18.478906,102.24712 23.496867,122.77513 45.849597,130.98634 64.552895,117.75717 62.728175,95.404443 46.305765,103.15947 Z"
-       id="path28-1"
-       inkscape:connector-curvature="0" />
+       d="M 73.762626,103.3731 72.559973,154.28535 55.321969,101.76957 Z M 73.762626,103.3731 74.965279,154.28535 92.203283,101.76957 Z"
+       id="path24"
+       inkscape:connector-curvature="0"
+       inkscape:path-effect="#path-effect26-7"
+       inkscape:original-d="M 73.762626,103.3731 72.559973,154.28535 55.321969,101.76957 Z" />
   </g>
 </svg>
