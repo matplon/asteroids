@@ -167,4 +167,12 @@ public class Particle extends Polygon {
     private void updateAngle() {
         angle += rotation;
     }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public Vector getVelocity() {
+        return velocity;
+    }
 }

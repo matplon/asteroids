@@ -16,6 +16,7 @@ import javafx.util.Duration;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,8 +31,9 @@ public class Main extends Application {
     final double FRICTION = 0.7;
 
     static AtomicBoolean isAlive = new AtomicBoolean(true);
+    List<Particle> bullets = new ArrayList<>();
 
-    String shipFilePath = "C:\\Users\\Computer Science\\Desktop\\asteroids\\ship1.svg";
+    String shipFilePath = "ship1.svg";
 
 
     static int HP = 3;
@@ -39,7 +41,6 @@ public class Main extends Application {
 
     static AnchorPane root;
     Scene scene;
-
     static Particle player;
     public static List<Particle> asteroids;
 
@@ -51,6 +52,15 @@ public class Main extends Application {
 
     public void gameOver() {
         System.out.println("Game Over");
+    }
+    public void bullet(Particle particle) {
+        List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 4.0, 2.4, 4.0, 2.4, 1.0);
+        Particle bullet = new Particle(points, -particle.getAngle(), 0, 10, 0);
+        bullet.setFill(Color.WHITE);
+        bullet.moveTo(particle.getCenterX(), particle.getCenterY());
+        bullets.add(bullet);
+
+        root.getChildren().add(bullet);
     }
 
     public List<Double> SVGconverter(String filepath) { // Convert .svg file to a list of coordinates
@@ -97,6 +107,7 @@ public class Main extends Application {
             if (keyEvent.getCode() == KeyCode.RIGHT) player.setRotationRight();   // Rotate right
             if (keyEvent.getCode() == KeyCode.LEFT) player.setRotationLeft(); // Rotate left
             if (keyEvent.getCode() == KeyCode.E) player.hyperSpace();   // Teleport (chance of exploding colliding with an asteroid)
+            if (keyEvent.getCode() == KeyCode.X) bullet(player);
         });
 
         scene.setOnKeyReleased(keyEvent -> {
@@ -118,6 +129,10 @@ public class Main extends Application {
     public void start(Stage stage) {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
             player.updatePosition(); // Update player's position
+            for (int i = 0; i < bullets.size(); i++) {
+                bullets.get(i).updatePosition();
+                System.out.println(bullets.get(i));
+            }
 
             if (!isAlive.get()) {  // If the player is dead
                 Circle circle = new Circle((double) WIDTH / 2, (double) HEIGHT / 2, 75);    // Safe zone

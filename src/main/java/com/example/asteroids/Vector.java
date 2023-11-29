@@ -53,4 +53,14 @@ public class Vector {
         if (direction < 0) return (180 - Math.abs(direction));
         return -(180 - direction);
     }
+
+    @Override
+    public String toString() {
+        return "Vector{" +
+                "direction=" + direction +
+                ", magnitude=" + magnitude +
+                ", x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }
