@@ -31,6 +31,8 @@ public class Main extends Application {
 
     static AtomicBoolean isAlive = new AtomicBoolean(true);
 
+    String shipFilePath = "C:\\Users\\Computer Science\\Desktop\\asteroids\\ship1.svg";
+
 
     static int HP = 3;
 
@@ -83,7 +85,7 @@ public class Main extends Application {
         scene.setFill(Color.BLACK);
 
 
-        player = new Particle(SVGconverter("C:\\Users\\plonc\\IdeaProjects\\demo\\asteroids\\asteroidVar2.svg"), 0, 0, 0, FRICTION);
+        player = new Particle(SVGconverter(shipFilePath), 0, 0, 0, FRICTION);
         player.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
         player.setFill(Color.TRANSPARENT);
         player.setStroke(Color.WHITE);
@@ -115,8 +117,8 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
-            System.out.println(player);
             player.updatePosition(); // Update player's position
+
             if (!isAlive.get()) {  // If the player is dead
                 Circle circle = new Circle((double) WIDTH / 2, (double) HEIGHT / 2, 75);    // Safe zone
                 boolean newSafe = true;
@@ -127,7 +129,7 @@ public class Main extends Application {
                 }
                 if (newSafe) {  // If no asteroids in the spawn zone
                     isAlive.set(true);
-                    player = new Particle(SVGconverter("C:\\Users\\plonc\\IdeaProjects\\demo\\asteroids\\asteroidVar2.svg"), 0, 0, 0, FRICTION);
+                    player = new Particle(SVGconverter(shipFilePath), 0, 0, 0, FRICTION);
                     player.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
                     player.setFill(Color.TRANSPARENT);
                     player.setStroke(Color.WHITE);
