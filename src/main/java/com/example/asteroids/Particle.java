@@ -81,6 +81,21 @@ public class Particle extends Polygon {
         }
     }
 
+    public void scale(double scale){
+        centerX = getCenterX();
+        centerY = getCenterY();
+        for (int i = 0; i < getPoints().size(); i+=2) {
+            double newX = scale * (getPoints().get(i) - centerX) + centerX;
+            double newY = scale * (getPoints().get(i+1) - centerY) + centerY;
+            getPoints().set(i, newX);
+            getPoints().set(i+1, newY);
+        }
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
+
     public void updatePosition() {
         updateAngle();   // Apply the rotation to the "angle" variable
         rotate(-rotation);   // Rotate the ship
@@ -141,6 +156,10 @@ public class Particle extends Polygon {
             getPoints().set(i, rotatedX);
             getPoints().set(i + 1, rotatedY);
         }
+    }
+
+    public void setVelocity(Vector velocity) {
+        this.velocity = velocity;
     }
 
     public void accelerate() {

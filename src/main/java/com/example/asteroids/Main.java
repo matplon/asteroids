@@ -27,8 +27,8 @@ public class Main extends Application {
     final static double FPS = 60;
     final int INIT_ASTEROID_COUNT = 15;
     final double FRICTION = 0.7;
-    final double BULLET_SPEED = 30;
-    final double MAX_BULLET_DISTANCE = BULLET_SPEED * FPS * 0.5;
+    final double BULLET_SPEED = 10;
+    final double MAX_BULLET_DISTANCE = BULLET_SPEED * FPS * 2;
 
 
     static AtomicBoolean isAlive = new AtomicBoolean(true);
@@ -57,7 +57,7 @@ public class Main extends Application {
     }
 
     public void bullet(Particle particle) {
-        List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 4.0, 2.4, 4.0, 2.4, 1.0);
+        List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);
         Particle bullet = new Particle(points, -particle.getAngle(), 0, BULLET_SPEED, 0);
         bullet.setFill(Color.WHITE);
         bullet.moveTo(particle.getCenterX() + particle.getRadius() * Math.cos(Math.toRadians(-particle.getAngle())), particle.getCenterY() + particle.getRadius() * Math.sin(Math.toRadians(-particle.getAngle())));
@@ -92,6 +92,25 @@ public class Main extends Application {
         return list;
     }
 
+    public void destroyAsteroid(Asteroid asteroid){
+        if(asteroid.getSize()>1){
+            asteroid.scale(0.5);
+            Asteroid asteroid1 = asteroid;
+            asteroid1.setAngle(Math.random()*360-180);
+
+        }
+    }
+
+    public void checkForHits(){
+        for (int i = 0; i < playerBullets.size(); i++) {
+            for (int j = 0; j < asteroids.size(); j++) {
+                if(Shape.intersect(playerBullets.get(i), asteroids.get(j)).getLayoutBounds().getWidth() != -1){
+
+                }
+            }
+        }
+    }
+
 
     public void init() {
         root = new AnchorPane();
@@ -104,6 +123,7 @@ public class Main extends Application {
         player.setFill(Color.TRANSPARENT);
         player.setStroke(Color.WHITE);
         root.getChildren().add(player);
+        player.scale(5);
 
 
         scene.setOnKeyPressed(keyEvent -> {
