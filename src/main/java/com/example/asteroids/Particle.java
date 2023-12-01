@@ -7,19 +7,19 @@ import java.util.Random;
 
 public class Particle extends Polygon {
 
-    private final double ROTATION_SPEED = 360;    // Degrees/second
-    private final double THRUST = 5;    // Pixels/second
-    private double friction;    // Coefficient of friction
-    private double centerX;
-    private double centerY;
-    private double angle;
-    private double rotation;
-    private final double radius;
-    private Vector velocity;
-    private boolean isThrusting = false;
-    final double FPS = Main.FPS;
-    final double WINDOW_WIDTH = Main.WIDTH;
-    final double WINDOW_HEIGHT = Main.HEIGHT;
+    protected final double ROTATION_SPEED = 360;    // Degrees/second
+    protected final double THRUST = 5;    // Pixels/second
+    protected double centerX;
+    protected double centerY;
+    protected double friction;    // Coefficient of friction
+    protected double rotation;
+    protected final double radius;
+    protected double angle;
+    protected Vector velocity;
+    protected boolean isThrusting = false;
+    protected final double FPS = Main.FPS;
+    protected final double WINDOW_WIDTH = Main.WIDTH;
+    protected final double WINDOW_HEIGHT = Main.HEIGHT;
 
     public Particle(List<Double> points, double angle, double rotation, double velocity, double friction) {
         super();

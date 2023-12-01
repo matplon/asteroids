@@ -97,7 +97,6 @@ public class Main extends Application {
             asteroid.scale(0.5);
             Asteroid asteroid1 = asteroid;
             asteroid1.setAngle(Math.random()*360-180);
-
         }
     }
 
