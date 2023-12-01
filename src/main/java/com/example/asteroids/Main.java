@@ -96,8 +96,25 @@ public class Main extends Application {
         if(asteroid.getSize()>1){
             asteroid.scale(0.5);
             Asteroid asteroid1 = asteroid;
+            Asteroid asteroid2 = asteroid;
             asteroid1.setAngle(Math.random()*360-180);
+            asteroid2.setAngle(Math.random()*360-180);
+
+
+            Vector newVelocity1 = new Vector(Math.random() * 2 * asteroid.getVelocity().getX() - asteroid.getVelocity().getX() / 2,
+                    Math.random() * 2 * asteroid.getVelocity().getY() - asteroid.getVelocity().getY() / 2, asteroid1.getAngle());
+            Vector newVelocity2 = new Vector(Math.random() * 2 * asteroid.getVelocity().getX() - asteroid.getVelocity().getX() / 2,
+                    Math.random() * 2 * asteroid.getVelocity().getY() - asteroid.getVelocity().getY() / 2, asteroid2.getAngle());
+
+            asteroid1.setVelocity(newVelocity1);
+            asteroid2.setVelocity(newVelocity2);
+
+            asteroids.add(asteroid1);
+            asteroids.add(asteroid2);
+            root.getChildren().addAll(asteroid1, asteroid2);
         }
+            root.getChildren().remove(asteroid);
+            asteroids.remove(asteroid);
     }
 
     public void checkForHits(){
