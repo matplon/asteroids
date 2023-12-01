@@ -44,7 +44,7 @@ public class Main extends Application {
     static AnchorPane root;
     Scene scene;
     static Particle player;
-    public static List<Particle> asteroids;
+    public static List<Asteroid> asteroids;
 
     public static void explode() {
         isAlive.set(false);
@@ -104,7 +104,7 @@ public class Main extends Application {
         for (int i = 0; i < playerBullets.size(); i++) {
             for (int j = 0; j < asteroids.size(); j++) {
                 if(Shape.intersect(playerBullets.get(i), asteroids.get(j)).getLayoutBounds().getWidth() != -1){
-
+                    destroyAsteroid(asteroids.get(j));
                 }
             }
         }
@@ -122,7 +122,7 @@ public class Main extends Application {
         player.setFill(Color.TRANSPARENT);
         player.setStroke(Color.WHITE);
         root.getChildren().add(player);
-        player.scale(5);
+        player.scale(1);
 
 
         scene.setOnKeyPressed(keyEvent -> {
@@ -148,11 +148,12 @@ public class Main extends Application {
 
         asteroids = new ArrayList<>();
 
-//        for (int i = 0; i < INIT_ASTEROID_COUNT; i++) {
-//            asteroids.add();
-//            asteroids.get(i).setStroke(Color.WHITE);
-//            root.getChildren().add(asteroids.get(i));
-//        }
+       for (int i = 0; i < INIT_ASTEROID_COUNT; i++) {
+           int type = (int)(Math.random() * 4 + 1);
+           asteroids.add(i, new Asteroid(SVGconverter("asteroidVar"+type+".svg"), (Math.random()*360-180), 0, Math.random()*3+1, 0, (int)Math.random() * 3));
+           asteroids.get(i).setStroke(Color.WHITE);
+           root.getChildren().add(asteroids.get(i));
+       }
     }
 
     @Override
