@@ -29,7 +29,6 @@ public class Main extends Application {
     final double FRICTION = 0.7;
     final double BULLET_SPEED = 10;
     final double MAX_BULLET_DISTANCE = BULLET_SPEED * FPS * 2;
-    final double bigAsteroidSpeed = 5;
 
 
     static AtomicBoolean isAlive = new AtomicBoolean(true);
@@ -98,12 +97,6 @@ public class Main extends Application {
             asteroid.scale(0.5);
             Asteroid asteroid1 = asteroid;
             asteroid1.setAngle(Math.random()*360-180);
-            Vector newVelocity = new Vector(Math.random() * 2 * asteroid.getVelocity().getX() - asteroid.getVelocity().getX() / 2,
-                    Math.random() * 2 * asteroid.getVelocity().getY() - asteroid.getVelocity().getY() / 2, asteroid1.getAngle());
-            asteroid.setVelocity(newVelocity);
-        }
-        else {
-            root.getChildren().remove(asteroid);
         }
     }
 
@@ -111,7 +104,7 @@ public class Main extends Application {
         for (int i = 0; i < playerBullets.size(); i++) {
             for (int j = 0; j < asteroids.size(); j++) {
                 if(Shape.intersect(playerBullets.get(i), asteroids.get(j)).getLayoutBounds().getWidth() != -1){
-                    destroyAsteroid(asteroids.get(i));
+                    destroyAsteroid(asteroids.get(j));
                 }
             }
         }
@@ -129,6 +122,7 @@ public class Main extends Application {
         player.setFill(Color.TRANSPARENT);
         player.setStroke(Color.WHITE);
         root.getChildren().add(player);
+        player.scale(1);
 
 
         scene.setOnKeyPressed(keyEvent -> {
@@ -154,11 +148,12 @@ public class Main extends Application {
 
         asteroids = new ArrayList<>();
 
-//        for (int i = 0; i < INIT_ASTEROID_COUNT; i++) {
-//            asteroids.add();
-//            asteroids.get(i).setStroke(Color.WHITE);
-//            root.getChildren().add(asteroids.get(i));
-//        }
+       for (int i = 0; i < INIT_ASTEROID_COUNT; i++) {
+           int type = (int)(Math.random() * 4 + 1);
+           asteroids.add(i, new Asteroid(SVGconverter("asteroidVar"+type+".svg"), (Math.random()*360-180), 0, Math.random()*3+1, 0, (int)Math.random() * 3));
+           asteroids.get(i).setStroke(Color.WHITE);
+           root.getChildren().add(asteroids.get(i));
+       }
     }
 
     @Override
