@@ -7,11 +7,11 @@ import java.util.Random;
 
 public class Particle extends Polygon {
 
-    protected final double ROTATION_SPEED = 360;    // Degrees/second
-    protected final double THRUST = 4;    // Pixels/second
+    protected final double ROTATION_SPEED = 360;
+    protected final double THRUST = 4;
     protected double centerX;
     protected double centerY;
-    protected double friction;    // Coefficient of friction
+    protected double friction;
     protected double rotation;
     protected final double radius;
     protected double angle;

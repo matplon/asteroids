@@ -60,7 +60,7 @@ public class Main extends Application {
         scene = new Scene(root, WIDTH, HEIGHT);
         scene.setFill(Color.BLACK);
 
-
+        // Spawn the player
         player = new Particle(SVGconverter(shipFilePath), -90, 0, 0, FRICTION);
         player.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
         player.setFill(Color.TRANSPARENT);
@@ -89,8 +89,8 @@ public class Main extends Application {
             if (keyEvent.getCode() == KeyCode.X) canShoot = true;
         });
 
+        // Spawn the big asteroids
         asteroids = new ArrayList<>();
-
         for (int i = 0; i < INIT_ASTEROID_COUNT; i++) {
             int type = (int) (Math.random() * 4 + 1);
             Asteroid asteroid = new Asteroid(SVGconverter("asteroidVar" + type + ".svg"), Math.random() * 360 - 180, BIG_ASTEROID_SPEED, 3);
@@ -114,13 +114,13 @@ public class Main extends Application {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
             player.updatePosition(); // Update player's position
 
-            for (Particle playerBullet : playerBullets) {
+            for (Particle playerBullet : playerBullets) {   // Update bullet distances
                 double currentDistance = bulletsDistanceCovered.get(playerBullet);
                 bulletsDistanceCovered.remove(playerBullet);
                 playerBullet.updatePosition();
                 bulletsDistanceCovered.put(playerBullet, currentDistance + BULLET_SPEED);
             }
-            for (int i = 0; i < playerBullets.size(); i++) {
+            for (int i = 0; i < playerBullets.size(); i++) {    // Delete bullets which have exceeded the max distance
                 if (bulletsDistanceCovered.get(playerBullets.get(i)) > MAX_BULLET_DISTANCE) {
                     root.getChildren().remove(playerBullets.get(i));
                     bulletsDistanceCovered.remove(playerBullets.get(i));
@@ -129,7 +129,7 @@ public class Main extends Application {
             }
             checkForHits();
 
-            if (!isAlive.get()) {  // If the player is dead
+            if (!isAlive.get()) {  // If the player is dead check for asteroids in the spawn zone
                 boolean newSafe = true;
                 for (Particle asteroid : asteroids) {
                     if (Shape.intersect(spawnZone, asteroid).getLayoutBounds().getWidth() > 0) {
@@ -186,7 +186,6 @@ public class Main extends Application {
                 }
             }
         }
-
         // Destroy bullets which hit the target
         for (Particle bullet :
                 bulletsToRemove) {
@@ -196,7 +195,9 @@ public class Main extends Application {
     }
 
     public void destroyAsteroid(Asteroid asteroid) {
-        if (asteroid.getSize() > 1) {
+        if (asteroid.getSize() > 1) {   // Multiply only the big and medium asteroids
+            // 2 smaller and faster asteroids from 1 asteroid
+
             asteroid.scale(0.5);
             Asteroid asteroid1 = new Asteroid(asteroid.getPoints(), 0, 0, asteroid.getSize() - 1);
             Asteroid asteroid2 = new Asteroid(asteroid.getPoints(), 0, 0, asteroid.getSize() - 1);
@@ -207,6 +208,7 @@ public class Main extends Application {
             asteroid1.setFill(Color.TRANSPARENT);
             asteroid2.setFill(Color.TRANSPARENT);
 
+            // Random, higher velocity
             Random random = new Random();
             Vector newVelocity1 = new Vector(random.nextDouble(asteroid.getVelocity().getMagnitude() * 1.2, asteroid.getVelocity().getMagnitude() * 2.5), asteroid1.getAngle());
             Vector newVelocity2 = new Vector(random.nextDouble(asteroid.getVelocity().getMagnitude() * 1.2, asteroid.getVelocity().getMagnitude() * 2.5), asteroid2.getAngle());
@@ -218,14 +220,16 @@ public class Main extends Application {
             asteroids.add(asteroid2);
             root.getChildren().addAll(asteroid1, asteroid2);
         }
+        // Remove the big asteroid
         root.getChildren().remove(asteroid);
         asteroids.remove(asteroid);
     }
 
     public void shootBullet(Particle particle) {
-        List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);
+        List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle bullet
         Particle bullet = new Particle(points, -particle.getAngle(), 0, BULLET_SPEED, 0);
         bullet.setFill(Color.WHITE);
+        // Spawn the bullet at the nose of the ship
         bullet.moveTo(particle.getCenterX() + particle.getRadius() * Math.cos(Math.toRadians(-particle.getAngle())), particle.getCenterY() + particle.getRadius() * Math.sin(Math.toRadians(-particle.getAngle())));
         playerBullets.add(bullet);
         bulletsDistanceCovered.put(bullet, 0.0);
@@ -242,10 +246,10 @@ public class Main extends Application {
                 String leftRemoved = nextLine.replaceAll("^\\s+", "");  // Remove whitespaces from the sides
                 nextLine = leftRemoved.replaceAll("\\s+$", "");
                 if (nextLine.startsWith("d=")) {    // Find the path line in the .svg file
-                    String subString = nextLine.substring(5, nextLine.length() - 3);
-                    String[] li = subString.split(" ");
+                    String subString = nextLine.substring(5, nextLine.length() - 3);    // Remove unnecessary characters from the sides
+                    String[] li = subString.split(" "); // Remove spaces
                     for (String s : li) {
-                        String[] lili = s.split(",");
+                        String[] lili = s.split(",");   // Remove commas
                         list.add(Double.parseDouble(lili[0]));
                         list.add(Double.parseDouble(lili[1]));
                     }
