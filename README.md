@@ -1,2 +1,0 @@
-marek does everything
-# asteroids
