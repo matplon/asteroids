@@ -34,11 +34,13 @@ public class Vector {
     }
 
     public double getMagnitude() {
-        return magnitude;
+        return Math.sqrt(x * x + y * y);
     }
 
     public void setMagnitude(double magnitude) {
         this.magnitude = magnitude;
+        this.x = magnitude * Math.cos(Math.toRadians(direction));
+        this.y = magnitude * Math.sin(Math.toRadians(direction));
     }
 
     public double getDirection() {
@@ -47,6 +49,11 @@ public class Vector {
 
     public void setDirection(double direction) {
         this.direction = direction;
+    }
+
+    public void scale(double scale){
+        this.x *= scale;
+        this.y *= scale;
     }
 
     public static double inverseDirection(double direction) {

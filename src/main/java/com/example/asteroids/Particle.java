@@ -8,7 +8,7 @@ import java.util.Random;
 public class Particle extends Polygon {
 
     protected final double ROTATION_SPEED = 360;    // Degrees/second
-    protected final double THRUST = 5;    // Pixels/second
+    protected final double THRUST = 4;    // Pixels/second
     protected double centerX;
     protected double centerY;
     protected double friction;    // Coefficient of friction
@@ -21,6 +21,8 @@ public class Particle extends Polygon {
     protected final double WINDOW_WIDTH = Main.WIDTH;
     protected final double WINDOW_HEIGHT = Main.HEIGHT;
 
+    private final double TERMINAL_VELOCITY = Main.SHIP_TERMINAL_VELOCITY;
+
     public Particle(List<Double> points, double angle, double rotation, double velocity, double friction) {
         super();
         getPoints().setAll(points);
@@ -31,30 +33,6 @@ public class Particle extends Polygon {
         this.rotation = rotation;
         this.velocity = new Vector(velocity, angle);
         this.friction = friction;
-    }
-
-    public double getCenterX() {    // Mean average of the X coordinates
-        double sum = 0;
-        for (int i = 0; i < getPoints().size(); i += 2) {
-            sum += getPoints().get(i);
-        }
-        return sum / ((double) getPoints().size() / 2);
-    }
-
-    public double getCenterY() {    // Mean average of the Y coordinates
-        double sum = 0;
-        for (int i = 1; i < getPoints().size(); i += 2) {
-            sum += getPoints().get(i);
-        }
-        return sum / ((double) getPoints().size() / 2);
-    }
-
-    public double getRadius() { // Calculate radius by finding the furthest coordinate
-        double maxOffset = 0;
-        for (int i = 2; i < getPoints().size(); i += 2) {
-            maxOffset = Math.max(maxOffset, Math.sqrt(Math.pow(centerX - getPoints().get(i), 2) + Math.pow(centerY - getPoints().get(i + 1), 2)));
-        }
-        return maxOffset;
     }
 
     public void moveTo(double newCenterX, double newCenterY) {
@@ -69,39 +47,17 @@ public class Particle extends Polygon {
         centerY = getCenterY();
     }
 
-    public void hyperSpace() {
-        Random random = new Random();
-        int randomEvenInteger = random.nextInt((62 / 2) + 1) * 2;   // Random even number from 0 to 62
-        if (randomEvenInteger >= Main.asteroids.size() + 44) {
-            Main.explode();
-        } else {
-            centerX = getCenterX();
-            centerY = getCenterY();
-            moveTo(Math.random() * WINDOW_WIDTH, Math.random() * WINDOW_HEIGHT);    // Teleport
-        }
-    }
-
-    public void scale(double scale){
-        centerX = getCenterX();
-        centerY = getCenterY();
-        for (int i = 0; i < getPoints().size(); i+=2) {
-            double newX = scale * (getPoints().get(i) - centerX) + centerX;
-            double newY = scale * (getPoints().get(i+1) - centerY) + centerY;
-            getPoints().set(i, newX);
-            getPoints().set(i+1, newY);
-        }
-    }
-
-    public void setAngle(double angle) {
-        this.angle = angle;
-    }
-
     public void updatePosition() {
         updateAngle();   // Apply the rotation to the "angle" variable
         rotate(-rotation);   // Rotate the ship
-        if (isThrusting) {
+        velocity.setDirection(-angle);
+        if (isThrusting && velocity.getMagnitude()<TERMINAL_VELOCITY) {
             velocity.setX(velocity.getX() + THRUST * Math.cos(Math.toRadians(angle)) / FPS);  // Update X component of velocity
             velocity.setY(velocity.getY() - THRUST * Math.sin(Math.toRadians(angle)) / FPS);  // Update Y component of velocity
+
+            if(velocity.getMagnitude() > TERMINAL_VELOCITY){
+                velocity.scale(TERMINAL_VELOCITY/velocity.getMagnitude());
+            }
         } else {
             velocity.setX(velocity.getX() - friction * velocity.getX() / FPS);    // Apply friction to X component of velocity
             velocity.setY(velocity.getY() - friction * velocity.getY() / FPS);    // Apply friction to Y component of velocity
@@ -156,6 +112,57 @@ public class Particle extends Polygon {
             getPoints().set(i, rotatedX);
             getPoints().set(i + 1, rotatedY);
         }
+    }
+
+    public void scale(double scale) {
+        centerX = getCenterX();
+        centerY = getCenterY();
+        for (int i = 0; i < getPoints().size(); i += 2) {
+            double newX = scale * (getPoints().get(i) - centerX) + centerX;
+            double newY = scale * (getPoints().get(i + 1) - centerY) + centerY;
+            getPoints().set(i, newX);
+            getPoints().set(i + 1, newY);
+        }
+    }
+
+    public void hyperSpace() {
+        Random random = new Random();
+        int randomEvenInteger = random.nextInt((62 / 2) + 1) * 2;   // Random even number from 0 to 62
+        if (randomEvenInteger >= Main.asteroids.size() + 44) {
+            Main.explode();
+        } else {
+            centerX = getCenterX();
+            centerY = getCenterY();
+            moveTo(Math.random() * WINDOW_WIDTH, Math.random() * WINDOW_HEIGHT);    // Teleport
+        }
+    }
+
+    public double getCenterX() {    // Mean average of the X coordinates
+        double sum = 0;
+        for (int i = 0; i < getPoints().size(); i += 2) {
+            sum += getPoints().get(i);
+        }
+        return sum / ((double) getPoints().size() / 2);
+    }
+
+    public double getCenterY() {    // Mean average of the Y coordinates
+        double sum = 0;
+        for (int i = 1; i < getPoints().size(); i += 2) {
+            sum += getPoints().get(i);
+        }
+        return sum / ((double) getPoints().size() / 2);
+    }
+
+    public double getRadius() { // Calculate radius by finding the furthest coordinate
+        double maxOffset = 0;
+        for (int i = 2; i < getPoints().size(); i += 2) {
+            maxOffset = Math.max(maxOffset, Math.sqrt(Math.pow(centerX - getPoints().get(i), 2) + Math.pow(centerY - getPoints().get(i + 1), 2)));
+        }
+        return maxOffset;
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
     }
 
     public void setVelocity(Vector velocity) {
