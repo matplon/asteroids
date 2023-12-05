@@ -162,6 +162,8 @@ public class Main extends Application {
         stage.show();
     }
 
+
+
     public static void explode() {
         isAlive.set(false);
         HP--;
@@ -195,19 +197,19 @@ public class Main extends Application {
     }
 
     public void destroyAsteroid(Asteroid asteroid) {
-        if (asteroid.getSize() > 1) {   // Multiply only the big and medium asteroids
+        if (asteroid.getSize() > 1.1) {   // Multiply only the big and medium asteroids
             // 2 smaller and faster asteroids from 1 asteroid
 
             int type1 = (int) (Math.random() * 4 + 1);
             int type2 = (int) (Math.random() * 4 + 1);
             List<Double>points1 = SVGconverter("asteroidVar" + type1 + ".svg");
             List<Double>points2 = SVGconverter("asteroidVar" + type2 + ".svg");
-
-            asteroid.scale(0.5);
-            Asteroid asteroid1 = new Asteroid(points1, 0, 0, asteroid.getSize() - 1);
+            Asteroid asteroid1 = new Asteroid(points1, 0, 0, asteroid.getSize()-1);
+            asteroid1.scale((asteroid.getRadius()) * 0.8/45);
             asteroid1.moveTo(asteroid.centerX, asteroid.getCenterY());
-            Asteroid asteroid2 = new Asteroid(points2, 0, 0, asteroid.getSize() - 1);
+            Asteroid asteroid2 = new Asteroid(points2, 0, 0, asteroid.getSize()-1);
             asteroid2.moveTo(asteroid.centerX, asteroid.getCenterY());
+            asteroid2.scale((asteroid.getRadius()) * 0.8/45);
             asteroid1.setAngle(Math.random() * 360 - 180);
             asteroid2.setAngle(Math.random() * 360 - 180);
             asteroid1.setStroke(Color.WHITE);
@@ -217,8 +219,8 @@ public class Main extends Application {
 
             // Random, higher velocity
             Random random = new Random();
-            Vector newVelocity1 = new Vector(random.nextDouble(asteroid.getVelocity().getMagnitude() * 1.2, asteroid.getVelocity().getMagnitude() * 2.5), asteroid1.getAngle());
-            Vector newVelocity2 = new Vector(random.nextDouble(asteroid.getVelocity().getMagnitude() * 1.2, asteroid.getVelocity().getMagnitude() * 2.5), asteroid2.getAngle());
+            Vector newVelocity1 = new Vector(random.nextDouble(asteroid.getVelocity().getMagnitude() * 1.2, asteroid.getVelocity().getMagnitude() * 2), asteroid1.getAngle());
+            Vector newVelocity2 = new Vector(random.nextDouble(asteroid.getVelocity().getMagnitude() * 1.2, asteroid.getVelocity().getMagnitude() * 2), asteroid2.getAngle());
 
             asteroid1.setVelocity(newVelocity1);
             asteroid2.setVelocity(newVelocity2);

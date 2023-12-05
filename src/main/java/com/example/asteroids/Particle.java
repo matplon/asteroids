@@ -165,6 +165,8 @@ public class Particle extends Polygon {
         this.angle = angle;
     }
 
+
+
     public void setVelocity(Vector velocity) {
         this.velocity = velocity;
     }
