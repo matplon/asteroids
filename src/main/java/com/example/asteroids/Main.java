@@ -76,7 +76,7 @@ public class Main extends Application {
             if (keyEvent.getCode() == KeyCode.LEFT) player.setRotationLeft(); // Rotate left
             if (keyEvent.getCode() == KeyCode.E)
                 player.hyperSpace();   // Teleport (chance of exploding or colliding with an asteroid)
-            if (keyEvent.getCode() == KeyCode.X && canShoot && playerBullets.size() <= 3) {
+            if (keyEvent.getCode() == KeyCode.X && canShoot && playerBullets.size() <= 3 && isAlive.get()) {
                 canShoot = false;
                 shootBullet(player);
             }
@@ -198,9 +198,16 @@ public class Main extends Application {
         if (asteroid.getSize() > 1) {   // Multiply only the big and medium asteroids
             // 2 smaller and faster asteroids from 1 asteroid
 
+            int type1 = (int) (Math.random() * 4 + 1);
+            int type2 = (int) (Math.random() * 4 + 1);
+            List<Double>points1 = SVGconverter("asteroidVar" + type1 + ".svg");
+            List<Double>points2 = SVGconverter("asteroidVar" + type2 + ".svg");
+
             asteroid.scale(0.5);
-            Asteroid asteroid1 = new Asteroid(asteroid.getPoints(), 0, 0, asteroid.getSize() - 1);
-            Asteroid asteroid2 = new Asteroid(asteroid.getPoints(), 0, 0, asteroid.getSize() - 1);
+            Asteroid asteroid1 = new Asteroid(points1, 0, 0, asteroid.getSize() - 1);
+            asteroid1.moveTo(asteroid.centerX, asteroid.getCenterY());
+            Asteroid asteroid2 = new Asteroid(points2, 0, 0, asteroid.getSize() - 1);
+            asteroid2.moveTo(asteroid.centerX, asteroid.getCenterY());
             asteroid1.setAngle(Math.random() * 360 - 180);
             asteroid2.setAngle(Math.random() * 360 - 180);
             asteroid1.setStroke(Color.WHITE);
