@@ -27,8 +27,13 @@ public class Main extends Application {
     final int INIT_ASTEROID_COUNT = 15;
     final double FRICTION = 0.7;
     final double BULLET_SPEED = 15;
+    static final double PARTICLE_SPEED = 1;
     final static double SHIP_TERMINAL_VELOCITY = 10;
     final double MAX_BULLET_DISTANCE = WIDTH * 0.6;
+
+    final double MAX_PARTICLE_DISTANCE = WIDTH * 0.05;
+
+    static final double PARTICLE_COUNT = 15;
     final double BIG_ASTEROID_SPEED = 1;
     final double SPAWNZONE_RADIUS = 100;
     final double PLAYER_RADIUS = 20;
@@ -37,7 +42,11 @@ public class Main extends Application {
 
     static AtomicBoolean isAlive = new AtomicBoolean(true);
     List<Particle> playerBullets = new ArrayList<>();
+
+    static List<Particle> particlesAll = new ArrayList<>();
     HashMap<Particle, Double> bulletsDistanceCovered = new HashMap<>();
+
+    static HashMap<Particle, Double> particlesDistanceCovered = new HashMap<>();
     Circle spawnZone;
     String shipFilePath = "ship1.svg";
 
@@ -127,6 +136,18 @@ public class Main extends Application {
                     playerBullets.remove(playerBullets.get(i));
                 }
             }
+            for (int i = 0; i < particlesAll.size(); i++) {   // Update bullet distances
+                Particle particle = particlesAll.get(i);
+                double currentDistance = particlesDistanceCovered.get(particle);
+                particlesDistanceCovered.remove(particle);
+                particle.updatePosition();
+                particlesDistanceCovered.put(particle, currentDistance + PARTICLE_SPEED);
+                if (particlesDistanceCovered.get(particle) > MAX_PARTICLE_DISTANCE) {
+                    root.getChildren().remove(particle);
+                    particlesDistanceCovered.remove(particle);
+                    particlesAll.remove(particle);
+                }
+            }
             checkForHits();
 
             if (!isAlive.get()) {  // If the player is dead check for asteroids in the spawn zone
@@ -168,6 +189,7 @@ public class Main extends Application {
         isAlive.set(false);
         HP--;
         root.getChildren().remove(player);
+        spawnParticle(player);
     }
 
     public void gameOver() {
@@ -231,6 +253,7 @@ public class Main extends Application {
         }
         // Remove the big asteroid
         root.getChildren().remove(asteroid);
+        spawnParticle(asteroid);
         asteroids.remove(asteroid);
     }
 
@@ -244,6 +267,19 @@ public class Main extends Application {
         bulletsDistanceCovered.put(bullet, 0.0);
 
         root.getChildren().add(bullet);
+    }
+
+    public static void spawnParticle(Particle particle) {
+        for (int i = 0; i < PARTICLE_COUNT; i++) {
+        List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle particle
+        double angle = Math.random() * 360 - 180;
+        Particle particle1 = new Particle(points, angle, 0, PARTICLE_SPEED * (Math.random() * 0.75 + 0.5), 0);
+        particle1.setFill(Color.WHITE);
+        particle1.moveTo(particle.getCenterX() + particle.getRadius() * Math.cos(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5), particle.getCenterY() + particle.getRadius() * Math.sin(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5));
+        particlesAll.add(particle1);
+        particlesDistanceCovered.put(particle1, 0.0);
+
+        root.getChildren().add(particle1);}
     }
 
     public List<Double> SVGconverter(String filepath) { // Convert .svg file to a list of coordinates
