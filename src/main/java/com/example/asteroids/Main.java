@@ -135,7 +135,15 @@ public class Main extends Application {
 
             if(Math.random() * FPS * 300 < 1000 && enemyList.size() < 1) {
                 Particle enemy = new Particle(SVGconverter(enemyFilePath), -90, 0, ENEMY_SPEED, 0);
-                double x = new Random().nextBoolean() ? 200 - enemy.getRadius() : WIDTH -200 + enemy.getRadius();
+                boolean check = Math.random() < 0.5;
+                double x = 0;
+                if(check) {
+                    x = 0 - enemy.getRadius();
+                    enemy.setVelocity(new Vector(ENEMY_SPEED, 0));
+                }else {
+                    x = WIDTH + enemy.getRadius();
+                    enemy.setVelocity(new Vector(ENEMY_SPEED, 180));
+                }
                 double y = Math.random() * (HEIGHT - enemy.getRadius() - (0 + enemy.getRadius())) + 0 + enemy.getRadius();
                 enemy.moveTo(x, y);
                 enemy.setFill(Color.TRANSPARENT);
@@ -146,7 +154,7 @@ public class Main extends Application {
             }
 
             if(enemyList.size() > 0){
-                moveEnemy(enemyList.get(0));
+                enemyList.get(0).updatePosition();
             }
 
             player.updatePosition(); // Update player's position
