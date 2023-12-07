@@ -36,6 +36,8 @@ public class Main extends Application {
     static final double PARTICLE_COUNT = 15;
     final double BIG_ASTEROID_SPEED = 1;
     final double SPAWNZONE_RADIUS = 100;
+
+    final double ENEMY_SPEED = 4;
     final double PLAYER_RADIUS = 20;
     final double BIG_ASTEROID_RADIUS = 45;
 
@@ -44,11 +46,18 @@ public class Main extends Application {
     List<Particle> playerBullets = new ArrayList<>();
 
     static List<Particle> particlesAll = new ArrayList<>();
+
     HashMap<Particle, Double> bulletsDistanceCovered = new HashMap<>();
 
     static HashMap<Particle, Double> particlesDistanceCovered = new HashMap<>();
+
+    List<Particle> enemyList = new ArrayList<>();
     Circle spawnZone;
     String shipFilePath = "ship1.svg";
+
+    String enemyFilePath = "enemy1.svg";
+
+
 
 
     static int HP = 3;
@@ -121,6 +130,23 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
+
+            if(Math.random() * FPS * 300 < 1000 && enemyList.size() < 1) {
+                Particle enemy = new Particle(SVGconverter(enemyFilePath), -90, 0, ENEMY_SPEED, 0);
+                double x = new Random().nextBoolean() ? 200 - enemy.getRadius() : WIDTH -200 + enemy.getRadius();
+                double y = Math.random() * (HEIGHT - enemy.getRadius() - (0 + enemy.getRadius())) + 0 + enemy.getRadius();
+                enemy.moveTo(x, y);
+                enemy.setFill(Color.TRANSPARENT);
+                enemy.setStroke(Color.WHITE);
+                root.getChildren().add(enemy);
+                enemy.scale(PLAYER_RADIUS / player.getRadius());
+                enemyList.add(enemy);
+            }
+
+            if(enemyList.size() > 0){
+                moveEnemy(enemyList.get(0));
+            }
+
             player.updatePosition(); // Update player's position
 
             for (Particle playerBullet : playerBullets) {   // Update bullet distances
@@ -194,6 +220,10 @@ public class Main extends Application {
 
     public void gameOver() {
         System.out.println("Game Over");
+    }
+
+    public void moveEnemy(Particle particle){
+
     }
 
     public void checkForHits() {
