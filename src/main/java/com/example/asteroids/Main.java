@@ -116,6 +116,8 @@ public class Main extends Application {
             asteroids.add(asteroid);
             root.getChildren().add(asteroid);
         }
+
+        HUDUtil.init(0, SVGconverter(shipFilePath));
     }
 
     @Override
