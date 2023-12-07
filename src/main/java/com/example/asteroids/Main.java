@@ -140,7 +140,7 @@ public class Main extends Application {
                 enemy.setStroke(Color.WHITE);
                 root.getChildren().add(enemy);
                 enemy.scale(PLAYER_RADIUS / player.getRadius());
-                enemyList.add(enemy);
+                enemyList.add(enemy); //all
             }
 
             if(enemyList.size() > 0){
