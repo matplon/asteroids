@@ -23,8 +23,8 @@ public class HUDUtil {
         pointsText.setFont(Font.font("Times New Roman", 15));
         pointsText.setTextAlignment(TextAlignment.CENTER);
 
-        highScore = new Text()
-
+        highScore = new Text();
+//lol
     }
 
 

@@ -133,7 +133,7 @@ public class Main extends Application {
                 if (bulletsDistanceCovered.get(playerBullets.get(i)) > MAX_BULLET_DISTANCE) {
                     root.getChildren().remove(playerBullets.get(i));
                     bulletsDistanceCovered.remove(playerBullets.get(i));
-                    playerBullets.remove(playerBullets.get(i));
+                    playerBullets.remove(playerBullets.get(i)); //commit
                 }
             }
             for (int i = 0; i < particlesAll.size(); i++) {   // Update bullet distances
