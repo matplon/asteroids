@@ -126,7 +126,7 @@ public class Main extends Application {
             root.getChildren().add(asteroid);
         }
 
-        HUDUtil.init(0, SVGconverter(shipFilePath));
+        HUD.init(0, SVGconverter(shipFilePath));
     }
 
     @Override
@@ -134,7 +134,8 @@ public class Main extends Application {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
 
             if(Math.random() * FPS * 300 < 1000 && enemyList.size() < 1) {
-                Particle enemy = new Particle(SVGconverter(enemyFilePath), -90, 0, ENEMY_SPEED, 0);
+                int type = Math.random() <0.5 ? 1 :2;
+                Enemy enemy = new Enemy(SVGconverter(enemyFilePath), -90, ENEMY_SPEED, type);
                 boolean check = Math.random() < 0.5;
                 double x = 0;
                 if(check) {
