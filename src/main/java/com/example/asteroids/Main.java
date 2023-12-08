@@ -4,6 +4,8 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
@@ -41,6 +43,8 @@ public class Main extends Application {
     final double PLAYER_RADIUS = 20;
     final double BIG_ASTEROID_RADIUS = 45;
 
+    public Integer points = 0;
+
 
     static AtomicBoolean isAlive = new AtomicBoolean(true);
     List<Particle> playerBullets = new ArrayList<>();
@@ -56,8 +60,6 @@ public class Main extends Application {
     String shipFilePath = "ship1.svg";
 
     String enemyFilePath = "enemy1.svg";
-
-
 
 
     static int HP = 3;
@@ -79,7 +81,7 @@ public class Main extends Application {
         scene.setFill(Color.BLACK);
 
         // Spawn the player
-        player = new Particle(SVGconverter(shipFilePath), -90, 0, 0, FRICTION);
+        player = new Particle(Util.SVGconverter(shipFilePath), -90, 0, 0, FRICTION);
         player.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
         player.setFill(Color.TRANSPARENT);
         player.setStroke(Color.WHITE);
@@ -111,7 +113,7 @@ public class Main extends Application {
         asteroids = new ArrayList<>();
         for (int i = 0; i < INIT_ASTEROID_COUNT; i++) {
             int type = (int) (Math.random() * 4 + 1);
-            Asteroid asteroid = new Asteroid(SVGconverter("asteroidVar" + type + ".svg"), Math.random() * 360 - 180, BIG_ASTEROID_SPEED, 3);
+            Asteroid asteroid = new Asteroid(Util.SVGconverter("asteroidVar" + type + ".svg"), Math.random() * 360 - 180, BIG_ASTEROID_SPEED, 3);
             asteroid.setStroke(Color.WHITE);
             asteroid.setFill(Color.TRANSPARENT);
             asteroid.scale(BIG_ASTEROID_RADIUS / asteroid.getRadius());
@@ -126,21 +128,26 @@ public class Main extends Application {
             root.getChildren().add(asteroid);
         }
 
-        HUDUtil.init(0, SVGconverter(shipFilePath));
+        HUD.init(0, Util.SVGconverter(shipFilePath));
+
+        ChangeListener<Integer> pointsListener = (observableValue, integer, t1) -> {
+            if (integer.intValue() % 100 == 0 && integer.intValue() > 0)
+                HUD.addHeart();
+        };
     }
 
     @Override
     public void start(Stage stage) {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
 
-            if(Math.random() * FPS * 300 < 1000 && enemyList.size() < 1) {
-                Particle enemy = new Particle(SVGconverter(enemyFilePath), -90, 0, ENEMY_SPEED, 0);
+            if (Math.random() * FPS * 300 < 1000 && enemyList.size() < 1) {
+                Particle enemy = new Particle(Util.SVGconverter(enemyFilePath), -90, 0, ENEMY_SPEED, 0);
                 boolean check = Math.random() < 0.5;
                 double x = 0;
-                if(check) {
+                if (check) {
                     x = 0 - enemy.getRadius();
                     enemy.setVelocity(new Vector(ENEMY_SPEED, 0));
-                }else {
+                } else {
                     x = WIDTH + enemy.getRadius();
                     enemy.setVelocity(new Vector(ENEMY_SPEED, 180));
                 }
@@ -153,7 +160,7 @@ public class Main extends Application {
                 enemyList.add(enemy); //all
             }
 
-            if(enemyList.size() > 0){
+            if (enemyList.size() > 0) {
                 enemyList.get(0).updatePosition();
             }
 
@@ -220,19 +227,19 @@ public class Main extends Application {
     }
 
 
-
     public static void explode() {
         isAlive.set(false);
         HP--;
         root.getChildren().remove(player);
         spawnParticle(player);
+        HUD.removeHeart();
     }
 
     public void gameOver() {
         System.out.println("Game Over");
     }
 
-    public void moveEnemy(Particle particle){
+    public void moveEnemy(Particle particle) {
 
     }
 
@@ -246,6 +253,7 @@ public class Main extends Application {
                     if (!bulletsToRemove.contains(playerBullets.get(i))) {    // Make sure that one bullet doesn't hit 2 asteroids
                         destroyAsteroid(asteroids.get(j));
                         bulletsToRemove.add(playerBullets.get(i));
+
                     }
                 }
             }
@@ -264,14 +272,14 @@ public class Main extends Application {
 
             int type1 = (int) (Math.random() * 4 + 1);
             int type2 = (int) (Math.random() * 4 + 1);
-            List<Double>points1 = SVGconverter("asteroidVar" + type1 + ".svg");
-            List<Double>points2 = SVGconverter("asteroidVar" + type2 + ".svg");
-            Asteroid asteroid1 = new Asteroid(points1, 0, 0, asteroid.getSize()-1);
-            asteroid1.scale((asteroid.getRadius()) * 0.8/45);
+            List<Double> points1 = Util.SVGconverter("asteroidVar" + type1 + ".svg");
+            List<Double> points2 = Util.SVGconverter("asteroidVar" + type2 + ".svg");
+            Asteroid asteroid1 = new Asteroid(points1, 0, 0, asteroid.getSize() - 1);
+            asteroid1.scale((asteroid.getRadius()) * 0.8 / 45);
             asteroid1.moveTo(asteroid.centerX, asteroid.getCenterY());
-            Asteroid asteroid2 = new Asteroid(points2, 0, 0, asteroid.getSize()-1);
+            Asteroid asteroid2 = new Asteroid(points2, 0, 0, asteroid.getSize() - 1);
             asteroid2.moveTo(asteroid.centerX, asteroid.getCenterY());
-            asteroid2.scale((asteroid.getRadius()) * 0.8/45);
+            asteroid2.scale((asteroid.getRadius()) * 0.8 / 45);
             asteroid1.setAngle(Math.random() * 360 - 180);
             asteroid2.setAngle(Math.random() * 360 - 180);
             asteroid1.setStroke(Color.WHITE);
@@ -311,40 +319,17 @@ public class Main extends Application {
 
     public static void spawnParticle(Particle particle) {
         for (int i = 0; i < PARTICLE_COUNT; i++) {
-        List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle particle
-        double angle = Math.random() * 360 - 180;
-        Particle particle1 = new Particle(points, angle, 0, PARTICLE_SPEED * (Math.random() * 0.75 + 0.5), 0);
-        particle1.setFill(Color.WHITE);
-        particle1.moveTo(particle.getCenterX() + particle.getRadius() * Math.cos(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5), particle.getCenterY() + particle.getRadius() * Math.sin(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5));
-        particlesAll.add(particle1);
-        particlesDistanceCovered.put(particle1, 0.0);
+            List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle particle
+            double angle = Math.random() * 360 - 180;
+            Particle particle1 = new Particle(points, angle, 0, PARTICLE_SPEED * (Math.random() * 0.75 + 0.5), 0);
+            particle1.setFill(Color.WHITE);
+            particle1.moveTo(particle.getCenterX() + particle.getRadius() * Math.cos(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5), particle.getCenterY() + particle.getRadius() * Math.sin(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5));
+            particlesAll.add(particle1);
+            particlesDistanceCovered.put(particle1, 0.0);
 
-        root.getChildren().add(particle1);}
-    }
-
-    public List<Double> SVGconverter(String filepath) { // Convert .svg file to a list of coordinates
-        List<Double> list = new ArrayList<>();
-        try {
-            Scanner scanner = new Scanner(new File(filepath));
-            while (scanner.hasNextLine()) {
-                String nextLine = scanner.nextLine();
-                String leftRemoved = nextLine.replaceAll("^\\s+", "");  // Remove whitespaces from the sides
-                nextLine = leftRemoved.replaceAll("\\s+$", "");
-                if (nextLine.startsWith("d=")) {    // Find the path line in the .svg file
-                    String subString = nextLine.substring(5, nextLine.length() - 3);    // Remove unnecessary characters from the sides
-                    String[] li = subString.split(" "); // Remove spaces
-                    for (String s : li) {
-                        String[] lili = s.split(",");   // Remove commas
-                        list.add(Double.parseDouble(lili[0]));
-                        list.add(Double.parseDouble(lili[1]));
-                    }
-                }
-            }
-
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            root.getChildren().add(particle1);
         }
-        return list;
     }
+
 
 }
