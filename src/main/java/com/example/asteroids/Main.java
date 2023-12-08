@@ -41,8 +41,6 @@ public class Main extends Application {
     final double PLAYER_RADIUS = 20;
     final double BIG_ASTEROID_RADIUS = 45;
 
-    public boolean ENEMY_COOLDOWN;
-
 
     static AtomicBoolean isAlive = new AtomicBoolean(true);
     List<Particle> playerBullets = new ArrayList<>();
@@ -53,11 +51,7 @@ public class Main extends Application {
 
     static HashMap<Particle, Double> particlesDistanceCovered = new HashMap<>();
 
-    List<Enemy> enemyList = new ArrayList<>();
-
-    final public List<Integer> enemyRightAngles = Arrays.asList(45,0-45);
-    final public List<Integer> enemyLeftAngles = Arrays.asList(135,180,135);
-
+    List<Particle> enemyList = new ArrayList<>();
     Circle spawnZone;
     String shipFilePath = "ship1.svg";
 
@@ -140,9 +134,7 @@ public class Main extends Application {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
 
             if(Math.random() * FPS * 300 < 1000 && enemyList.size() < 1) {
-                int type = Math.random() < 0.5 ? 1 : 2;
-                int behavior = Math.random() < 0.5 ? 1 : 2;
-                Enemy enemy = new Enemy(SVGconverter(enemyFilePath), -90,  ENEMY_SPEED, type);
+                Particle enemy = new Particle(SVGconverter(enemyFilePath), -90, 0, ENEMY_SPEED, 0);
                 boolean check = Math.random() < 0.5;
                 double x = 0;
                 if(check) {
@@ -158,32 +150,11 @@ public class Main extends Application {
                 enemy.setStroke(Color.WHITE);
                 root.getChildren().add(enemy);
                 enemy.scale(PLAYER_RADIUS / player.getRadius());
-                enemyList.add(enemy);
+                enemyList.add(enemy); //all
             }
 
             if(enemyList.size() > 0){
                 enemyList.get(0).updatePosition();
-                Enemy enemy = enemyList.get(0);
-                int index = 0;
-                if(Math.random() < 0.1 && (enemyRightAngles.contains(enemy.getAngle()))){
-                    index = enemyRightAngles.indexOf(enemy.getAngle());
-
-                }
-                if(Math.random() < 0.1 && (enemyLeftAngles.contains(enemy.getAngle()))){
-                    index = enemyLeftAngles.indexOf(enemy.getAngle());
-                    int picked = -1;
-                    do {
-                        if(Math.random()<0.33){
-                            picked = 0;
-                        }
-                        else if(Math.random() >= 0.33 && Math.random()<0.66){
-                            picked = 1;
-                        } else{
-                            picked = 2;
-                        }
-                    }while (picked!=index);
-                }
-
             }
 
             player.updatePosition(); // Update player's position

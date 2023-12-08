@@ -1,11 +1,9 @@
 package com.example.asteroids;
 
-import javafx.scene.shape.Polygon;
-
 import java.util.List;
 import java.util.Random;
 
-public class Particle extends Polygon {
+public class Particle extends BetterPolygon {
 
     protected final double ROTATION_SPEED = 360;
     protected final double THRUST = 4;
@@ -46,6 +44,7 @@ public class Particle extends Polygon {
         centerX = getCenterX();
         centerY = getCenterY();
     }
+
 
     public void updatePosition() {
         updateAngle();   // Apply the rotation to the "angle" variable
@@ -135,30 +134,6 @@ public class Particle extends Polygon {
             centerY = getCenterY();
             moveTo(Math.random() * WINDOW_WIDTH, Math.random() * WINDOW_HEIGHT);    // Teleport
         }
-    }
-
-    public double getCenterX() {    // Mean average of the X coordinates
-        double sum = 0;
-        for (int i = 0; i < getPoints().size(); i += 2) {
-            sum += getPoints().get(i);
-        }
-        return sum / ((double) getPoints().size() / 2);
-    }
-
-    public double getCenterY() {    // Mean average of the Y coordinates
-        double sum = 0;
-        for (int i = 1; i < getPoints().size(); i += 2) {
-            sum += getPoints().get(i);
-        }
-        return sum / ((double) getPoints().size() / 2);
-    }
-
-    public double getRadius() { // Calculate radius by finding the furthest coordinate
-        double maxOffset = 0;
-        for (int i = 2; i < getPoints().size(); i += 2) {
-            maxOffset = Math.max(maxOffset, Math.sqrt(Math.pow(centerX - getPoints().get(i), 2) + Math.pow(centerY - getPoints().get(i + 1), 2)));
-        }
-        return maxOffset;
     }
 
     public void setAngle(double angle) {
