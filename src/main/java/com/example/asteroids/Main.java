@@ -72,7 +72,8 @@ public class Main extends Application {
 
 
     static AnchorPane root;
-    Scene scene;
+    static Scene scene;
+    static Stage stage1;
     static Particle player;
     public static List<Asteroid> asteroids;
 
@@ -228,6 +229,8 @@ public class Main extends Application {
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
 
+        stage1 = new Stage();
+        stage = stage1;
         stage.setScene(scene);
         stage.show();
     }
@@ -250,7 +253,6 @@ public class Main extends Application {
     }
 
     public void gameOver() {
-
         HUD.gameOver();
     }
 

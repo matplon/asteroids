@@ -1,5 +1,9 @@
 package com.example.asteroids;
 
+import javafx.css.FontFace;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -74,8 +78,7 @@ public class HUD {
     public static int getPoints(){
         return points;
     }
-
-    public static void gameOver(){
+    public static void gameOver() {
         Text gameOverText = new Text("Game Over");
         gameOverText.setFont(font);
         gameOverText.setStroke(Color.RED);
@@ -83,6 +86,24 @@ public class HUD {
         gameOverText.setY(Main.HEIGHT/2);
         Main.root.getChildren().add(gameOverText);
 
+        AnchorPane newRoot = new AnchorPane();
+        Button restart = new Button("Restart");
+        restart.setLayoutX(400);
+        restart.setLayoutY(700);
+        restart.setFont(font);
+
+        restart.setOnAction(actionEvent -> {
+
+        });
+
+        Button menu = new Button("Menu");
+        menu.setLayoutX(1300);
+        menu.setLayoutY(700);
+        menu.setFont(font);
+
+        newRoot.getChildren().addAll(restart, menu);
+        Main.scene = new Scene(newRoot, Main.WIDTH, Main.HEIGHT);
+        Main.stage1.setScene(Main.scene);
     }
 
 
