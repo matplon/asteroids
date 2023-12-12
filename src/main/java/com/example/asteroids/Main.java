@@ -51,6 +51,12 @@ public class Main extends Application {
 
     static HashMap<Particle, Double> particlesDistanceCovered = new HashMap<>();
 
+    HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
+        put(3, 20);
+        put(2, 50);
+        put(1, 100);
+    }};
+
     List<Particle> enemyList = new ArrayList<>();
     Circle spawnZone;
     String shipFilePath = "ship1.svg";
@@ -58,10 +64,9 @@ public class Main extends Application {
     String enemyFilePath = "enemy1.svg";
 
 
-
-
     static int HP = 3;
     boolean canShoot = true;
+    int nextPointThreshold = 10000;
 
 
     static AnchorPane root;
@@ -132,16 +137,20 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
+            if (HUD.getPoints() >= nextPointThreshold) {
+                HUD.addHeart();
+                nextPointThreshold += 10000;
+            }
 
-            if(Math.random() * FPS * 300 < 1000 && enemyList.size() < 1) {
-                int type = Math.random() <0.5 ? 1 :2;
+            if (Math.random() * FPS * 300 < 1000 && enemyList.size() < 1) {
+                int type = Math.random() < 0.5 ? 1 : 2;
                 Enemy enemy = new Enemy(SVGconverter(enemyFilePath), -90, ENEMY_SPEED, type);
                 boolean check = Math.random() < 0.5;
                 double x = 0;
-                if(check) {
+                if (check) {
                     x = 0 - enemy.getRadius();
                     enemy.setVelocity(new Vector(ENEMY_SPEED, 0));
-                }else {
+                } else {
                     x = WIDTH + enemy.getRadius();
                     enemy.setVelocity(new Vector(ENEMY_SPEED, 180));
                 }
@@ -154,7 +163,7 @@ public class Main extends Application {
                 enemyList.add(enemy); //all
             }
 
-            if(enemyList.size() > 0){
+            if (enemyList.size() > 0) {
                 enemyList.get(0).updatePosition();
             }
 
@@ -221,7 +230,14 @@ public class Main extends Application {
         stage.show();
     }
 
+    void addPoint(Asteroid asteroid) {
+        HUD.addPoints(pointsMapping.get(asteroid.getSize()));
+    }
 
+    void addPoint(Enemy enemyShip){
+        if(enemyShip.getType() == 1) HUD.addPoints(200);
+        else HUD.addPoints(1000);
+    }
 
     public static void explode() {
         isAlive.set(false);
@@ -235,7 +251,7 @@ public class Main extends Application {
         System.out.println("Game Over");
     }
 
-    public void moveEnemy(Particle particle){
+    public void moveEnemy(Particle particle) {
 
     }
 
@@ -267,14 +283,14 @@ public class Main extends Application {
 
             int type1 = (int) (Math.random() * 4 + 1);
             int type2 = (int) (Math.random() * 4 + 1);
-            List<Double>points1 = SVGconverter("asteroidVar" + type1 + ".svg");
-            List<Double>points2 = SVGconverter("asteroidVar" + type2 + ".svg");
-            Asteroid asteroid1 = new Asteroid(points1, 0, 0, asteroid.getSize()-1);
-            asteroid1.scale((asteroid.getRadius()) * 0.8/45);
+            List<Double> points1 = SVGconverter("asteroidVar" + type1 + ".svg");
+            List<Double> points2 = SVGconverter("asteroidVar" + type2 + ".svg");
+            Asteroid asteroid1 = new Asteroid(points1, 0, 0, asteroid.getSize() - 1);
+            asteroid1.scale((asteroid.getRadius()) * 0.8 / 45);
             asteroid1.moveTo(asteroid.centerX, asteroid.getCenterY());
-            Asteroid asteroid2 = new Asteroid(points2, 0, 0, asteroid.getSize()-1);
+            Asteroid asteroid2 = new Asteroid(points2, 0, 0, asteroid.getSize() - 1);
             asteroid2.moveTo(asteroid.centerX, asteroid.getCenterY());
-            asteroid2.scale((asteroid.getRadius()) * 0.8/45);
+            asteroid2.scale((asteroid.getRadius()) * 0.8 / 45);
             asteroid1.setAngle(Math.random() * 360 - 180);
             asteroid2.setAngle(Math.random() * 360 - 180);
             asteroid1.setStroke(Color.WHITE);
@@ -294,6 +310,9 @@ public class Main extends Application {
             asteroids.add(asteroid2);
             root.getChildren().addAll(asteroid1, asteroid2);
         }
+        // Add points for asteroid
+        addPoint(asteroid);
+
         // Remove the big asteroid
         root.getChildren().remove(asteroid);
         spawnParticle(asteroid);
@@ -314,15 +333,16 @@ public class Main extends Application {
 
     public static void spawnParticle(Particle particle) {
         for (int i = 0; i < PARTICLE_COUNT; i++) {
-        List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle particle
-        double angle = Math.random() * 360 - 180;
-        Particle particle1 = new Particle(points, angle, 0, PARTICLE_SPEED * (Math.random() * 0.75 + 0.5), 0);
-        particle1.setFill(Color.WHITE);
-        particle1.moveTo(particle.getCenterX() + particle.getRadius() * Math.cos(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5), particle.getCenterY() + particle.getRadius() * Math.sin(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5));
-        particlesAll.add(particle1);
-        particlesDistanceCovered.put(particle1, 0.0);
+            List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle particle
+            double angle = Math.random() * 360 - 180;
+            Particle particle1 = new Particle(points, angle, 0, PARTICLE_SPEED * (Math.random() * 0.75 + 0.5), 0);
+            particle1.setFill(Color.WHITE);
+            particle1.moveTo(particle.getCenterX() + particle.getRadius() * Math.cos(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5), particle.getCenterY() + particle.getRadius() * Math.sin(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5));
+            particlesAll.add(particle1);
+            particlesDistanceCovered.put(particle1, 0.0);
 
-        root.getChildren().add(particle1);}
+            root.getChildren().add(particle1);
+        }
     }
 
     public List<Double> SVGconverter(String filepath) { // Convert .svg file to a list of coordinates

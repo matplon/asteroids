@@ -68,5 +68,9 @@ public class HUD {
         hearts.remove(hearts.size() - 1);
     }
 
+    public static int getPoints(){
+        return points;
+    }
+
 
 }
