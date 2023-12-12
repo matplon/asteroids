@@ -15,9 +15,12 @@ public class HUD {
     private static List<BetterPolygon> hearts;
 
     private static final int pointsTextX = 15;
-    private static final int pointsTextY = 15;
+    private static final int pointsTextY = 100;
     private static final int fontSize = 50;
+    private static final String fontStyle = "Times New Roman";
     private static List<Double> pointsHeart;
+
+    private static Font font = new Font(fontStyle, fontSize);
 
     public static void addHeart() {
         BetterPolygon heart = new Particle(pointsHeart, 0, 0, 0, 0);
@@ -37,13 +40,13 @@ public class HUD {
         pointsHeart = pointsHeartCoordinates;
 
         pointsText = new Text(points + "");
-        pointsText.setFont(Font.font("Times New Roman", fontSize));
+        pointsText.setFont(font);
         pointsText.setLayoutX(pointsTextX);
         pointsText.setLayoutY(pointsTextY);
         pointsText.setStroke(Color.RED);
 
         highScore = new Text(previousHighScore + "");
-        highScore.setFont(Font.font("Times New Roman", fontSize));
+        highScore.setFont(font);
         highScore.setTextAlignment(TextAlignment.CENTER);
         highScore.setLayoutX(Main.WIDTH / 2);
         highScore.setLayoutY(pointsTextY);
@@ -70,6 +73,16 @@ public class HUD {
 
     public static int getPoints(){
         return points;
+    }
+
+    public static void gameOver(){
+        Text gameOverText = new Text("Game Over");
+        gameOverText.setFont(font);
+        gameOverText.setStroke(Color.RED);
+        gameOverText.setX(Main.WIDTH/2 - gameOverText.getLayoutBounds().getWidth()/2);
+        gameOverText.setY(Main.HEIGHT/2);
+        Main.root.getChildren().add(gameOverText);
+
     }
 
 

@@ -51,6 +51,8 @@ public class Main extends Application {
 
     static HashMap<Particle, Double> particlesDistanceCovered = new HashMap<>();
 
+    public static Timeline timeline;
+
     HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
         put(3, 20);
         put(2, 50);
@@ -136,7 +138,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
             if (HUD.getPoints() >= nextPointThreshold) {
                 HUD.addHeart();
                 nextPointThreshold += 10000;
@@ -196,7 +198,7 @@ public class Main extends Application {
             }
             checkForHits();
 
-            if (!isAlive.get()) {  // If the player is dead check for asteroids in the spawn zone
+            if (!isAlive.get() && HP > 0) {  // If the player is dead check for asteroids in the spawn zone
                 boolean newSafe = true;
                 for (Particle asteroid : asteroids) {
                     if (Shape.intersect(spawnZone, asteroid).getLayoutBounds().getWidth() > 0) {
@@ -248,7 +250,8 @@ public class Main extends Application {
     }
 
     public void gameOver() {
-        System.out.println("Game Over");
+
+        HUD.gameOver();
     }
 
     public void moveEnemy(Particle particle) {
