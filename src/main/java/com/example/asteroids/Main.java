@@ -37,8 +37,8 @@ public class Main extends Application {
     final double BIG_ASTEROID_SPEED = 1;
     final double SPAWNZONE_RADIUS = 100;
 
-    final double ENEMY_SPEED = 4;
-    final double PLAYER_RADIUS = 20;
+    static final double ENEMY_SPEED = 4;
+    final static  double PLAYER_RADIUS = 20;
     final double BIG_ASTEROID_RADIUS = 45;
 
 
@@ -59,11 +59,14 @@ public class Main extends Application {
         put(1, 100);
     }};
 
-    List<Particle> enemyList = new ArrayList<>();
+    static List<Enemy> enemyList = new ArrayList<>();
+
+    final static List<Double> leftDirections = new ArrayList<>(Arrays.asList(-45.0, 0.0 ,45.0));
+    final static List<Double> rightDirections = new ArrayList<>(Arrays.asList(-135.0, 180.0 ,135.0));
     Circle spawnZone;
     String shipFilePath = "ship1.svg";
 
-    String enemyFilePath = "enemy1.svg";
+    static String enemyFilePath = "enemy1.svg";
 
 
     static int HP = 3;
@@ -145,30 +148,13 @@ public class Main extends Application {
                 nextPointThreshold += 10000;
             }
 
-            if (Math.random() * FPS * 300 < 1000 && enemyList.size() < 1) {
-                int type = Math.random() < 0.5 ? 1 : 2;
-                Enemy enemy = new Enemy(SVGconverter(enemyFilePath), -90, ENEMY_SPEED, type);
-                boolean check = Math.random() < 0.5;
-                double x = 0;
-                if (check) {
-                    x = 0 - enemy.getRadius();
-                    enemy.setVelocity(new Vector(ENEMY_SPEED, 0));
-                } else {
-                    x = WIDTH + enemy.getRadius();
-                    enemy.setVelocity(new Vector(ENEMY_SPEED, 180));
-                }
-                double y = Math.random() * (HEIGHT - enemy.getRadius() - (0 + enemy.getRadius())) + 0 + enemy.getRadius();
-                enemy.moveTo(x, y);
-                enemy.setFill(Color.TRANSPARENT);
-                enemy.setStroke(Color.WHITE);
-                root.getChildren().add(enemy);
-                enemy.scale(PLAYER_RADIUS / player.getRadius());
-                enemyList.add(enemy); //all
-            }
+            List<Double> leftDirections = new ArrayList<>(Arrays.asList(-45.0, 0.0 ,45.0));
+            List<Double> rightDirections = new ArrayList<>(Arrays.asList(-135.0, 180.0 ,135.0));
 
-            if (enemyList.size() > 0) {
-                enemyList.get(0).updatePosition();
-            }
+            Enemy.spawnEnemy();
+            Enemy.updateEnemy(rightDirections,leftDirections);
+
+
 
             player.updatePosition(); // Update player's position
 

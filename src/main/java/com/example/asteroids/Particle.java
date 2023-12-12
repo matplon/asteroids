@@ -6,7 +6,7 @@ import java.util.Random;
 public class Particle extends BetterPolygon {
 
     protected final double ROTATION_SPEED = 360;
-    protected final double THRUST = 4;
+    protected static final double THRUST = 4;
     protected double centerX;
     protected double centerY;
     protected double friction;
@@ -91,7 +91,7 @@ public class Particle extends BetterPolygon {
         }
     }
 
-    private void rotate(double angle) {
+    void rotate(double angle) {
         double centerX1 = getCenterX();
         double centerY1 = getCenterY();
 
