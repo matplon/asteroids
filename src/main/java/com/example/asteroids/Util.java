@@ -1,7 +1,5 @@
 package com.example.asteroids;
 
-import javafx.scene.shape.Polygon;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

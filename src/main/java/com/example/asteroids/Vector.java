@@ -51,7 +51,7 @@ public class Vector {
         this.direction = direction;
     }
 
-    public void scale(double scale){
+    public void scale(double scale) {
         this.x *= scale;
         this.y *= scale;
     }

@@ -1,7 +1,9 @@
 package com.example.asteroids;
 
+import javafx.scene.paint.Color;
+
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class Particle extends BetterPolygon {
 
@@ -50,12 +52,12 @@ public class Particle extends BetterPolygon {
         updateAngle();   // Apply the rotation to the "angle" variable
         rotate(-rotation);   // Rotate the ship
         velocity.setDirection(-angle);
-        if (isThrusting && velocity.getMagnitude()<TERMINAL_VELOCITY) {
+        if (isThrusting && velocity.getMagnitude() < TERMINAL_VELOCITY) {
             velocity.setX(velocity.getX() + THRUST * Math.cos(Math.toRadians(angle)) / FPS);  // Update X component of velocity
             velocity.setY(velocity.getY() - THRUST * Math.sin(Math.toRadians(angle)) / FPS);  // Update Y component of velocity
 
-            if(velocity.getMagnitude() > TERMINAL_VELOCITY){
-                velocity.scale(TERMINAL_VELOCITY/velocity.getMagnitude());
+            if (velocity.getMagnitude() > TERMINAL_VELOCITY) {
+                velocity.scale(TERMINAL_VELOCITY / velocity.getMagnitude());
             }
         } else {
             velocity.setX(velocity.getX() - friction * velocity.getX() / FPS);    // Apply friction to X component of velocity
@@ -124,34 +126,27 @@ public class Particle extends BetterPolygon {
         }
     }
 
-    public void hyperSpace() {
-        Random random = new Random();
-        int randomEvenInteger = random.nextInt((62 / 2) + 1) * 2;   // Random even number from 0 to 62
-        if (randomEvenInteger >= Main.asteroids.size() + 44) {
-            Main.explode();
-        } else {
-            centerX = getCenterX();
-            centerY = getCenterY();
-            moveTo(Math.random() * WINDOW_WIDTH, Math.random() * WINDOW_HEIGHT);    // Teleport
+    public void animationParticles(){
+        for (int i = 0; i < Main.PARTICLE_COUNT; i++) {
+            List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle particle
+            double angle = Math.random() * 360 - 180;
+            Particle particle1 = new Particle(points, angle, 0, Main.PARTICLE_SPEED * (Math.random() * 0.75 + 0.5), 0);
+            particle1.setFill(Color.WHITE);
+            particle1.moveTo(getCenterX() + getRadius() * Math.cos(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5), getCenterY() + getRadius() * Math.sin(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5));
+            Main.particlesAll.add(particle1);
+            Main.particlesDistanceCovered.put(particle1, 0.0);
+
+            Main.root.getChildren().add(particle1);
         }
     }
+
 
     public void setAngle(double angle) {
         this.angle = angle;
     }
 
-
-
     public void setVelocity(Vector velocity) {
         this.velocity = velocity;
-    }
-
-    public void accelerate() {
-        isThrusting = true;
-    }
-
-    public void stopAcceleration() {
-        isThrusting = false;
     }
 
     public void setRotationRight() {
