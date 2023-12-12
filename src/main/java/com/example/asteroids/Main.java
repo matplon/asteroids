@@ -202,10 +202,11 @@ public class Main extends Application {
                     root.getChildren().add(player);
                 }
             }
-            for (Particle asteroid : asteroids) {   // Update asteroids and check for collision
-                asteroid.updatePosition();
-                if (Shape.intersect(player, asteroid).getLayoutBounds().getWidth() > 0 && root.getChildren().contains(player)) {
+            for (int i = 0; i < asteroids.size(); i++) {   // Update asteroids and check for collision
+                asteroids.get(i).updatePosition();
+                if (Shape.intersect(player, asteroids.get(i)).getLayoutBounds().getWidth() > 0 && root.getChildren().contains(player)) {
                     explode();
+                    destroyAsteroid(asteroids.get(i));
                     if (HP <= 0) {  // You lost
                         gameOver();
                     }
@@ -225,6 +226,7 @@ public class Main extends Application {
     public static void explode() {
         isAlive.set(false);
         HP--;
+        HUD.removeHeart();
         root.getChildren().remove(player);
         spawnParticle(player);
     }
