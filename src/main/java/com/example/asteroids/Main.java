@@ -30,7 +30,7 @@ public class Main extends Application {
     final static double BULLET_SPEED = 15;
     static final double PARTICLE_SPEED = 1;
     final static double SHIP_TERMINAL_VELOCITY = 10;
-    final double MAX_BULLET_DISTANCE = WIDTH * 0.6;
+    final static double MAX_BULLET_DISTANCE = WIDTH * 0.6;
 
     final double MAX_PARTICLE_DISTANCE = WIDTH * 0.05;
 
@@ -44,7 +44,7 @@ public class Main extends Application {
 
 
     static AtomicBoolean isAlive = new AtomicBoolean(true);
-    static List<Particle> playerBullets = new ArrayList<>();
+    static List<Particle> bullets = new ArrayList<>();
 
     static List<Particle> particlesAll = new ArrayList<>();
 
@@ -98,7 +98,7 @@ public class Main extends Application {
             if (keyEvent.getCode() == KeyCode.LEFT) player.setRotationLeft(); // Rotate left
             if (keyEvent.getCode() == KeyCode.E)
                 player.hyperSpace();   // Teleport (chance of exploding or colliding with an asteroid)
-            if (keyEvent.getCode() == KeyCode.X && canShoot && playerBullets.size() <= 3 && isAlive.get()) {
+            if (keyEvent.getCode() == KeyCode.X && canShoot && bullets.size() <= 3 && isAlive.get()) {
                 canShoot = false;
                 player.shootBullet();
             }
@@ -145,24 +145,26 @@ public class Main extends Application {
             List<Double> rightDirections = new ArrayList<>(Arrays.asList(-135.0, 180.0, 135.0));
 
             Enemy.spawnEnemy();
-            Enemy.updateEnemy(leftDirections, rightDirections);
+            Enemy.enemyList.get(0).updateEnemy(leftDirections, rightDirections);
+            Enemy.enemyList.get(0).shootBullet();
+            Enemy.enemyList.get(0).updateBullet();
 
             player.updatePosition(); // Update player's position
 
-            for (Particle playerBullet : playerBullets) {   // Update bullet distances
+            for (Particle playerBullet : bullets) {   // Update bullet distances
                 double currentDistance = bulletsDistanceCovered.get(playerBullet);
                 bulletsDistanceCovered.remove(playerBullet);
                 playerBullet.updatePosition();
                 bulletsDistanceCovered.put(playerBullet, currentDistance + BULLET_SPEED);
             }
-            for (int i = 0; i < playerBullets.size(); i++) {    // Delete bullets which have exceeded the max distance
-                if (bulletsDistanceCovered.get(playerBullets.get(i)) > MAX_BULLET_DISTANCE) {
-                    root.getChildren().remove(playerBullets.get(i));
-                    bulletsDistanceCovered.remove(playerBullets.get(i));
-                    playerBullets.remove(playerBullets.get(i)); //commit
+            for (int i = 0; i < bullets.size(); i++) {    // Delete bullets which have exceeded the max distance
+                if (bulletsDistanceCovered.get(bullets.get(i)) > MAX_BULLET_DISTANCE) {
+                    root.getChildren().remove(bullets.get(i));
+                    bulletsDistanceCovered.remove(bullets.get(i));
+                    bullets.remove(bullets.get(i)); //commit
                 }
             }
-            for (int i = 0; i < particlesAll.size(); i++) {   // Update bullet distances
+            for (int i = 0; i < particlesAll.size(); i++) {   // Update animation particles distances
                 Particle particle = particlesAll.get(i);
                 double currentDistance = particlesDistanceCovered.get(particle);
                 particlesDistanceCovered.remove(particle);
@@ -174,7 +176,7 @@ public class Main extends Application {
                     particlesAll.remove(particle);
                 }
             }
-            checkForHits();
+            player.checkForHits();
 
             if (!isAlive.get() && HP > 0) {  // If the player is dead check for asteroids in the spawn zone
                 boolean newSafe = true;
@@ -191,16 +193,7 @@ public class Main extends Application {
                     root.getChildren().add(player);
                 }
             }
-            for (int i = 0; i < asteroids.size(); i++) {   // Update asteroids and check for collision
-                asteroids.get(i).updatePosition();
-                if (Shape.intersect(player, asteroids.get(i)).getLayoutBounds().getWidth() > 0 && root.getChildren().contains(player)) {
-                    player.explode();
-                    asteroids.get(i).destroy();
-                    if (HP <= 0) {  // You lost
-                        gameOver();
-                    }
-                }
-            }
+            Asteroid.updateAndCheck();
 
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -218,30 +211,8 @@ public class Main extends Application {
     }
 
 
-    public void gameOver() {
+    public static void gameOver() {
         HUD.gameOver();
-    }
-
-    public void checkForHits() {
-        List<Particle> bulletsToRemove = new ArrayList<>();
-
-        // Check every bullet and asteroid for intersection
-        for (int i = 0; i < playerBullets.size(); i++) {
-            for (int j = 0; j < asteroids.size(); j++) {
-                if (Shape.intersect(playerBullets.get(i), asteroids.get(j)).getLayoutBounds().getWidth() > 0) {
-                    if (!bulletsToRemove.contains(playerBullets.get(i))) {    // Make sure that one bullet doesn't hit 2 asteroids
-                        asteroids.get(j).destroy();
-                        bulletsToRemove.add(playerBullets.get(i));
-                    }
-                }
-            }
-        }
-        // Destroy bullets which hit the target
-        for (Particle bullet :
-                bulletsToRemove) {
-            root.getChildren().remove(bullet);
-            playerBullets.remove(bullet);
-        }
     }
 
 }

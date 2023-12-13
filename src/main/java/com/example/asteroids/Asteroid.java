@@ -1,6 +1,7 @@
 package com.example.asteroids;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
 
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +60,19 @@ public class Asteroid extends Particle{
         Main.root.getChildren().remove(this);
         animationParticles();
         Main.asteroids.remove(this);
+    }
+
+    public static void updateAndCheck(){
+        for (int i = 0; i < Main.asteroids.size(); i++) {   // Update asteroids and check for collision
+            Main.asteroids.get(i).updatePosition();
+            if (Shape.intersect(Main.player, Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Main.player)) {
+                Main.player.explode();
+                Main.asteroids.get(i).destroy();
+                if (Main.HP <= 0) {  // You lost
+                    Main.gameOver();
+                }
+            }
+        }
     }
 
     public int getSize() {

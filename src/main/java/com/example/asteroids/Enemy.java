@@ -1,8 +1,11 @@
 package com.example.asteroids;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.example.asteroids.Main.*;
@@ -11,7 +14,9 @@ import static com.example.asteroids.Util.SVGconverter;
 
 public class Enemy extends Particle{
     private final int type;
-    private static List<Enemy> enemyList = new ArrayList<>();
+    static List<Enemy> enemyList = new ArrayList<>();
+    private List<Particle> enemyBullets = new ArrayList<>();
+    HashMap<Particle, Double> enemyBulletDistanceCovered = new HashMap<>();
 
 
     public Enemy(List<Double> points, double angle, double speed, int type){
@@ -44,28 +49,85 @@ public class Enemy extends Particle{
         }
     }
 
-    public static void updateEnemy(List<Double> rightDirections, List<Double> leftDirections){
+    public void updateEnemy(List<Double> rightDirections, List<Double> leftDirections){
         if(!enemyList.isEmpty()){
-            Enemy enemy = enemyList.get(0);
-            boolean goingRight = enemy.getAngle() < 90 && enemy.getAngle() > -90;
-            double originalX = enemy.getCenterX();
-            if(rightDirections.contains(enemy.getAngle()) && Math.random() * 1000 < 10 ){
-                rightDirections.remove(enemy.getAngle());
+            boolean goingRight = getAngle() < 90 &&getAngle() > -90;
+            double originalX = getCenterX();
+            if(rightDirections.contains(getAngle()) && Math.random() * 1000 < 10 ){
+                rightDirections.remove(getAngle());
                 int index = Math.random() < 0.5 ? 0 : 1;
-                enemy.setVelocity(new Vector(ENEMY_SPEED, rightDirections.get(index)));
-                enemy.setAngle(rightDirections.get(index));
+                setVelocity(new Vector(ENEMY_SPEED, rightDirections.get(index)));
+                setAngle(rightDirections.get(index));
             }
-            if(leftDirections.contains(enemy.getAngle()) && Math.random() * 1000 < 10){
-                leftDirections.remove(enemy.getAngle());
+            if(leftDirections.contains(getAngle()) && Math.random() * 1000 < 10){
+                leftDirections.remove(getAngle());
                 int index = Math.random() <0.5 ? 0 : 1;
-                enemy.setVelocity(new Vector(ENEMY_SPEED, leftDirections.get(index)));
-                enemy.setAngle(leftDirections.get(index));
+                setVelocity(new Vector(ENEMY_SPEED, leftDirections.get(index)));
+                setAngle(leftDirections.get(index));
             }
-            enemy.updatePosition();
-            if((goingRight && originalX > enemy.getCenterX()) || (!goingRight && originalX < enemy.getCenterX())){
-                root.getChildren().remove(enemy);
-                enemyList.remove(enemy);
+            updatePosition();
+            if((goingRight && originalX > getCenterX()) || (!goingRight && originalX < getCenterX())){
+                root.getChildren().remove(this);
+                enemyList.remove(this);
             }
+        }
+    }
+
+    void updateBullet(){
+        for (Particle playerBullet : enemyBullets) {   // Update bullet distances
+            double currentDistance = enemyBulletDistanceCovered.get(playerBullet);
+            enemyBulletDistanceCovered.remove(playerBullet);
+            playerBullet.updatePosition();
+            enemyBulletDistanceCovered.put(playerBullet, currentDistance + BULLET_SPEED);
+        }
+        for (int i = 0; i < enemyBullets.size(); i++) {    // Delete bullets which have exceeded the max distance
+            if (enemyBulletDistanceCovered.get(enemyBullets.get(i)) > Main.MAX_BULLET_DISTANCE) {
+                root.getChildren().remove(enemyBullets.get(i));
+                enemyBulletDistanceCovered.remove(enemyBullets.get(i));
+                enemyBullets.remove(enemyBullets.get(i));
+            }
+        }
+    }
+
+    public void shootBullet() {
+        if(enemyBullets.isEmpty() && !enemyList.isEmpty()){
+            List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle bullet
+            double angle = Math.random()*360-180;
+            Particle bullet = new Particle(points, angle, 0, Main.BULLET_SPEED, 0);
+            bullet.setFill(Color.WHITE);
+            // Spawn the bullet at the nose of the ship
+            bullet.moveTo(getCenterX() + getRadius() * Math.cos(Math.toRadians(angle)), getCenterY() + getRadius() * Math.sin(Math.toRadians(angle)));
+            enemyBullets.add(bullet);
+            enemyBulletDistanceCovered.put(bullet, 0.0);
+
+            Main.root.getChildren().add(bullet);
+        }
+    }
+
+    public void checkForHits(){
+        List<Particle> bulletsToRemove = new ArrayList<>();
+        boolean playerKilled = false;
+
+        // Check every bullet and asteroid for intersection
+        for (int i = 0; i < enemyBullets.size(); i++) {
+            if(!playerKilled && Shape.intersect(enemyBullets.get(i), player).getLayoutBounds().getWidth() >= 0){
+                playerKilled = true;
+
+            }
+            for (int j = 0; j < Main.asteroids.size(); j++) {
+                if (Shape.intersect(enemyBullets.get(i), Main.asteroids.get(j)).getLayoutBounds().getWidth() > 0) {
+                    if (!bulletsToRemove.contains(enemyBullets.get(i))) {    // Make sure that one bullet doesn't hit 2 asteroids
+                        Main.asteroids.get(j).destroy();
+                        bulletsToRemove.add(enemyBullets.get(i));
+                    }
+                }
+            }
+        }
+        // Destroy bullets which hit the target
+        for (Particle bullet :
+                bulletsToRemove) {
+            Main.root.getChildren().remove(bullet);
+            enemyBullets.remove(bullet);
         }
     }
 
