@@ -4,12 +4,14 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -19,8 +21,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main extends Application {
 
-    final static int WIDTH = 1800;
-    final static int HEIGHT = 900;
+     static Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    final static int WIDTH = (int)screenBounds.getWidth();
+    final static int HEIGHT = (int)screenBounds.getHeight() ;
     final static double FPS = 60;
     final int INIT_ASTEROID_COUNT = 15;
     final double FRICTION = 0.7;
@@ -73,6 +76,8 @@ public class Main extends Application {
     }
 
     public void init() {
+        System.out.println(screenBounds.getHeight());
+        System.out.println(screenBounds.getWidth());
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
         scene.setFill(Color.BLACK);
