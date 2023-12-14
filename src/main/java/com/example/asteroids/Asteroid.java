@@ -72,6 +72,14 @@ public class Asteroid extends Particle{
                     Main.gameOver();
                 }
             }
+            if(!Enemy.enemyList.isEmpty()){
+                if(Shape.intersect(Enemy.enemyList.get(0), Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Enemy.enemyList.get(0))){
+                   Enemy.enemyList.get(0).animationParticles();
+                   Main.root.getChildren().remove(Enemy.enemyList.get(0));
+                   Enemy.enemyList.remove(Enemy.enemyList.get(0));
+                    Main.asteroids.get(i).destroy();
+                }
+            }
         }
     }
 

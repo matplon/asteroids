@@ -146,9 +146,9 @@ public class Main extends Application {
 
             Enemy.spawnEnemy();
             if(!Enemy.enemyList.isEmpty()){
-                Enemy.enemyList.get(0).updateEnemy(leftDirections, rightDirections);
                 Enemy.enemyList.get(0).shootBullet();
                 Enemy.enemyList.get(0).updateBullet();
+                Enemy.enemyList.get(0).updateEnemy(leftDirections, rightDirections);
             }
 
 
