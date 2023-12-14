@@ -145,9 +145,12 @@ public class Main extends Application {
             List<Double> rightDirections = new ArrayList<>(Arrays.asList(-135.0, 180.0, 135.0));
 
             Enemy.spawnEnemy();
-            Enemy.enemyList.get(0).updateEnemy(leftDirections, rightDirections);
-            Enemy.enemyList.get(0).shootBullet();
-            Enemy.enemyList.get(0).updateBullet();
+            if(!Enemy.enemyList.isEmpty()){
+                Enemy.enemyList.get(0).updateEnemy(leftDirections, rightDirections);
+                Enemy.enemyList.get(0).shootBullet();
+                Enemy.enemyList.get(0).updateBullet();
+            }
+
 
             player.updatePosition(); // Update player's position
 
@@ -177,6 +180,8 @@ public class Main extends Application {
                 }
             }
             player.checkForHits();
+            if(!Enemy.enemyList.isEmpty())
+                Enemy.enemyList.get(0).checkForHits();
 
             if (!isAlive.get() && HP > 0) {  // If the player is dead check for asteroids in the spawn zone
                 boolean newSafe = true;
