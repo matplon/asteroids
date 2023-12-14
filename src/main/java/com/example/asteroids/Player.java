@@ -41,11 +41,20 @@ public class Player extends Particle {
 
         // Check every bullet and asteroid for intersection
         for (int i = 0; i < Main.bullets.size(); i++) {
+            if(!Enemy.enemyList.isEmpty() && Main.bullets.get(i).getLayoutBounds().intersects(Enemy.enemyList.get(0).getLayoutBounds())){
+                if(Shape.intersect(Main.bullets.get(i), Enemy.enemyList.get(0)).getLayoutBounds().getWidth() > 0){
+                    bulletsToRemove.add(Main.bullets.get(i));
+                    Enemy.explode();
+                    continue;
+                }
+            }
             for (int j = 0; j < Main.asteroids.size(); j++) {
-                if (Shape.intersect(Main.bullets.get(i), Main.asteroids.get(j)).getLayoutBounds().getWidth() > 0) {
-                    if (!bulletsToRemove.contains(Main.bullets.get(i))) {    // Make sure that one bullet doesn't hit 2 asteroids
-                        Main.asteroids.get(j).destroy();
-                        bulletsToRemove.add(Main.bullets.get(i));
+                if(Main.bullets.get(i).getLayoutBounds().intersects(Main.asteroids.get(j).getLayoutBounds())){
+                    if (Shape.intersect(Main.bullets.get(i), Main.asteroids.get(j)).getLayoutBounds().getWidth() > 0) {
+                        if (!bulletsToRemove.contains(Main.bullets.get(i))) {    // Make sure that one bullet doesn't hit 2 asteroids
+                            Main.asteroids.get(j).destroy(true);
+                            bulletsToRemove.add(Main.bullets.get(i));
+                        }
                     }
                 }
             }

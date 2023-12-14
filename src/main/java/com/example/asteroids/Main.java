@@ -149,6 +149,7 @@ public class Main extends Application {
                 Enemy.enemyList.get(0).shootBullet();
                 Enemy.enemyList.get(0).updateBullet();
                 Enemy.enemyList.get(0).updateEnemy(leftDirections, rightDirections);
+                Enemy.enemyList.get(0).collisionDetection();
             }
 
 
@@ -209,12 +210,6 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
     }
-
-    void addPoint(Enemy enemyShip) {
-        if (enemyShip.getType() == 1) HUD.addPoints(200);
-        else HUD.addPoints(1000);
-    }
-
 
     public static void gameOver() {
         HUD.gameOver();

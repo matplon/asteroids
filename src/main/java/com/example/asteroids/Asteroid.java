@@ -20,7 +20,7 @@ public class Asteroid extends Particle{
         this.size = size;
     }
 
-    public void destroy(){
+    public void destroy(boolean destroyedByPlayer){
         if (getSize() > 1.1) {   // Multiply only the big and medium asteroids
             // 2 smaller and faster asteroids from 1 asteroid
 
@@ -54,7 +54,8 @@ public class Asteroid extends Particle{
             Main.root.getChildren().addAll(asteroid1, asteroid2);
         }
         // Add points for asteroid
-        HUD.addPoints(pointsMapping.get(getSize()));
+        if(destroyedByPlayer)
+            HUD.addPoints(pointsMapping.get(getSize()));
 
         // Remove the big asteroid
         Main.root.getChildren().remove(this);
@@ -65,19 +66,23 @@ public class Asteroid extends Particle{
     public static void updateAndCheck(){
         for (int i = 0; i < Main.asteroids.size(); i++) {   // Update asteroids and check for collision
             Main.asteroids.get(i).updatePosition();
-            if (Shape.intersect(Main.player, Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Main.player)) {
-                Main.player.explode();
-                Main.asteroids.get(i).destroy();
-                if (Main.HP <= 0) {  // You lost
-                    Main.gameOver();
+            if(Main.player.getLayoutBounds().intersects(Main.asteroids.get(i).getLayoutBounds())){
+                if (Shape.intersect(Main.player, Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Main.player)) {
+                    Main.player.explode();
+                    Main.asteroids.get(i).destroy(true);
+                    if (Main.HP <= 0) {  // You lost
+                        Main.gameOver();
+                    }
                 }
             }
             if(!Enemy.enemyList.isEmpty()){
-                if(Shape.intersect(Enemy.enemyList.get(0), Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Enemy.enemyList.get(0))){
-                   Enemy.enemyList.get(0).animationParticles();
-                   Main.root.getChildren().remove(Enemy.enemyList.get(0));
-                   Enemy.enemyList.remove(Enemy.enemyList.get(0));
-                    Main.asteroids.get(i).destroy();
+                if(Enemy.enemyList.get(0).getLayoutBounds().intersects(Main.asteroids.get(i).getLayoutBounds())){
+                    if(Shape.intersect(Enemy.enemyList.get(0), Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Enemy.enemyList.get(0))){
+                        Enemy.enemyList.get(0).animationParticles();
+                        Main.root.getChildren().remove(Enemy.enemyList.get(0));
+                        Enemy.enemyList.remove(Enemy.enemyList.get(0));
+                        Main.asteroids.get(i).destroy(false);
+                    }
                 }
             }
         }

@@ -17,6 +17,10 @@ public class Enemy extends Particle {
     static List<Enemy> enemyList = new ArrayList<>();
     private List<Particle> enemyBullets = new ArrayList<>();
     HashMap<Particle, Double> enemyBulletDistanceCovered = new HashMap<>();
+    HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
+        put(2, 1000);
+        put(1, 200);
+    }};
 
 
     public Enemy(List<Double> points, double angle, double speed, int type) {
@@ -110,16 +114,20 @@ public class Enemy extends Particle {
 
         // Check every bullet and asteroid for intersection
         for (int i = 0; i < enemyBullets.size(); i++) {
-            if (!playerKilled && Shape.intersect(enemyBullets.get(i), player).getLayoutBounds().getWidth() >= 0) {
-                playerKilled = true;
-                if(!bulletsToRemove.contains(enemyBullets.get(i)))
-                    bulletsToRemove.add(enemyBullets.get(i));
+            if (!playerKilled && enemyBullets.get(i).getLayoutBounds().intersects(player.getLayoutBounds())) {
+                if(Shape.intersect(enemyBullets.get(i), player).getLayoutBounds().getWidth() >= 0){
+                    playerKilled = true;
+                    if(!bulletsToRemove.contains(enemyBullets.get(i)))
+                        bulletsToRemove.add(enemyBullets.get(i));
+                }
             }
             for (int j = 0; j < Main.asteroids.size(); j++) {
-                if (Shape.intersect(enemyBullets.get(i), Main.asteroids.get(j)).getLayoutBounds().getWidth() > 0) {
-                    if (!bulletsToRemove.contains(enemyBullets.get(i))) {    // Make sure that one bullet doesn't hit 2 asteroids
-                        Main.asteroids.get(j).destroy();
-                        bulletsToRemove.add(enemyBullets.get(i));
+                if(enemyBullets.get(i).getLayoutBounds().intersects(asteroids.get(j).getLayoutBounds())){
+                    if (Shape.intersect(enemyBullets.get(i), Main.asteroids.get(j)).getLayoutBounds().getWidth() > 0) {
+                        if (!bulletsToRemove.contains(enemyBullets.get(i))) {    // Make sure that one bullet doesn't hit 2 asteroids
+                            Main.asteroids.get(j).destroy(false);
+                            bulletsToRemove.add(enemyBullets.get(i));
+                        }
                     }
                 }
             }
@@ -132,6 +140,26 @@ public class Enemy extends Particle {
         }
         if(playerKilled)
             player.explode();
+    }
+
+    public static void explode(){
+        if(!enemyList.isEmpty()){
+            HUD.addPoints(enemyList.get(0).pointsMapping.get(enemyList.get(0).type));
+            enemyList.get(0).animationParticles();
+            root.getChildren().remove(enemyList.get(0));
+            enemyList.remove(enemyList.get(0));
+        }
+    }
+
+    public void collisionDetection(){
+        if(!enemyList.isEmpty()){
+            if(getLayoutBounds().intersects(player.getLayoutBounds())){
+                if(Shape.intersect(this, player).getLayoutBounds().getWidth() > 0){
+                    player.explode();
+                    explode();
+                }
+            }
+        }
     }
 
     public int getType() {
