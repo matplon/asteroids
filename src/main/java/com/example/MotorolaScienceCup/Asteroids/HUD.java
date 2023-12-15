@@ -1,6 +1,5 @@
-package com.example.asteroids;
+package com.example.MotorolaScienceCup.Asteroids;
 
-import javafx.css.FontFace;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;

@@ -1,4 +1,4 @@
-package com.example.asteroids;
+package com.example.MotorolaScienceCup.Asteroids;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -21,9 +21,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main extends Application {
 
-     static Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-    final static int WIDTH = (int)screenBounds.getWidth();
-    final static int HEIGHT = (int)screenBounds.getHeight() ;
+    static Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    final static int WIDTH = (int) screenBounds.getWidth();
+    final static int HEIGHT = (int) screenBounds.getHeight();
     final static double FPS = 60;
     final int INIT_ASTEROID_COUNT = 15;
     final double FRICTION = 0.7;
@@ -135,20 +135,21 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
-            if (HUD.getPoints() >= nextPointThreshold) {
-                HUD.addHeart();
-                nextPointThreshold += 10000;
-            }
+            if (HP <= 0)
+                gameOver();
+
+                if (HUD.getPoints() >= nextPointThreshold) {
+                    HUD.addHeart();
+                    nextPointThreshold += 10000;
+                }
 
             List<Double> leftDirections = new ArrayList<>(Arrays.asList(-45.0, 0.0, 45.0));
             List<Double> rightDirections = new ArrayList<>(Arrays.asList(-135.0, 180.0, 135.0));
 
             Enemy.spawnEnemy();
-            if(!Enemy.enemyList.isEmpty()){
-                Enemy.enemyList.get(0).shootBullet();
-                Enemy.enemyList.get(0).collisionDetection();
-                Enemy.enemyList.get(0).updateEnemy(leftDirections, rightDirections);
-            }
+            Enemy.updateEnemy(leftDirections, rightDirections);
+            Enemy.shootBullet();
+            Enemy.collisionDetection();
             Enemy.updateBullet();
 
 
@@ -180,7 +181,7 @@ public class Main extends Application {
                 }
             }
             player.checkForHits();
-            if(!Enemy.enemyList.isEmpty())
+            if (!Enemy.enemyList.isEmpty())
                 Enemy.enemyList.get(0).checkForHits();
 
             if (!isAlive.get() && HP > 0) {  // If the player is dead check for asteroids in the spawn zone
@@ -209,6 +210,12 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
     }
+
+    void addPoint(Enemy enemyShip) {
+        if (enemyShip.getType() == 1) HUD.addPoints(200);
+        else HUD.addPoints(1000);
+    }
+
 
     public static void gameOver() {
         HUD.gameOver();

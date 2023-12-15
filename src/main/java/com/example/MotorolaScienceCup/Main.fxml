@@ -5,21 +5,21 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.asteroids.Main">
+<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MotorolaScienceCup.Asteroids.Main">
    <children>
       <ImageView fx:id="tempest" fitHeight="85.0" fitWidth="85.0" layoutX="242.0" layoutY="158.0" pickOnBounds="true">
          <image>
-            <Image url="@img2.jpg" />
+            <Image url="@Asteroids/img2.jpg" />
          </image>
       </ImageView>
       <ImageView fx:id="first" fitHeight="85.0" fitWidth="116.0" layoutX="242.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@img3.jpg" />
+            <Image url="@Asteroids/img3.jpg" />
          </image>
       </ImageView>
       <ImageView fx:id="battleZone" fitHeight="85.0" fitWidth="116.0" layoutX="242.0" layoutY="292.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@img1.jpg" />
+            <Image url="@Asteroids/img1.jpg" />
          </image>
       </ImageView>
    </children>

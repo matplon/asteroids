@@ -1,11 +1,8 @@
-package com.example.asteroids;
+package com.example.MotorolaScienceCup.Asteroids;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Asteroid extends Particle{
     HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
@@ -64,27 +61,29 @@ public class Asteroid extends Particle{
     }
 
     public static void updateAndCheck(){
+        HashMap<Asteroid, Boolean> asteroidsToDestroy = new HashMap<>();
+
         for (int i = 0; i < Main.asteroids.size(); i++) {   // Update asteroids and check for collision
             Main.asteroids.get(i).updatePosition();
             if(Main.player.getLayoutBounds().intersects(Main.asteroids.get(i).getLayoutBounds())){
-                if (Shape.intersect(Main.player, Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Main.player)) {
+                if (intersect(Main.player, Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Main.player)) {
                     Main.player.explode();
-                    Main.asteroids.get(i).destroy(true);
-                    if (Main.HP <= 0) {  // You lost
-                        Main.gameOver();
-                    }
+                    asteroidsToDestroy.put(Main.asteroids.get(i), true);
                 }
             }
             if(!Enemy.enemyList.isEmpty()){
                 if(Enemy.enemyList.get(0).getLayoutBounds().intersects(Main.asteroids.get(i).getLayoutBounds())){
-                    if(Shape.intersect(Enemy.enemyList.get(0), Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Enemy.enemyList.get(0))){
+                    if(intersect(Enemy.enemyList.get(0), Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Enemy.enemyList.get(0))){
                         Enemy.enemyList.get(0).animationParticles();
                         Main.root.getChildren().remove(Enemy.enemyList.get(0));
                         Enemy.enemyList.remove(Enemy.enemyList.get(0));
-                        Main.asteroids.get(i).destroy(false);
+                        asteroidsToDestroy.put(Main.asteroids.get(i), false);
                     }
                 }
             }
+        }
+        for (Map.Entry<Asteroid, Boolean> entry : asteroidsToDestroy.entrySet()) {
+            entry.getKey().destroy(entry.getValue());
         }
     }
 

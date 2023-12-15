@@ -1,16 +1,15 @@
-package com.example.asteroids;
+package com.example.MotorolaScienceCup.Asteroids;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.example.asteroids.Main.*;
-import static com.example.asteroids.Main.ENEMY_SPEED;
-import static com.example.asteroids.Util.SVGconverter;
+import static com.example.MotorolaScienceCup.Asteroids.Main.*;
+import static com.example.MotorolaScienceCup.Asteroids.Main.ENEMY_SPEED;
+import static com.example.MotorolaScienceCup.Asteroids.Util.SVGconverter;
 
 public class Enemy extends Particle {
     private final int type;
@@ -60,27 +59,27 @@ public class Enemy extends Particle {
         }
     }
 
-    public void updateEnemy(List<Double> rightDirections, List<Double> leftDirections) {
+    static void updateEnemy(List<Double> rightDirections, List<Double> leftDirections) {
         if (!enemyList.isEmpty()) {
             Enemy enemy = enemyList.get(0);
-            boolean goingRight = getAngle() < 90 && getAngle() > -90;
-            double originalX = getCenterX();
-            if (rightDirections.contains(getAngle()) && Math.random() * 1000 < 10) {
-                rightDirections.remove(getAngle());
+            boolean goingRight = enemy.getAngle() < 90 && enemy.getAngle() > -90;
+            double originalX = enemy.getCenterX();
+            if (rightDirections.contains(enemy.getAngle()) && Math.random() * 1000 < 10) {
+                rightDirections.remove(enemy.getAngle());
                 int index = Math.random() < 0.5 ? 0 : 1;
-                setVelocity(new Vector(enemy.getVelocity().getMagnitude(), rightDirections.get(index)));
-                setAngle(rightDirections.get(index));
+                enemy.setVelocity(new Vector(ENEMY_SPEED, rightDirections.get(index)));
+                enemy.setAngle(rightDirections.get(index));
             }
-            if (leftDirections.contains(getAngle()) && Math.random() * 1000 < 10) {
-                leftDirections.remove(getAngle());
+            if (leftDirections.contains(enemy.getAngle()) && Math.random() * 1000 < 10) {
+                leftDirections.remove(enemy.getAngle());
                 int index = Math.random() < 0.5 ? 0 : 1;
-                setVelocity(new Vector(enemy.getVelocity().getMagnitude(), leftDirections.get(index)));
-                setAngle(leftDirections.get(index));
+                enemy.setVelocity(new Vector(ENEMY_SPEED, leftDirections.get(index)));
+                enemy.setAngle(leftDirections.get(index));
             }
-            updatePosition();
-            if ((goingRight && originalX > getCenterX()) || (!goingRight && originalX < getCenterX())) {
-                root.getChildren().remove(this);
-                enemyList.remove(this);
+            enemy.updatePosition();
+            if ((goingRight && originalX > enemy.getCenterX()) || (!goingRight && originalX < enemy.getCenterX())) {
+                root.getChildren().remove(enemy);
+                enemyList.remove(enemy);
             }
         }
     }
@@ -162,7 +161,7 @@ public class Enemy extends Particle {
             player.explode();
     }
 
-    public static void explode(){
+    static void explode(){
         if(!enemyList.isEmpty()){
             HUD.addPoints(enemyList.get(0).pointsMapping.get(enemyList.get(0).type));
             enemyList.get(0).animationParticles();
@@ -171,10 +170,11 @@ public class Enemy extends Particle {
         }
     }
 
-    public void collisionDetection(){
+    static void collisionDetection(){
         if(!enemyList.isEmpty()){
-            if(getLayoutBounds().intersects(player.getLayoutBounds())){
-                if(Shape.intersect(this, player).getLayoutBounds().getWidth() > 0){
+            Enemy enemy = enemyList.get(0);
+            if(enemy.getLayoutBounds().intersects(player.getLayoutBounds())){
+                if(intersect(enemy, player).getLayoutBounds().getWidth() > 0){
                     player.explode();
                     explode();
                 }
