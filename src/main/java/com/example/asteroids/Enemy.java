@@ -28,7 +28,7 @@ public class Enemy extends Particle {
         this.type = type;
     }
 
-    public static void spawnEnemy() {
+    static void spawnEnemy() {
         if (Math.random() * Main.FPS * 300 < 1000 && enemyList.isEmpty()) {
             int type = Math.random() < 0.5 ? 1 : 2;
             Enemy enemy = new Enemy(SVGconverter(enemyFilePath), 0, Main.ENEMY_SPEED, type);
@@ -53,26 +53,27 @@ public class Enemy extends Particle {
         }
     }
 
-    public void updateEnemy(List<Double> rightDirections, List<Double> leftDirections) {
+    static void updateEnemy(List<Double> rightDirections, List<Double> leftDirections) {
         if (!enemyList.isEmpty()) {
-            boolean goingRight = getAngle() < 90 && getAngle() > -90;
-            double originalX = getCenterX();
-            if (rightDirections.contains(getAngle()) && Math.random() * 1000 < 10) {
-                rightDirections.remove(getAngle());
+            Enemy enemy = enemyList.get(0);
+            boolean goingRight = enemy.getAngle() < 90 && enemy.getAngle() > -90;
+            double originalX = enemy.getCenterX();
+            if (rightDirections.contains(enemy.getAngle()) && Math.random() * 1000 < 10) {
+                rightDirections.remove(enemy.getAngle());
                 int index = Math.random() < 0.5 ? 0 : 1;
-                setVelocity(new Vector(ENEMY_SPEED, rightDirections.get(index)));
-                setAngle(rightDirections.get(index));
+                enemy.setVelocity(new Vector(ENEMY_SPEED, rightDirections.get(index)));
+                enemy.setAngle(rightDirections.get(index));
             }
-            if (leftDirections.contains(getAngle()) && Math.random() * 1000 < 10) {
-                leftDirections.remove(getAngle());
+            if (leftDirections.contains(enemy.getAngle()) && Math.random() * 1000 < 10) {
+                leftDirections.remove(enemy.getAngle());
                 int index = Math.random() < 0.5 ? 0 : 1;
-                setVelocity(new Vector(ENEMY_SPEED, leftDirections.get(index)));
-                setAngle(leftDirections.get(index));
+                enemy.setVelocity(new Vector(ENEMY_SPEED, leftDirections.get(index)));
+                enemy.setAngle(leftDirections.get(index));
             }
-            updatePosition();
-            if ((goingRight && originalX > getCenterX()) || (!goingRight && originalX < getCenterX())) {
-                root.getChildren().remove(this);
-                enemyList.remove(this);
+            enemy.updatePosition();
+            if ((goingRight && originalX > enemy.getCenterX()) || (!goingRight && originalX < enemy.getCenterX())) {
+                root.getChildren().remove(enemy);
+                enemyList.remove(enemy);
             }
         }
     }
@@ -93,14 +94,16 @@ public class Enemy extends Particle {
         }
     }
 
-    public void shootBullet() {
+    static void shootBullet() {
         if (enemyBullets.isEmpty() && !enemyList.isEmpty()) {
+            Enemy enemy = enemyList.get(0);
             List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle bullet
             double angle = Math.random() * 360 - 180;
             Particle bullet = new Particle(points, angle, 0, Main.BULLET_SPEED, 0);
             bullet.setFill(Color.WHITE);
             // Spawn the bullet at the nose of the ship
-            bullet.moveTo(getCenterX() + getRadius() * Math.cos(Math.toRadians(angle)), getCenterY() + getRadius() * Math.sin(Math.toRadians(angle)));
+            bullet.moveTo(enemy.getCenterX() + enemy.getRadius() * Math.cos(Math.toRadians(angle)),
+                    enemy.getCenterY() + enemy.getRadius() * Math.sin(Math.toRadians(angle)));
             enemyBullets.add(bullet);
             enemyBulletDistanceCovered.put(bullet, 0.0);
 
@@ -108,7 +111,7 @@ public class Enemy extends Particle {
         }
     }
 
-    public void checkForHits() {
+    static void checkForHits() {
         List<Particle> bulletsToRemove = new ArrayList<>();
         boolean playerKilled = false;
 
@@ -142,7 +145,7 @@ public class Enemy extends Particle {
             player.explode();
     }
 
-    public static void explode(){
+    static void explode(){
         if(!enemyList.isEmpty()){
             HUD.addPoints(enemyList.get(0).pointsMapping.get(enemyList.get(0).type));
             enemyList.get(0).animationParticles();
@@ -151,10 +154,11 @@ public class Enemy extends Particle {
         }
     }
 
-    public void collisionDetection(){
+    static void collisionDetection(){
         if(!enemyList.isEmpty()){
-            if(getLayoutBounds().intersects(player.getLayoutBounds())){
-                if(Shape.intersect(this, player).getLayoutBounds().getWidth() > 0){
+            Enemy enemy = enemyList.get(0);
+            if(enemy.getLayoutBounds().intersects(player.getLayoutBounds())){
+                if(Shape.intersect(enemy, player).getLayoutBounds().getWidth() > 0){
                     player.explode();
                     explode();
                 }

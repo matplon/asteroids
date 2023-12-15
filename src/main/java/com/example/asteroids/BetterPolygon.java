@@ -24,4 +24,8 @@ public class BetterPolygon extends javafx.scene.shape.Polygon {
         }
         return maxOffset;
     }
+
+
+
+
 }
