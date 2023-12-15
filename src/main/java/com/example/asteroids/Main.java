@@ -57,7 +57,6 @@ public class Main extends Application {
     Circle spawnZone;
     String shipFilePath = "ship1.svg";
 
-    static String enemyFilePath = "enemy1.svg";
 
 
     static int HP = 3;
@@ -147,8 +146,8 @@ public class Main extends Application {
             Enemy.spawnEnemy();
             if(!Enemy.enemyList.isEmpty()){
                 Enemy.enemyList.get(0).shootBullet();
-                Enemy.enemyList.get(0).updateEnemy(leftDirections, rightDirections);
                 Enemy.enemyList.get(0).collisionDetection();
+                Enemy.enemyList.get(0).updateEnemy(leftDirections, rightDirections);
             }
             Enemy.updateBullet();
 
