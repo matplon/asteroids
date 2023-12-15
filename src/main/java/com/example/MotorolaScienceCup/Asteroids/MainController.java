@@ -1,4 +1,4 @@
-package com.example.asteroids;
+package com.example.MotorolaScienceCup.Asteroids;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;

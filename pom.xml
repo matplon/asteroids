@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
-    <artifactId>asteroids</artifactId>
+    <artifactId>MotorolaScienceCup</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>asteroids</name>
 
@@ -65,7 +65,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.example.asteroids/com.example.asteroids.Main</mainClass>
+                            <mainClass>com.example.asteroids/com.example.MotorolaScienceCup.Asteroids.Main</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

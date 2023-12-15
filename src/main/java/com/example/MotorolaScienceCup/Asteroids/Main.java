@@ -1,4 +1,4 @@
-package com.example.asteroids;
+package com.example.MotorolaScienceCup.Asteroids;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;

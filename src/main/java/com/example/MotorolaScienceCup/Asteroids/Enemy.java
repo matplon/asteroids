@@ -1,16 +1,15 @@
-package com.example.asteroids;
+package com.example.MotorolaScienceCup.Asteroids;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.example.asteroids.Main.*;
-import static com.example.asteroids.Main.ENEMY_SPEED;
-import static com.example.asteroids.Util.SVGconverter;
+import static com.example.MotorolaScienceCup.Asteroids.Main.*;
+import static com.example.MotorolaScienceCup.Asteroids.Main.ENEMY_SPEED;
+import static com.example.MotorolaScienceCup.Asteroids.Util.SVGconverter;
 
 public class Enemy extends Particle {
     private final int type;
@@ -118,7 +117,7 @@ public class Enemy extends Particle {
         // Check every bullet and asteroid for intersection
         for (int i = 0; i < enemyBullets.size(); i++) {
             if (!playerKilled && enemyBullets.get(i).getLayoutBounds().intersects(player.getLayoutBounds())) {
-                if(Shape.intersect(enemyBullets.get(i), player).getLayoutBounds().getWidth() >= 0){
+                if(intersect(enemyBullets.get(i), player).getLayoutBounds().getWidth() >= 0){
                     playerKilled = true;
                     if(!bulletsToRemove.contains(enemyBullets.get(i)))
                         bulletsToRemove.add(enemyBullets.get(i));
@@ -126,7 +125,7 @@ public class Enemy extends Particle {
             }
             for (int j = 0; j < Main.asteroids.size(); j++) {
                 if(enemyBullets.get(i).getLayoutBounds().intersects(asteroids.get(j).getLayoutBounds())){
-                    if (Shape.intersect(enemyBullets.get(i), Main.asteroids.get(j)).getLayoutBounds().getWidth() > 0) {
+                    if (intersect(enemyBullets.get(i), Main.asteroids.get(j)).getLayoutBounds().getWidth() > 0) {
                         if (!bulletsToRemove.contains(enemyBullets.get(i))) {    // Make sure that one bullet doesn't hit 2 asteroids
                             Main.asteroids.get(j).destroy(false);
                             bulletsToRemove.add(enemyBullets.get(i));
@@ -158,7 +157,7 @@ public class Enemy extends Particle {
         if(!enemyList.isEmpty()){
             Enemy enemy = enemyList.get(0);
             if(enemy.getLayoutBounds().intersects(player.getLayoutBounds())){
-                if(Shape.intersect(enemy, player).getLayoutBounds().getWidth() > 0){
+                if(intersect(enemy, player).getLayoutBounds().getWidth() > 0){
                     player.explode();
                     explode();
                 }

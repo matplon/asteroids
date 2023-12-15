@@ -1,4 +1,4 @@
-package com.example.asteroids;
+package com.example.MotorolaScienceCup.Asteroids;
 
 public class BetterPolygon extends javafx.scene.shape.Polygon {
     public double getCenterX() {    // Mean average of the X coordinates

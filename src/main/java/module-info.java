@@ -1,8 +1,8 @@
-module com.example.asteroids {
+module com.example.MotorolaScienceCup {
     requires javafx.controls;
     requires javafx.fxml;
 
 
-    opens com.example.asteroids to javafx.fxml;
-    exports com.example.asteroids;
+    opens com.example.MotorolaScienceCup to javafx.fxml;
+    exports com.example.MotorolaScienceCup.Asteroids;
 }
