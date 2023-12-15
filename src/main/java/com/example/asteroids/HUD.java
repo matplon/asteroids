@@ -71,8 +71,11 @@ public class HUD {
     }
 
     public static void removeHeart() {
-        Main.root.getChildren().remove(hearts.get(hearts.size() - 1));
-        hearts.remove(hearts.size() - 1);
+        if(!hearts.isEmpty()) {
+            Main.root.getChildren().remove(hearts.get(hearts.size() - 1));
+            hearts.remove(hearts.size() - 1);
+        }
+
     }
 
     public static int getPoints(){

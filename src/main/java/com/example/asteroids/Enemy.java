@@ -15,8 +15,8 @@ import static com.example.asteroids.Util.SVGconverter;
 public class Enemy extends Particle {
     private final int type;
     static List<Enemy> enemyList = new ArrayList<>();
-    private List<Particle> enemyBullets = new ArrayList<>();
-    HashMap<Particle, Double> enemyBulletDistanceCovered = new HashMap<>();
+    private static List<Particle> enemyBullets = new ArrayList<>();
+    static HashMap<Particle, Double> enemyBulletDistanceCovered = new HashMap<>();
     HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
         put(2, 1000);
         put(1, 200);
@@ -77,7 +77,7 @@ public class Enemy extends Particle {
         }
     }
 
-    void updateBullet() {
+    static void updateBullet() {
         for (Particle playerBullet : enemyBullets) {   // Update bullet distances
             double currentDistance = enemyBulletDistanceCovered.get(playerBullet);
             enemyBulletDistanceCovered.remove(playerBullet);
