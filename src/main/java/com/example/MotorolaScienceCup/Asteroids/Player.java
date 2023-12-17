@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Player extends Particle {
+    private final double ROTATION_SPEED = 270;
     public Player(List<Double> points, double angle, double rotation, double velocity, double friction) {
         super(points, angle, rotation, velocity, friction);
     }
@@ -23,6 +24,7 @@ public class Player extends Particle {
             moveTo(Math.random() * WINDOW_WIDTH, Math.random() * WINDOW_HEIGHT);    // Teleport
         }
     }
+
     public void shootBullet() {
         List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle bullet
         Particle bullet = new Particle(points, -getAngle(), 0, Main.BULLET_SPEED, 0);
@@ -40,20 +42,24 @@ public class Player extends Particle {
 
         // Check every bullet and asteroid for intersection
         for (int i = 0; i < Main.bullets.size(); i++) {
-            if(!Enemy.enemyList.isEmpty() && Main.bullets.get(i).getLayoutBounds().intersects(Enemy.enemyList.get(0).getLayoutBounds())){
-                if(intersect(Main.bullets.get(i), Enemy.enemyList.get(0)).getLayoutBounds().getWidth() > 0){
+            if (!bulletsToRemove.contains(Main.bullets.get(i)) && Main.isAlive.get() && Main.bullets.get(i).getLayoutBounds().intersects(this.getLayoutBounds())) {
+                if (intersect(Main.bullets.get(i), this).getLayoutBounds().getWidth() > 0) {
+                    bulletsToRemove.add(Main.bullets.get(i));
+                    explode();
+                }
+            }
+            if (!bulletsToRemove.contains(Main.bullets.get(i)) && !Enemy.enemyList.isEmpty() && Main.bullets.get(i).getLayoutBounds().intersects(Enemy.enemyList.get(0).getLayoutBounds())) {
+                if (intersect(Main.bullets.get(i), Enemy.enemyList.get(0)).getLayoutBounds().getWidth() > 0) {
                     bulletsToRemove.add(Main.bullets.get(i));
                     Enemy.explode();
                     continue;
                 }
             }
             for (int j = 0; j < Main.asteroids.size(); j++) {
-                if(Main.bullets.get(i).getLayoutBounds().intersects(Main.asteroids.get(j).getLayoutBounds())){
+                if (!bulletsToRemove.contains(Main.bullets.get(i)) && Main.bullets.get(i).getLayoutBounds().intersects(Main.asteroids.get(j).getLayoutBounds())) {
                     if (intersect(Main.bullets.get(i), Main.asteroids.get(j)).getLayoutBounds().getWidth() > 0) {
-                        if (!bulletsToRemove.contains(Main.bullets.get(i))) {    // Make sure that one bullet doesn't hit 2 asteroids
-                            Main.asteroids.get(j).destroy(true);
-                            bulletsToRemove.add(Main.bullets.get(i));
-                        }
+                        Main.asteroids.get(j).destroy(true);
+                        bulletsToRemove.add(Main.bullets.get(i));
                     }
                 }
             }
@@ -81,6 +87,14 @@ public class Player extends Particle {
 
     public void stopAcceleration() {
         isThrusting = false;
+    }
+
+    public void setRotationRight() {
+        rotation = -ROTATION_SPEED / FPS;
+    }
+
+    public void setRotationLeft() {
+        rotation = ROTATION_SPEED / FPS;
     }
 
 }

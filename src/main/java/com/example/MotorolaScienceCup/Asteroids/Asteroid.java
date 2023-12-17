@@ -1,10 +1,11 @@
 package com.example.MotorolaScienceCup.Asteroids;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
 
 import java.util.*;
 
-public class Asteroid extends Particle{
+public class Asteroid extends Particle {
     HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
         put(3, 20);
         put(2, 50);
@@ -12,12 +13,12 @@ public class Asteroid extends Particle{
     }};
     private int size;
 
-    public Asteroid(List<Double> points, double angle, double speed, int size){
+    public Asteroid(List<Double> points, double angle, double speed, int size) {
         super(points, angle, 0, speed, 0);
         this.size = size;
     }
 
-    public void destroy(boolean destroyedByPlayer){
+    public void destroy(boolean destroyedByPlayer) {
         if (getSize() > 1.1) {   // Multiply only the big and medium asteroids
             // 2 smaller and faster asteroids from 1 asteroid
 
@@ -51,7 +52,7 @@ public class Asteroid extends Particle{
             Main.root.getChildren().addAll(asteroid1, asteroid2);
         }
         // Add points for asteroid
-        if(destroyedByPlayer)
+        if (destroyedByPlayer)
             HUD.addPoints(pointsMapping.get(getSize()));
 
         // Remove the big asteroid
@@ -60,20 +61,20 @@ public class Asteroid extends Particle{
         Main.asteroids.remove(this);
     }
 
-    public static void updateAndCheck(){
+    public static void updateAndCheck() {
         HashMap<Asteroid, Boolean> asteroidsToDestroy = new HashMap<>();
 
         for (int i = 0; i < Main.asteroids.size(); i++) {   // Update asteroids and check for collision
             Main.asteroids.get(i).updatePosition();
-            if(Main.player.getLayoutBounds().intersects(Main.asteroids.get(i).getLayoutBounds())){
+            if (Main.isAlive.get() && Main.player.getLayoutBounds().intersects(Main.asteroids.get(i).getLayoutBounds())){
                 if (intersect(Main.player, Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Main.player)) {
                     Main.player.explode();
                     asteroidsToDestroy.put(Main.asteroids.get(i), true);
                 }
             }
-            if(!Enemy.enemyList.isEmpty()){
-                if(Enemy.enemyList.get(0).getLayoutBounds().intersects(Main.asteroids.get(i).getLayoutBounds())){
-                    if(intersect(Enemy.enemyList.get(0), Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Enemy.enemyList.get(0))){
+            if (!Enemy.enemyList.isEmpty()) {
+                if (Enemy.enemyList.get(0).getLayoutBounds().intersects(Main.asteroids.get(i).getLayoutBounds())) {
+                    if (intersect(Enemy.enemyList.get(0), Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Enemy.enemyList.get(0))) {
                         Enemy.enemyList.get(0).animationParticles();
                         Main.root.getChildren().remove(Enemy.enemyList.get(0));
                         Enemy.enemyList.remove(Enemy.enemyList.get(0));
@@ -84,6 +85,25 @@ public class Asteroid extends Particle{
         }
         for (Map.Entry<Asteroid, Boolean> entry : asteroidsToDestroy.entrySet()) {
             entry.getKey().destroy(entry.getValue());
+        }
+    }
+
+    static void spawnAsteroids(int count) {
+        for (int i = 0; i < count; i++) {
+            int type = (int) (Math.random() * 4 + 1);
+            Asteroid asteroid = new Asteroid(Util.SVGconverter("asteroidVar" + type + ".svg"), Math.random() * 360 - 180, Main.BIG_ASTEROID_SPEED, 3);
+            asteroid.setStroke(Color.WHITE);
+            asteroid.setFill(Color.TRANSPARENT);
+            asteroid.scale(Main.BIG_ASTEROID_RADIUS / asteroid.getRadius());
+
+            // Spawn asteroids outside the spawn zone
+            do {
+                asteroid.moveTo(Math.random() * Main.WIDTH, Math.random() * Main.HEIGHT);
+
+            } while (Shape.intersect(asteroid, Main.spawnZone).getLayoutBounds().getWidth() > 0);
+
+            Main.asteroids.add(asteroid);
+            Main.root.getChildren().add(asteroid);
         }
     }
 

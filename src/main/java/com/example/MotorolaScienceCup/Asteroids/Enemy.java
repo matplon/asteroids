@@ -1,6 +1,7 @@
 package com.example.MotorolaScienceCup.Asteroids;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,11 +29,10 @@ public class Enemy extends Particle {
     }
 
     public static void spawnEnemy() {
-        if (Math.random() * Main.FPS * 300 < 1000 && enemyList.isEmpty()) {
+        if (enemyList.isEmpty()) {
             int type = Math.random() < 0.5 ? 1 : 2;
             Enemy enemy = new Enemy(SVGconverter("enemy" + "1" + ".svg"), 0, Main.ENEMY_SPEED, type);
-            if(enemy.getType() == 2){
-                System.out.println("lol");
+            if (enemy.getType() == 2) {
                 enemy.setStroke(Color.RED);
             }
             boolean check = Math.random() < 0.5;
@@ -46,15 +46,15 @@ public class Enemy extends Particle {
                 enemy.setAngle(180);
                 enemy.setVelocity(new Vector(ENEMY_SPEED, 180));
             }
-            if(enemy.getType()==2){
-                enemy.setVelocity(new Vector(ENEMY_SPEED*1, enemy.getAngle()));
+            if (enemy.getType() == 2) {
+                enemy.setVelocity(new Vector(ENEMY_SPEED * 1, enemy.getAngle()));
             }
             double y = Math.random() * (HEIGHT - enemy.getRadius() - (0 + enemy.getRadius())) + 0 + enemy.getRadius();
             enemy.moveTo(x, y);
+            enemy.scale(LARGE_SAUCER_RADIUS / enemy.radius);
             enemy.setFill(Color.TRANSPARENT);
             enemy.setStroke(Color.WHITE);
             root.getChildren().add(enemy);
-            enemy.scale(PLAYER_RADIUS / player.getRadius());
             enemyList.add(enemy); //all
         }
     }
@@ -64,23 +64,22 @@ public class Enemy extends Particle {
             Enemy enemy = enemyList.get(0);
             boolean goingRight = enemy.getAngle() < 90 && enemy.getAngle() > -90;
             double originalX = enemy.getCenterX();
-            if (rightDirections.contains(enemy.getAngle()) && Math.random() * 1000 < 10) {
-                rightDirections.remove(enemy.getAngle());
-                int index = Math.random() < 0.5 ? 0 : 1;
-                enemy.setVelocity(new Vector(ENEMY_SPEED, rightDirections.get(index)));
-                enemy.setAngle(rightDirections.get(index));
-            }
-            if (leftDirections.contains(enemy.getAngle()) && Math.random() * 1000 < 10) {
-                leftDirections.remove(enemy.getAngle());
-                int index = Math.random() < 0.5 ? 0 : 1;
-                enemy.setVelocity(new Vector(ENEMY_SPEED, leftDirections.get(index)));
-                enemy.setAngle(leftDirections.get(index));
-            }
+            checkDirections(rightDirections, enemy);
+            checkDirections(leftDirections, enemy);
             enemy.updatePosition();
             if ((goingRight && originalX > enemy.getCenterX()) || (!goingRight && originalX < enemy.getCenterX())) {
                 root.getChildren().remove(enemy);
                 enemyList.remove(enemy);
             }
+        }
+    }
+
+    private static void checkDirections(List<Double> directions, Enemy enemy) {
+        if (directions.contains(enemy.getAngle()) && Math.random() * 1000 < 10) {
+            directions.remove(enemy.getAngle());
+            int index = Math.random() < 0.5 ? 0 : 1;
+            enemy.setVelocity(new Vector(ENEMY_SPEED, directions.get(index)));
+            enemy.setAngle(directions.get(index));
         }
     }
 
@@ -100,25 +99,43 @@ public class Enemy extends Particle {
         }
     }
 
-    public void shootBullet() {
+    public static void shootBullet() {
         if (enemyBullets.isEmpty() && !enemyList.isEmpty()) {
             Enemy enemy = enemyList.get(0);
             List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle bullet
             double angle = Math.random() * 360 - 180;
             Particle bullet = new Particle(points, angle, 0, Main.BULLET_SPEED, 0);
-            if(enemy.getType() == 2){
+            bullet.moveTo(enemy.getCenterX() + enemy.getRadius() * Math.cos(Math.toRadians(angle)), enemy.getCenterY() + enemy.getRadius() * Math.sin(Math.toRadians(angle)));
+            if (enemy.getType() == 2) {
                 bullet.setStroke(Color.RED);
-                double x = player.getCenterX() - enemy.getCenterX();
-                double y = player.getCenterY() - enemy.getCenterY();
-                System.out.println(x/y + " lol");
-                double dir = Math.toDegrees(Math.atan2(x,y))/2;
-                System.out.println(dir + " lmao");
+                double x = player.getCenterX(), y = player.getCenterY();
+
+                double a = Math.pow(player.getVelocity().getX(), 2) + Math.pow(player.getVelocity().getY(), 2) - Math.pow(BULLET_SPEED, 2);
+                double b = 2 * (player.getVelocity().getX() * (player.getCenterX() - bullet.getCenterX()) +
+                        player.getVelocity().getY() * (player.getCenterY() - bullet.getCenterY()));
+                double c = Math.pow(player.getCenterX() - bullet.getCenterX(), 2) + Math.pow(player.getCenterY() - bullet.getCenterY(), 2);
+
+                double disc = Math.pow(b, 2) - 4 * a * c;
+                if (disc >= 0) {
+                    double t1 = (-b + Math.sqrt(disc)) / (2 * a);
+                    double t2 = (-b - Math.sqrt(disc)) / (2 * a);
+                    double t = 0;
+                    if(t1 >= 0 && t1 < t2) t = t1;
+                    else if(t2 >= 0) t = t2;
+                    x = t * player.getVelocity().getX() + player.getCenterX();
+                    y = t * player.getVelocity().getY() + player.getCenterY();
+                }
+                System.out.println("Player: "+player.getCenterX()+" "+player.getCenterY());
+                System.out.println("Predict: "+x+" "+y);
+                double dir = Math.toDegrees(Math.atan2(y - bullet.getCenterY(), x - bullet.getCenterX()));
+
                 Vector vector = new Vector(BULLET_SPEED, dir);
                 bullet.setVelocity(vector);
+                bullet.setAngle(dir);
             }
             bullet.setFill(Color.WHITE);
             // Spawn the bullet at the nose of the ship
-            bullet.moveTo(getCenterX() + getRadius() * Math.cos(Math.toRadians(angle)), getCenterY() + getRadius() * Math.sin(Math.toRadians(angle)));
+
             enemyBullets.add(bullet);
             enemyBulletDistanceCovered.put(bullet, 0.0);
 
@@ -133,15 +150,15 @@ public class Enemy extends Particle {
 
         // Check every bullet and asteroid for intersection
         for (int i = 0; i < enemyBullets.size(); i++) {
-            if (!playerKilled && enemyBullets.get(i).getLayoutBounds().intersects(player.getLayoutBounds())) {
-                if(Shape.intersect(enemyBullets.get(i), player).getLayoutBounds().getWidth() >= 0){
+            if (isAlive.get() && enemyBullets.get(i).getLayoutBounds().intersects(player.getLayoutBounds())) {
+                if (Shape.intersect(enemyBullets.get(i), player).getLayoutBounds().getWidth() >= 0) {
                     playerKilled = true;
-                    if(!bulletsToRemove.contains(enemyBullets.get(i)))
+                    if (!bulletsToRemove.contains(enemyBullets.get(i)))
                         bulletsToRemove.add(enemyBullets.get(i));
                 }
             }
             for (int j = 0; j < Main.asteroids.size(); j++) {
-                if(enemyBullets.get(i).getLayoutBounds().intersects(asteroids.get(j).getLayoutBounds())){
+                if (enemyBullets.get(i).getLayoutBounds().intersects(asteroids.get(j).getLayoutBounds())) {
                     if (Shape.intersect(enemyBullets.get(i), Main.asteroids.get(j)).getLayoutBounds().getWidth() > 0) {
                         if (!bulletsToRemove.contains(enemyBullets.get(i))) {    // Make sure that one bullet doesn't hit 2 asteroids
                             Main.asteroids.get(j).destroy(false);
@@ -157,12 +174,12 @@ public class Enemy extends Particle {
             Main.root.getChildren().remove(bullet);
             enemyBullets.remove(bullet);
         }
-        if(playerKilled)
+        if (playerKilled)
             player.explode();
     }
 
-    static void explode(){
-        if(!enemyList.isEmpty()){
+    static void explode() {
+        if (!enemyList.isEmpty()) {
             HUD.addPoints(enemyList.get(0).pointsMapping.get(enemyList.get(0).type));
             enemyList.get(0).animationParticles();
             root.getChildren().remove(enemyList.get(0));
@@ -170,11 +187,11 @@ public class Enemy extends Particle {
         }
     }
 
-    static void collisionDetection(){
-        if(!enemyList.isEmpty()){
+    static void collisionDetection() {
+        if (!enemyList.isEmpty()) {
             Enemy enemy = enemyList.get(0);
-            if(enemy.getLayoutBounds().intersects(player.getLayoutBounds())){
-                if(intersect(enemy, player).getLayoutBounds().getWidth() > 0){
+            if (enemy.getLayoutBounds().intersects(player.getLayoutBounds())) {
+                if (intersect(enemy, player).getLayoutBounds().getWidth() > 0) {
                     player.explode();
                     explode();
                 }

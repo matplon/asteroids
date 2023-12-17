@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Particle extends BetterPolygon {
-
-    protected final double ROTATION_SPEED = 360;
     protected static final double THRUST = 4;
     protected double centerX;
     protected double centerY;
@@ -149,13 +147,7 @@ public class Particle extends BetterPolygon {
         this.velocity = velocity;
     }
 
-    public void setRotationRight() {
-        rotation = -ROTATION_SPEED / FPS;
-    }
 
-    public void setRotationLeft() {
-        rotation = ROTATION_SPEED / FPS;
-    }
 
     public void stopRotation() {
         rotation = 0;

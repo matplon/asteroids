@@ -2,6 +2,7 @@ package com.example.MotorolaScienceCup.Asteroids;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
@@ -25,7 +26,6 @@ public class Main extends Application {
     final static int WIDTH = (int) screenBounds.getWidth();
     final static int HEIGHT = (int) screenBounds.getHeight();
     final static double FPS = 60;
-    final int INIT_ASTEROID_COUNT = 15;
     final double FRICTION = 0.7;
     final static double BULLET_SPEED = 15;
     static final double PARTICLE_SPEED = 1;
@@ -35,12 +35,15 @@ public class Main extends Application {
     final double MAX_PARTICLE_DISTANCE = WIDTH * 0.05;
 
     static final double PARTICLE_COUNT = 15;
-    final double BIG_ASTEROID_SPEED = 1;
+    final static double BIG_ASTEROID_SPEED = 1.5;
     final double SPAWNZONE_RADIUS = 100;
 
     static final double ENEMY_SPEED = 4;
-    final static double PLAYER_RADIUS = 20;
-    final double BIG_ASTEROID_RADIUS = 45;
+    final static double BIG_ASTEROID_RADIUS = WIDTH * 0.04;
+    final static double PLAYER_RADIUS = BIG_ASTEROID_RADIUS * 0.5;
+    final static double LARGE_SAUCER_RADIUS = PLAYER_RADIUS;
+    final double RESPAWN_COOLDOWN = 2;   // in seconds
+    final double SAUCER_COOLDOWN = 10;  // in seconds
 
 
     static AtomicBoolean isAlive = new AtomicBoolean(true);
@@ -54,14 +57,16 @@ public class Main extends Application {
 
     static Timeline timeline;
 
-    Circle spawnZone;
+    static Circle spawnZone;
     String shipFilePath = "ship1.svg";
 
-
-
     static int HP = 3;
+    static int LEVEL = 1;
+    static int ASTEROID_COUNT = 4;
     boolean canShoot = true;
     int nextPointThreshold = 10000;
+    int respawnTimer = 0;
+    int saucerTimer = 0;
 
 
     static AnchorPane root;
@@ -75,8 +80,6 @@ public class Main extends Application {
     }
 
     public void init() {
-        System.out.println(screenBounds.getHeight());
-        System.out.println(screenBounds.getWidth());
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
         scene.setFill(Color.BLACK);
@@ -112,22 +115,7 @@ public class Main extends Application {
 
         // Spawn the big asteroids
         asteroids = new ArrayList<>();
-        for (int i = 0; i < INIT_ASTEROID_COUNT; i++) {
-            int type = (int) (Math.random() * 4 + 1);
-            Asteroid asteroid = new Asteroid(Util.SVGconverter("asteroidVar" + type + ".svg"), Math.random() * 360 - 180, BIG_ASTEROID_SPEED, 3);
-            asteroid.setStroke(Color.WHITE);
-            asteroid.setFill(Color.TRANSPARENT);
-            asteroid.scale(BIG_ASTEROID_RADIUS / asteroid.getRadius());
-
-            // Spawn asteroids outside the spawn zone
-            do {
-                asteroid.moveTo(Math.random() * WIDTH, Math.random() * HEIGHT);
-
-            } while (Shape.intersect(asteroid, spawnZone).getLayoutBounds().getWidth() > 0);
-
-            asteroids.add(asteroid);
-            root.getChildren().add(asteroid);
-        }
+        Asteroid.spawnAsteroids(ASTEROID_COUNT);
 
         HUD.init(0, Util.SVGconverter(shipFilePath));
     }
@@ -138,15 +126,43 @@ public class Main extends Application {
             if (HP <= 0)
                 gameOver();
 
-                if (HUD.getPoints() >= nextPointThreshold) {
-                    HUD.addHeart();
-                    nextPointThreshold += 10000;
+            if (!isAlive.get())
+                respawnTimer++;
+
+            if (Enemy.enemyList.isEmpty())
+                saucerTimer++;
+
+            if (asteroids.isEmpty() && Enemy.enemyList.isEmpty()) {
+                LEVEL++;
+                ASTEROID_COUNT = (int) Math.round(ASTEROID_COUNT * 1.5);
+                player.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
+                for (Particle particle :
+                        particlesAll) {
+                    root.getChildren().remove(particle);
                 }
+                particlesAll.clear();
+                timeline.stop();
+                PauseTransition pause = new PauseTransition(Duration.seconds(1));
+                pause.setOnFinished(pauseEvent -> {
+                    Asteroid.spawnAsteroids(ASTEROID_COUNT);
+                    saucerTimer = 0;
+                    timeline.play();
+                });
+                pause.play();
+            }
+
+            if (HUD.getPoints() >= nextPointThreshold) {
+                HUD.addHeart();
+                nextPointThreshold += 10000;
+            }
 
             List<Double> leftDirections = new ArrayList<>(Arrays.asList(-45.0, 0.0, 45.0));
             List<Double> rightDirections = new ArrayList<>(Arrays.asList(-135.0, 180.0, 135.0));
 
-            Enemy.spawnEnemy();
+            if (saucerTimer >= SAUCER_COOLDOWN * FPS) {
+                saucerTimer = 0;
+                Enemy.spawnEnemy();
+            }
             Enemy.updateEnemy(leftDirections, rightDirections);
             Enemy.shootBullet();
             Enemy.collisionDetection();
@@ -165,7 +181,7 @@ public class Main extends Application {
                 if (bulletsDistanceCovered.get(bullets.get(i)) > MAX_BULLET_DISTANCE) {
                     root.getChildren().remove(bullets.get(i));
                     bulletsDistanceCovered.remove(bullets.get(i));
-                    bullets.remove(bullets.get(i)); //commit
+                    bullets.remove(bullets.get(i));
                 }
             }
             for (int i = 0; i < particlesAll.size(); i++) {   // Update animation particles distances
@@ -184,7 +200,8 @@ public class Main extends Application {
             if (!Enemy.enemyList.isEmpty())
                 Enemy.enemyList.get(0).checkForHits();
 
-            if (!isAlive.get() && HP > 0) {  // If the player is dead check for asteroids in the spawn zone
+            if (!isAlive.get() && HP > 0 && respawnTimer >= RESPAWN_COOLDOWN * FPS) {  // If the player is dead check for asteroids in the spawn zone
+                respawnTimer = 0;
                 boolean newSafe = true;
                 for (Particle asteroid : asteroids) {
                     if (Shape.intersect(spawnZone, asteroid).getLayoutBounds().getWidth() > 0) {
@@ -210,12 +227,6 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
     }
-
-    void addPoint(Enemy enemyShip) {
-        if (enemyShip.getType() == 1) HUD.addPoints(200);
-        else HUD.addPoints(1000);
-    }
-
 
     public static void gameOver() {
         HUD.gameOver();
