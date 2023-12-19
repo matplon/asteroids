@@ -9,18 +9,20 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.example.MotorolaScienceCup.Asteroids.Main.*;
-import static com.example.MotorolaScienceCup.Asteroids.Main.ENEMY_SPEED;
 import static com.example.MotorolaScienceCup.Asteroids.Util.SVGconverter;
 
 public class Enemy extends Particle {
-    private final int type;
     static List<Enemy> enemyList = new ArrayList<>();
-    private static List<Particle> enemyBullets = new ArrayList<>();
-    static HashMap<Particle, Double> enemyBulletDistanceCovered = new HashMap<>();
-    HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
+    static final double ENEMY_SPEED = 4;
+    private final HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
         put(2, 1000);
         put(1, 200);
     }};
+    private final int type;
+
+    private static List<Particle> enemyBullets = new ArrayList<>();
+    static HashMap<Particle, Double> enemyBulletDistanceCovered = new HashMap<>();
+
 
 
     public Enemy(List<Double> points, double angle, double speed, int type) {
@@ -31,7 +33,7 @@ public class Enemy extends Particle {
     public static void spawnEnemy() {
         if (enemyList.isEmpty()) {
             int type = Math.random() < 0.5 ? 1 : 2;
-            Enemy enemy = new Enemy(SVGconverter("enemy" + "1" + ".svg"), 0, Main.ENEMY_SPEED, type);
+            Enemy enemy = new Enemy(SVGconverter("enemy" + "1" + ".svg"), 0, ENEMY_SPEED, type);
             if (enemy.getType() == 2) {
                 enemy.setStroke(Color.RED);
             }

@@ -26,40 +26,22 @@ public class Main extends Application {
     final static int WIDTH = (int) screenBounds.getWidth();
     final static int HEIGHT = (int) screenBounds.getHeight();
     final static double FPS = 60;
-    final double FRICTION = 0.7;
     final static double BULLET_SPEED = 15;
-    static final double PARTICLE_SPEED = 1;
-    final static double SHIP_TERMINAL_VELOCITY = 10;
     final static double MAX_BULLET_DISTANCE = WIDTH * 0.6;
-
     final double MAX_PARTICLE_DISTANCE = WIDTH * 0.05;
-
     static final double PARTICLE_COUNT = 15;
-    final static double BIG_ASTEROID_SPEED = 1.5;
     final double SPAWNZONE_RADIUS = 100;
-
-    static final double ENEMY_SPEED = 4;
-    final static double BIG_ASTEROID_RADIUS = WIDTH * 0.04;
-    final static double PLAYER_RADIUS = BIG_ASTEROID_RADIUS * 0.5;
-    final static double LARGE_SAUCER_RADIUS = PLAYER_RADIUS;
+    final static double LARGE_SAUCER_RADIUS = Player.PLAYER_RADIUS;
     final double RESPAWN_COOLDOWN = 2;   // in seconds
     final double SAUCER_COOLDOWN = 10;  // in seconds
-
-
     static AtomicBoolean isAlive = new AtomicBoolean(true);
     static List<Particle> bullets = new ArrayList<>();
-
     static List<Particle> particlesAll = new ArrayList<>();
-
     static HashMap<Particle, Double> bulletsDistanceCovered = new HashMap<>();
-
     static HashMap<Particle, Double> particlesDistanceCovered = new HashMap<>();
-
     static Timeline timeline;
-
     static Circle spawnZone;
     String shipFilePath = "ship1.svg";
-
     static int HP = 3;
     static int LEVEL = 1;
     static int ASTEROID_COUNT = 4;
@@ -67,8 +49,7 @@ public class Main extends Application {
     int nextPointThreshold = 10000;
     int respawnTimer = 0;
     int saucerTimer = 0;
-
-
+    int invulnerabilityTimer = 0;
     static AnchorPane root;
     static Scene scene;
     static Stage stage1;
@@ -85,12 +66,12 @@ public class Main extends Application {
         scene.setFill(Color.BLACK);
 
         // Spawn the player
-        player = new Player(Util.SVGconverter(shipFilePath), -90, 0, 0, FRICTION);
+        player = new Player(Util.SVGconverter(shipFilePath), -90, 0, 0);
         player.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
         player.setFill(Color.TRANSPARENT);
         player.setStroke(Color.WHITE);
         root.getChildren().add(player);
-        player.scale(PLAYER_RADIUS / player.getRadius());
+        player.scale(Player.PLAYER_RADIUS / player.getRadius());
 
         spawnZone = new Circle((double) WIDTH / 2, (double) HEIGHT / 2, SPAWNZONE_RADIUS);
 
@@ -189,7 +170,7 @@ public class Main extends Application {
                 double currentDistance = particlesDistanceCovered.get(particle);
                 particlesDistanceCovered.remove(particle);
                 particle.updatePosition();
-                particlesDistanceCovered.put(particle, currentDistance + PARTICLE_SPEED);
+                particlesDistanceCovered.put(particle, currentDistance + Particle.ANIMATION_PARTICLE_SPEED);
                 if (particlesDistanceCovered.get(particle) > MAX_PARTICLE_DISTANCE) {
                     root.getChildren().remove(particle);
                     particlesDistanceCovered.remove(particle);

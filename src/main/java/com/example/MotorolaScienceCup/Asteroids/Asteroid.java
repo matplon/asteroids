@@ -6,12 +6,14 @@ import javafx.scene.shape.Shape;
 import java.util.*;
 
 public class Asteroid extends Particle {
-    HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
+    static final double BIG_ASTEROID_SPEED = 1.5;
+    static final double BIG_ASTEROID_RADIUS = Main.WIDTH * 0.04;
+    static final HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
         put(3, 20);
         put(2, 50);
         put(1, 100);
     }};
-    private int size;
+    private final int size;
 
     public Asteroid(List<Double> points, double angle, double speed, int size) {
         super(points, angle, 0, speed, 0);
@@ -19,7 +21,7 @@ public class Asteroid extends Particle {
     }
 
     public void destroy(boolean destroyedByPlayer) {
-        if (getSize() > 1.1) {   // Multiply only the big and medium asteroids
+        if (getSize() > 1) {   // Multiply only the big and medium asteroids
             // 2 smaller and faster asteroids from 1 asteroid
 
             int type1 = (int) (Math.random() * 4 + 1);
@@ -91,10 +93,10 @@ public class Asteroid extends Particle {
     static void spawnAsteroids(int count) {
         for (int i = 0; i < count; i++) {
             int type = (int) (Math.random() * 4 + 1);
-            Asteroid asteroid = new Asteroid(Util.SVGconverter("asteroidVar" + type + ".svg"), Math.random() * 360 - 180, Main.BIG_ASTEROID_SPEED, 3);
+            Asteroid asteroid = new Asteroid(Util.SVGconverter("asteroidVar" + type + ".svg"), Math.random() * 360 - 180, BIG_ASTEROID_SPEED, 3);
             asteroid.setStroke(Color.WHITE);
             asteroid.setFill(Color.TRANSPARENT);
-            asteroid.scale(Main.BIG_ASTEROID_RADIUS / asteroid.getRadius());
+            asteroid.scale(BIG_ASTEROID_RADIUS / asteroid.getRadius());
 
             // Spawn asteroids outside the spawn zone
             do {

@@ -9,8 +9,14 @@ import java.util.Random;
 
 public class Player extends Particle {
     private final double ROTATION_SPEED = 270;
-    public Player(List<Double> points, double angle, double rotation, double velocity, double friction) {
-        super(points, angle, rotation, velocity, friction);
+    private final double SHIP_TERMINAL_VELOCITY = 10;
+    private final double SHIP_THRUST = 4;
+    final static double PLAYER_RADIUS = Asteroid.BIG_ASTEROID_RADIUS * 0.5;
+    static final double FRICTION = 0.7;
+    public Player(List<Double> points, double angle, double rotation, double velocity) {
+        super(points, angle, rotation, velocity, FRICTION);
+        this.thrust = SHIP_THRUST;
+        this.terminalVelocity = SHIP_TERMINAL_VELOCITY;
     }
 
     public void hyperSpace() {
