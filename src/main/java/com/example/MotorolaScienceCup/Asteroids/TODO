@@ -1,0 +1,15 @@
+TODO Asteroids:
+    zwiekszajaca sie wraz z wynikiem dokladnosc strzalow enemy type 2\
+    wieksza czestotliwosc strzalow enemy type 2
+    ustawienie odpowiedniego rozmiaru enemy type 2
+    okres niesmiertelnosci playera po respawnie
+    dzwiek (np jak sie asteroidy niszcza)
+    animacja ognia za playerem gdy przyspiesza
+    zapisywanie wyniku + wyswietlanie high-score
+    sklep
+    moze lepsza animacja niszczenia (?)
+    ustawienia (fullscreen on/off, glosnosc itp)
+    dopracowanie zeby wszystkie rozmiary i predkosci byly odpowiednie
+    ogolne wyczyszczenie kodu (zrobienia metod dla powtarzajacych sie rzeczy, przeniesienie niektorych zmiennych z main do innych klas itp)
+    mozliwosc powrotu do menu glownego po zakonczeniu gry
+    ulepszenie graficzne HUDu

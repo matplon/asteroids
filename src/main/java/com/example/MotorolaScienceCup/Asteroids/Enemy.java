@@ -110,24 +110,7 @@ public class Enemy extends Particle {
             bullet.moveTo(enemy.getCenterX() + enemy.getRadius() * Math.cos(Math.toRadians(angle)), enemy.getCenterY() + enemy.getRadius() * Math.sin(Math.toRadians(angle)));
             if (enemy.getType() == 2) {
                 bullet.setStroke(Color.RED);
-                double x = player.getCenterX(), y = player.getCenterY();
-
-                double a = Math.pow(player.getVelocity().getX(), 2) + Math.pow(player.getVelocity().getY(), 2) - Math.pow(BULLET_SPEED, 2);
-                double b = 2 * (player.getVelocity().getX() * (player.getCenterX() - bullet.getCenterX()) +
-                        player.getVelocity().getY() * (player.getCenterY() - bullet.getCenterY()));
-                double c = Math.pow(player.getCenterX() - bullet.getCenterX(), 2) + Math.pow(player.getCenterY() - bullet.getCenterY(), 2);
-
-                double disc = Math.pow(b, 2) - 4 * a * c;
-                if (disc >= 0) {
-                    double t1 = (-b + Math.sqrt(disc)) / (2 * a);
-                    double t2 = (-b - Math.sqrt(disc)) / (2 * a);
-                    double t = 0;
-                    if(t1 >= 0 && t1 < t2) t = t1;
-                    else if(t2 >= 0) t = t2;
-                    x = t * player.getVelocity().getX() + player.getCenterX();
-                    y = t * player.getVelocity().getY() + player.getCenterY();
-                }
-                double dir = Math.toDegrees(Math.atan2(y - bullet.getCenterY(), x - bullet.getCenterX()));
+                double dir = getDir(bullet);
 
                 Vector vector = new Vector(BULLET_SPEED, dir);
                 bullet.setVelocity(vector);
@@ -142,6 +125,27 @@ public class Enemy extends Particle {
 
             Main.root.getChildren().add(bullet);
         }
+    }
+
+    private static double getDir(Particle bullet) {
+        double x = player.getCenterX(), y = player.getCenterY();
+
+        double a = Math.pow(player.getVelocity().getX(), 2) + Math.pow(player.getVelocity().getY(), 2) - Math.pow(BULLET_SPEED, 2);
+        double b = 2 * (player.getVelocity().getX() * (player.getCenterX() - bullet.getCenterX()) +
+                player.getVelocity().getY() * (player.getCenterY() - bullet.getCenterY()));
+        double c = Math.pow(player.getCenterX() - bullet.getCenterX(), 2) + Math.pow(player.getCenterY() - bullet.getCenterY(), 2);
+
+        double disc = Math.pow(b, 2) - 4 * a * c;
+        if (disc >= 0) {
+            double t1 = (-b + Math.sqrt(disc)) / (2 * a);
+            double t2 = (-b - Math.sqrt(disc)) / (2 * a);
+            double t = 0;
+            if(t1 >= 0 && t1 < t2) t = t1;
+            else if(t2 >= 0) t = t2;
+            x = t * player.getVelocity().getX() + player.getCenterX();
+            y = t * player.getVelocity().getY() + player.getCenterY();
+        }
+        return Math.toDegrees(Math.atan2(y - bullet.getCenterY(), x - bullet.getCenterX()));
     }
 
     public void checkForHits() {
