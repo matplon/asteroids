@@ -127,8 +127,6 @@ public class Enemy extends Particle {
                     x = t * player.getVelocity().getX() + player.getCenterX();
                     y = t * player.getVelocity().getY() + player.getCenterY();
                 }
-                System.out.println("Player: "+player.getCenterX()+" "+player.getCenterY());
-                System.out.println("Predict: "+x+" "+y);
                 double dir = Math.toDegrees(Math.atan2(y - bullet.getCenterY(), x - bullet.getCenterX()));
 
                 Vector vector = new Vector(BULLET_SPEED, dir);
