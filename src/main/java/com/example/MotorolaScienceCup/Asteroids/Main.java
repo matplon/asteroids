@@ -49,7 +49,6 @@ public class Main extends Application {
     int nextPointThreshold = 10000;
     int respawnTimer = 0;
     int saucerTimer = 0;
-    int invulnerabilityTimer = 0;
     static AnchorPane root;
     static Scene scene;
     static Stage stage1;
