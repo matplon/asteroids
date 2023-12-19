@@ -6,6 +6,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Label;
 import javafx.stage.Screen;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 
 public class MainController {
     @FXML
@@ -21,6 +24,12 @@ public class MainController {
 
     @FXML
     private ImageView battleZone;
+
+    @FXML
+    private Media media;
+    @FXML
+    private MediaView mediaView;
+
 
 
     @FXML
