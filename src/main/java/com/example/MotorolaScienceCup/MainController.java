@@ -36,17 +36,11 @@ public class MainController {
 
     @FXML
     void initialize() {
-        first = new ImageView(new Image("file:first.jpg"));
-        tempest = new ImageView(new Image("file:tempest.jpg"));
-        battleZone = new ImageView(new Image("file:battlezone.jpg"));
+        first.setImage(new Image("file:images\\first.jpg"));
+        tempest.setImage(new Image("file:images\\tempest.jpg"));
+        battleZone.setImage(new Image("file:images\\battlezone.jpg"));
 
-        anchorPane.getChildren().addAll(first, tempest, battleZone);
-        anchorPane.setPrefWidth(800);
-        anchorPane.setPrefHeight(800);
-       /* Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-        anchorPane.setPrefHeight(screenBounds.getHeight());
-        anchorPane.setPrefWidth(screenBounds.getWidth());
-*/
+
         //animation();
     }
 
