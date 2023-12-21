@@ -33,7 +33,7 @@ public class Main extends Application {
     final double SPAWNZONE_RADIUS = 100;
     final static double LARGE_SAUCER_RADIUS = Player.PLAYER_RADIUS;
     final double RESPAWN_COOLDOWN = 2;   // in seconds
-    final double SAUCER_COOLDOWN = 10;  // in seconds
+    final double SAUCER_COOLDOWN = 10;// in seconds
     static AtomicBoolean isAlive = new AtomicBoolean(true);
     static List<Particle> bullets = new ArrayList<>();
     static List<Particle> particlesAll = new ArrayList<>();
@@ -49,6 +49,7 @@ public class Main extends Application {
     int nextPointThreshold = 10000;
     int respawnTimer = 0;
     int saucerTimer = 0;
+    double enemyShootTimer = 0;
     static AnchorPane root;
     static Scene scene;
     static Stage stage1;
@@ -143,8 +144,18 @@ public class Main extends Application {
                 saucerTimer = 0;
                 Enemy.spawnEnemy();
             }
+            enemyShootTimer++;
             Enemy.updateEnemy(leftDirections, rightDirections);
-            Enemy.shootBullet();
+            if(!Enemy.enemyList.isEmpty()){
+                Enemy enemy = Enemy.enemyList.get(0);
+                if(enemy.getType() == 1 && enemyShootTimer == 90){
+                    Enemy.shootBullet();
+                    enemyShootTimer = 0;
+                }else if(enemy.getType() == 2 && enemyShootTimer == 60){
+                    Enemy.shootBullet();
+                    enemyShootTimer = 0;
+                }
+            }
             Enemy.collisionDetection();
             Enemy.updateBullet();
 
