@@ -77,15 +77,7 @@
      id="layer1">
     <path
        style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d=""
-       id="path10"
-       inkscape:connector-curvature="0"
-       inkscape:path-effect="#path-effect14"
-       inkscape:original-d="M 112.2532,135.5692 V 102.96232 L 102.09696,128.08565 Z"
-       transform="rotate(-180,112.2532,119.26576)" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 103.43331,144.65637 98.622455,144.92364 95.147952,155.34715 101.82969,158.28711 101.56242,148.66541 Z M 103.43331,144.65637 108.24417,144.92364 111.71867,155.34715 105.03693,158.28711 105.3042,148.66541 Z"
+       d="M 103.43331,144.65637 98.622455,144.92364 95.147952,155.34715 101.82969,158.28711 101.56242,148.66541 103.43331,144.65637 108.24417,144.92364 111.71867,155.34715 105.03693,158.28711 105.3042,148.66541 Z"
        id="path26"
        inkscape:connector-curvature="0"
        inkscape:path-effect="#path-effect28"

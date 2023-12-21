@@ -33,7 +33,7 @@ public class Enemy extends Particle {
     public static void spawnEnemy() {
         if (enemyList.isEmpty()) {
             int type = Math.random() < 0.5 ? 1 : 2;
-            Enemy enemy = new Enemy(SVGconverter("enemy" + "1" + ".svg"), 0, ENEMY_SPEED, type);
+            Enemy enemy = new Enemy(SVGconverter("enemy" + type + ".svg"), 0, ENEMY_SPEED, type);
             if (enemy.getType() == 2) {
                 enemy.setStroke(Color.RED);
             }
@@ -102,7 +102,7 @@ public class Enemy extends Particle {
     }
 
     public static void shootBullet() {
-        if (enemyBullets.isEmpty() && !enemyList.isEmpty()) {
+        if (!enemyList.isEmpty()) {
             Enemy enemy = enemyList.get(0);
             List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle bullet
             double angle = Math.random() * 360 - 180;
@@ -111,7 +111,9 @@ public class Enemy extends Particle {
             if (enemy.getType() == 2) {
                 bullet.setStroke(Color.RED);
                 double dir = getDir(bullet);
-
+                double offset = Math.random() * 10 - 5;
+                offset = offset/LEVEL;
+                dir = dir + offset;
                 Vector vector = new Vector(BULLET_SPEED, dir);
                 bullet.setVelocity(vector);
                 bullet.setAngle(dir);

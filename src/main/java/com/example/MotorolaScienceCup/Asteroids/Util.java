@@ -16,7 +16,7 @@ public class Util {
                 String leftRemoved = nextLine.replaceAll("^\\s+", "");  // Remove whitespaces from the sides
                 nextLine = leftRemoved.replaceAll("\\s+$", "");
                 if (nextLine.startsWith("d=")) {    // Find the path line in the .svg file
-                    String subString = nextLine.substring(5, nextLine.length() - 3);    // Remove unnecessary characters from the sides
+                    String subString = nextLine.substring(5, nextLine.length() - 3);// Remove unnecessary characters from the sides
                     String[] li = subString.split(" "); // Remove spaces
                     for (String s : li) {
                         String[] lili = s.split(",");   // Remove commas

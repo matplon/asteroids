@@ -139,7 +139,7 @@ public class Main extends Application {
             List<Double> leftDirections = new ArrayList<>(Arrays.asList(-45.0, 0.0, 45.0));
             List<Double> rightDirections = new ArrayList<>(Arrays.asList(-135.0, 180.0, 135.0));
 
-            if (saucerTimer >= SAUCER_COOLDOWN * FPS) {
+            if (saucerTimer >= SAUCER_COOLDOWN) {
                 saucerTimer = 0;
                 Enemy.spawnEnemy();
             }
