@@ -105,7 +105,7 @@ public class HUD {
 
         newRoot.getChildren().addAll(restart, menu);
         Main.scene = new Scene(newRoot, Main.WIDTH, Main.HEIGHT);
-        Main.stage1.setScene(Main.scene);
+        Main.stage.setScene(Main.scene);
     }
 
 

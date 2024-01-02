@@ -2,6 +2,7 @@ package com.example.MotorolaScienceCup.Asteroids;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -17,8 +18,8 @@ public class ShopController {
     private Text coins;
 
     @FXML
-    void backToMenu(MouseEvent event) throws IOException {
-        AnchorPane root = FXMLLoader.load(getClass().getResource("Menu.fxml"));
+    void initialize(){
+        menuButton = new ImageView(new Image("@Asteroids/img1.jpg"));
     }
 
 }

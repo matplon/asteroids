@@ -1,11 +1,13 @@
 package com.example.MotorolaScienceCup.Asteroids;
 
+import com.example.MotorolaScienceCup.Menu;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
@@ -20,7 +22,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public class Main extends Application {
+public class Main {
 
     static Rectangle2D screenBounds = Screen.getPrimary().getBounds();
     final static int WIDTH = (int) screenBounds.getWidth();
@@ -28,12 +30,12 @@ public class Main extends Application {
     final static double FPS = 60;
     final static double BULLET_SPEED = 15;
     final static double MAX_BULLET_DISTANCE = WIDTH * 0.6;
-    final double MAX_PARTICLE_DISTANCE = WIDTH * 0.05;
+    static final double MAX_PARTICLE_DISTANCE = WIDTH * 0.05;
     static final double PARTICLE_COUNT = 15;
     static final double SPAWNZONE_RADIUS = 100;
     final static double LARGE_SAUCER_RADIUS = Player.PLAYER_RADIUS;
-    final double RESPAWN_COOLDOWN = 2;   // in seconds
-    final double SAUCER_COOLDOWN = 10;// in seconds
+    static final double RESPAWN_COOLDOWN = 2;   // in seconds
+    static final double SAUCER_COOLDOWN = 1;  // in seconds
     static AtomicBoolean isAlive = new AtomicBoolean(true);
     static List<Particle> bullets = new ArrayList<>();
     static List<Particle> particlesAll = new ArrayList<>();
@@ -46,20 +48,19 @@ public class Main extends Application {
     static int LEVEL = 1;
     static int ASTEROID_COUNT = 4;
     static boolean canShoot = true;
-    int nextPointThreshold = 10000;
-    int respawnTimer = 0;
-    int saucerTimer = 0;
-    double enemyShootTimer = 0;
-    static AnchorPane root;
-    static Scene scene;
-    static Stage stage1;
+    static int nextPointThreshold = 10000;
+    static int respawnTimer = 0;
+    static int saucerTimer = 0;
+    static double enemyShootTimer = 0;
     static Player player;
     static List<Asteroid> asteroids;
 
+    static Scene scene = Menu.scene;
+    static AnchorPane root = Menu.root;
+    static Stage stage = Menu.stage;
 
 
-
-    public static void init() {
+    public static void main() {
 
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
@@ -99,10 +100,13 @@ public class Main extends Application {
         Asteroid.spawnAsteroids(ASTEROID_COUNT);
 
         HUD.init(0, Util.SVGconverter(shipFilePath));
+
+        start();
+
     }
 
 
-    public void start(Stage stage) {
+    public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
             if (HP <= 0)
                 gameOver();
@@ -149,10 +153,10 @@ public class Main extends Application {
             if(!Enemy.enemyList.isEmpty()){
                 Enemy enemy = Enemy.enemyList.get(0);
                 if(enemy.getType() == 1 && enemyShootTimer == 90){
-                    enemy.shootBullet();
+                    Enemy.shootBullet();
                     enemyShootTimer = 0;
                 }else if(enemy.getType() == 2 && enemyShootTimer == 60){
-                    enemy.shootBullet();
+                    Enemy.shootBullet();
                     enemyShootTimer = 0;
                 }
             }
@@ -213,8 +217,7 @@ public class Main extends Application {
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
 
-        stage1 = new Stage();
-        stage = stage1;
+        stage = new Stage();
         stage.setScene(scene);
         stage.show();
     }

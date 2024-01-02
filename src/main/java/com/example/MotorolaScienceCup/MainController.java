@@ -30,10 +30,7 @@ public class MainController {
     @FXML
     private ImageView battleZone;
 
-    @FXML
-    private Media media;
-    @FXML
-    private MediaPlayer mediaPlayer;
+
     @FXML
     private MediaView mediaView;
 
@@ -45,19 +42,18 @@ public class MainController {
         tempest.setImage(new Image("file:images\\tempest.jpg"));
         battleZone.setImage(new Image("file:images\\battlezone.jpg"));
 
-
-        //animation();
+//        animation();
     }
 
     @FXML
     void animation() {
-        Media media = new Media(getClass().getResource("img.mp4").toString());
+        Media media = new Media(getClass().getResource("file:images\\img.mp4").toString());
 
         MediaPlayer mediaPlayer = new MediaPlayer(media);
         mediaPlayer.play();
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
 
-        MediaView mediaView = new MediaView(mediaPlayer);
+        mediaView = new MediaView(mediaPlayer);
 
         mediaPlayer.setOnEndOfMedia(new Runnable() {
             @Override
@@ -66,7 +62,7 @@ public class MainController {
                 mediaPlayer.play();
             }
         });
-        anchorPane.getChildren().add(mediaView);
+//        anchorPane.getChildren().add(mediaView);
 
 
     }
@@ -74,7 +70,7 @@ public class MainController {
     @FXML
     private void clicked(MouseEvent event)
     {
-        Main.init();
+        Main.main();
     }
 
 
