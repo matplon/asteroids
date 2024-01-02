@@ -30,7 +30,7 @@ public class Main extends Application {
     final static double MAX_BULLET_DISTANCE = WIDTH * 0.6;
     final double MAX_PARTICLE_DISTANCE = WIDTH * 0.05;
     static final double PARTICLE_COUNT = 15;
-    final double SPAWNZONE_RADIUS = 100;
+    static final double SPAWNZONE_RADIUS = 100;
     final static double LARGE_SAUCER_RADIUS = Player.PLAYER_RADIUS;
     final double RESPAWN_COOLDOWN = 2;   // in seconds
     final double SAUCER_COOLDOWN = 10;// in seconds
@@ -41,11 +41,11 @@ public class Main extends Application {
     static HashMap<Particle, Double> particlesDistanceCovered = new HashMap<>();
     static Timeline timeline;
     static Circle spawnZone;
-    String shipFilePath = "ship1.svg";
+    static String shipFilePath = "ship1.svg";
     static int HP = 3;
     static int LEVEL = 1;
     static int ASTEROID_COUNT = 4;
-    boolean canShoot = true;
+    static boolean canShoot = true;
     int nextPointThreshold = 10000;
     int respawnTimer = 0;
     int saucerTimer = 0;
@@ -56,11 +56,11 @@ public class Main extends Application {
     static Player player;
     static List<Asteroid> asteroids;
 
-    public static void main(String[] args) {
-        launch();
-    }
 
-    public void init() {
+
+
+    public static void init() {
+
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
         scene.setFill(Color.BLACK);
@@ -101,7 +101,7 @@ public class Main extends Application {
         HUD.init(0, Util.SVGconverter(shipFilePath));
     }
 
-    @Override
+
     public void start(Stage stage) {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
             if (HP <= 0)
