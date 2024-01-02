@@ -149,10 +149,10 @@ public class Main extends Application {
             if(!Enemy.enemyList.isEmpty()){
                 Enemy enemy = Enemy.enemyList.get(0);
                 if(enemy.getType() == 1 && enemyShootTimer == 90){
-                    Enemy.shootBullet();
+                    enemy.shootBullet();
                     enemyShootTimer = 0;
                 }else if(enemy.getType() == 2 && enemyShootTimer == 60){
-                    Enemy.shootBullet();
+                    enemy.shootBullet();
                     enemyShootTimer = 0;
                 }
             }
