@@ -2,7 +2,6 @@ package com.example.MotorolaScienceCup;
 
 import com.example.MotorolaScienceCup.Asteroids.Main;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -12,6 +11,9 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.util.Duration;
+
+import java.io.File;
+import java.net.MalformedURLException;
 
 import static javafx.application.Application.launch;
 
@@ -38,16 +40,20 @@ public class MainController {
 
     @FXML
     void initialize() {
+        animation();
         first.setImage(new Image("file:images\\first.jpg"));
         tempest.setImage(new Image("file:images\\tempest.jpg"));
         battleZone.setImage(new Image("file:images\\battlezone.jpg"));
-
-//        animation();
     }
 
     @FXML
     void animation() {
-        Media media = new Media(getClass().getResource("file:images\\img.mp4").toString());
+        Media media = null;
+        try {
+            media = new Media(new File("images\\img.mp4").toURI().toURL().toString());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
 
         MediaPlayer mediaPlayer = new MediaPlayer(media);
         mediaPlayer.play();
@@ -62,7 +68,7 @@ public class MainController {
                 mediaPlayer.play();
             }
         });
-//        anchorPane.getChildren().add(mediaView);
+        anchorPane.getChildren().add(mediaView);
 
 
     }
@@ -70,7 +76,7 @@ public class MainController {
     @FXML
     private void clicked(MouseEvent event)
     {
-        Main.main();
+        Main.init();
     }
 
 

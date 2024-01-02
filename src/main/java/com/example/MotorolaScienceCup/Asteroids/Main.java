@@ -5,9 +5,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
@@ -60,7 +58,7 @@ public class Main {
     static Stage stage = Menu.stage;
 
 
-    public static void main() {
+    public static void init() {
 
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
