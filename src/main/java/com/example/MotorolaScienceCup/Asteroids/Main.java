@@ -217,7 +217,6 @@ public class Main {
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
 
-        stage = new Stage();
         stage.setScene(scene);
         stage.show();
     }

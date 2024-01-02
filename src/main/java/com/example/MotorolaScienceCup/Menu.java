@@ -9,12 +9,13 @@ import javafx.stage.Stage;
 
 public class Menu extends Application {
     public static AnchorPane root;
-    public static Stage stage;
+    public static Stage stage = new Stage();
     public static Scene scene;
     @Override
     public void start(Stage stage) throws Exception {
         root = FXMLLoader.load(getClass().getResource("Main.fxml"));
         scene = new Scene(root);
+
         stage.setScene(scene);
         stage.show();
     }
