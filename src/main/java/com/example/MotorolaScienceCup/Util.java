@@ -1,4 +1,4 @@
-package com.example.MotorolaScienceCup.Asteroids;
+package com.example.MotorolaScienceCup;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class Util {
     public static List<Double> SVGconverter(String filepath) { // Convert .svg file to a list of coordinates
-        List<Double> list = new ArrayList<>();
+        List<String> list = new ArrayList<>();
         try {
             Scanner scanner = new Scanner(new File(filepath));
             while (scanner.hasNextLine()) {

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.example.MotorolaScienceCup.Asteroids.Main.*;
-import static com.example.MotorolaScienceCup.Asteroids.Util.SVGconverter;
+import static com.example.MotorolaScienceCup.Util.SVGconverter;
 
 public class Enemy extends Particle {
     static List<Enemy> enemyList = new ArrayList<>();
