@@ -15,6 +15,7 @@ public class Menu extends Application {
     public void start(Stage stage) throws Exception {
         root = FXMLLoader.load(getClass().getResource("Main.fxml"));
         scene = new Scene(root);
+        System.out.println(Util.SVGconverter("testsquare.svg"));
 
         stage.setScene(scene);
         stage.show();
