@@ -12,8 +12,8 @@ import javafx.stage.Stage;
 public class Main {
 
     static Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-    final static int WIDTH = (int) screenBounds.getWidth();
-    final static int HEIGHT = (int) screenBounds.getHeight();
+    final static int WIDTH = Menu.WIDTH;
+    final static int HEIGHT = Menu.HEIGHT;
     static Scene scene = Menu.scene;
     static AnchorPane root = Menu.root;
     static Stage stage = Menu.stage;

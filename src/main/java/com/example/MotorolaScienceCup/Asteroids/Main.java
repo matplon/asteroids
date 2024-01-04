@@ -24,8 +24,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Main {
 
     static Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-    final static int WIDTH = (int) screenBounds.getWidth();
-    final static int HEIGHT = (int) screenBounds.getHeight();
+    static int WIDTH = Menu.WIDTH;
+    static int HEIGHT = Menu.HEIGHT;
     final static double FPS = 60;
     final static double BULLET_SPEED = 15;
     final static double MAX_BULLET_DISTANCE = WIDTH * 0.6;

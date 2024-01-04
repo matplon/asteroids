@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HUD {
+    public final static int baseRadius = 40;
     private static int points;
     private static Text pointsText;
     private static Text highScore;
@@ -110,4 +111,8 @@ public class HUD {
     }
 
 
+    public static void drawMap(BetterPolygon base){
+        base.scale(baseRadius /base.getRadius());
+
+    }
 }
