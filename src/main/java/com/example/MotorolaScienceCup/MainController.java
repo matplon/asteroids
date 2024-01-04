@@ -40,7 +40,6 @@ public class MainController {
 
     @FXML
     void initialize() {
-        animation();
         first.setImage(new Image("file:images\\first.jpg"));
         tempest.setImage(new Image("file:images\\tempest.jpg"));
         battleZone.setImage(new Image("file:images\\battlezone.jpg"));
@@ -73,17 +72,12 @@ public class MainController {
 
     }
 
-    @FXML
-    private void clicked(MouseEvent event)
-    {
-        Main.init();
-    }
 
 
 
 
     @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
+    protected void clicked() {
+        Main.init(Menu.root, Menu.scene, Menu.stage);
     }
 }

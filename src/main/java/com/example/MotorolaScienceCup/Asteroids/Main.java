@@ -58,10 +58,10 @@ public class Main {
     static Stage stage = Menu.stage;
 
 
-    public static void init() {
+    public static void init(AnchorPane root, Scene scene, Stage stage) {
 
-        root = new AnchorPane();
-        scene = new Scene(root, WIDTH, HEIGHT);
+        root = root;
+        scene = scene;
         scene.setFill(Color.BLACK);
 
         // Spawn the player
