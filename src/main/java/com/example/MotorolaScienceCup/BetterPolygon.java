@@ -39,17 +39,17 @@ public class BetterPolygon extends javafx.scene.shape.Polygon {
         }
     }
 
-    public static void scale(BetterPolygon polygon){
-        double centerX = polygon.getCenterX();
-        double centerY = polygon.getCenterY();
-
-        for (int i = 0; i < getPoints().size(); i += 2) {
-            double newX = scale * (getPoints().get(i) - centerX) + centerX;
-            double newY = scale * (getPoints().get(i + 1) - centerY) + centerY;
-            getPoints().set(i, newX);
-            getPoints().set(i + 1, newY);
-        }
-    }
+//    public static void scale(BetterPolygon polygon){
+//        double centerX = polygon.getCenterX();
+//        double centerY = polygon.getCenterY();
+//
+//        for (int i = 0; i < getPoints().size(); i += 2) {
+//            double newX = scale * (getPoints().get(i) - centerX) + centerX;
+//            double newY = scale * (getPoints().get(i + 1) - centerY) + centerY;
+//            getPoints().set(i, newX);
+//            getPoints().set(i + 1, newY);
+//        }
+//    }
 
 
 }
