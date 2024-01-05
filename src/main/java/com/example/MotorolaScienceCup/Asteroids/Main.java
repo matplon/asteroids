@@ -220,6 +220,8 @@ public class Main {
     }
 
     public static void resetData(){
+        root = new AnchorPane();
+        scene = new Scene(root,WIDTH,HEIGHT);
         isAlive = new AtomicBoolean(true);
         bullets = new ArrayList<>();
         particlesAll = new ArrayList<>();
