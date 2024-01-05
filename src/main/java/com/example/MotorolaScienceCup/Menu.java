@@ -19,10 +19,10 @@ public class Menu extends Application {
     public static Stage stage = new Stage();
     public static Scene scene;
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage1) throws Exception {
         root = FXMLLoader.load(getClass().getResource("Main.fxml"));
         scene = new Scene(root, WIDTH,HEIGHT);
-        System.out.println(Util.SVGconverter("testsquare.svg"));
+        stage = stage1;
 
         stage.setScene(scene);
         stage.show();

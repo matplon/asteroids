@@ -4,7 +4,6 @@ import com.example.MotorolaScienceCup.Asteroids.Main;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Label;
 import javafx.scene.media.Media;
@@ -20,6 +19,7 @@ import static javafx.application.Application.launch;
 public class MainController {
     @FXML
     private Label welcomeText;
+
     @FXML
     private AnchorPane anchorPane;
 
@@ -31,7 +31,6 @@ public class MainController {
 
     @FXML
     private ImageView battleZone;
-
 
     @FXML
     private MediaView mediaView;
@@ -67,17 +66,16 @@ public class MainController {
                 mediaPlayer.play();
             }
         });
-        anchorPane.getChildren().add(mediaView);
-
-
+        anchorPane.getChildren().add(0, mediaView);
     }
 
-
-
-
+    @FXML
+    protected void clickedAsteroids() {
+        Main.init(Menu.root, Menu.scene, Menu.stage);
+    }
 
     @FXML
-    protected void clicked() {
-        Main.init(Menu.root, Menu.scene, Menu.stage);
+    protected void clickedTempest(){
+        com.example.MotorolaScienceCup.Tempest.Main.init();
     }
 }

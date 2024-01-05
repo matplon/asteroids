@@ -1,6 +1,9 @@
 package com.example.MotorolaScienceCup;
 
+import com.example.MotorolaScienceCup.Asteroids.Particle;
 import javafx.scene.shape.Polygon;
+
+import java.util.List;
 
 public class BetterPolygon extends javafx.scene.shape.Polygon {
 
@@ -39,17 +42,23 @@ public class BetterPolygon extends javafx.scene.shape.Polygon {
         }
     }
 
-//    public static void scale(BetterPolygon polygon){
-//        double centerX = polygon.getCenterX();
-//        double centerY = polygon.getCenterY();
-//
-//        for (int i = 0; i < getPoints().size(); i += 2) {
-//            double newX = scale * (getPoints().get(i) - centerX) + centerX;
-//            double newY = scale * (getPoints().get(i + 1) - centerY) + centerY;
-//            getPoints().set(i, newX);
-//            getPoints().set(i + 1, newY);
-//        }
-//    }
+    public static BetterPolygon scale(BetterPolygon polygon, double scale){
+        BetterPolygon tempPolygon = new BetterPolygon();
+        tempPolygon.getPoints().setAll(polygon.getPoints());
+        tempPolygon.scale(scale);
+        return tempPolygon;
+    }
 
+    public void moveTo(double newCenterX, double newCenterY) {
+        // Calculate new point coordinates
+        double centerX = getCenterX();
+        double centerY = getCenterY();
+        for (int i = 0; i < getPoints().size(); i += 2) {
+            double newX = newCenterX + getPoints().get(i) - centerX;
+            double newY = newCenterY + getPoints().get(i + 1) - centerY;
+            getPoints().set(i, newX);
+            getPoints().set(i + 1, newY);
+        }
+    }
 
 }
