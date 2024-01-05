@@ -37,19 +37,6 @@ public class Particle extends BetterPolygon {
         this.isThrusting = false;
     }
 
-    public void moveTo(double newCenterX, double newCenterY) {
-        // Calculate new point coordinates
-        for (int i = 0; i < getPoints().size(); i += 2) {
-            double newX = newCenterX + getPoints().get(i) - centerX;
-            double newY = newCenterY + getPoints().get(i + 1) - centerY;
-            getPoints().set(i, newX);
-            getPoints().set(i + 1, newY);
-        }
-        centerX = getCenterX();
-        centerY = getCenterY();
-    }
-
-
     public void updatePosition() {
         updateAngle();   // Apply the rotation to the "angle" variable
         rotate(-rotation);   // Rotate the ship

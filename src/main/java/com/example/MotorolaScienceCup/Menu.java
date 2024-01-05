@@ -23,6 +23,7 @@ public class Menu extends Application {
         root = FXMLLoader.load(getClass().getResource("Main.fxml"));
         scene = new Scene(root, WIDTH,HEIGHT);
         System.out.println(Util.SVGconverter("testsquare.svg") +"lol");
+        stage = stage1;
 
         stage1.setScene(scene);
         stage1.show();

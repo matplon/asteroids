@@ -22,7 +22,6 @@ public class Util {
                     String subString = nextLine.substring(5, nextLine.length() - 3);    // Remove unnecessary characters from the sides
                     String[] li = subString.split(" "); // Remove spaces
                     double previousX = 0, previousY = 0;
-                    System.out.println(Arrays.toString(li));
                     for (int i = 0; i<li.length; i++) {
                         if(li[i].contains("H")){
                             previousX = Double.parseDouble(li[i+1]);
