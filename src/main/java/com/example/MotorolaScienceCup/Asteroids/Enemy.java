@@ -72,6 +72,7 @@ public class Enemy extends Particle {
             if ((goingRight && originalX > enemy.getCenterX()) || (!goingRight && originalX < enemy.getCenterX())) {
                 root.getChildren().remove(enemy);
                 enemyList.remove(enemy);
+                enemyShootTimer=0;
             }
         }
     }

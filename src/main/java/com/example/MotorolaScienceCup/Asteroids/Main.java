@@ -6,6 +6,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -54,15 +55,13 @@ public class Main {
     static Player player;
     static List<Asteroid> asteroids;
 
-    static Scene scene = Menu.scene;
-    static AnchorPane root = Menu.root;
-    static Stage stage = Menu.stage;
 
+    static AnchorPane root = new AnchorPane();
+    public static Scene scene = new Scene(root,WIDTH,HEIGHT);
 
-    public static void init(AnchorPane root, Scene scene, Stage stage) {
+    public static void init() {
 
-        root = root;
-        scene = scene;
+        resetData();
         scene.setFill(Color.BLACK);
 
         // Spawn the player
@@ -101,6 +100,8 @@ public class Main {
         HUD.init(0, Util.SVGconverter(shipFilePath));
 
         start();
+        Menu.stage.setScene(scene);
+        Menu.stage.show();
 
     }
 
@@ -216,8 +217,24 @@ public class Main {
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
 
-        stage.setScene(scene);
-        stage.show();
+    }
+
+    public static void resetData(){
+        isAlive = new AtomicBoolean(true);
+        bullets = new ArrayList<>();
+        particlesAll = new ArrayList<>();
+        bulletsDistanceCovered = new HashMap<>();
+        particlesDistanceCovered = new HashMap<>();
+        HP = 3;
+        LEVEL = 1;
+        ASTEROID_COUNT = 4;
+        canShoot = true;
+        nextPointThreshold = 10000;
+        respawnTimer = 0;
+        saucerTimer = 0;
+        enemyShootTimer = 0;
+        Player player;
+        List<Asteroid> asteroids;
     }
 
     public static void gameOver() {

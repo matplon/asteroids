@@ -16,15 +16,16 @@ public class Menu extends Application {
     public  static int WIDTH = (int) screenBounds.getWidth();
     public static int HEIGHT = (int) screenBounds.getHeight();
     public static AnchorPane root;
-    public static Stage stage = new Stage();
+    public static Stage stage;
     public static Scene scene;
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage1) throws Exception {
         root = FXMLLoader.load(getClass().getResource("Main.fxml"));
         scene = new Scene(root, WIDTH,HEIGHT);
-        System.out.println(Util.SVGconverter("testsquare.svg"));
+        System.out.println(Util.SVGconverter("testsquare.svg") +"lol");
 
-        stage.setScene(scene);
-        stage.show();
+        stage1.setScene(scene);
+        stage1.show();
+        stage = stage1;
     }
 }

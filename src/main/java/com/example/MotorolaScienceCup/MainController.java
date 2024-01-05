@@ -78,6 +78,6 @@ public class MainController {
 
     @FXML
     protected void clicked() {
-        Main.init(Menu.root, Menu.scene, Menu.stage);
+        Main.init();
     }
 }

@@ -1,6 +1,8 @@
 package com.example.MotorolaScienceCup.Asteroids;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
+import com.example.MotorolaScienceCup.Menu;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
@@ -8,11 +10,16 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HUD {
+
     public final static int baseRadius = 40;
     private static int points;
     private static Text pointsText;
@@ -83,6 +90,7 @@ public class HUD {
         return points;
     }
     public static void gameOver() {
+        Main.resetData();
         Text gameOverText = new Text("Game Over");
         gameOverText.setFont(font);
         gameOverText.setStroke(Color.RED);
@@ -97,17 +105,21 @@ public class HUD {
         restart.setFont(font);
 
         restart.setOnAction(actionEvent -> {
-
+            Main.init();
         });
 
         Button menu = new Button("Menu");
         menu.setLayoutX(1300);
         menu.setLayoutY(700);
         menu.setFont(font);
+        menu.setOnAction(actionEvent -> {
+            Menu.stage.setScene(Menu.scene);
+            Menu.stage.show();
+        });
 
         newRoot.getChildren().addAll(restart, menu);
-        Main.scene = new Scene(newRoot, Main.WIDTH, Main.HEIGHT);
-        Main.stage.setScene(Main.scene);
+        Scene newScene = new Scene(newRoot, Main.WIDTH, Main.HEIGHT);
+        Menu.stage.setScene(newScene);
     }
 
 
