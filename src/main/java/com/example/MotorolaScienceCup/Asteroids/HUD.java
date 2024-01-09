@@ -96,9 +96,11 @@ public class HUD {
         gameOverText.setStroke(Color.RED);
         gameOverText.setX(Main.WIDTH/2 - gameOverText.getLayoutBounds().getWidth()/2);
         gameOverText.setY(Main.HEIGHT/2);
-        Main.root.getChildren().add(gameOverText);
+
+
 
         AnchorPane newRoot = new AnchorPane();
+        newRoot.getChildren().add(gameOverText);
         Button restart = new Button("Restart");
         restart.setLayoutX(400);
         restart.setLayoutY(700);
@@ -110,18 +112,20 @@ public class HUD {
         menu.setLayoutY(700);
         menu.setFont(font);
         menu.setOnAction(actionEvent -> {
-            Menu.stage.setScene(Menu.scene);
-            Menu.stage.show();
+            try {
+                Menu.resetMenu();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        restart.setOnAction(actionEvent -> {
+            Main.init();
         });
 
         newRoot.getChildren().addAll(restart, menu);
         Scene newScene = new Scene(newRoot, Main.WIDTH, Main.HEIGHT);
+        newScene.setFill(Color.BLACK);
         Menu.stage.setScene(newScene);
-
-        restart.setOnAction(actionEvent -> {
-            newScene.setFill(Color.BLACK);
-            Main.init();
-        });
     }
 
 

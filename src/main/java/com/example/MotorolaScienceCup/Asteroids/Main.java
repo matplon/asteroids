@@ -7,10 +7,14 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
@@ -44,7 +48,7 @@ public class Main {
     static Timeline timeline;
     static Circle spawnZone;
     static String shipFilePath = "ship1.svg";
-    static int HP = 3;
+    static int HP = 1;
     static int LEVEL = 1;
     static int ASTEROID_COUNT = 4;
     static boolean canShoot = true;
@@ -63,6 +67,7 @@ public class Main {
 
         resetData();
         scene.setFill(Color.BLACK);
+        root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
 
         // Spawn the player
         player = new Player(Util.SVGconverter(shipFilePath), -90, 0, 0);
@@ -222,12 +227,15 @@ public class Main {
     public static void resetData(){
         root = new AnchorPane();
         scene = new Scene(root,WIDTH,HEIGHT);
+        scene.setFill(Color.BLACK);
+        root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
+        Timeline timeline = new Timeline();
         isAlive = new AtomicBoolean(true);
         bullets = new ArrayList<>();
         particlesAll = new ArrayList<>();
         bulletsDistanceCovered = new HashMap<>();
         particlesDistanceCovered = new HashMap<>();
-        HP = 3;
+        HP = 1;
         LEVEL = 1;
         ASTEROID_COUNT = 4;
         canShoot = true;
@@ -240,6 +248,7 @@ public class Main {
     }
 
     public static void gameOver() {
+        timeline.stop();
         HUD.gameOver();
     }
 
