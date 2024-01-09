@@ -20,7 +20,7 @@ public class Enemy extends Particle {
     }};
     private final int type;
 
-    private static List<Particle> enemyBullets = new ArrayList<>();
+    static List<Particle> enemyBullets = new ArrayList<>();
     static HashMap<Particle, Double> enemyBulletDistanceCovered = new HashMap<>();
 
 

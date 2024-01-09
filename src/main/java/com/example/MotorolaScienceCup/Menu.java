@@ -24,7 +24,6 @@ public class Menu extends Application {
     public static void resetMenu() throws IOException {
         root = FXMLLoader.load(Menu.class.getResource("Main.fxml"));
         scene = new Scene(root, WIDTH,HEIGHT);
-        System.out.println(Util.SVGconverter("testsquare.svg") +"lol");
         stage.setScene(scene);
         stage.show();
     }
@@ -32,7 +31,6 @@ public class Menu extends Application {
     public void start(Stage stage1) throws Exception {
         root = FXMLLoader.load(getClass().getResource("Main.fxml"));
         scene = new Scene(root, WIDTH,HEIGHT);
-        System.out.println(Util.SVGconverter("testsquare.svg") +"lol");
         stage = stage1;
 
         stage1.setScene(scene);

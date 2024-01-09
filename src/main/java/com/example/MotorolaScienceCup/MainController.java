@@ -72,10 +72,6 @@ public class MainController {
 
     }
 
-
-
-
-
     @FXML
     protected void clickedAsteroids() {
         Main.init();

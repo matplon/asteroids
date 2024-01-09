@@ -27,8 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class Main {
-
-    static Rectangle2D screenBounds = Screen.getPrimary().getBounds();
     static int WIDTH = Menu.WIDTH;
     static int HEIGHT = Menu.HEIGHT;
     final static double FPS = 60;
@@ -57,7 +55,7 @@ public class Main {
     static int saucerTimer = 0;
     static double enemyShootTimer = 0;
     static Player player;
-    static List<Asteroid> asteroids;
+    static List<Asteroid> asteroids = new ArrayList<>();
 
 
     static AnchorPane root = new AnchorPane();
@@ -99,7 +97,6 @@ public class Main {
         });
 
         // Spawn the big asteroids
-        asteroids = new ArrayList<>();
         Asteroid.spawnAsteroids(ASTEROID_COUNT);
 
         HUD.init(0, Util.SVGconverter(shipFilePath));
@@ -229,7 +226,7 @@ public class Main {
         scene = new Scene(root,WIDTH,HEIGHT);
         scene.setFill(Color.BLACK);
         root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
-        Timeline timeline = new Timeline();
+        timeline = new Timeline();
         isAlive = new AtomicBoolean(true);
         bullets = new ArrayList<>();
         particlesAll = new ArrayList<>();
@@ -243,8 +240,10 @@ public class Main {
         respawnTimer = 0;
         saucerTimer = 0;
         enemyShootTimer = 0;
-        Player player;
-        List<Asteroid> asteroids;
+        Enemy.enemyList.clear();
+        Enemy.enemyBullets.clear();
+        asteroids.clear();
+        bullets.clear();
     }
 
     public static void gameOver() {
