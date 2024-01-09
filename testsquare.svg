@@ -54,7 +54,7 @@
      id="layer1">
     <path
        style="fill:none;stroke:#000000;stroke-width:0.264494047 V58332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 42.333333,103.47619 V 151.10119 H 101.20833 Z"
+       d="M 50,0 85,15 100,50 85,85 50,100 15,85 0,50 15,15 Z"
        id="path10"
        inkscape:connector-curvature="0" />
   </g>
