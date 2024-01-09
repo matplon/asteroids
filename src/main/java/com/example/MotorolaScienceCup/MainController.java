@@ -77,7 +77,12 @@ public class MainController {
 
 
     @FXML
-    protected void clicked() {
+    protected void clickedAsteroids() {
         Main.init();
+    }
+
+    @FXML
+    protected void clickedTempest() {
+        com.example.MotorolaScienceCup.Tempest.Main.init();
     }
 }

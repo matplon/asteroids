@@ -51,6 +51,6 @@ public class HUD {
     }
 
     private void drawWeb(List<Double> smallPoints, List<Double> bigPoints){
-        fori
+
     }
 }

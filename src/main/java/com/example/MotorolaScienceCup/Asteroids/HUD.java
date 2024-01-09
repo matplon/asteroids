@@ -104,9 +104,6 @@ public class HUD {
         restart.setLayoutY(700);
         restart.setFont(font);
 
-        restart.setOnAction(actionEvent -> {
-            Main.init();
-        });
 
         Button menu = new Button("Menu");
         menu.setLayoutX(1300);
@@ -120,6 +117,11 @@ public class HUD {
         newRoot.getChildren().addAll(restart, menu);
         Scene newScene = new Scene(newRoot, Main.WIDTH, Main.HEIGHT);
         Menu.stage.setScene(newScene);
+
+        restart.setOnAction(actionEvent -> {
+            newScene.setFill(Color.BLACK);
+            Main.init();
+        });
     }
 
 
