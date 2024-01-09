@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -21,6 +22,7 @@ public class Main {
     static List<Polyline> connectors;
 
     public static void init() {
+        connectors = new ArrayList<>();
         HUD.drawMap("testsquare.svg", Color.BLUE);
     }
 
