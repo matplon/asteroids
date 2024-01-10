@@ -9,40 +9,22 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Player extends BetterPolygon {
-    private final int MOVES_PER_SIDE = 6;
-    private double moveLength;
+    private final double MOVE_SIZE = 1; // pixel
     private double sideLength;
-    private HashMap<Polyline, Pair<Double, Double>> moveLengthsHashmap; //  <Side, <XInterval, YInterval>>
+    private int sideIndex;
+    private int rightSideIndex;
+    private int leftSideIndex;
+    private HashMap<Integer, Pair<Double, Double>> moveLengthsHashmap; //  <Side, <XInterval, YInterval>>
 
-    public Player(List<Double> points, double sideLength){
+    public Player(List<Double> points, double sideLength, int sideIndex, int rightSideIndex, int leftSideInex){
         super(points);
-        this.moveLength = sideLength / MOVES_PER_SIDE;
         this.sideLength = sideLength;
-        calculateMoveLength(Main.bigShape);
+        this.sideIndex = sideIndex;
+        this.rightSideIndex = rightSideIndex;
+        this.leftSideIndex = leftSideInex;
     }
     
-    public void move(){
-        for (Polyline polyline: Main.bigShape) {
-            if(Shape.intersect(this, polyline).getLayoutBounds().getWidth() > 0){
-                moveTo(getCenterX() + moveLengthsHashmap.get(polyline).getValue(), getCenterX() + moveLengthsHashmap.get(polyline).getKey());
-                break;
-            }
-        }
-    }
+    public void move(boolean left){
 
-    private void calculateMoveLength(List<Polyline> sides){
-        for (Polyline polyline: sides) {
-            double gradient = (polyline.getPoints().get(3) - polyline.getPoints().get(1)) / (polyline.getPoints().get(2) - polyline.getPoints().get(0));
-            double angle = Math.atan(gradient);
-            double xInterval = moveLength * Math.cos(angle);
-            double yInterval = moveLength * Math.sin(angle);
-            if (polyline.getPoints().get(0) > polyline.getPoints().get(2)) {
-                xInterval  *= -1;
-            }
-            if ((polyline.getPoints().get(3) > polyline.getPoints().get(1) && gradient < 0) || (gradient > 0 && polyline.getPoints().get(3) < polyline.getPoints().get(1))) {
-                yInterval *= -1;
-            }
-            moveLengthsHashmap.put(polyline, new Pair<>(xInterval, yInterval));
-        }
     }
 }
