@@ -22,15 +22,14 @@ public class HUD {
     public static void drawMap(String filepath, Color color) {
         List<Double> basePoints = Util.SVGconverter(filepath);
 
-        base = new BetterPolygon();
-        base.getPoints().setAll(basePoints);
+        base = new BetterPolygon(basePoints);
         base.setStroke(color);
         base.setFill(Color.TRANSPARENT);
         base.moveTo((double) WIDTH / 2, (double) HEIGHT / 2 + baseOffset);
         root.getChildren().add(base);
         basePoints = base.getPoints();
 
-        BetterPolygon tempPolygon = BetterPolygon.scale(base, 15);
+        BetterPolygon tempPolygon = BetterPolygon.scale(base, 8);
         tempPolygon.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
         List<Double> bigShapePoints = tempPolygon.getPoints();
 

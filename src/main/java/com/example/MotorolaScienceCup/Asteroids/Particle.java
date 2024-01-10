@@ -23,7 +23,7 @@ public class Particle extends BetterPolygon {
     protected final double FPS = Main.FPS;
 
     public Particle(List<Double> points, double angle, double rotation, double velocity, double friction) {
-        super();
+        super(points);
         getPoints().setAll(points);
         this.centerX = getCenterX();
         this.centerY = getCenterY();

@@ -232,7 +232,7 @@ public class Main {
         particlesAll = new ArrayList<>();
         bulletsDistanceCovered = new HashMap<>();
         particlesDistanceCovered = new HashMap<>();
-        HP = 1;
+        HP = 3;
         LEVEL = 1;
         ASTEROID_COUNT = 4;
         canShoot = true;
