@@ -19,23 +19,41 @@ public class Util {
                 String leftRemoved = nextLine.replaceAll("^\\s+", "");  // Remove whitespaces from the sides
                 nextLine = leftRemoved.replaceAll("\\s+$", "");
                 if (nextLine.startsWith("d=")) {    // Find the path line in the .svg file
-                    String subString = nextLine.substring(5, nextLine.length() - 3);    // Remove unnecessary characters from the sides
+                    Character charAt = nextLine.charAt(0);
+                    int indexesToRemoveLeft = 0;
+                    while (!Character.isDigit(charAt)) {
+                        indexesToRemoveLeft++;
+                        charAt = nextLine.charAt(indexesToRemoveLeft);
+                    }
+                    int indexesToRemoveRight = 0;
+                    charAt = nextLine.charAt(nextLine.length() - indexesToRemoveRight - 1);
+                    while(!Character.isDigit(charAt)){
+                        indexesToRemoveRight++;
+                        charAt = nextLine.charAt(nextLine.length() - indexesToRemoveRight);
+                    }
+                    String subString = nextLine.substring(indexesToRemoveLeft, nextLine.length() - indexesToRemoveRight);    // Remove unnecessary characters from the sides
+                    if (subString.contains("Z")) {
+                        subString = subString.substring(0, subString.length() - 3);
+                    }
+                    String substringNew = subString;
+                    if (subString.contains("M")) {
+                        substringNew = subString.replaceAll("M", "");
+                    }
+                    subString = substringNew.replaceAll(" {2}", " ");
                     String[] li = subString.split(" "); // Remove spaces
                     double previousX = 0, previousY = 0;
-                    for (int i = 0; i<li.length; i++) {
-                        if(li[i].contains("H")){
-                            previousX = Double.parseDouble(li[i+1]);
+                    for (int i = 0; i < li.length; i++) {
+                        if (li[i].contains("H")) {
+                            previousX = Double.parseDouble(li[i + 1]);
                             list.add(previousX);
                             list.add(previousY);
                             i++;
-                        }
-                        else if(li[i].contains("V")){
-                            previousY = Double.parseDouble(li[i+1]);
+                        } else if (li[i].contains("V")) {
+                            previousY = Double.parseDouble(li[i + 1]);
                             list.add(previousX);
                             list.add(previousY);
                             i++;
-                        }
-                        else{
+                        } else if (!li[i].isEmpty()) {
                             String[] lili = li[i].split(",");   // Remove commas
                             previousX = Double.parseDouble(lili[0]);
                             list.add(previousX);
