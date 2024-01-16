@@ -27,20 +27,11 @@ public class Util {
                     }
                     int indexesToRemoveRight = 0;
                     charAt = nextLine.charAt(nextLine.length() - indexesToRemoveRight - 1);
-                    while(!Character.isDigit(charAt)){
+                    while (!Character.isDigit(charAt)) {
                         indexesToRemoveRight++;
                         charAt = nextLine.charAt(nextLine.length() - indexesToRemoveRight);
                     }
-                    String subString = nextLine.substring(indexesToRemoveLeft, nextLine.length() - indexesToRemoveRight);    // Remove unnecessary characters from the sides
-                    if (subString.contains("Z")) {
-                        subString = subString.substring(0, subString.length() - 3);
-                    }
-                    String substringNew = subString;
-                    if (subString.contains("M")) {
-                        substringNew = subString.replaceAll("M", "");
-                    }
-                    subString = substringNew.replaceAll(" {2}", " ");
-                    String[] li = subString.split(" "); // Remove spaces
+                    String[] li = getStrings(nextLine, indexesToRemoveLeft, indexesToRemoveRight);
                     double previousX = 0, previousY = 0;
                     for (int i = 0; i < li.length; i++) {
                         if (li[i].contains("H")) {
@@ -67,5 +58,19 @@ public class Util {
             throw new RuntimeException(e);
         }
         return list;
+    }
+
+    private static String[] getStrings(String nextLine, int indexesToRemoveLeft, int indexesToRemoveRight) {
+        String subString = nextLine.substring(indexesToRemoveLeft, nextLine.length() - indexesToRemoveRight);    // Remove unnecessary characters from the sides
+        if (subString.contains("Z")) {
+            subString = subString.substring(0, subString.length() - 3);
+        }
+        String substringNew = subString;
+        if (subString.contains("M")) {
+            substringNew = subString.replaceAll("M", "");
+        }
+        subString = substringNew.replaceAll(" {2}", " ");
+        String[] li = subString.split(" "); // Remove spaces
+        return li;
     }
 }
