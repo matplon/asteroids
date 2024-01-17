@@ -25,7 +25,7 @@ public class Main {
 
     public static void init() {
         connectors = new ArrayList<>();
-        Graphics.drawMap("mapa1.svg", Color.BLUE);
+        Graphics.drawMap("testsquare.svg", Color.BLUE);
         double bigSideLength = Math.sqrt(Math.pow(bigShape.get(0).getPoints().get(2) - bigShape.get(0).getPoints().get(0), 2) +
                 Math.pow(bigShape.get(0).getPoints().get(3) - bigShape.get(0).getPoints().get(1), 2));
         Player player = new Player(Util.SVGconverter("ship1.svg"), bigSideLength, 0, 7, 1);

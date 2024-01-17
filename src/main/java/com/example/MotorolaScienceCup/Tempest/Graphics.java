@@ -58,39 +58,38 @@ public class Graphics {
             connectors.add(polyline);
             root.getChildren().add(polyline);
         }
-        int i = 0;
-        int connectionsPerSide = (16 - smallShapePoints.size() / 2) / bigShape.size();
-        for (Polyline polyline : bigShape) {
-            List<Double> points = polyline.getPoints();
-            double bigXInterval = points.get(2) - points.get(0);
-            double bigYInterval = points.get(3) - points.get(1);
-            bigXInterval /= connectionsPerSide + 1;
-            bigYInterval /= connectionsPerSide + 1;
-
-            double smallXInterval, smallYInterval;
-
+        int n = 16 - smallShapePoints.size() / 2;
+        n /= (smallShapePoints.size() / 2);
+        for (int i = 0; i < smallShapePoints.size(); i += 2) {
+            double xDiffSmall, yDiffSmall, xDiffBig, yDiffBig;
             if (i + 2 >= smallShapePoints.size()) {
-                smallXInterval = smallShapePoints.get(0) - smallShapePoints.get(i);
-                smallYInterval = smallShapePoints.get(1) - smallShapePoints.get(i + 1);
+                xDiffSmall = smallShapePoints.get(0) - smallShapePoints.get(i);
+                yDiffSmall = smallShapePoints.get(1) - smallShapePoints.get(i + 1);
+                xDiffBig = bigShapePoints.get(0) - bigShapePoints.get(i);
+                yDiffBig = bigShapePoints.get(1) - bigShapePoints.get(i + 1);
             } else {
-                smallXInterval = smallShapePoints.get(i + 2) - smallShapePoints.get(i);
-                smallYInterval = smallShapePoints.get(i + 3) - smallShapePoints.get(i + 1);
+                xDiffSmall = smallShapePoints.get(i + 2) - smallShapePoints.get(i);
+                yDiffSmall = smallShapePoints.get(i + 3) - smallShapePoints.get(i + 1);
+                xDiffBig = bigShapePoints.get(i + 2) - bigShapePoints.get(i);
+                yDiffBig = bigShapePoints.get(i + 3) - bigShapePoints.get(i + 1);
             }
-            smallXInterval /= connectionsPerSide + 1;
-            smallYInterval /= connectionsPerSide + 1;
-
-            for (int j = 1; j <= connectionsPerSide; j++) {
-                Polyline connection = new Polyline(0, 0, 0, 0);
-                connection.getPoints().set(0, points.get(0) + j * bigXInterval);
-                connection.getPoints().set(1, points.get(1) + j * bigYInterval);
-                connection.getPoints().set(2, smallShapePoints.get(i) + j * smallXInterval);
-                connection.getPoints().set(3, smallShapePoints.get(i + 1) + j * smallYInterval);
-                connection.setStroke(color);
-                connection.setFill(color);
-                connectors.add(connection);
-                root.getChildren().add(connection);
+            xDiffSmall /= (n + 1);
+            yDiffSmall /= (n + 1);
+            xDiffBig /= (n + 1);
+            yDiffBig /= (n + 1);
+            System.out.println("Smol: "+ smallShapePoints.get(i) + " " + smallShapePoints.get(i+ 1) + " Big: " + bigShapePoints.get(i)+" "+bigShapePoints.get(i+1));
+            System.out.println("Small " + xDiffSmall + " "+ yDiffSmall + " Big: " + xDiffBig + " "+ yDiffBig+"\n");
+            for (int j = 1; j <= n; j++) {
+                double xSmall = smallShapePoints.get(i) + xDiffSmall * j;
+                double ySmall = smallShapePoints.get(i + 1) + yDiffSmall * j;
+                double xBig = bigShapePoints.get(i) + xDiffBig * j;
+                double yBig = bigShapePoints.get(i + 1) + yDiffBig * j;
+                Polyline polyline = new Polyline(xSmall, ySmall, xBig, yBig);
+                polyline.setStroke(color);
+                polyline.setFill(color);
+                connectors.add(polyline);
+                root.getChildren().add(polyline);
             }
-            i += 2;
         }
     }
 

@@ -29,7 +29,7 @@ public class Util {
                     charAt = nextLine.charAt(nextLine.length() - indexesToRemoveRight - 1);
                     while (!Character.isDigit(charAt)) {
                         indexesToRemoveRight++;
-                        charAt = nextLine.charAt(nextLine.length() - indexesToRemoveRight);
+                        charAt = nextLine.charAt(nextLine.length() - indexesToRemoveRight - 1);
                     }
                     String[] li = getStrings(nextLine, indexesToRemoveLeft, indexesToRemoveRight);
                     double previousX = 0, previousY = 0;
