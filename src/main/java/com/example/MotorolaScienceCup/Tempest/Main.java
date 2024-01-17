@@ -16,26 +16,28 @@ import java.util.List;
 public class Main {
     final static int WIDTH = Menu.WIDTH;
     final static int HEIGHT = Menu.HEIGHT;
-    static Scene scene = Menu.scene;
-    static AnchorPane root = Menu.root;
+    static Scene scene;
+    static AnchorPane root;
     static Stage stage = Menu.stage;
-    static BetterPolygon base;
+    static List<Polyline> smallShape;
     static List<Polyline> bigShape;
     static List<Polyline> connectors;
+    static List<Panel> panels;
+    static String testMap1 = "testoctagon.svg";
+    static String testMap2 = "testsquareKTORYDZIALA.svg";
+    static String testMap3 = "mapa 3.svg";
+    static String testShip = "ship1.svg";
 
     public static void init() {
         connectors = new ArrayList<>();
-        Graphics.drawMap("testsquare.svg", Color.BLUE);
-        double bigSideLength = Math.sqrt(Math.pow(bigShape.get(0).getPoints().get(2) - bigShape.get(0).getPoints().get(0), 2) +
-                Math.pow(bigShape.get(0).getPoints().get(3) - bigShape.get(0).getPoints().get(1), 2));
-        Player player = new Player(Util.SVGconverter("ship1.svg"), bigSideLength, 0, 7, 1);
-        player.moveTo(bigShape.get(0).getPoints().get(0), bigShape.get(0).getPoints().get(1));
-        player.setStroke(Color.RED);
-        player.scale(20/player.getRadius());
-        root.getChildren().add(player);
-//        scene.setOnKeyPressed(keyEvent -> {
-//            if (keyEvent.getCode() == KeyCode.RIGHT) player.move(false);   // Move right
-//        });
+        bigShape = new ArrayList<>();
+        smallShape = new ArrayList<>();
+        panels = new ArrayList<>();
+        root = new AnchorPane();
+        scene = new Scene(root, WIDTH, HEIGHT);
+        stage.setScene(scene);
+
+        Graphics.drawMap(testMap2, Color.BLUE);
     }
 
 }
