@@ -13,11 +13,11 @@
  height="297mm"
  viewBox="0 0 210 297"
  version="1.1"
- id="svg5007"
+ id="svg5069"
  inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
- sodipodi:docname="testsquare.svg">
+ sodipodi:docname="map6.svg">
 <defs
- id="defs5001" />
+ id="defs5063" />
 <sodipodi:namedview
  id="base"
  pagecolor="#ffffff"
@@ -25,9 +25,9 @@
  borderopacity="1.0"
  inkscape:pageopacity="0.0"
  inkscape:pageshadow="2"
- inkscape:zoom="0.7"
- inkscape:cx="396.3425"
- inkscape:cy="733.22994"
+ inkscape:zoom="1.4"
+ inkscape:cx="536.13938"
+ inkscape:cy="472.12938"
  inkscape:document-units="mm"
  inkscape:current-layer="layer1"
  showgrid="false"
@@ -37,7 +37,7 @@
  inkscape:window-y="-8"
  inkscape:window-maximized="1" />
 <metadata
- id="metadata5004">
+ id="metadata5066">
 <rdf:RDF>
 <cc:Work
  rdf:about="">
@@ -53,9 +53,22 @@
  inkscape:groupmode="layer"
  id="layer1">
 <path
- id="path5033-1"
- style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
- d="M 55.59667,95.787292 H 110.11965 Z M 110.11965,150.31027 H 55.59667 M 110.11965,95.787292 V 150.31027 M 55.59667,95.787292 V 150.31027 Z"
- inkscape:connector-curvature="0" />
+ sodipodi:type="star"
+ style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:0.21499999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+ id="path5082"
+ sodipodi:sides="8"
+ sodipodi:cx="46.113091"
+ sodipodi:cy="51.315475"
+ sodipodi:r1="59.873146"
+ sodipodi:r2="42.33672"
+ sodipodi:arg1="-1.141034"
+ sodipodi:arg2="-0.74833492"
+ inkscape:flatsided="false"
+ inkscape:rounded="0"
+ inkscape:randomized="0.002"
+ d="M 71.069963,-3.0038589 77.256105,22.547226 102.21152,30.463538 88.417907,52.787387 100.64002,76.232191 74.813834,82.350298 66.945887,107.40492 44.586508,93.5633 21.062527,105.86244 15.056953,80.116644 -9.9659923,72.206102 3.7148298,49.852394 -8.4203091,26.455859 17.318903,20.289482 25.343857,-4.9277482 47.611735,8.9795158 Z"
+ inkscape:transform-center-x="0.048852597"
+ inkscape:transform-center-y="0.013685448"
+ transform="translate(61.232143,117.17262)" />
 </g>
 </svg>
