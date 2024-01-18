@@ -10,21 +10,75 @@ import java.util.List;
 
 public class Player extends BetterPolygon {
     private final double MOVE_SIZE = 1; // pixel
-    private double sideLength;
+    private double xStepLeft, xStepRight;
+    private double yStepLeft, yStepRight;
     private int sideIndex;
-    private int rightSideIndex;
-    private int leftSideIndex;
-    private HashMap<Integer, Pair<Double, Double>> moveLengthsHashmap; //  <Side, <XInterval, YInterval>>
+    private Panel currentPanel;
 
-    public Player(List<Double> points, double sideLength, int sideIndex, int rightSideIndex, int leftSideInex){
+    public Player(List<Double> points, Panel currentPanel){
         super(points);
-        this.sideLength = sideLength;
-        this.sideIndex = sideIndex;
-        this.rightSideIndex = rightSideIndex;
-        this.leftSideIndex = leftSideInex;
+        this.currentPanel = currentPanel;
+
     }
     
     public void move(boolean left){
+        double leftRightDiffX = currentPanel.getRightSide().getPoints().get(2) - currentPanel.getLeftSide().getPoints().get(2);
+        double leftRightDiffY = currentPanel.getRightSide().getPoints().get(3) - currentPanel.getLeftSide().getPoints().get(3);
 
+        if(left){
+            moveTo(getCenterX() + xStepLeft, getCenterY() + yStepLeft);
+            if(leftRightDiffX > 0){
+                if(getCenterX() < currentPanel.getLeftSide().getPoints().get(2)){
+                    moveTo(currentPanel.getLeftPanel().getRightSide().getPoints().get(2), currentPanel.getLeftPanel().getRightSide().getPoints().get(3));
+                    currentPanel = currentPanel.getLeftPanel();
+                }
+            }
+            else if(leftRightDiffX < 0){
+                if(getCenterX() > currentPanel.getLeftSide().getPoints().get(2)){
+                    moveTo(currentPanel.getLeftPanel().getRightSide().getPoints().get(2), currentPanel.getLeftPanel().getRightSide().getPoints().get(3));
+                    currentPanel = currentPanel.getLeftPanel();
+                }
+            }
+            if(leftRightDiffY > 0){
+                if(getCenterY() < currentPanel.getLeftSide().getPoints().get(3)){
+                    moveTo(currentPanel.getLeftPanel().getRightSide().getPoints().get(2), currentPanel.getLeftPanel().getRightSide().getPoints().get(3));
+                    currentPanel = currentPanel.getLeftPanel();
+                }
+            }
+            else if(leftRightDiffY < 0){
+                if(getCenterY() > currentPanel.getLeftSide().getPoints().get(3)){
+                    moveTo(currentPanel.getLeftPanel().getRightSide().getPoints().get(2), currentPanel.getLeftPanel().getRightSide().getPoints().get(3));
+                    currentPanel = currentPanel.getLeftPanel();
+                }
+            }
+        }
+        else{
+            moveTo(getCenterX() + xStepRight, getCenterY() + yStepRight);
+            if(leftRightDiffX > 0){
+                if(getCenterX() > currentPanel.getRightSide().getPoints().get(2)){
+                    moveTo(currentPanel.getRightPanel().getLeftSide().getPoints().get(2), currentPanel.getRightPanel().getLeftSide().getPoints().get(3));
+                    currentPanel = currentPanel.getRightPanel();
+                }
+            }
+            else if(leftRightDiffX < 0){
+                if(getCenterX() < currentPanel.getRightSide().getPoints().get(2)){
+                    moveTo(currentPanel.getRightPanel().getLeftSide().getPoints().get(2), currentPanel.getRightPanel().getLeftSide().getPoints().get(3));
+                    currentPanel = currentPanel.getRightPanel();
+                }
+            }
+            if(leftRightDiffY > 0){
+                if(getCenterX() > currentPanel.getRightSide().getPoints().get(3)){
+                    moveTo(currentPanel.getRightPanel().getLeftSide().getPoints().get(2), currentPanel.getRightPanel().getLeftSide().getPoints().get(3));
+                    currentPanel = currentPanel.getRightPanel();
+                }
+            }
+            else if(leftRightDiffY < 0){
+                if(getCenterX() < currentPanel.getRightSide().getPoints().get(3)){
+                    moveTo(currentPanel.getRightPanel().getLeftSide().getPoints().get(2), currentPanel.getRightPanel().getLeftSide().getPoints().get(3));
+                    currentPanel = currentPanel.getRightPanel();
+                }
+            }
+        }
+        System.out.println(getCenterX()+" "+getCenterY());
     }
 }
