@@ -35,4 +35,28 @@ public class Panel {
     public void setRightPanel(Panel rightPanel) {
         this.rightPanel = rightPanel;
     }
+
+    public Polyline getSmallSide() {
+        return smallSide;
+    }
+
+    public Polyline getBigSide() {
+        return bigSide;
+    }
+
+    public Polyline getLeftSide() {
+        return leftSide;
+    }
+
+    public Polyline getRightSide() {
+        return rightSide;
+    }
+
+    public Panel getLeftPanel() {
+        return leftPanel;
+    }
+
+    public Panel getRightPanel() {
+        return rightPanel;
+    }
 }

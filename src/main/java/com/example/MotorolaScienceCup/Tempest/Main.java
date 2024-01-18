@@ -37,7 +37,22 @@ public class Main {
         scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
 
+
         Graphics.drawMap(testMap2, Color.BLUE);
+
+        Player player = new Player(Util.SVGconverter(testShip), panels.getFirst());
+        player.scale(20/player.getRadius());
+        player.setStroke(Color.RED);
+        player.setFill(Color.RED);
+        player.moveTo(panels.getFirst().getRightSide().getPoints().get(2), panels.getFirst().getRightSide().getPoints().get(3));
+        root.getChildren().add(player);
+        System.out.println(player.getCenterX()+" "+player.getCenterY());
+
+        scene.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.RIGHT) player.move(false);   // Rotate right
+            if (keyEvent.getCode() == KeyCode.LEFT) player.move(true); // Rotate left
+        });
+
     }
 
 }
