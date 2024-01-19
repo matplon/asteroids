@@ -1,8 +1,5 @@
 package com.example.MotorolaScienceCup;
 
-import com.example.MotorolaScienceCup.Asteroids.Particle;
-import javafx.scene.shape.Polygon;
-
 import java.util.List;
 
 public class BetterPolygon extends javafx.scene.shape.Polygon {

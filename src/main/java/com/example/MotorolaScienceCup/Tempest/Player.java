@@ -1,8 +1,14 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
+import com.example.MotorolaScienceCup.Particle;
+import com.example.MotorolaScienceCup.Util;
+import javafx.scene.paint.Color;
 
+import java.util.Arrays;
 import java.util.List;
+
+import static com.example.MotorolaScienceCup.Tempest.Main.*;
 
 public class Player extends BetterPolygon {
     private double xStepLeft, xStepRight;
@@ -79,6 +85,20 @@ public class Player extends BetterPolygon {
                 currentPanel = currentPanel.getRightPanel();
             }
         }
+    }
+
+    public void shoot() {
+        double x = (currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2))/2;
+        double y = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().getLast())/2;
+        System.out.println(x+" "+y);
+        List<Double> points = Util.SVGconverter(bullet);    // Rectangle bullet
+        Particle bullet = new Particle(points, Math.atan2(y, x), 0, BULLET_SPEED, 0);
+        bullet.setFill(Color.RED);
+        bullet.scale(10/bullet.getRadius());
+        bullet.moveTo(x, y);
+        currentPanel.bullets.add(bullet);
+
+        root.getChildren().add(bullet);
     }
 
     public Panel getCurrentPanel() {
