@@ -7,6 +7,61 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Util {
+
+    public static double[][] getTranslationMatrix(double Tx, double Ty, double Tz){
+        double[][] matrix = {
+                {1,0,0,Tx},
+                {0,1,0,Ty},
+                {0,0,1,Tz},
+                {0,0,0,1}
+        };
+        return matrix;
+    }
+
+    public static double[][] getRotationYMatrix(double angle){
+        double[][] matrix = {
+                {Math.cos(Math.toRadians(angle)),0,Math.sin(Math.toRadians(angle)),0},
+                {0,                              1,0,                              0},
+                {Math.sin(Math.toRadians(angle))*(-1),0,Math.cos(Math.toRadians(angle)),0},
+                {0,                                   0,0,                              1}
+        };
+        return matrix;
+    }
+
+    public static double[][] getRotationXMatrix(double angle){
+        double[][] matrix = {
+                {1,0,0,0},
+                {0,Math.cos(Math.toRadians(angle)),Math.sin(Math.toRadians(angle))*(-1),0},
+                {0,Math.sin(Math.toRadians(angle)),Math.cos(Math.toRadians(angle)),0},
+                {0,0,0,1}
+        };
+        return matrix;
+    }
+
+    public static double[][] getRotationZMatrix(double angle){
+        double[][] matrix = {
+                {Math.cos(Math.toRadians(angle)),Math.sin(Math.toRadians(angle))*(-1),0,0},
+                {Math.sin(Math.toRadians(angle)),Math.cos(Math.toRadians(angle)),0,0},
+                {0,0,1,0},
+                {0,0,0,1}
+        };
+        return matrix;
+    }
+
+    public static double[][] getScaleMatrix(double Tx, double Ty, double Tz){
+        double[][] matrix = {
+                {Tx,0, 0, 0},
+                {0, Ty,0, 0},
+                {0, 0, Tz,0},
+                {0, 0, 0, 1}
+        };
+        return matrix;
+    }
+
+
+
+
+
     public static double [] multiplyTransform(double[][] matrix1, double[] array){
         double [] finalArray = new double[4];
         for (int i = 0; i < array.length; i++) {
@@ -18,6 +73,26 @@ public class Util {
 
         }
         return finalArray;
+    }
+
+    public static double [][] multiplyMatrices(double[][] matrix1, double[][] matrix2){
+        double [][] finalMatrix = new double[4][4];
+        for (int i = 0; i < matrix1.length; i++) {
+            for (int j = 0; j < matrix1[0].length; j++) {
+                double result = 0;
+                for (int k = 0; k < matrix2.length; k++) {
+                    result += matrix2[k][j]*matrix1[i][k];
+                }
+                finalMatrix[i][j]=result;
+            }
+
+        }
+        return finalMatrix;
+    }
+
+    public static Vertex arrToVert(double[] arr){
+        Vertex vertex = new Vertex(arr[0], arr[1], arr[2], arr[3]);
+        return vertex;
     }
     public static Object3D convertOBJ(String path){
         ArrayList<Vertex> vertices = new ArrayList<>();

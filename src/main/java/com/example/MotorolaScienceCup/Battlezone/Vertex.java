@@ -15,6 +15,23 @@ public class Vertex {
 
     }
 
+    public Vertex(double x, double y, double z, double w) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
+
+    }
+
+    public double[] toArray(){
+        double[] array1 = new double[4];
+        array1[0] = this.getX();
+        array1[1] = this.getY();
+        array1[2] = this.getZ();
+        array1[3] = this.getZ();
+        return array1;
+    }
+
     public double getX() {
         return x;
     }

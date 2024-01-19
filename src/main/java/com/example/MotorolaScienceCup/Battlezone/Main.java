@@ -11,6 +11,8 @@ public class Main {
     static int WIDTH = Menu.WIDTH;
     static int HEIGHT = Menu.HEIGHT;
 
+    static double H_FOV = 90;
+
     public static AnchorPane root = new AnchorPane();
     public static Scene scene = new Scene(root,WIDTH,HEIGHT);
 
