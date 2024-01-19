@@ -1,15 +1,17 @@
-package com.example.MotorolaScienceCup.Asteroids;
+package com.example.MotorolaScienceCup;
 
-import com.example.MotorolaScienceCup.BetterPolygon;
+import com.example.MotorolaScienceCup.Asteroids.Main;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Particle extends BetterPolygon {
-    static final double ANIMATION_PARTICLE_SPEED = 1;
-    protected final double WINDOW_WIDTH = Main.WIDTH;
-    protected final double WINDOW_HEIGHT = Main.HEIGHT;
+    public static final double ANIMATION_PARTICLE_SPEED = 1;
+    protected final double WINDOW_WIDTH = Menu.WIDTH;
+    protected final double WINDOW_HEIGHT = Menu.HEIGHT;
     protected final double radius;
     protected double centerX;
     protected double centerY;
@@ -20,7 +22,7 @@ public class Particle extends BetterPolygon {
     protected double thrust;
     protected boolean isThrusting;
     protected Vector velocity;
-    protected final double FPS = Main.FPS;
+    protected final double FPS = Menu.FPS;
 
     public Particle(List<Double> points, double angle, double rotation, double velocity, double friction) {
         super(points);
@@ -103,17 +105,17 @@ public class Particle extends BetterPolygon {
         }
     }
 
-    public void animationParticles(){
-        for (int i = 0; i < Main.PARTICLE_COUNT; i++) {
+    public void animationParticles(double particleCount, List<Particle> particleList, HashMap<Particle, Double> particlesDistance, AnchorPane root){
+        for (int i = 0; i < particleCount; i++) {
             List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle particle
             double angle = Math.random() * 360 - 180;
             Particle particle1 = new Particle(points, angle, 0, ANIMATION_PARTICLE_SPEED * (Math.random() * 0.75 + 0.5), 0);
             particle1.setFill(Color.WHITE);
             particle1.moveTo(getCenterX() + getRadius() * Math.cos(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5), getCenterY() + getRadius() * Math.sin(Math.toRadians(angle)) * (Math.random() * 0.75 + 0.5));
-            Main.particlesAll.add(particle1);
-            Main.particlesDistanceCovered.put(particle1, 0.0);
+            particleList.add(particle1);
+            particlesDistance.put(particle1, 0.0);
 
-            Main.root.getChildren().add(particle1);
+            root.getChildren().add(particle1);
         }
     }
 

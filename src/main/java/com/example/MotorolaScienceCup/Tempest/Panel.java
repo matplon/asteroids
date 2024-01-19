@@ -1,7 +1,12 @@
 package com.example.MotorolaScienceCup.Tempest;
 
+import com.example.MotorolaScienceCup.Particle;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class Panel {
@@ -12,7 +17,72 @@ public class Panel {
     private Panel leftPanel;
     private Panel rightPanel;
 
+    public List<Particle> bullets = new ArrayList<>();
+
     public Panel() {
+    }
+
+    public void updateBullets() {
+        for (Particle bullet : bullets) {
+            bullet.updatePosition();
+        }
+        double xBigSide = (bigSide.getPoints().getFirst() + bigSide.getPoints().get(2)) / 2;
+        double yBigSide = (bigSide.getPoints().get(2) + bigSide.getPoints().getLast()) / 2;
+        double xSmallSide = (smallSide.getPoints().getFirst() + smallSide.getPoints().get(2)) / 2;
+        double ySmallSide = (smallSide.getPoints().get(2) + smallSide.getPoints().getLast()) / 2;
+
+        System.out.println("\nBig: x = " + xBigSide + " y = "+yBigSide);
+        System.out.println("Small: x = " + xSmallSide + " y = "+ySmallSide);
+
+        double xDiff = xBigSide - xSmallSide;
+        double yDiff = yBigSide - ySmallSide;
+
+        List<Particle> bulletsToRemove = new ArrayList<>();
+
+        for (Particle bullet : bullets) {
+            if (xDiff > 0 && bullet.getCenterX() < xSmallSide) {
+                bulletsToRemove.add(bullet);
+            } else if (xDiff < 0 && bullet.getCenterX() > xSmallSide) {
+                bulletsToRemove.add(bullet);
+            } else if (yDiff > 0 && bullet.getCenterY() > ySmallSide) {
+                bulletsToRemove.add(bullet);
+            } else if (yDiff < 0 && bullet.getCenterY() < ySmallSide) {
+                bulletsToRemove.add(bullet);
+            }
+        }
+        for (Particle bullet : bulletsToRemove) {
+            bullets.remove(bullet);
+        }
+    }
+
+    private void checkForHits() {
+
+    }
+
+    public void changeColorSmallSide(Color color) {
+        smallSide.setStroke(color);
+        smallSide.setFill(color);
+    }
+
+    public void changeColorBigSide(Color color) {
+        bigSide.setStroke(color);
+        bigSide.setFill(color);
+    }
+
+    public void changeColorRightSide(Color color) {
+        rightSide.setStroke(color);
+        rightSide.setFill(color);
+    }
+
+    public void changeColorLeftSide(Color color) {
+        leftSide.setStroke(color);
+        leftSide.setFill(color);
+    }
+
+    public void changeColor(Color color) {
+        changeColorBigSide(color);
+        changeColorLeftSide(color);
+        changeColorRightSide(color);
     }
 
     public void setSmallSide(Polyline smallSide) {
@@ -61,32 +131,6 @@ public class Panel {
 
     public Panel getRightPanel() {
         return rightPanel;
-    }
-
-    public void changeColorSmallSide(Color color) {
-        smallSide.setStroke(color);
-        smallSide.setFill(color);
-    }
-
-    public void changeColorBigSide(Color color) {
-        bigSide.setStroke(color);
-        bigSide.setFill(color);
-    }
-
-    public void changeColorRightSide(Color color) {
-        rightSide.setStroke(color);
-        rightSide.setFill(color);
-    }
-
-    public void changeColorLeftSide(Color color) {
-        leftSide.setStroke(color);
-        leftSide.setFill(color);
-    }
-
-    public void changeColor(Color color) {
-        changeColorBigSide(color);
-        changeColorLeftSide(color);
-        changeColorRightSide(color);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.MotorolaScienceCup.Asteroids;
 
+import com.example.MotorolaScienceCup.Particle;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -84,7 +85,7 @@ public class Player extends Particle {
         Main.HP--;
         HUD.removeHeart();
         Main.root.getChildren().remove(this);
-        animationParticles();
+        animationParticles(Main.PARTICLE_COUNT, Main.particlesAll, Main.particlesDistanceCovered, Main.root);
     }
 
     public void accelerate() {

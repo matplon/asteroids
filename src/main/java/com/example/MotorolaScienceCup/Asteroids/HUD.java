@@ -2,7 +2,7 @@ package com.example.MotorolaScienceCup.Asteroids;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Menu;
-import javafx.fxml.FXMLLoader;
+import com.example.MotorolaScienceCup.Particle;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
@@ -10,11 +10,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 

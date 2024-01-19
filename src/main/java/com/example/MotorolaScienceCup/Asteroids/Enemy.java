@@ -1,5 +1,7 @@
 package com.example.MotorolaScienceCup.Asteroids;
 
+import com.example.MotorolaScienceCup.Particle;
+import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
@@ -188,7 +190,7 @@ public class Enemy extends Particle {
     static void explode() {
         if (!enemyList.isEmpty()) {
             HUD.addPoints(enemyList.get(0).pointsMapping.get(enemyList.get(0).type));
-            enemyList.get(0).animationParticles();
+            enemyList.get(0).animationParticles(Main.PARTICLE_COUNT, Main.particlesAll, Main.particlesDistanceCovered, Main.root);
             root.getChildren().remove(enemyList.get(0));
             enemyList.remove(enemyList.get(0));
         }

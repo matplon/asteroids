@@ -19,20 +19,24 @@ import java.util.List;
 public class Main {
     final static int WIDTH = Menu.WIDTH;
     final static int HEIGHT = Menu.HEIGHT;
+    final static double BULLET_SPEED = 15;
+    final static double BULLET_RADIUS = 7;
+
     static Scene scene;
     static AnchorPane root;
     static Stage stage = Menu.stage;
-    static List<Polyline> smallShape;
-    static List<Polyline> bigShape;
-    static List<Polyline> connectors;
-    static List<Panel> panels;
     static Timeline timeline;
     static Color defaultPanelColor = Color.BLUE;
     static Color activePanelColor = Color.RED;
     static Player player;
 
+    static List<Polyline> smallShape;
+    static List<Polyline> bigShape;
+    static List<Polyline> connectors;
+    static List<Panel> panels;
 
-    static String testMap1 = "testoctagon.svg";
+
+    static String bullet = "testoctagon.svg";
     static String testMap2 = "testsquareKTORYDZIALA.svg";
     static String testMap3 = "mapa 3.svg";
     static String testShip = "ship1.svg";
@@ -47,11 +51,10 @@ public class Main {
         scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
 
-
         Graphics.drawMap(testMap3, defaultPanelColor);
 
         player = new Player(Util.SVGconverter(testShip), panels.getFirst());
-        player.scale(20/player.getRadius());
+        player.scale(20 / player.getRadius());
         player.setStroke(Color.RED);
         player.setFill(Color.RED);
         player.moveTo(panels.getFirst().getRightSide().getPoints().get(2), panels.getFirst().getRightSide().getPoints().get(3));
@@ -61,13 +64,18 @@ public class Main {
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) player.move(false);   // Move right
             if (keyEvent.getCode() == KeyCode.LEFT) player.move(true); // Move left
+            if (keyEvent.getCode() == KeyCode.X) {
+                player.shoot();
+            }
         });
-//        start();
+        start();
     }
 
-    public static void start(){
-        timeline = new Timeline(new KeyFrame(Duration.millis(10), actionEvent -> {
-
+    public static void start() {
+        timeline = new Timeline(new KeyFrame(Duration.millis(1000/60), actionEvent -> {
+            for (Panel panel : panels) {
+                panel.updateBullets();
+            }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();

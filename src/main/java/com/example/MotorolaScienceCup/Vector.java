@@ -1,4 +1,4 @@
-package com.example.MotorolaScienceCup.Asteroids;
+package com.example.MotorolaScienceCup;
 
 public class Vector {
     private double direction, magnitude;

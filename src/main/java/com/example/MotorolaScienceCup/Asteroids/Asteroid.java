@@ -1,6 +1,8 @@
 package com.example.MotorolaScienceCup.Asteroids;
 
+import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
+import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
@@ -44,8 +46,8 @@ public class Asteroid extends Particle {
 
             // Random, higher velocity
             Random random = new Random();
-            Vector newVelocity1 = new Vector(random.nextDouble(getVelocity().getMagnitude() * 1.2, getVelocity().getMagnitude() * 2), asteroid1.getAngle());
-            Vector newVelocity2 = new Vector(random.nextDouble(getVelocity().getMagnitude() * 1.2, getVelocity().getMagnitude() * 2), asteroid2.getAngle());
+            com.example.MotorolaScienceCup.Vector newVelocity1 = new com.example.MotorolaScienceCup.Vector(random.nextDouble(getVelocity().getMagnitude() * 1.2, getVelocity().getMagnitude() * 2), asteroid1.getAngle());
+            com.example.MotorolaScienceCup.Vector newVelocity2 = new Vector(random.nextDouble(getVelocity().getMagnitude() * 1.2, getVelocity().getMagnitude() * 2), asteroid2.getAngle());
 
             asteroid1.setVelocity(newVelocity1);
             asteroid2.setVelocity(newVelocity2);
@@ -60,7 +62,7 @@ public class Asteroid extends Particle {
 
         // Remove the big asteroid
         Main.root.getChildren().remove(this);
-        animationParticles();
+        animationParticles(Main.PARTICLE_COUNT, Main.particlesAll, Main.particlesDistanceCovered, Main.root);
         Main.asteroids.remove(this);
     }
 
@@ -78,7 +80,7 @@ public class Asteroid extends Particle {
             if (!Enemy.enemyList.isEmpty()) {
                 if (Enemy.enemyList.get(0).getLayoutBounds().intersects(Main.asteroids.get(i).getLayoutBounds())) {
                     if (intersect(Enemy.enemyList.get(0), Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Enemy.enemyList.get(0))) {
-                        Enemy.enemyList.get(0).animationParticles();
+                        Enemy.enemyList.get(0).animationParticles(Main.PARTICLE_COUNT, Main.particlesAll, Main.particlesDistanceCovered, Main.root);
                         Main.enemyShootTimer = 0;
                         Main.root.getChildren().remove(Enemy.enemyList.get(0));
                         Enemy.enemyList.remove(Enemy.enemyList.get(0));

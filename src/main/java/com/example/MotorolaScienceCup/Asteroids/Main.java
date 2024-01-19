@@ -1,14 +1,13 @@
 package com.example.MotorolaScienceCup.Asteroids;
 
 import com.example.MotorolaScienceCup.Menu;
+import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
@@ -18,8 +17,6 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.*;
