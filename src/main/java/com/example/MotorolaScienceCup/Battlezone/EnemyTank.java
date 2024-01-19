@@ -3,11 +3,10 @@ package com.example.MotorolaScienceCup.Battlezone;
 import java.util.ArrayList;
 
 public class EnemyTank extends Object3D{
-    private double rotation;
 
-    public EnemyTank(double x, double y, ArrayList<Double> points3D, double rotation){
-        super(x,y,points3D);
-        this.rotation = rotation;
+
+    public EnemyTank(double x, double y, double z, double rotation, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
+        super(x,y,z,rotation,points3D, faces3D);
     }
 
 }

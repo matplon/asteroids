@@ -1,0 +1,3 @@
+add transform 2d Arrays and functions
+Generate camera logic and to shift points3D by the xyz of object3D and viceversa (get xyz of object from vertices through averages - middle of any )
+design game (optional)
