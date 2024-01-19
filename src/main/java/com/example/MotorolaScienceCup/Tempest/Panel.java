@@ -1,6 +1,8 @@
 package com.example.MotorolaScienceCup.Tempest;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
+
 
 public class Panel {
     private Polyline smallSide;
@@ -10,7 +12,8 @@ public class Panel {
     private Panel leftPanel;
     private Panel rightPanel;
 
-    public Panel(){}
+    public Panel() {
+    }
 
     public void setSmallSide(Polyline smallSide) {
         this.smallSide = smallSide;
@@ -58,5 +61,43 @@ public class Panel {
 
     public Panel getRightPanel() {
         return rightPanel;
+    }
+
+    public void changeColorSmallSide(Color color) {
+        smallSide.setStroke(color);
+        smallSide.setFill(color);
+    }
+
+    public void changeColorBigSide(Color color) {
+        bigSide.setStroke(color);
+        bigSide.setFill(color);
+    }
+
+    public void changeColorRightSide(Color color) {
+        rightSide.setStroke(color);
+        rightSide.setFill(color);
+    }
+
+    public void changeColorLeftSide(Color color) {
+        leftSide.setStroke(color);
+        leftSide.setFill(color);
+    }
+
+    public void changeColor(Color color) {
+        changeColorBigSide(color);
+        changeColorLeftSide(color);
+        changeColorRightSide(color);
+    }
+
+    @Override
+    public String toString() {
+        return "Panel{" +
+                "smallSide=" + smallSide +
+                ", bigSide=" + bigSide +
+                ", leftSide=" + leftSide +
+                ", rightSide=" + rightSide +
+                ", leftPanel=" + Main.panels.indexOf(leftPanel) +
+                ", rightPanel=" + Main.panels.indexOf(rightPanel) +
+                '}';
     }
 }
