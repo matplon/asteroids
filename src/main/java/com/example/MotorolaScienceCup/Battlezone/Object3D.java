@@ -83,7 +83,7 @@ public class Object3D {
             for (int j = 0; j < arr.length; j++) {
                 arr[j] = arr1[j];
             }
-            System.out.println(Arrays.toString(arr1)+"2");
+            System.out.println(Arrays.toString(arr)+"2");
             arr = Util.multiplyTransform(camMatrixMatrix, arr);
             System.out.println(Arrays.toString(arr)+"3");
             double [][] projectionMatrix = Camera.getProjectionMatrix();
@@ -122,7 +122,7 @@ public class Object3D {
             double dy = arrlist.get(face.getD()).getY();
             Polygon polygon = new Polygon(ax,ay,bx,by,cx,cy,dx,dy);
             polygon.setStroke(Color.BLACK);
-            polygon.setFill(Color.BLACK);
+            polygon.setFill(Color.WHITE);
             Main.root.getChildren().add(polygon);
         }
     }

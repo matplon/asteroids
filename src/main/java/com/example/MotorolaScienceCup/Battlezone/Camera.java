@@ -44,7 +44,7 @@ public class Camera{
                 {1,0,0,-x},
                 {0,1,0,-y},
                 {0,0,1,-z},
-                {0,1,0,1}
+                {0,0,0,1}
         };
         return matrix;
     }
@@ -75,17 +75,19 @@ public class Camera{
     public static double[][] getProjectionMatrix(){
         double RIGHT = Math.tan(Math.toRadians(H_FOV/2));
         double LEFT = -RIGHT;
-        double TOP = Math.tan(Math.toRadians(V_FOV/2));
+        double TOP = Math.tan(Math.toRadians((25.3125)));
         double BOTTOM = -TOP;
         double a = 2/(RIGHT - LEFT);
         double b = 2/(TOP - BOTTOM);
-        double c = (far+near)/(far-near);
-        double d = -2 * near * far / (far - near);
+
+        System.out.println((25.3125));
+        double c = -(far+near)/(far-near);
+        double d = (-2 * near * far) / (far - near);
         double [][] matrix = {
                 {a, 0, 0, 0},
                 {0, b, 0, 0},
                 {0, 0, c, d},
-                {0, 0, 1, 0}
+                {0, 0, -1, 0}
         };
         return matrix;
     }
