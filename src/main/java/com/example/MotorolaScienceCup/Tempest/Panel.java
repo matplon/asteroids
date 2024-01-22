@@ -1,12 +1,15 @@
 package com.example.MotorolaScienceCup.Tempest;
 
+import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Particle;
+import com.example.MotorolaScienceCup.Util;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+
+import static com.example.MotorolaScienceCup.Tempest.Main.root;
 
 
 public class Panel {
@@ -27,12 +30,9 @@ public class Panel {
             bullet.updatePosition();
         }
         double xBigSide = (bigSide.getPoints().getFirst() + bigSide.getPoints().get(2)) / 2;
-        double yBigSide = (bigSide.getPoints().get(2) + bigSide.getPoints().getLast()) / 2;
+        double yBigSide = (bigSide.getPoints().get(1) + bigSide.getPoints().getLast()) / 2;
         double xSmallSide = (smallSide.getPoints().getFirst() + smallSide.getPoints().get(2)) / 2;
-        double ySmallSide = (smallSide.getPoints().get(2) + smallSide.getPoints().getLast()) / 2;
-
-        System.out.println("\nBig: x = " + xBigSide + " y = "+yBigSide);
-        System.out.println("Small: x = " + xSmallSide + " y = "+ySmallSide);
+        double ySmallSide = (smallSide.getPoints().get(1) + smallSide.getPoints().getLast()) / 2;
 
         double xDiff = xBigSide - xSmallSide;
         double yDiff = yBigSide - ySmallSide;
@@ -44,14 +44,15 @@ public class Panel {
                 bulletsToRemove.add(bullet);
             } else if (xDiff < 0 && bullet.getCenterX() > xSmallSide) {
                 bulletsToRemove.add(bullet);
-            } else if (yDiff > 0 && bullet.getCenterY() > ySmallSide) {
+            } else if (yDiff > 0 && bullet.getCenterY() < ySmallSide) {
                 bulletsToRemove.add(bullet);
-            } else if (yDiff < 0 && bullet.getCenterY() < ySmallSide) {
+            } else if (yDiff < 0 && bullet.getCenterY() > ySmallSide) {
                 bulletsToRemove.add(bullet);
             }
         }
         for (Particle bullet : bulletsToRemove) {
             bullets.remove(bullet);
+            root.getChildren().remove(bullet);
         }
     }
 
@@ -131,6 +132,10 @@ public class Panel {
 
     public Panel getRightPanel() {
         return rightPanel;
+    }
+
+    public List<Particle> getBullets() {
+        return bullets;
     }
 
     @Override
