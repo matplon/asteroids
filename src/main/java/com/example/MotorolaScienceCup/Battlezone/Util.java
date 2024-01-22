@@ -110,7 +110,6 @@ public class Util {
         obj.convertVertecesToCentralOrigin();
         System.out.println(obj.getPoints3D().get(0).getW()+"      OOOOOOOO");
         obj.moveTo(x,y,z);
-        obj.rotY(45);
         System.out.println(obj.getPoints3D().get(0).getW()+"   1");
         System.out.println(obj.getCenterX()+" "+obj.getCenterY()+" "+obj.getCenterZ()+" 10000000");
         return obj;

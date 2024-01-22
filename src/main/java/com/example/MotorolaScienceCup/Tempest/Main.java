@@ -35,10 +35,6 @@ public class Main {
     static List<Polyline> connectors;
     static List<Panel> panels;
 
-    static boolean shoot;
-    static boolean goRight;
-    static boolean goLeft;
-
 
     static String bullet = "testoctagon.svg";
     static String testMap2 = "testsquareKTORYDZIALA.svg";
@@ -55,10 +51,6 @@ public class Main {
         scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
 
-        shoot = false;
-        goLeft = false;
-        goRight = false;
-
         Graphics.drawMap(testMap3, defaultPanelColor);
 
         player = new Player(Util.SVGconverter(testShip), panels.get(0));
@@ -70,33 +62,19 @@ public class Main {
 
 
         scene.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.RIGHT) goRight = true;
-            if (keyEvent.getCode() == KeyCode.LEFT) goLeft = true;
-            if (keyEvent.getCode() == KeyCode.X) shoot = true;
-        });
-        scene.setOnKeyReleased(keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.RIGHT) goRight = false;
-            if (keyEvent.getCode() == KeyCode.LEFT) goLeft = false;
-            if (keyEvent.getCode() == KeyCode.X) shoot = false;
+            if (keyEvent.getCode() == KeyCode.RIGHT) player.move(false);   // Move right
+            if (keyEvent.getCode() == KeyCode.LEFT) player.move(true); // Move left
+            if (keyEvent.getCode() == KeyCode.X) {
+                player.shoot();
+            }
         });
         start();
     }
 
     public static void start() {
-        timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 /Menu.FPS), actionEvent -> {
-            double bulletsNumber = 0;
+        timeline = new Timeline(new KeyFrame(Duration.millis(1000/60), actionEvent -> {
             for (Panel panel : panels) {
                 panel.updateBullets();
-                bulletsNumber += panel.getBullets().size();
-            }
-            if(goRight){
-                player.move(false);
-            }
-            if(goLeft){
-                player.move(true);
-            }
-            if(shoot && bulletsNumber < 5){
-                player.shoot();
             }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
