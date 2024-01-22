@@ -35,7 +35,7 @@ public class Camera{
         this.forward = new Vertex(0,0,1);
         this.up = new Vertex(0,1,0);
         this.right = new Vertex(1,0,0);
-        this.near = 1 ;
+        this.near = 0.1 ;
         this.far = 100;
     }
 
@@ -87,7 +87,7 @@ public class Camera{
                 {a, 0, 0, 0},
                 {0, b, 0, 0},
                 {0, 0, c, d},
-                {0, 0, -1, 0}
+                {0, 0, 1, 0}
         };
         return matrix;
     }

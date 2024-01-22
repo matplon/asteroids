@@ -2,7 +2,9 @@ package com.example.MotorolaScienceCup.Battlezone;
 
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Polyline;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,10 +122,13 @@ public class Object3D {
             double cy = arrlist.get(face.getC()).getY();
             double dx = arrlist.get(face.getD()).getX();
             double dy = arrlist.get(face.getD()).getY();
-            Polygon polygon = new Polygon(ax,ay,bx,by,cx,cy,dx,dy);
-            polygon.setStroke(Color.BLACK);
-            polygon.setFill(Color.WHITE);
-            Main.root.getChildren().add(polygon);
+            Polyline polyline1 = new Polyline(ax,ay,bx,by);
+            Polyline polyline2 = new Polyline(bx,by,cx,cy);
+            Polyline polyline3 = new Polyline(cx,cy,dx,dy);
+            Polyline polyline4 = new Polyline(dx,dy,ax,ay);
+            Main.root.getChildren().addAll(polyline2,polyline1,polyline4,polyline3);
+
+
         }
     }
 

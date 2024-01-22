@@ -19,13 +19,14 @@ public class Main {
 
     public static void init(){
 
-        Camera camera = new Camera(6,-2,10);
+        Camera camera = new Camera(5,-2,-10);
         Object3D obj = Util.convertOBJ(cubePath);
         System.out.println("BRUH");
-        Object3D obj1 = Util.generateOBJ(0,0,-10,obj.getPoints3D(),obj.getFaces3D());
+        Object3D obj1 = Util.generateOBJ(0,0,0,obj.getPoints3D(),obj.getFaces3D());
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "0");
         }
+        obj1.rotY(45);
         obj1.displayObject();
 
 
