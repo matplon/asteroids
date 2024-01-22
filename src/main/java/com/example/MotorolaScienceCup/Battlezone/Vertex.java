@@ -28,7 +28,7 @@ public class Vertex {
         array1[0] = this.getX();
         array1[1] = this.getY();
         array1[2] = this.getZ();
-        array1[3] = this.getZ();
+        array1[3] = this.getW();
         return array1;
     }
 
@@ -46,5 +46,15 @@ public class Vertex {
 
     public double getW(){
         return w;
+    }
+
+    @Override
+    public String toString() {
+        return "Vertex{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                ", w=" + w +
+                '}';
     }
 }

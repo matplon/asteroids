@@ -26,10 +26,10 @@ public class Panel {
         for (Particle bullet : bullets) {
             bullet.updatePosition();
         }
-        double xBigSide = (bigSide.getPoints().getFirst() + bigSide.getPoints().get(2)) / 2;
-        double yBigSide = (bigSide.getPoints().get(2) + bigSide.getPoints().getLast()) / 2;
-        double xSmallSide = (smallSide.getPoints().getFirst() + smallSide.getPoints().get(2)) / 2;
-        double ySmallSide = (smallSide.getPoints().get(2) + smallSide.getPoints().getLast()) / 2;
+        double xBigSide = (bigSide.getPoints().get(0) + bigSide.getPoints().get(2)) / 2;
+        double yBigSide = (bigSide.getPoints().get(2) + bigSide.getPoints().get(bigSide.getPoints().size()-1)) / 2;
+        double xSmallSide = (smallSide.getPoints().get(0) + smallSide.getPoints().get(2)) / 2;
+        double ySmallSide = (smallSide.getPoints().get(2) + smallSide.getPoints().get(smallSide.getPoints().size()-1)) / 2;
 
         System.out.println("\nBig: x = " + xBigSide + " y = "+yBigSide);
         System.out.println("Small: x = " + xSmallSide + " y = "+ySmallSide);

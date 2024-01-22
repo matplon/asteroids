@@ -72,14 +72,14 @@ public class Player extends BetterPolygon {
     private void checkIfSideClose(boolean left) {
         if (left) {
             double xDiff = getCenterX() - currentPanel.getLeftSide().getPoints().get(2);
-            double yDiff = getCenterY() - currentPanel.getLeftSide().getPoints().getLast();
+            double yDiff = getCenterY() - currentPanel.getLeftSide().getPoints().get(currentPanel.getLeftSide().getPoints().size()-1);
             if (xDiff < 0.5 && xDiff > -0.5 && yDiff < 0.5 && yDiff > -0.5) {
                 moveTo(currentPanel.getLeftSide().getPoints().get(2), currentPanel.getLeftSide().getPoints().get(3));
                 currentPanel = currentPanel.getLeftPanel();
             }
         } else {
             double xDiff = getCenterX() - currentPanel.getRightSide().getPoints().get(2);
-            double yDiff = getCenterY() - currentPanel.getRightSide().getPoints().getLast();
+            double yDiff = getCenterY() - currentPanel.getLeftSide().getPoints().get(currentPanel.getLeftSide().getPoints().size()-1);
             if (xDiff < 0.5 && xDiff > -0.5 && yDiff < 0.5 && yDiff > -0.5) {
                 moveTo(currentPanel.getRightSide().getPoints().get(2), currentPanel.getRightSide().getPoints().get(3));
                 currentPanel = currentPanel.getRightPanel();
@@ -88,8 +88,8 @@ public class Player extends BetterPolygon {
     }
 
     public void shoot() {
-        double x = (currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2))/2;
-        double y = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().getLast())/2;
+        double x = (currentPanel.getBigSide().getPoints().get(0) + currentPanel.getBigSide().getPoints().get(2))/2;
+        double y = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().get(currentPanel.getBigSide().getPoints().size()-1))/2;
         System.out.println(x+" "+y);
         List<Double> points = Util.SVGconverter(bullet);    // Rectangle bullet
         Particle bullet = new Particle(points, Math.atan2(y, x), 0, BULLET_SPEED, 0);

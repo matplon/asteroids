@@ -98,11 +98,11 @@ public class Graphics {
                 bigSideY2 = connectors.get(i + 1).getPoints().get(3);
                 panel.setLeftSide(connectors.get(i + 1));
             } else {
-                smallSideX2 = connectors.getFirst().getPoints().getFirst();
-                smallSideY2 = connectors.getFirst().getPoints().get(1);
-                bigSideX2 = connectors.getFirst().getPoints().get(2);
-                bigSideY2 = connectors.getFirst().getPoints().get(3);
-                panel.setLeftSide(connectors.getFirst());
+                smallSideX2 = connectors.get(0).getPoints().get(0);
+                smallSideY2 = connectors.get(0).getPoints().get(1);
+                bigSideX2 = connectors.get(0).getPoints().get(2);
+                bigSideY2 = connectors.get(0).getPoints().get(3);
+                panel.setLeftSide(connectors.get(0));
             }
             Polyline smallSide = new Polyline(smallSideX1, smallSideY1, smallSideX2, smallSideY2);
             smallSide.setFill(color);
@@ -122,14 +122,14 @@ public class Graphics {
 
         for (int i = 0; i < panels.size(); i++) {
             if (i + 1 >= panels.size()) {
-                panels.get(i).setLeftPanel(panels.getFirst());
+                panels.get(i).setLeftPanel(panels.get(0));
             } else {
                 panels.get(i).setLeftPanel(panels.get(i + 1));
             }
             if (i > 0) {
                 panels.get(i).setRightPanel(panels.get(i - 1));
             } else {
-                panels.get(i).setRightPanel(panels.getLast());
+                panels.get(i).setRightPanel(panels.get(panels.size()-1));
             }
         }
     }

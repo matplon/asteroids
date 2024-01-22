@@ -53,11 +53,11 @@ public class Main {
 
         Graphics.drawMap(testMap3, defaultPanelColor);
 
-        player = new Player(Util.SVGconverter(testShip), panels.getFirst());
+        player = new Player(Util.SVGconverter(testShip), panels.get(0));
         player.scale(20 / player.getRadius());
         player.setStroke(Color.RED);
         player.setFill(Color.RED);
-        player.moveTo(panels.getFirst().getRightSide().getPoints().get(2), panels.getFirst().getRightSide().getPoints().get(3));
+        player.moveTo(panels.get(0).getRightSide().getPoints().get(2), panels.get(0).getRightSide().getPoints().get(3));
         root.getChildren().add(player);
 
 

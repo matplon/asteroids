@@ -2,19 +2,19 @@ package com.example.MotorolaScienceCup.Battlezone;
 
 public class Face {
 
-    private double a;
-    private double b;
-    private double c;
-    private double d;
+    private int a;
+    private int b;
+    private int c;
+    private int d;
 
-    public Face(double a, double b, double c) {
+    public Face(int a, int b, int c) {
         this.a = a;
         this.b = b;
         this.c = c;
 
     }
 
-    public Face(double a, double b, double c, double d) {
+    public Face(int a, int b, int c, int d) {
         this.a = a;
         this.b = b;
         this.c = c;
@@ -22,35 +22,45 @@ public class Face {
 
     }
 
-    public double getA() {
+    public int getA() {
         return a;
     }
 
-    public void setA(double a) {
+    public void setA(int a) {
         this.a = a;
     }
 
-    public double getB() {
+    public int getB() {
         return b;
     }
 
-    public void setB(double b) {
+    public void setB(int b) {
         this.b = b;
     }
 
-    public double getC() {
+    public int getC() {
         return c;
     }
 
-    public void setC(double c) {
+    public void setC(int c) {
         this.c = c;
     }
 
-    public double getD() {
+    public int getD() {
         return d;
     }
 
-    public void setD(double d) {
+    public void setD(int d) {
         this.d = d;
+    }
+
+    @Override
+    public String toString() {
+        return "Face{" +
+                "a=" + a +
+                ", b=" + b +
+                ", c=" + c +
+                ", d=" + d +
+                '}';
     }
 }

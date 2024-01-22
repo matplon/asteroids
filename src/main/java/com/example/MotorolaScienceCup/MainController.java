@@ -78,7 +78,14 @@ public class MainController {
     }
 
     @FXML
+    protected void clickedBattleZone() {
+        com.example.MotorolaScienceCup.Battlezone.Main.init();
+    }
+
+    @FXML
     protected void clickedTempest() {
         com.example.MotorolaScienceCup.Tempest.Main.init();
     }
+
+
 }

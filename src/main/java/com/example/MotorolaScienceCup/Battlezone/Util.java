@@ -22,7 +22,7 @@ public class Util {
         double[][] matrix = {
                 {Math.cos(Math.toRadians(angle)),0,Math.sin(Math.toRadians(angle)),0},
                 {0,                              1,0,                              0},
-                {Math.sin(Math.toRadians(angle))*(-1),0,Math.cos(Math.toRadians(angle)),0},
+                {-Math.sin(Math.toRadians(angle)),0,Math.cos(Math.toRadians(angle)),0},
                 {0,                                   0,0,                              1}
         };
         return matrix;
@@ -58,6 +58,16 @@ public class Util {
         return matrix;
     }
 
+    public static double[][] getDisplayMatrix(){
+        double[][] matrix = {
+                {Main.WIDTH,   0,          0,  Main.WIDTH},
+                {0,           -Main.HEIGHT,0,  Main.HEIGHT},
+                {0,            0,          1,  0},
+                {0,            0,          0,  1}
+        };
+        return matrix;
+    }
+
 
 
 
@@ -67,7 +77,7 @@ public class Util {
         for (int i = 0; i < array.length; i++) {
             double result = 0;
             for (int j = 0; j < array.length; j++) {
-                result += array[j]*matrix1[j][i];
+                result += array[j]*matrix1[i][j];
             }
             finalArray[i]=result;
 
@@ -81,7 +91,7 @@ public class Util {
             for (int j = 0; j < matrix1[0].length; j++) {
                 double result = 0;
                 for (int k = 0; k < matrix2.length; k++) {
-                    result += matrix2[k][j]*matrix1[i][k];
+                    result += matrix2[i][k]*matrix1[k][j];
                 }
                 finalMatrix[i][j]=result;
             }
@@ -94,6 +104,20 @@ public class Util {
         Vertex vertex = new Vertex(arr[0], arr[1], arr[2], arr[3]);
         return vertex;
     }
+
+    public static Object3D generateOBJ (double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
+        Object3D obj = new Object3D(points3D,faces3D);
+        obj.convertVertecesToCentralOrigin();
+        System.out.println(obj.getPoints3D().get(0).getW()+"      OOOOOOOO");
+        obj.moveTo(x,y,z);
+        obj.rotY(45);
+        System.out.println(obj.getPoints3D().get(0).getW()+"   1");
+        System.out.println(obj.getCenterX()+" "+obj.getCenterY()+" "+obj.getCenterZ()+" 10000000");
+        return obj;
+    }
+
+
+
     public static Object3D convertOBJ(String path){
         ArrayList<Vertex> vertices = new ArrayList<>();
         ArrayList<Face> faces = new ArrayList<>();
@@ -101,30 +125,37 @@ public class Util {
             Scanner scanner = new Scanner(new File(path));
             while (scanner.hasNextLine()) {
                 String nextLine = scanner.nextLine();
+                System.out.println(nextLine);
                 if(nextLine.startsWith("v")){
-                    nextLine.replaceAll("v ","");
-                    String [] cords = nextLine.split(" ");
+                    String line = nextLine.replace("v ", "");
+                    System.out.println(line);
+                    String [] cords = line.split(" ");
+                    System.out.println(Arrays.toString(cords));
                     double x = Double.parseDouble(cords[0]);
                     double y = Double.parseDouble(cords[1]);
                     double z = Double.parseDouble(cords[2]);
-                    Vertex vertex = new Vertex(x,y,z);
+                    Vertex vertex = new Vertex(Math.round(x),Math.round(y),Math.round(z));
+                    System.out.println(vertex.getW()+"WWWW");
                     vertices.add(vertex);
                 }
                 if(nextLine.startsWith("f")){
-                    nextLine.replaceAll("f ","");
-                    String [] prepFaces = nextLine.split(" ");
+                    String line = nextLine.replace("f ","");
+                    String [] prepFaces = line.split(" ");
+                    System.out.println(Arrays.toString(prepFaces));
                     if(prepFaces.length != 0){
-                        double a = 0;
-                        double b = 0;
-                        double c = 0;
-                        double d = 0;
+                        int a = 0;
+                        int b = 0;
+                        int c = 0;
+                        int d = 0;
                         for (int i = 0; i < prepFaces.length;i++) {
                            String [] finalFace = prepFaces[i].split("/");
-                           double result = Double.parseDouble(finalFace[0]);
+                            System.out.println(Arrays.toString(finalFace));
+                            System.out.println("lol");
+                           int result = Integer.parseInt(finalFace[0])-1;
                            if(i==0){
                                a = result;
                            } else if (i==1) {
-                             b = result;
+                              b = result;
                            } else if (i==2) {
                                 c = result;
                            } else if (i==3 && prepFaces.length == 4) {
@@ -145,7 +176,8 @@ public class Util {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        Object3D object3D = new Object3D(0,0,0, vertices, faces);
+
+        Object3D object3D = generateOBJ(0,0,0,vertices, faces);
         return object3D;
     }
 }

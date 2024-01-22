@@ -31,7 +31,6 @@ public class Menu extends Application {
         root = FXMLLoader.load(getClass().getResource("Main.fxml"));
         scene = new Scene(root, WIDTH,HEIGHT);
         stage = stage1;
-
         stage1.setScene(scene);
         stage1.show();
         stage = stage1;

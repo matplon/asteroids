@@ -17,7 +17,7 @@
             <Image url="@../../../../../../images/first.jpg" />
          </image>
       </ImageView>
-      <ImageView fx:id="battleZone" fitHeight="85.0" fitWidth="116.0" layoutX="242.0" layoutY="292.0" pickOnBounds="true">
+      <ImageView fx:id="battleZone" fitHeight="85.0" fitWidth="116.0" layoutX="242.0" layoutY="292.0" pickOnBounds="true" onMouseClicked="#clickedBattleZone">
          <image>
             <Image url="@../../../../../../images/battlezone.jpg" />
          </image>
