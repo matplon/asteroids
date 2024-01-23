@@ -2,54 +2,83 @@ package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Flipper extends BetterPolygon {
     private Panel currentPanel;
-    private boolean movedUp;
-    public Flipper(List<Double> points, Panel startPanel){
-        super(points);
+    private boolean goingUp;
+
+    public Flipper(List<Double> points, Panel startPanel) {
+        super(null);
         this.currentPanel = startPanel;
-        double x = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2))/2;
-        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast())/2;
+        double x = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
+        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast()) / 2;
         moveTo(x, y);
-        movedUp = false;
+        goingUp = false;
     }
 
-    public void moveUp(){
+    private void generate(){
+        List<Double> points = new ArrayList<>();
 
     }
 
-    public void move(boolean left){
-        rotate(180, getCenterX(), getCenterY());
+    public void moveUp() {
 
-        if(left){
+    }
+
+    public void move(boolean left) {
+        double pivotX = (currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2)) / 2;
+        double pivotY = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().getLast()) / 2;
+
+        rotate(180, pivotX, pivotY);
+
+        if (left) {
             double triangleBaseXLeft = currentPanel.getLeftPanel().getLeftSide().getPoints().get(2);
             double triangleBaseYLeft = currentPanel.getLeftPanel().getLeftSide().getPoints().get(3);
             double triangleBaseXRight = currentPanel.getRightSide().getPoints().get(2);
             double triangleBaseYRight = currentPanel.getRightSide().getPoints().get(3);
+
+            double angle = getMovementAngle(triangleBaseXLeft, triangleBaseYLeft, triangleBaseXRight, triangleBaseYRight);
+
+            for (int i = 0; i < getPoints().size(); i += 2) {
+                if (Objects.equals(getPoints().get(i), currentPanel.getLeftSide().getPoints().get(2)) && Objects.equals(getPoints().get(i + 1), currentPanel.getLeftSide().getPoints().getLast())) {
+                    rotate(angle, getPoints().get(i), getPoints().get(i + 1));
+                    break;
+                }
+            }
+            currentPanel = currentPanel.getLeftPanel();
+        } else {
+            double triangleBaseXLeft = currentPanel.getRightPanel().getRightSide().getPoints().get(2);
+            double triangleBaseYLeft = currentPanel.getRightPanel().getRightSide().getPoints().get(3);
+            double triangleBaseXRight = currentPanel.getLeftSide().getPoints().get(2);
+            double triangleBaseYRight = currentPanel.getLeftSide().getPoints().get(3);
+
+            double angle = getMovementAngle(triangleBaseXLeft, triangleBaseYLeft, triangleBaseXRight, triangleBaseYRight);
+
+            for (int i = 0; i < getPoints().size(); i += 2) {
+                if (Objects.equals(getPoints().get(i), currentPanel.getRightSide().getPoints().get(2)) && Objects.equals(getPoints().get(i + 1), currentPanel.getRightSide().getPoints().getLast())) {
+                    rotate(angle, getPoints().get(i), getPoints().get(i + 1));
+                    break;
+                }
+            }
+            currentPanel = currentPanel.getRightPanel();
         }
     }
 
-    void rotate(double angle, double pivotX, double pivotY) {
-        double centerX1 = pivotX;
-        double centerY1 = pivotY;
+    private double getMovementAngle(double triangleBaseXLeft, double triangleBaseYLeft, double triangleBaseXRight, double triangleBaseYRight) {
+        double triangleBaseLengthX = triangleBaseXRight - triangleBaseXLeft;
+        double triangleBaseLengthY = triangleBaseYRight - triangleBaseYLeft;
+        double triangleBaseLength = Math.sqrt(Math.pow(triangleBaseLengthX, 2) + Math.pow(triangleBaseLengthY, 2));
 
-        // Convert angle to radians
-        double radianAngle = Math.toRadians(angle);
+        double triangleSideLength = Main.bigSideLength;
 
-        // Apply rotation to each point
-        for (int i = 0; i < getPoints().size(); i += 2) {
-            double x = getPoints().get(i);
-            double y = getPoints().get(i + 1);
-
-            // Perform rotation
-            double rotatedX = centerX1 + (x - centerX1) * Math.cos(radianAngle) - (y - centerY1) * Math.sin(radianAngle);
-            double rotatedY = centerY1 + (x - centerX1) * Math.sin(radianAngle) + (y - centerY1) * Math.cos(radianAngle);
-
-            // Update the coordinates
-            getPoints().set(i, rotatedX);
-            getPoints().set(i + 1, rotatedY);
+        double angle = -Math.toDegrees(Math.acos((Math.pow(triangleBaseLength, 2) - Math.pow(triangleSideLength, 2) - Math.pow(triangleSideLength, 2)) /
+                (-2 * triangleSideLength * triangleSideLength)));
+        if (triangleBaseXLeft == triangleBaseXRight || triangleBaseYLeft == triangleBaseYRight) {
+            angle = 180;
         }
+        return angle;
     }
 }
