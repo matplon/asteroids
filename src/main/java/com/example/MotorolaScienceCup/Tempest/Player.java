@@ -5,7 +5,6 @@ import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
 import javafx.scene.paint.Color;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static com.example.MotorolaScienceCup.Tempest.Main.*;
@@ -72,14 +71,14 @@ public class Player extends BetterPolygon {
     private void checkIfSideClose(boolean left) {
         if (left) {
             double xDiff = getCenterX() - currentPanel.getLeftSide().getPoints().get(2);
-            double yDiff = getCenterY() - currentPanel.getLeftSide().getPoints().get(currentPanel.getLeftSide().getPoints().size()-1);
+            double yDiff = getCenterY() - currentPanel.getLeftSide().getPoints().getLast();
             if (xDiff < 0.5 && xDiff > -0.5 && yDiff < 0.5 && yDiff > -0.5) {
                 moveTo(currentPanel.getLeftSide().getPoints().get(2), currentPanel.getLeftSide().getPoints().get(3));
                 currentPanel = currentPanel.getLeftPanel();
             }
         } else {
             double xDiff = getCenterX() - currentPanel.getRightSide().getPoints().get(2);
-            double yDiff = getCenterY() - currentPanel.getLeftSide().getPoints().get(currentPanel.getLeftSide().getPoints().size()-1);
+            double yDiff = getCenterY() - currentPanel.getRightSide().getPoints().getLast();
             if (xDiff < 0.5 && xDiff > -0.5 && yDiff < 0.5 && yDiff > -0.5) {
                 moveTo(currentPanel.getRightSide().getPoints().get(2), currentPanel.getRightSide().getPoints().get(3));
                 currentPanel = currentPanel.getRightPanel();
@@ -88,14 +87,22 @@ public class Player extends BetterPolygon {
     }
 
     public void shoot() {
-        double x = (currentPanel.getBigSide().getPoints().get(0) + currentPanel.getBigSide().getPoints().get(2))/2;
-        double y = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().get(currentPanel.getBigSide().getPoints().size()-1))/2;
-        System.out.println(x+" "+y);
+        double xBig = (currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2))/2;
+        double yBig = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().getLast())/2;
+        double xSmall = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2))/2;
+        double ySmall = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast())/2;
+
+        double x = xBig - xSmall;
+        double y = yBig - ySmall;
+
+        double angle = Math.toDegrees(Math.atan(y/x));
+        if(x >= 0) angle += 180;
+
         List<Double> points = Util.SVGconverter(bullet);    // Rectangle bullet
-        Particle bullet = new Particle(points, Math.atan2(y, x), 0, BULLET_SPEED, 0);
+        Particle bullet = new Particle(points, angle, 0, BULLET_SPEED, 0);
         bullet.setFill(Color.RED);
         bullet.scale(10/bullet.getRadius());
-        bullet.moveTo(x, y);
+        bullet.moveTo(xBig, yBig);
         currentPanel.bullets.add(bullet);
 
         root.getChildren().add(bullet);
