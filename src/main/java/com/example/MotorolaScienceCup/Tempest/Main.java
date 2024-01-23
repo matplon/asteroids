@@ -35,6 +35,10 @@ public class Main {
     static List<Polyline> connectors;
     static List<Panel> panels;
 
+    static boolean shoot;
+    static boolean goRight;
+    static boolean goLeft;
+
 
     static String bullet = "testoctagon.svg";
     static String testMap2 = "testsquareKTORYDZIALA.svg";
@@ -51,33 +55,57 @@ public class Main {
         scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
 
+        shoot = false;
+        goLeft = false;
+        goRight = false;
+
         Graphics.drawMap(testMap3, defaultPanelColor);
 
-        player = new Player(Util.SVGconverter(testShip), panels.get(0));
+        player = new Player(Util.SVGconverter(testShip), panels.getFirst());
         player.scale(20 / player.getRadius());
         player.setStroke(Color.RED);
         player.setFill(Color.RED);
-        player.moveTo(panels.get(0).getRightSide().getPoints().get(2), panels.get(0).getRightSide().getPoints().get(3));
+        player.moveTo(panels.getFirst().getRightSide().getPoints().get(2), panels.getFirst().getRightSide().getPoints().get(3));
         root.getChildren().add(player);
 
 
         scene.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.RIGHT) player.move(false);   // Move right
-            if (keyEvent.getCode() == KeyCode.LEFT) player.move(true); // Move left
-            if (keyEvent.getCode() == KeyCode.X) {
-                player.shoot();
-            }
+            if (keyEvent.getCode() == KeyCode.RIGHT) goRight = true;
+            if (keyEvent.getCode() == KeyCode.LEFT) goLeft = true;
+            if (keyEvent.getCode() == KeyCode.X) shoot = true;
+        });
+        scene.setOnKeyReleased(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.RIGHT) goRight = false;
+            if (keyEvent.getCode() == KeyCode.LEFT) goLeft = false;
+            if (keyEvent.getCode() == KeyCode.X) shoot = false;
         });
         start();
     }
 
     public static void start() {
-        timeline = new Timeline(new KeyFrame(Duration.millis(1000/60), actionEvent -> {
+        Flipper flipper = new Flipper(Util.SVGconverter("asteroidVar3.svg"), panels.get(0));
+        root.getChildren().add(flipper);
+        flipper.setStroke(Color.RED);
+        timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
+            double bulletsNumber = 0;
             for (Panel panel : panels) {
                 panel.updateBullets();
+                bulletsNumber += panel.getBullets().size();
             }
+            if(goRight){
+                player.move(false);
+            }
+            if(goLeft){
+                player.move(true);
+            }
+            if(shoot && bulletsNumber < 5){
+                player.shoot();
+            }
+            flipper.move(true);
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+
+
     }
 }
