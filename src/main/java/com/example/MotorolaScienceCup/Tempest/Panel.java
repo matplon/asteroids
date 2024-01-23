@@ -57,7 +57,6 @@ public class Panel {
     }
 
     private void checkForHits() {
-
     }
 
     public void changeColorSmallSide(Color color) {

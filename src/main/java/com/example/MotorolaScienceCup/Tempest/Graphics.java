@@ -77,7 +77,7 @@ public class Graphics {
         for (int i = 0; i < vertices; i++) {    // Order connectors the correct way
             newConnectors.add(connectors.get(i));
             for (int j = 0; j < connectorsBetweenVertices; j++) {
-                newConnectors.add(connectors.get(vertices + (connectorsBetweenVertices * i)));
+                newConnectors.add(connectors.get(vertices + (connectorsBetweenVertices * i) + j));
             }
         }
         for (Polyline connector : connectors) {     // Draw connectors

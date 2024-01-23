@@ -98,6 +98,8 @@ public class Player extends BetterPolygon {
         double angle = Math.toDegrees(Math.atan(y/x));
         if(x >= 0) angle += 180;
 
+        System.out.println(Math.toDegrees(Math.atan2(y, x)));
+
         List<Double> points = Util.SVGconverter(bullet);    // Rectangle bullet
         Particle bullet = new Particle(points, angle, 0, BULLET_SPEED, 0);
         bullet.setFill(Color.RED);

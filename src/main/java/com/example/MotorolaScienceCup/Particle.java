@@ -1,6 +1,5 @@
 package com.example.MotorolaScienceCup;
 
-import com.example.MotorolaScienceCup.Asteroids.Main;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 
@@ -39,8 +38,8 @@ public class Particle extends BetterPolygon {
     }
 
     public void updatePosition() {
-        updateAngle();   // Apply the rotation to the "angle" variable
-        rotate(-rotation);   // Rotate the ship
+        updateAngle();
+        rotate(-rotation);
         velocity.setDirection(-angle);
         if (isThrusting && velocity.getMagnitude() < terminalVelocity) {
             velocity.setX(velocity.getX() + thrust * Math.cos(Math.toRadians(angle)) / FPS);  // Update X component of velocity
@@ -80,28 +79,6 @@ public class Particle extends BetterPolygon {
             for (int i = 1; i < getPoints().size(); i += 2) {
                 getPoints().set(i, getPoints().get(i) - WINDOW_HEIGHT - 2 * radius);
             }
-        }
-    }
-
-    void rotate(double angle) {
-        double centerX1 = getCenterX();
-        double centerY1 = getCenterY();
-
-        // Convert angle to radians
-        double radianAngle = Math.toRadians(angle);
-
-        // Apply rotation to each point
-        for (int i = 0; i < getPoints().size(); i += 2) {
-            double x = getPoints().get(i);
-            double y = getPoints().get(i + 1);
-
-            // Perform rotation
-            double rotatedX = centerX1 + (x - centerX1) * Math.cos(radianAngle) - (y - centerY1) * Math.sin(radianAngle);
-            double rotatedY = centerY1 + (x - centerX1) * Math.sin(radianAngle) + (y - centerY1) * Math.cos(radianAngle);
-
-            // Update the coordinates
-            getPoints().set(i, rotatedX);
-            getPoints().set(i + 1, rotatedY);
         }
     }
 

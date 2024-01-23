@@ -61,4 +61,46 @@ public class BetterPolygon extends javafx.scene.shape.Polygon {
         }
     }
 
+    public void rotate(double angle) {
+        double centerX1 = getCenterX();
+        double centerY1 = getCenterY();
+
+        // Convert angle to radians
+        double radianAngle = Math.toRadians(angle);
+
+        // Apply rotation to each point
+        for (int i = 0; i < getPoints().size(); i += 2) {
+            double x = getPoints().get(i);
+            double y = getPoints().get(i + 1);
+
+            // Perform rotation
+            double rotatedX = centerX1 + (x - centerX1) * Math.cos(radianAngle) - (y - centerY1) * Math.sin(radianAngle);
+            double rotatedY = centerY1 + (x - centerX1) * Math.sin(radianAngle) + (y - centerY1) * Math.cos(radianAngle);
+
+            // Update the coordinates
+            getPoints().set(i, rotatedX);
+            getPoints().set(i + 1, rotatedY);
+        }
+    }
+
+    public void rotate(double angle, double pivotX, double pivotY) {
+
+        // Convert angle to radians
+        double radianAngle = Math.toRadians(angle);
+
+        // Apply rotation to each point
+        for (int i = 0; i < getPoints().size(); i += 2) {
+            double x = getPoints().get(i);
+            double y = getPoints().get(i + 1);
+
+            // Perform rotation
+            double rotatedX = pivotX + (x - pivotX) * Math.cos(radianAngle) - (y - pivotY) * Math.sin(radianAngle);
+            double rotatedY = pivotY + (x - pivotX) * Math.sin(radianAngle) + (y - pivotY) * Math.cos(radianAngle);
+
+            // Update the coordinates
+            getPoints().set(i, rotatedX);
+            getPoints().set(i + 1, rotatedY);
+        }
+    }
+
 }
