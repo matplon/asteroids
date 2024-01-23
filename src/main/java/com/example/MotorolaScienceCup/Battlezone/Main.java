@@ -46,6 +46,16 @@ public class Main {
     public static void init(){
 
         camera = new Camera(new ArrayList<Vertex>(),new ArrayList<Face>(),-5,5,40);
+        for (int i = 0; i < 10; i++) {
+            Object3D obj = Util.convertOBJ("cube.txt");
+            Object3D obj3 = Util.convertOBJ(cubePath);
+            System.out.println("BRUH");
+            Object3D obj1 = Util.generateOBJ(Math.random()*10,Math.random()*-10,Math.random()*-50,obj.getPoints3D(),obj.getFaces3D());
+            Object3D obj2 = Util.generateOBJ(Math.random()*10,Math.random()*-10,Math.random()*-50,obj3.getPoints3D(),obj3.getFaces3D());
+            obj1.rotZ(30);
+            obj2.displayObject();
+            obj1.displayObject();
+        }
         Object3D obj = Util.convertOBJ("cube.txt");
         Object3D obj3 = Util.convertOBJ(cubePath);
         System.out.println("BRUH");
