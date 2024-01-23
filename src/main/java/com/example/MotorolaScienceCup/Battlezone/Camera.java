@@ -2,7 +2,7 @@ package com.example.MotorolaScienceCup.Battlezone;
 
 import java.util.ArrayList;
 
-public class Camera{
+public class Camera extends Object3D{
 
     private static double H_FOV;
 
@@ -12,38 +12,34 @@ public class Camera{
 
     private static double far;
 
-    private static double x;
-    private static double y;
-
-    private static double z;
+    private static Vertex position;
 
     private static Vertex forward;
     private static Vertex up;
     private static Vertex right;
 
 
-    private ArrayList<Vertex> rotation;
 
 
 
-    public Camera(double x, double y, double z){
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public Camera(ArrayList<Vertex> points3D, ArrayList<Face> faces3D, double x, double y, double z){
+        super(points3D,faces3D);
+        Vertex vertex = new Vertex(x,y,z);
+        this.position = vertex;
         this.H_FOV = Main.H_FOV;
         this.V_FOV = H_FOV*(Main.HEIGHT/Main.WIDTH);
         this.forward = new Vertex(0,0,1);
         this.up = new Vertex(0,1,0);
         this.right = new Vertex(1,0,0);
-        this.near = 0.1 ;
+        this.near = 1 ;
         this.far = 100;
     }
 
     public static double[][] getTranslateCamMatrix(){
         double[][] matrix = {
-                {1,0,0,-x},
-                {0,1,0,-y},
-                {0,0,1,-z},
+                {1,0,0,-position.getX()},
+                {0,1,0,-position.getY()},
+                {0,0,1,-position.getZ()},
                 {0,0,0,1}
         };
         return matrix;
@@ -92,4 +88,51 @@ public class Camera{
         return matrix;
     }
 
+    public static double gethFov() {
+        return H_FOV;
+    }
+
+    public static double getvFov() {
+        return V_FOV;
+    }
+
+    public static double getNear() {
+        return near;
+    }
+
+    public static double getFar() {
+        return far;
+    }
+
+    public static Vertex getPosition() {
+        return position;
+    }
+
+    public static Vertex getForward() {
+        return forward;
+    }
+
+    public static Vertex getUp() {
+        return up;
+    }
+
+    public static Vertex getRight() {
+        return right;
+    }
+
+    public static void setPosition(Vertex position) {
+        Camera.position = position;
+    }
+
+    public static void setForward(Vertex forward) {
+        Camera.forward = forward;
+    }
+
+    public static void setUp(Vertex up) {
+        Camera.up = up;
+    }
+
+    public static void setRight(Vertex right) {
+        Camera.right = right;
+    }
 }

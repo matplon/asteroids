@@ -112,6 +112,7 @@ public class Util {
         obj.moveTo(x,y,z);
         System.out.println(obj.getPoints3D().get(0).getW()+"   1");
         System.out.println(obj.getCenterX()+" "+obj.getCenterY()+" "+obj.getCenterZ()+" 10000000");
+        Main.objectList.add(obj);
         return obj;
     }
 

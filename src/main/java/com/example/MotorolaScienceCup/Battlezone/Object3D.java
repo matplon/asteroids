@@ -22,6 +22,16 @@ public class Object3D {
 
     private ArrayList<Face> faces3D = new ArrayList<>();
 
+    public Object3D(ArrayList<Vertex> points3D, ArrayList<Face> faces3D, double x, double y, double z){
+        this.points3D = points3D;
+        this.faces3D = faces3D;
+        this.rotation = 0;
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+
+    }
+
     public Object3D(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         this.points3D = points3D;
         this.faces3D = faces3D;
@@ -126,6 +136,10 @@ public class Object3D {
             Polyline polyline2 = new Polyline(bx,by,cx,cy);
             Polyline polyline3 = new Polyline(cx,cy,dx,dy);
             Polyline polyline4 = new Polyline(dx,dy,ax,ay);
+            Main.lineList.add(polyline1);
+            Main.lineList.add(polyline2);
+            Main.lineList.add(polyline3);
+            Main.lineList.add(polyline4);
             Main.root.getChildren().addAll(polyline2,polyline1,polyline4,polyline3);
 
 
