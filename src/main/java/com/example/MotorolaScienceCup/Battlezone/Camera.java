@@ -12,11 +12,11 @@ public class Camera extends Object3D{
 
     private static double far;
 
-    private static Vertex position;
+    private Vertex position;
 
-    private static Vertex forward;
-    private static Vertex up;
-    private static Vertex right;
+    private Vertex forward;
+    private Vertex up;
+    private  Vertex right;
 
 
 
@@ -35,7 +35,7 @@ public class Camera extends Object3D{
         this.far = 100;
     }
 
-    public static double[][] getTranslateCamMatrix(){
+    public double[][] getTranslateCamMatrix(){
         double[][] matrix = {
                 {1,0,0,-position.getX()},
                 {0,1,0,-position.getY()},
@@ -44,7 +44,7 @@ public class Camera extends Object3D{
         };
         return matrix;
     }
-    public static double[][] getRotateCamMatrix(){
+    public double[][] getRotateCamMatrix(){
         double rx = right.getX();
         double ry = right.getY();
         double rz = right.getZ();
@@ -63,7 +63,7 @@ public class Camera extends Object3D{
         return matrix;
     }
 
-    public static double[][] getCamMatrix(){
+    public  double[][] getCamMatrix(){
         double[][] matrix = Util.multiplyMatrices(getTranslateCamMatrix(),getRotateCamMatrix());
         return matrix;
     }
@@ -76,7 +76,7 @@ public class Camera extends Object3D{
         double a = 2/(RIGHT - LEFT);
         double b = 2/(TOP - BOTTOM);
 
-        System.out.println((25.3125));
+        System.out.println((42.1875));
         double c = -(far+near)/(far-near);
         double d = (-2 * near * far) / (far - near);
         double [][] matrix = {
@@ -104,35 +104,34 @@ public class Camera extends Object3D{
         return far;
     }
 
-    public static Vertex getPosition() {
+    public  Vertex getPosition() {
         return position;
     }
 
-    public static Vertex getForward() {
+    public Vertex getForward() {
         return forward;
     }
 
-    public static Vertex getUp() {
+    public  Vertex getUp() {
         return up;
     }
 
-    public static Vertex getRight() {
+    public  Vertex getRight() {
         return right;
     }
 
-    public static void setPosition(Vertex position) {
-        Camera.position = position;
+    public  void setPosition(Vertex position) {
+        this.position = position;
     }
 
-    public static void setForward(Vertex forward) {
-        Camera.forward = forward;
+    public  void setForward(Vertex forward) { this.forward = forward;
     }
 
-    public static void setUp(Vertex up) {
-        Camera.up = up;
+    public  void setUp(Vertex up) {
+        this.up = up;
     }
 
-    public static void setRight(Vertex right) {
-        Camera.right = right;
+    public  void setRight(Vertex right) {
+        this.right = right;
     }
 }

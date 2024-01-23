@@ -108,10 +108,8 @@ public class Util {
     public static Object3D generateOBJ (double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         Object3D obj = new Object3D(points3D,faces3D);
         obj.convertVertecesToCentralOrigin();
-        System.out.println(obj.getPoints3D().get(0).getW()+"      OOOOOOOO");
         obj.moveTo(x,y,z);
-        System.out.println(obj.getPoints3D().get(0).getW()+"   1");
-        System.out.println(obj.getCenterX()+" "+obj.getCenterY()+" "+obj.getCenterZ()+" 10000000");
+        //obj.scale(0.1,0.1,0.1);
         Main.objectList.add(obj);
         return obj;
     }
@@ -126,7 +124,7 @@ public class Util {
             while (scanner.hasNextLine()) {
                 String nextLine = scanner.nextLine();
                 System.out.println(nextLine);
-                if(nextLine.startsWith("v")){
+                if(nextLine.startsWith("v ")){
                     String line = nextLine.replace("v ", "");
                     System.out.println(line);
                     String [] cords = line.split(" ");
@@ -143,31 +141,16 @@ public class Util {
                     String [] prepFaces = line.split(" ");
                     System.out.println(Arrays.toString(prepFaces));
                     if(prepFaces.length != 0){
-                        int a = 0;
-                        int b = 0;
-                        int c = 0;
-                        int d = 0;
+                        ArrayList<Integer> list = new ArrayList<>();
                         for (int i = 0; i < prepFaces.length;i++) {
-                           String [] finalFace = prepFaces[i].split("/");
+                            String [] finalFace = prepFaces[i].split("/");
                             System.out.println(Arrays.toString(finalFace));
                             System.out.println("lol");
-                           int result = Integer.parseInt(finalFace[0])-1;
-                           if(i==0){
-                               a = result;
-                           } else if (i==1) {
-                              b = result;
-                           } else if (i==2) {
-                                c = result;
-                           } else if (i==3 && prepFaces.length == 4) {
-                                d = result;
-                           }
+                            int result = Integer.parseInt(finalFace[0])-1;
+                            list.add(result);
                         }
                         Face face;
-                        if(prepFaces.length == 3){
-                            face = new Face(a,b,c);
-                        } else{
-                            face = new Face(a,b,c,d);
-                        }
+                        face = new Face(list);
                         faces.add(face);
                     }
 

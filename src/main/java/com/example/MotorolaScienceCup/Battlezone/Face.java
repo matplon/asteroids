@@ -1,66 +1,28 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
+import java.util.ArrayList;
+
 public class Face {
 
-    private int a;
-    private int b;
-    private int c;
-    private int d;
+    private ArrayList<Integer> indexes;
 
-    public Face(int a, int b, int c) {
-        this.a = a;
-        this.b = b;
-        this.c = c;
+    public Face(ArrayList<Integer> indexes) {
+        this.indexes = indexes;
 
     }
 
-    public Face(int a, int b, int c, int d) {
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-
+    public ArrayList<Integer> getIndexes() {
+        return indexes;
     }
 
-    public int getA() {
-        return a;
-    }
-
-    public void setA(int a) {
-        this.a = a;
-    }
-
-    public int getB() {
-        return b;
-    }
-
-    public void setB(int b) {
-        this.b = b;
-    }
-
-    public int getC() {
-        return c;
-    }
-
-    public void setC(int c) {
-        this.c = c;
-    }
-
-    public int getD() {
-        return d;
-    }
-
-    public void setD(int d) {
-        this.d = d;
+    public void setIndexes(ArrayList<Integer> indexes) {
+        this.indexes = indexes;
     }
 
     @Override
     public String toString() {
         return "Face{" +
-                "a=" + a +
-                ", b=" + b +
-                ", c=" + c +
-                ", d=" + d +
+                "indexes=" + indexes +
                 '}';
     }
 }

@@ -62,13 +62,12 @@ public class Object3D {
         double x = 0;
         for (int i = 0; i < this.points3D.size(); i++) {
             x += this.points3D.get(i).getZ();
-            System.out.println(x+"IIIII");
-            System.out.println(this.points3D.get(i).getZ()+ " xxxxxxxxxxxx");
         }
         double average = x/this.points3D.size();
         return average;
     }
 
+    //DOES NOT WORK. DO NOT USE UNDER ANY CIRCUMSTANCES. ONLY USE Object.moveTo(0,0,0)
     public void convertVertecesToCentralOrigin(){
         for (int i = 0; i < this.points3D.size(); i++) {
             Vertex vertex = this.points3D.get(i);
@@ -82,13 +81,15 @@ public class Object3D {
         this.z = getCenterZ();
     }
 
+    //
+
     public ArrayList<Vertex> toScreen(){
         ArrayList<Vertex> arrlist= new ArrayList<>();
         for (int i = 0; i < this.points3D.size(); i++) {
             System.out.println(this.points3D.get(i).toString()+"0");
         }
         for (int i = 0; i < this.points3D.size(); i++) {
-            double [][] camMatrixMatrix = Camera.getCamMatrix();
+            double [][] camMatrixMatrix = Main.camera.getCamMatrix();
             double [] arr = new double[4];
             double[] arr1 = this.points3D.get(i).toArray();
             System.out.println(Arrays.toString(arr1)+"1");
@@ -102,8 +103,8 @@ public class Object3D {
             arr = Util.multiplyTransform(projectionMatrix, arr);
             System.out.println(Arrays.toString(arr)+"4");
             for (int j = 0; j < arr.length; j++) {
-                arr[j] = arr[j] / arr[3];
-                if(arr[j]>2||arr[j]<-2){
+                arr[j] = arr[j] / arr[arr.length-1];
+                if(arr[j]>3||arr[j]<-3){
                     arr[j]=0;
                 }
             }
@@ -123,24 +124,25 @@ public class Object3D {
         }
         for (int i = 0; i < this.faces3D.size(); i++) {
             Face face = this.faces3D.get(i);
-            double ax = arrlist.get(face.getA()).getX();
-            double ay = arrlist.get(face.getA()).getY();
-            System.out.println(face.toString());
-            double bx = arrlist.get(face.getB()).getX();
-            double by = arrlist.get(face.getB()).getY();
-            double cx = arrlist.get(face.getC()).getX();
-            double cy = arrlist.get(face.getC()).getY();
-            double dx = arrlist.get(face.getD()).getX();
-            double dy = arrlist.get(face.getD()).getY();
-            Polyline polyline1 = new Polyline(ax,ay,bx,by);
-            Polyline polyline2 = new Polyline(bx,by,cx,cy);
-            Polyline polyline3 = new Polyline(cx,cy,dx,dy);
-            Polyline polyline4 = new Polyline(dx,dy,ax,ay);
-            Main.lineList.add(polyline1);
-            Main.lineList.add(polyline2);
-            Main.lineList.add(polyline3);
-            Main.lineList.add(polyline4);
-            Main.root.getChildren().addAll(polyline2,polyline1,polyline4,polyline3);
+            for (int j = 0; j < face.getIndexes().size(); j++) {
+                if(j+1<face.getIndexes().size()){
+                    double ax = arrlist.get(face.getIndexes().get(j)).getX();
+                    double ay = arrlist.get(face.getIndexes().get(j)).getY();
+                    double bx = arrlist.get(face.getIndexes().get(j+1)).getX();
+                    double by = arrlist.get(face.getIndexes().get(j+1)).getY();
+                    Polyline polyline1 = new Polyline(ax,ay,bx,by);
+                    Main.lineList.add(polyline1);
+                    Main.root.getChildren().add(polyline1);
+                }else{
+                    double ax = arrlist.get(face.getIndexes().get(j)).getX();
+                    double ay = arrlist.get(face.getIndexes().get(j)).getY();
+                    double bx = arrlist.get(face.getIndexes().get(0)).getX();
+                    double by = arrlist.get(face.getIndexes().get(0)).getY();
+                    Polyline polyline1 = new Polyline(ax,ay,bx,by);
+                    Main.lineList.add(polyline1);
+                    Main.root.getChildren().add(polyline1);
+                }
+            }
 
 
         }
@@ -162,15 +164,25 @@ public class Object3D {
     }
 
     public void moveTo(double x, double y, double z){
-        double tx = x - this.getCenterX();
-        double ty = y - this.getCenterY();
-        double tz = z - this.getCenterZ();
+        double tx = x - this.getX();
+        double ty = y - this.getY();
+        double tz = z - this.getZ();
         System.out.println(tx+" "+ty+" "+tz + "CFFF");
         System.out.println(x+" "+y+" "+z);
         translate(tx,ty,tz);
     }
 
     public void rotX(double angle){
+        double x = this.getCenterX();
+        double y = this.getCenterY();
+        double z = this.getCenterZ();
+        this.rotation += angle;
+        if(rotation == 360 || rotation==-360){
+            angle = 0;
+            rotation = 0;
+        }
+        System.out.println(rotation+" HHHHHHHHHHHHHHHHHHHH");
+        this.moveTo(0,0,0);
         for (int i = 0; i < this.points3D.size(); i++) {
             double [][] translationMatrix = Util.getRotationXMatrix(angle);
             double [] arr = this.points3D.get(i).toArray();
@@ -178,30 +190,59 @@ public class Object3D {
             this.points3D.set(i,Util.arrToVert(arr));
 
         }
+        this.moveTo(x,y,z);
         this.x = getCenterX();
         this.y = getCenterY();
         this.z = getCenterZ();
     }
     public void rotY(double angle){
+        double x = this.getCenterX();
+        double y = this.getCenterY();
+        double z = this.getCenterZ();
+        this.rotation += angle;
+        if(rotation == 360 || rotation==-360){
+            angle = 0;
+            rotation = 0;
+        }
+        System.out.println(rotation+" HHHHHHHHHHHHHHHHHHHH");
+        this.moveTo(0,0,0);
         for (int i = 0; i < this.points3D.size(); i++) {
             double [][] translationMatrix = Util.getRotationYMatrix(angle);
             double [] arr = this.points3D.get(i).toArray();
             arr = Util.multiplyTransform(translationMatrix, arr);
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = Math.round(arr[j] * 10000.0) / 10000.0;
+            }
             this.points3D.set(i,Util.arrToVert(arr));
 
         }
+        this.moveTo(x,y,z);
         this.x = getCenterX();
         this.y = getCenterY();
         this.z = getCenterZ();
     }
     public void rotZ(double angle){
+        double x = this.getCenterX();
+        double y = this.getCenterY();
+        double z = this.getCenterZ();
+        this.rotation += angle;
+        if(rotation == 360 || rotation==-360){
+            angle = 0;
+            rotation = 0;
+        }
+        System.out.println(rotation+" HHHHHHHHHHHHHHHHHHHH");
+        this.moveTo(0,0,0);
         for (int i = 0; i < this.points3D.size(); i++) {
             double [][] translationMatrix = Util.getRotationZMatrix(angle);
             double [] arr = this.points3D.get(i).toArray();
             arr = Util.multiplyTransform(translationMatrix, arr);
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = Math.round(arr[j] * 10000.0) / 10000.0;
+            }
             this.points3D.set(i,Util.arrToVert(arr));
 
         }
+        this.moveTo(x,y,z);
         this.x = getCenterX();
         this.y = getCenterY();
         this.z = getCenterZ();
@@ -211,6 +252,9 @@ public class Object3D {
             double [][] translationMatrix = Util.getScaleMatrix(x,y,z);
             double [] arr = this.points3D.get(i).toArray();
             arr = Util.multiplyTransform(translationMatrix, arr);
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = Math.round(arr[j] * 10000.0) / 10000.0;
+            }
             this.points3D.set(i,Util.arrToVert(arr));
 
         }
