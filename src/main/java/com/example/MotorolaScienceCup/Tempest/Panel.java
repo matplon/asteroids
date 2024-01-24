@@ -21,6 +21,7 @@ public class Panel {
     private Panel rightPanel;
 
     public List<Particle> bullets = new ArrayList<>();
+    public List<Flipper> flippers = new ArrayList<>();
 
     public Panel() {
     }
@@ -57,6 +58,10 @@ public class Panel {
     }
 
     private void checkForHits() {
+    }
+
+    public void addFlipper(Flipper flipper){
+        flippers.add(flipper);
     }
 
     public void changeColorSmallSide(Color color) {

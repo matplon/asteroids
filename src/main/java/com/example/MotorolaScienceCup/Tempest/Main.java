@@ -59,7 +59,7 @@ public class Main {
         goLeft = false;
         goRight = false;
 
-        Graphics.drawMap(testMap3, defaultPanelColor);
+        Graphics.drawMap(testMap2, defaultPanelColor);
 
         double bigSideLengthX = panels.get(0).getBigSide().getPoints().getFirst() - panels.get(0).getBigSide().getPoints().get(2);
         double bigSideLengthY = panels.get(0).getBigSide().getPoints().get(1) - panels.get(0).getBigSide().getPoints().getLast();
@@ -88,7 +88,7 @@ public class Main {
         root.getChildren().add(flipper);
         flipper.setStroke(Color.RED);
         flipper.moveTo((panels.get(0).getBigSide().getPoints().get(2) + panels.get(0).getBigSide().getPoints().get(0))/2, panels.get(0).getBigSide().getPoints().get(1) + 5);
-
+        panels.get(0).addFlipper(flipper);
 
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = true;
@@ -121,6 +121,12 @@ public class Main {
             }
             if(shoot && bulletsNumber < 5){
                 player.shoot();
+            }
+            for(Panel panel : panels){
+                for(Flipper flipper : panel.flippers){
+                    flipper.move(true);
+                    System.out.println(flipper);
+                }
             }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
