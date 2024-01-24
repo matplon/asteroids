@@ -105,7 +105,7 @@ public class Player extends BetterPolygon {
         bullet.setFill(Color.RED);
         bullet.scale(10/bullet.getRadius());
         bullet.moveTo(xBig, yBig);
-        currentPanel.bullets.add(bullet);
+        currentPanel.addBullet(bullet);
 
         root.getChildren().add(bullet);
     }

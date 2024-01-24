@@ -20,8 +20,11 @@ public class Panel {
     private Panel leftPanel;
     private Panel rightPanel;
 
-    public List<Particle> bullets = new ArrayList<>();
-    public List<Flipper> flippers = new ArrayList<>();
+    private List<Particle> bullets = new ArrayList<>();
+    private List<Flipper> flippers = new ArrayList<>();
+
+    private double length;
+    private double angle;
 
     public Panel() {
     }
@@ -63,6 +66,8 @@ public class Panel {
     public void addFlipper(Flipper flipper){
         flippers.add(flipper);
     }
+
+    public void addBullet(Particle bullet){bullets.add(bullet);}
 
     public void changeColorSmallSide(Color color) {
         smallSide.setStroke(color);
@@ -140,6 +145,26 @@ public class Panel {
 
     public List<Particle> getBullets() {
         return bullets;
+    }
+
+    public List<Flipper> getFlippers() {
+        return flippers;
+    }
+
+    public double getLength() {
+        return length;
+    }
+
+    public void setLength(double length) {
+        this.length = length;
+    }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
     }
 
     @Override

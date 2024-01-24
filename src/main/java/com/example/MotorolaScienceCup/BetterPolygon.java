@@ -5,7 +5,8 @@ import java.util.List;
 public class BetterPolygon extends javafx.scene.shape.Polygon {
     public BetterPolygon(List<Double> points){
         super();
-        getPoints().setAll(points);
+        if(points != null)
+            getPoints().setAll(points);
     }
 
     public double getCenterX() {    // Mean average of the X coordinates

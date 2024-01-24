@@ -3,44 +3,87 @@ package com.example.MotorolaScienceCup.Tempest;
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
+import javafx.geometry.Point2D;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Flipper extends Particle {
+    private static String filepath = "flipper.svg";
+    private static List<Double> defPoints = Util.SVGconverter(filepath);
+    private static final double initVelocity = 1;
+
     private Panel currentPanel;
     public int step;
     private boolean goingUp;
     private double pivotX, pivotY;
-    private double y;
+    private double h;
 
-    public Flipper(List<Double> points, Panel startPanel) {
-        super(points, );
+    public Flipper(Panel startPanel) {
+        super(null, startPanel.getAngle(), 0, initVelocity, 0);
+        getPoints().setAll(defPoints);
+        rotate(startPanel.getAngle()-90);
+        System.out.println(startPanel.getAngle());
+
         this.currentPanel = startPanel;
         double x = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
         double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast()) / 2;
         moveTo(x, y);
         goingUp = false;
         step = 0;
-        y = 0;
-    }
-
-    private void generate(){
-        List<Double> points = new ArrayList<>();
-        double grad = (currentPanel.getRightSide().getPoints().get(3) - currentPanel.getRightSide().getPoints().get(1)) /
-                (currentPanel.getRightSide().getPoints().get(2) - currentPanel.getRightSide().getPoints().get(0));
-        double x1 = (currentPanel.getRightSide().getPoints().get(0) + y) * grad;
-        double x2
-
+        h = 0;
     }
 
     public void moveUp() {
-
+        updatePosition();
+        generate();
     }
 
+    private void generate(){
+        Point2D leftWing = getLeftWingCoords();
+        Point2D rightWing = getRightWingCoords();
+        double topLength = Math.sqrt(Math.pow(rightWing.getX() - leftWing.getX(), 2) + Math.pow(rightWing.getY() - leftWing.getY(), 2));
 
+        double scale = 1.01;
+        BetterPolygon tempFlipper = BetterPolygon.scale(this, scale);
 
+        double topLengthTemp = Math.sqrt(Math.pow(tempFlipper.getPoints().get(8) - tempFlipper.getPoints().get(12), 2) + Math.pow(tempFlipper.getPoints().get(9) - tempFlipper.getPoints().get(13), 2));
+        while(Math.round(topLength) == Math.round(topLengthTemp)){
+            scale += 0.1;
+            tempFlipper = BetterPolygon.scale(this, scale);
+            topLengthTemp = Math.sqrt(Math.pow(tempFlipper.getPoints().get(8) - tempFlipper.getPoints().get(12), 2) + Math.pow(tempFlipper.getPoints().get(9) - tempFlipper.getPoints().get(13), 2));
+        }
+    }
+
+    private Point2D getLeftWingCoords(){
+        double x1 = currentPanel.getRightSide().getPoints().getFirst();
+        double x2 = currentPanel.getRightSide().getPoints().get(2);
+        double y1 = currentPanel.getRightSide().getPoints().get(1);
+        double y2 = currentPanel.getRightSide().getPoints().getLast();
+
+        double xGrad = (x2 - x1) / currentPanel.getLength();
+        double yGrad = (y2 - y1) / currentPanel.getLength();
+
+        double xFinal = x1 + h * xGrad;
+        double yFinal = y1 + h * yGrad;
+
+        return new Point2D(xFinal, yFinal);
+    }
+
+    private Point2D getRightWingCoords(){
+        double x1 = currentPanel.getLeftSide().getPoints().getFirst();
+        double x2 = currentPanel.getLeftSide().getPoints().get(2);
+        double y1 = currentPanel.getLeftSide().getPoints().get(1);
+        double y2 = currentPanel.getLeftSide().getPoints().getLast();
+
+        double xGrad = (x2 - x1) / currentPanel.getLength();
+        double yGrad = (y2 - y1) / currentPanel.getLength();
+
+        double xFinal = x1 + h * xGrad;
+        double yFinal = y1 + h * yGrad;
+
+        return new Point2D(xFinal, yFinal);
+    }
 
     public void move(boolean left) {
         if(step == 0){

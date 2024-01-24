@@ -118,6 +118,22 @@ public class Graphics {
 
             panel.setRightSide(connectors.get(i));
             panels.add(panel);
+
+            double x1 = (smallSideX1 + smallSideX2) / 2;
+            double y1 = (smallSideY1 + smallSideY2) / 2;
+            double x2 = (bigSideX1 + bigSideX2) / 2;
+            double y2 = (bigSideY1 + bigSideY2) / 2;
+
+            double xLength = x2 - x1;
+            double yLength = y2 - y1;
+            double length = Math.sqrt(xLength * xLength + yLength * yLength);
+            panel.setLength(length);
+
+//            double sideOpposite = y2 - y1;
+//            double side1 = x2 - x1;
+//            double angle = Math.toDegrees(Math.acos((sideOpposite * sideOpposite - length * length - side1 * side1) / (-2 * length * side1)));
+
+            panel.setAngle(Math.toDegrees(Math.atan2(y2 - y1, x2 - x1)));
         }
 
         for (int i = 0; i < panels.size(); i++) {
@@ -129,7 +145,7 @@ public class Graphics {
             if (i > 0) {
                 panels.get(i).setRightPanel(panels.get(i - 1));
             } else {
-                panels.get(i).setRightPanel(panels.get(panels.size()-1));
+                panels.get(i).setRightPanel(panels.get(panels.size() - 1));
             }
         }
     }
