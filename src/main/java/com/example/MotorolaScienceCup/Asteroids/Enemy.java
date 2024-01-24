@@ -32,13 +32,28 @@ public class Enemy extends Particle {
         this.type = type;
     }
 
+    private static double probability(){
+        double baseProb = 0.01;
+        double changeRate = 0.02;
+
+        double adjustedProb = baseProb + HUD.getPoints() * changeRate;
+        adjustedProb =Math.max(0, Math.min(1, adjustedProb));
+
+        return adjustedProb;
+    }
+
     public static void spawnEnemy() {
+
         if (enemyList.isEmpty()) {
-            int type = Math.random() < 0.5 ? 1 : 2;
+            double pick = Math.random();
+            int type = 1;
+            if (pick < probability()){
+                type = 2;
+            }
             Enemy enemy = new Enemy(SVGconverter("enemy" + type + ".svg"), 0, ENEMY_SPEED, type);
             if (enemy.getType() == 2) {
                 enemy.setStroke(Color.RED);
-            }
+                }
             boolean check = Math.random() < 0.5;
             double x;
             if (check) {
@@ -59,8 +74,8 @@ public class Enemy extends Particle {
             enemy.setFill(Color.TRANSPARENT);
             enemy.setStroke(Color.WHITE);
             root.getChildren().add(enemy);
-            enemyList.add(enemy); //all
-        }
+                enemyList.add(enemy); //all
+            }
     }
 
     static void updateEnemy(List<Double> rightDirections, List<Double> leftDirections) {
