@@ -84,7 +84,7 @@ public class Object3D {
     //
 
     public ArrayList<Vertex> toScreen(){
-        ArrayList<Vertex> arrlist= new ArrayList<>();
+        ArrayList<Vertex> arrlist = new ArrayList<>();
         for (int i = 0; i < this.points3D.size(); i++) {
             System.out.println(this.points3D.get(i).toString()+"0");
         }
@@ -125,23 +125,24 @@ public class Object3D {
         for (int i = 0; i < this.faces3D.size(); i++) {
             Face face = this.faces3D.get(i);
             for (int j = 0; j < face.getIndexes().size(); j++) {
+                double ax;
+                double ay;
+                double bx;
+                double by;
                 if(j+1<face.getIndexes().size()){
-                    double ax = arrlist.get(face.getIndexes().get(j)).getX();
-                    double ay = arrlist.get(face.getIndexes().get(j)).getY();
-                    double bx = arrlist.get(face.getIndexes().get(j+1)).getX();
-                    double by = arrlist.get(face.getIndexes().get(j+1)).getY();
-                    Polyline polyline1 = new Polyline(ax,ay,bx,by);
-                    Main.lineList.add(polyline1);
-                    Main.root.getChildren().add(polyline1);
+                    ax = arrlist.get(face.getIndexes().get(j)).getX();
+                    ay = arrlist.get(face.getIndexes().get(j)).getY();
+                    bx = arrlist.get(face.getIndexes().get(j+1)).getX();
+                    by = arrlist.get(face.getIndexes().get(j+1)).getY();
                 }else{
-                    double ax = arrlist.get(face.getIndexes().get(j)).getX();
-                    double ay = arrlist.get(face.getIndexes().get(j)).getY();
-                    double bx = arrlist.get(face.getIndexes().get(0)).getX();
-                    double by = arrlist.get(face.getIndexes().get(0)).getY();
-                    Polyline polyline1 = new Polyline(ax,ay,bx,by);
-                    Main.lineList.add(polyline1);
-                    Main.root.getChildren().add(polyline1);
+                    ax = arrlist.get(face.getIndexes().get(j)).getX();
+                    ay = arrlist.get(face.getIndexes().get(j)).getY();
+                    bx = arrlist.get(face.getIndexes().get(0)).getX();
+                    by = arrlist.get(face.getIndexes().get(0)).getY();
                 }
+                Polyline polyline1 = new Polyline(ax,ay,bx,by);
+                Main.lineList.add(polyline1);
+                Main.root.getChildren().add(polyline1);
             }
 
 
