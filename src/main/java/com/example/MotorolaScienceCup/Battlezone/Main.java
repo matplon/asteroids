@@ -29,7 +29,7 @@ public class Main {
     static int WIDTH = Menu.WIDTH;
     static int HEIGHT = Menu.HEIGHT;
 
-    static double CAMERA_SPEED = 0.1;
+    static double CAMERA_SPEED = 0.5;
 
     static ArrayList<Object3D> objectList = new ArrayList<>();
 
@@ -45,7 +45,7 @@ public class Main {
 
     public static void init(){
 
-        camera = new Camera(new ArrayList<Vertex>(),new ArrayList<Face>(),-5,5,40);
+        camera = new Camera(new ArrayList<Vertex>(),new ArrayList<Face>(),0,0,0);
         for (int i = 0; i < 10; i++) {
             Object3D obj = Util.convertOBJ("cube.txt");
             Object3D obj3 = Util.convertOBJ(cubePath);
@@ -59,7 +59,7 @@ public class Main {
         Object3D obj = Util.convertOBJ("cube.txt");
         Object3D obj3 = Util.convertOBJ(cubePath);
         System.out.println("BRUH");
-        Object3D obj1 = Util.generateOBJ(10,-5,-50,obj.getPoints3D(),obj.getFaces3D());
+        Object3D obj1 = Util.generateOBJ(0,-5,-10,obj.getPoints3D(),obj.getFaces3D());
         Object3D obj2 = Util.generateOBJ(3,0,-4,obj3.getPoints3D(),obj3.getFaces3D());
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
@@ -80,22 +80,22 @@ public class Main {
             Vertex camVert = camera.getPosition();
             double [] camArr = camVert.toArray();
             Vertex camForward = camera.getForward();
-            double [] camF = camVert.toArray();
+            double [] camF = camForward.toArray();
             Vertex camUp = camera.getUp();
-            double [] camU = camVert.toArray();
+            double [] camU = camUp.toArray();
             Vertex camRight = camera.getRight();
-            double [] camR = camVert.toArray();
+            double [] camR = camRight.toArray();
 
             if (keyEvent.getCode() == KeyCode.S){
                 System.out.println("lol");
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 3; i++) {
                     camArr[i]+=camF[i]*CAMERA_SPEED;
                 }
                 camera.setPosition(Util.arrToVert(camArr));
             };
             if (keyEvent.getCode() == KeyCode.W){
                 System.out.println("xd");
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 3; i++) {
                     camArr[i]-=camF[i]*CAMERA_SPEED;
                 }
                 camera.setPosition(Util.arrToVert(camArr));
@@ -115,30 +115,34 @@ public class Main {
                 camera.setPosition(Util.arrToVert(camArr));
             }; // Rotate left
             if (keyEvent.getCode() == KeyCode.UP){
-                camArr[1]-=CAMERA_SPEED;
+                for (int i = 0; i < 4; i++) {
+                    camArr[i]-=camU[i]*CAMERA_SPEED;
+                }
                 camera.setPosition(Util.arrToVert(camArr));
             };   // Rotate right
             if (keyEvent.getCode() == KeyCode.DOWN){
-                camArr[1]+=CAMERA_SPEED;
+                for (int i = 0; i < 4; i++) {
+                    camArr[i]+=camU[i]*CAMERA_SPEED;
+                }
                 camera.setPosition(Util.arrToVert(camArr));
             }; // Rotate left
             if (keyEvent.getCode() == KeyCode.E){
-                double x = camVert.getX();
-                double y = camVert.getY();
-                double z = camVert.getZ();
-                double [] arr = camVert.toArray();
-                arr = Util.multiplyTransform(Util.getTranslationMatrix(-x,-y,-z),arr);
-                arr = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_SPEED), arr);
-                arr = Util.multiplyTransform(Util.getTranslationMatrix(x,y,z),arr);
-                camera.setPosition(Util.arrToVert(arr));
+
+
             };
             if (keyEvent.getCode() == KeyCode.Q){
-                camArr = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_SPEED), camArr);
-                camera.setPosition(Util.arrToVert(camArr));
+
             };
             if (keyEvent.getCode() == KeyCode.X);
 
         });
+        System.out.println("LLLLLLLLLLLL");
+        System.out.println(camera.getPosition().toString());
+        System.out.println(camera.getForward().toString());
+        System.out.println(camera.getUp().toString());
+        System.out.println(camera.getRight().toString());
+        System.out.println("WWWWWWWWWWWWW");
+
     }
 
     public static void start() {

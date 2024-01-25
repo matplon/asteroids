@@ -60,6 +60,12 @@ public class Camera extends Object3D{
                 {fx,fy,fz,0},
                 {0, 0, 0, 1}
         };
+        double[][] matrix1 = {
+                {rx,ux,fx,0},
+                {ry,uy,fy,0},
+                {rz,uz,fz,0},
+                {0, 0, 0, 1}
+        };
         return matrix;
     }
 
