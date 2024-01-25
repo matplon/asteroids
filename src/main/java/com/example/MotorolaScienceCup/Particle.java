@@ -115,4 +115,20 @@ public class Particle extends BetterPolygon {
     public Vector getVelocity() {
         return velocity;
     }
+
+    public void setThrust(double thrust){
+        this.thrust = thrust;
+    }
+
+    public double getThrust() {
+        return thrust;
+    }
+
+    public void setThrusting(boolean thrusting) {
+        isThrusting = thrusting;
+    }
+
+    public void setTerminalVelocity(double terminalVelocity) {
+        this.terminalVelocity = terminalVelocity;
+    }
 }
