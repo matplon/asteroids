@@ -45,27 +45,19 @@ public class Main {
 
     public static void init(){
 
-        camera = new Camera(new ArrayList<Vertex>(),new ArrayList<Face>(),0,0,0);
-        for (int i = 0; i < 10; i++) {
+        camera = new Camera(new ArrayList<Vertex>(),new ArrayList<Face>(),20,-5,10);
+        //camera.setForward(Util.arrToVert(Util.multiplyTransform(Util.getRotationYMatrix(-45), camera.getForward().toArray())));
+        for (int i = 0; i < 30; i++) {
             Object3D obj = Util.convertOBJ("cube.txt");
-            Object3D obj3 = Util.convertOBJ(cubePath);
             System.out.println("BRUH");
-            Object3D obj1 = Util.generateOBJ(Math.random()*10,Math.random()*-10,Math.random()*-50,obj.getPoints3D(),obj.getFaces3D());
-            Object3D obj2 = Util.generateOBJ(Math.random()*10,Math.random()*-10,Math.random()*-50,obj3.getPoints3D(),obj3.getFaces3D());
-            obj1.rotZ(30);
-            obj2.displayObject();
+            Object3D obj1 = Util.generateOBJ(Math.random()*500-250,Math.random()*500-250,Math.random()*500-250,obj.getPoints3D(),obj.getFaces3D());
             obj1.displayObject();
         }
-        Object3D obj = Util.convertOBJ("cube.txt");
         Object3D obj3 = Util.convertOBJ(cubePath);
-        System.out.println("BRUH");
-        Object3D obj1 = Util.generateOBJ(0,-5,-10,obj.getPoints3D(),obj.getFaces3D());
-        Object3D obj2 = Util.generateOBJ(3,0,-4,obj3.getPoints3D(),obj3.getFaces3D());
+        Object3D obj1 = Util.generateOBJ(0,0,0,obj3.getPoints3D(),obj3.getFaces3D());
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
         }
-        obj1.rotZ(30);
-        obj2.displayObject();
         obj1.displayObject();
 
         start();
@@ -74,6 +66,7 @@ public class Main {
 
         Menu.stage.setScene(scene);
     }
+
 
     public static void control(){
         scene.setOnKeyPressed(keyEvent -> {
@@ -102,14 +95,14 @@ public class Main {
             }; // Thrust forward
             if (keyEvent.getCode() == KeyCode.RIGHT){
                 System.out.println("xd1");
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 3; i++) {
                     camArr[i]-=camR[i]*CAMERA_SPEED;
                 }
                 camera.setPosition(Util.arrToVert(camArr));
             };   // Rotate right
             if (keyEvent.getCode() == KeyCode.LEFT){
                 System.out.println("xd1");
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 3; i++) {
                     camArr[i]+=camR[i]*CAMERA_SPEED;
                 }
                 camera.setPosition(Util.arrToVert(camArr));
@@ -127,11 +120,20 @@ public class Main {
                 camera.setPosition(Util.arrToVert(camArr));
             }; // Rotate left
             if (keyEvent.getCode() == KeyCode.E){
+                camF = Util.multiplyTransform(Util.getRotationYMatrix(1), camF);
+                System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
+                camera.setForward(Util.arrToVert(camF));
+                camR = Util.multiplyTransform(Util.getRotationYMatrix(1), camR);
+                camera.setRight(Util.arrToVert(camR));
 
 
             };
             if (keyEvent.getCode() == KeyCode.Q){
-
+                camF = Util.multiplyTransform(Util.getRotationYMatrix(-1), camF);
+                System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
+                camera.setForward(Util.arrToVert(camF));
+                camR = Util.multiplyTransform(Util.getRotationYMatrix(-1), camR);
+                camera.setRight(Util.arrToVert(camR));
             };
             if (keyEvent.getCode() == KeyCode.X);
 
@@ -148,6 +150,9 @@ public class Main {
     public static void start() {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / Menu.FPS), actionEvent -> {
             control();
+            Vertex camForward = camera.getForward();
+            double [] camF = camForward.toArray();
+            System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
             for (Polyline polyline:lineList) {
                 root.getChildren().remove(polyline);
             }

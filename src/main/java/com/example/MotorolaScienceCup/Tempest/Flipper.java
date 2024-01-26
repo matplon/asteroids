@@ -96,7 +96,7 @@ public class Flipper extends Particle {
     }
 
     private boolean insidePanel(){
-
+        return true;
     }
 
     public void moveUp() {

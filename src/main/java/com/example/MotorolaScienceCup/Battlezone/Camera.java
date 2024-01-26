@@ -31,15 +31,15 @@ public class Camera extends Object3D{
         this.forward = new Vertex(0,0,1);
         this.up = new Vertex(0,1,0);
         this.right = new Vertex(1,0,0);
-        this.near = 1 ;
+        this.near = 0.5 ;
         this.far = 100;
     }
 
     public double[][] getTranslateCamMatrix(){
         double[][] matrix = {
-                {1,0,0,-position.getX()},
-                {0,1,0,-position.getY()},
-                {0,0,1,-position.getZ()},
+                {1,0,0,position.getX()},
+                {0,1,0,position.getY()},
+                {0,0,1,position.getZ()},
                 {0,0,0,1}
         };
         return matrix;
@@ -61,16 +61,16 @@ public class Camera extends Object3D{
                 {0, 0, 0, 1}
         };
         double[][] matrix1 = {
-                {rx,ux,fx,0},
-                {ry,uy,fy,0},
-                {rz,uz,fz,0},
+                {rx,fx,ux,0},
+                {ry,fy,uy,0},
+                {rz,fz,uz,0},
                 {0, 0, 0, 1}
         };
         return matrix;
     }
 
     public  double[][] getCamMatrix(){
-        double[][] matrix = Util.multiplyMatrices(getTranslateCamMatrix(),getRotateCamMatrix());
+        double[][] matrix = Util.multiplyMatrices(getTranslateCamMatrix(), getRotateCamMatrix());
         return matrix;
     }
 
@@ -82,7 +82,7 @@ public class Camera extends Object3D{
         double a = 2/(RIGHT - LEFT);
         double b = 2/(TOP - BOTTOM);
 
-        System.out.println((42.1875));
+        System.out.println((V_FOV/2));
         double c = -(far+near)/(far-near);
         double d = (-2 * near * far) / (far - near);
         double [][] matrix = {

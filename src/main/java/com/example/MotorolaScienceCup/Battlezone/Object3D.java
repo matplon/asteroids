@@ -99,12 +99,12 @@ public class Object3D {
             System.out.println(Arrays.toString(arr)+"2");
             arr = Util.multiplyTransform(camMatrixMatrix, arr);
             System.out.println(Arrays.toString(arr)+"3");
-            double [][] projectionMatrix = Camera.getProjectionMatrix();
+            double [][] projectionMatrix = Main.camera.getProjectionMatrix();
             arr = Util.multiplyTransform(projectionMatrix, arr);
             System.out.println(Arrays.toString(arr)+"4");
             for (int j = 0; j < arr.length; j++) {
                 arr[j] = arr[j] / arr[arr.length-1];
-                if(arr[j]>3||arr[j]<-3){
+                if(arr[j]>1||arr[j]<-1){
                     arr[j]=0;
                 }
             }
@@ -140,9 +140,18 @@ public class Object3D {
                     bx = arrlist.get(face.getIndexes().get(0)).getX();
                     by = arrlist.get(face.getIndexes().get(0)).getY();
                 }
-                Polyline polyline1 = new Polyline(ax,ay,bx,by);
+
+
+                if(ax > Main.WIDTH+Main.WIDTH || bx > Main.WIDTH+Main.WIDTH || ax < 0-Main.WIDTH || bx < 0-Main.WIDTH ||
+                        ay > Main.HEIGHT+Main.HEIGHT|| by > Main.HEIGHT+Main.HEIGHT || ay < 0-Main.HEIGHT || by < 0-Main.HEIGHT){
+
+                }else{
+                    Polyline polyline1 = new Polyline(ax,ay,bx,by);
+                    if(this.getCenterX() > -1 && this.getCenterY() > -1 && this.getCenterZ() > -1 && this.getCenterX() < 1 && this.getCenterY() < 1 && this.getCenterZ() < 1){
+                        polyline1.setStroke(Color.RED);
+                    }
                 Main.lineList.add(polyline1);
-                Main.root.getChildren().add(polyline1);
+                Main.root.getChildren().add(polyline1);}
             }
 
 
