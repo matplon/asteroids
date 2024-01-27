@@ -47,7 +47,7 @@ public class Main {
 
         camera = new Camera(new ArrayList<Vertex>(),new ArrayList<Face>(),20,-5,10);
         //camera.setForward(Util.arrToVert(Util.multiplyTransform(Util.getRotationYMatrix(-45), camera.getForward().toArray())));
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 5; i++) {
             Object3D obj = Util.convertOBJ("cube.txt");
             System.out.println("BRUH");
             Object3D obj1 = Util.generateOBJ(Math.random()*500-250,Math.random()*500-250,Math.random()*500-250,obj.getPoints3D(),obj.getFaces3D());
@@ -81,6 +81,7 @@ public class Main {
 
             if (keyEvent.getCode() == KeyCode.S){
                 System.out.println("lol");
+                camF = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), camF);
                 for (int i = 0; i < 3; i++) {
                     camArr[i]+=camF[i]*CAMERA_SPEED;
                 }
@@ -88,6 +89,7 @@ public class Main {
             };
             if (keyEvent.getCode() == KeyCode.W){
                 System.out.println("xd");
+                camF = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), camF);
                 for (int i = 0; i < 3; i++) {
                     camArr[i]-=camF[i]*CAMERA_SPEED;
                 }
@@ -95,6 +97,7 @@ public class Main {
             }; // Thrust forward
             if (keyEvent.getCode() == KeyCode.RIGHT){
                 System.out.println("xd1");
+                camR = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), camR);
                 for (int i = 0; i < 3; i++) {
                     camArr[i]-=camR[i]*CAMERA_SPEED;
                 }
@@ -102,6 +105,7 @@ public class Main {
             };   // Rotate right
             if (keyEvent.getCode() == KeyCode.LEFT){
                 System.out.println("xd1");
+                camR = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), camR);
                 for (int i = 0; i < 3; i++) {
                     camArr[i]+=camR[i]*CAMERA_SPEED;
                 }
