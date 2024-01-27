@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,9 +105,6 @@ public class Object3D {
             System.out.println(Arrays.toString(arr)+"4");
             for (int j = 0; j < arr.length; j++) {
                 arr[j] = arr[j] / arr[arr.length-1];
-                if(arr[j]>1||arr[j]<-1){
-                    arr[j]=0;
-                }
             }
             System.out.println(Arrays.toString(arr)+"5");
             double [][] displayMatrix = Util.getDisplayMatrix();
@@ -150,8 +148,17 @@ public class Object3D {
                     if(this.getCenterX() > -1 && this.getCenterY() > -1 && this.getCenterZ() > -1 && this.getCenterX() < 1 && this.getCenterY() < 1 && this.getCenterZ() < 1){
                         polyline1.setStroke(Color.RED);
                     }
-                Main.lineList.add(polyline1);
-                Main.root.getChildren().add(polyline1);}
+                    if(i==0 && j==0){
+                        Text text = new Text();
+                        text.setText(Math.round(this.getCenterX()) + " " + Math.round(this.getCenterY()) + " " + Math.round(this.getCenterZ()));
+                        text.setX(ax);
+                        text.setY(ay);
+                        Main.textList.add(text);
+                        Main.root.getChildren().add(text);
+                    }
+                    Main.lineList.add(polyline1);
+                    Main.root.getChildren().add(polyline1);
+                }
             }
 
 

@@ -37,9 +37,9 @@ public class Camera extends Object3D{
 
     public double[][] getTranslateCamMatrix(){
         double[][] matrix = {
-                {1,0,0,position.getX()},
-                {0,1,0,position.getY()},
-                {0,0,1,position.getZ()},
+                {1,0,0,-position.getX()},
+                {0,1,0,-position.getY()},
+                {0,0,1,-position.getZ()},
                 {0,0,0,1}
         };
         return matrix;
