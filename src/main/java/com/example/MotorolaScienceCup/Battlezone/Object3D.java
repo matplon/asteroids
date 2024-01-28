@@ -106,6 +106,9 @@ public class Object3D {
             for (int j = 0; j < arr.length; j++) {
                 arr[j] = arr[j] / arr[arr.length-1];
             }
+            if(arr[2]>1||arr[2]<-1){
+                Arrays.fill(arr, 0);
+            }
             System.out.println(Arrays.toString(arr)+"5");
             double [][] displayMatrix = Util.getDisplayMatrix();
             arr = Util.multiplyTransform(displayMatrix, arr);
