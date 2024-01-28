@@ -85,6 +85,7 @@ public class Object3D {
     //
 
     public ArrayList<Vertex> toScreen(){
+        int zeroedArrCount = 0;
         ArrayList<Vertex> arrlist = new ArrayList<>();
         for (int i = 0; i < this.points3D.size(); i++) {
             System.out.println(this.points3D.get(i).toString()+"0");
@@ -107,6 +108,7 @@ public class Object3D {
                 arr[j] = arr[j] / arr[arr.length-1];
             }
             if(arr[2]>1||arr[2]<-1){
+                zeroedArrCount++;
                 Arrays.fill(arr, 0);
             }
             System.out.println(Arrays.toString(arr)+"5");
@@ -115,7 +117,8 @@ public class Object3D {
             System.out.println(Arrays.toString(arr)+"6");
             arrlist.add(Util.arrToVert(arr));
         }
-        return arrlist;
+        if(zeroedArrCount == 0 || zeroedArrCount == arrlist.size()){
+        return arrlist;}else{return new ArrayList<>();}
     }
 
     public void displayObject(){
@@ -130,6 +133,7 @@ public class Object3D {
                 double ay;
                 double bx;
                 double by;
+                if(arrlist.size()>0){
                 if(j+1<face.getIndexes().size()){
                     ax = arrlist.get(face.getIndexes().get(j)).getX();
                     ay = arrlist.get(face.getIndexes().get(j)).getY();
@@ -162,7 +166,7 @@ public class Object3D {
                     Main.lineList.add(polyline1);
                     Main.root.getChildren().add(polyline1);
 
-            }
+            }}
 
 
         }
