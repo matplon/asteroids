@@ -112,7 +112,7 @@ public class Main {
                 }
                 camera.setPosition(Util.arrToVert(camArr));
             }; // Thrust forward
-            if (keyEvent.getCode() == KeyCode.RIGHT){
+            if (keyEvent.getCode() == KeyCode.D){
                 System.out.println("xd1");
                 camR = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), camR);
                 for (int i = 0; i < 4; i++) {
@@ -120,7 +120,7 @@ public class Main {
                 }
                 camera.setPosition(Util.arrToVert(camArr));
             };   // Rotate right
-            if (keyEvent.getCode() == KeyCode.LEFT){
+            if (keyEvent.getCode() == KeyCode.A){
                 System.out.println("xd1");
                 camR = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), camR);
                 for (int i = 0; i < 4; i++) {

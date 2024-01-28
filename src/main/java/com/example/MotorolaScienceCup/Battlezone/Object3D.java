@@ -143,10 +143,10 @@ public class Object3D {
                 }
 
 
-                if(ax > Main.WIDTH+Main.WIDTH || bx > Main.WIDTH+Main.WIDTH || ax < 0-Main.WIDTH || bx < 0-Main.WIDTH ||
-                        ay > Main.HEIGHT+Main.HEIGHT|| by > Main.HEIGHT+Main.HEIGHT || ay < 0-Main.HEIGHT || by < 0-Main.HEIGHT){
+                //if(ax > Main.WIDTH+Main.WIDTH || bx > Main.WIDTH+Main.WIDTH || ax < 0-Main.WIDTH || bx < 0-Main.WIDTH ||
+              //          ay > Main.HEIGHT+Main.HEIGHT|| by > Main.HEIGHT+Main.HEIGHT || ay < 0-Main.HEIGHT || by < 0-Main.HEIGHT){
 
-                }else{
+              //  }else{
                     Polyline polyline1 = new Polyline(ax,ay,bx,by);
                     if(this.getCenterX() > -1 && this.getCenterY() > -1 && this.getCenterZ() > -1 && this.getCenterX() < 1 && this.getCenterY() < 1 && this.getCenterZ() < 1){
                         polyline1.setStroke(Color.RED);
@@ -161,7 +161,7 @@ public class Object3D {
                     }
                     Main.lineList.add(polyline1);
                     Main.root.getChildren().add(polyline1);
-                }
+
             }
 
 
