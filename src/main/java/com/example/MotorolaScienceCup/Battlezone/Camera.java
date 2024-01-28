@@ -29,7 +29,7 @@ public class Camera extends Object3D{
         this.H_FOV = Main.H_FOV;
         this.V_FOV = H_FOV*(Main.HEIGHT/Main.WIDTH);
         this.forward = new Vertex(0,0,1);
-        this.up = new Vertex(0,1,0);
+        this.up = new Vertex(0,-1,0);
         this.right = new Vertex(1,0,0);
         this.near = 0.5 ;
         this.far = 100;
