@@ -65,12 +65,12 @@ public class Main {
         camera = new Camera(new ArrayList<Vertex>(),new ArrayList<Face>(),20,-5,10);
         //camera.setForward(Util.arrToVert(Util.multiplyTransform(Util.getRotationYMatrix(-45), camera.getForward().toArray())));
         for (int i = 0; i < 10; i++) {
-            Object3D obj = Util.convertOBJ("cube.txt");
+            Object3D obj = Util.convertOBJ(cubePath);
             System.out.println("BRUH");
             Object3D obj1 = Util.generateOBJ(Math.random()*100-50,Math.random()*100-50,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D());
             obj1.displayObject();
         }
-        Object3D obj3 = Util.convertOBJ(cubePath);
+        Object3D obj3 = Util.convertOBJ("Pyramid.txt");
         Object3D obj1 = Util.generateOBJ(0,0,0,obj3.getPoints3D(),obj3.getFaces3D());
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
