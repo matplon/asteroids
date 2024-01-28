@@ -70,7 +70,7 @@ public class Main {
             Object3D obj1 = Util.generateOBJ(Math.random()*100-50,Math.random()*100-50,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D());
             obj1.displayObject();
         }
-        Object3D obj3 = Util.convertOBJ("Pyramid.txt");
+        Object3D obj3 = Util.convertOBJ("newTank.txt");
         Object3D obj1 = Util.generateOBJ(0,0,0,obj3.getPoints3D(),obj3.getFaces3D());
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
@@ -195,7 +195,7 @@ public class Main {
 
 
             for (Object3D object:objectList) {
-                object.rotY(1);
+                object.rotY(0);
                 object.displayObject();
             }
         }));
