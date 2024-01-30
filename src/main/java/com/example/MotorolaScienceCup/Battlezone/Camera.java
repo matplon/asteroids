@@ -26,9 +26,9 @@ public class Camera extends Object3D{
         int rotation = 0;
         this.H_FOV = Main.H_FOV;
         this.V_FOV = H_FOV*(Main.HEIGHT/Main.WIDTH);
-        this.forward = new Vertex(0,0,1);
+        this.forward = new Vertex(0,0,-1);
         this.up = new Vertex(0,-1,0);
-        this.right = new Vertex(1,0,0);
+        this.right = new Vertex(-1,0,0);
         this.near = 0.5 ;
         this.far = 1000;
     }
@@ -94,7 +94,7 @@ public class Camera extends Object3D{
 
     public void shootBullet(){
         if(Main.bullets.isEmpty()||Main.bullets.isEmpty()){
-            Object3D obj = Util.convertOBJ("bullet.txt");
+            Object3D obj = Util.convertOBJ("Pyramid.txt");
             Vertex position = this.getPosition();
             double[] dir = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), this.getForward().toArray());
             Bullet bullet = Util.generateBullet(dir, this.getRotation(), this.position.getX(), this.position.getY(), this.position.getZ(), obj.getPoints3D(),obj.getFaces3D());

@@ -96,6 +96,7 @@ public class Object3D {
             System.out.println(this.points3D.get(i).toString()+"0");
         }
         for (int i = 0; i < this.points3D.size(); i++) {
+
             double [][] camMatrixMatrix = Main.camera.getCamMatrix();
             double [] arr = new double[4];
             double[] arr1 = this.points3D.get(i).toArray();
@@ -103,6 +104,7 @@ public class Object3D {
             for (int j = 0; j < arr.length; j++) {
                 arr[j] = arr1[j];
             }
+            arr = Util.multiplyTransform(Util.getRotationYMatrix(0), arr);
             System.out.println(Arrays.toString(arr)+"2");
             arr = Util.multiplyTransform(camMatrixMatrix, arr);
             System.out.println(Arrays.toString(arr)+"3");

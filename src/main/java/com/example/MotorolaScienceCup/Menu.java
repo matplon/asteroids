@@ -15,7 +15,7 @@ public class Menu extends Application {
     static Rectangle2D screenBounds = Screen.getPrimary().getBounds();
     public  static int WIDTH = (int) screenBounds.getWidth();
     public static int HEIGHT = (int) screenBounds.getHeight();
-    public static final int FPS = 60        ;
+    public static final int FPS = 60;
     public static AnchorPane root;
     public static Stage stage;
     public static Scene scene;

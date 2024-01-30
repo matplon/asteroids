@@ -31,7 +31,7 @@ public class Main {
     static int WIDTH = Menu.WIDTH;
     static int HEIGHT = Menu.HEIGHT;
 
-    static double CAMERA_SPEED = 1;
+    static double CAMERA_SPEED = 0.5;
 
     static ArrayList<Object3D> objectList = new ArrayList<>();
 
@@ -42,7 +42,7 @@ public class Main {
     static String cubePath = "Cube.txt";
     static double H_FOV = 90;
 
-    static double MAX_BULLET_DISTANCE = 1000;
+    static double MAX_BULLET_DISTANCE = 100;
 
     public static AnchorPane root = new AnchorPane();
     public static Scene scene = new Scene(root,WIDTH,HEIGHT);
@@ -64,8 +64,24 @@ public class Main {
         text1.setFont(Font.font(50));
         root.getChildren().addAll(text,text1);
 
-        camera = new Camera(new ArrayList<Vertex>(),new ArrayList<Face>(),20,-5,10);
-        //camera.setForward(Util.arrToVert(Util.multiplyTransform(Util.getRotationYMatrix(-45), camera.getForward().toArray())));
+        camera = new Camera(new ArrayList<Vertex>(),new ArrayList<Face>(),0,0,-20);
+        Vertex camForward = camera.getForward();
+        double [] camF = camForward.toArray();
+        Vertex camUp = camera.getUp();
+        double [] camU = camUp.toArray();
+        Vertex camRight = camera.getRight();
+        double [] camR = camRight.toArray();
+        camF = Util.multiplyTransform(Util.getRotationYMatrix(22.5), camF);
+        System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
+        camera.setForward(Util.arrToVert(camF));
+        camR = Util.multiplyTransform(Util.getRotationYMatrix(22.5), camR);
+        camera.setRight(Util.arrToVert(camR));
+        /*camF = Util.multiplyTransform(Util.getRotationXMatrix(22.5), camF);
+        System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
+        camera.setForward(Util.arrToVert(camF));
+        camU = Util.multiplyTransform(Util.getRotationXMatrix(22.5), camU);
+        camera.setRight(Util.arrToVert(camU));*/
+        //camera.setForward(Util.arrToVert(Util.multiplyTransform(Util.getRotationYMatrix(22.5), camera.getForward().toArray())));
         for (int i = 0; i < 10; i++) {
             Object3D obj = Util.convertOBJ(cubePath);
             System.out.println("BRUH");
@@ -207,12 +223,12 @@ public class Main {
             }
             for (Bullet bullet:bullets){
                 System.out.println(">>>>>>>>>>>>>>>>>>");
-                bullet.translate(-bullet.getDirection().getX(),0,-bullet.getDirection().getZ());
+                bullet.translate(-bullet.getDirection().getX()*0.1,0,-bullet.getDirection().getZ()*0.1);
                 double travelled = Math.sqrt(bullet.getDirection().getX()*bullet.getDirection().getX()+bullet.getDirection().getZ()*bullet.getDirection().getZ());
                 bullet.setDistanceCovered(bullet.getDistanceCovered()+travelled);
                 bullet.displayObject();
                 if(bullet.getDistanceCovered()>MAX_BULLET_DISTANCE){
-                    //bullets.remove(bullet);
+                    bullets.remove(bullet);
                 }
                 System.out.println("<<<<<<<<<<<<<<<<<<");
             }

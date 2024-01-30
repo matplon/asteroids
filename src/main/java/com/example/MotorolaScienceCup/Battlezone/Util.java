@@ -73,7 +73,9 @@ public class Util {
     public static Bullet generateBullet(double[] dir,double firingAngle, double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         System.out.println("PPPPPPPPP");
         Bullet bullet = new Bullet(points3D,faces3D);
-        bullet.rotX(-90);
+        bullet.moveTo(0,0,0);
+        bullet.scale(0.25,0.5,0.25);
+        bullet.rotX(90);
         bullet.rotY(firingAngle);
         bullet.moveTo(x,y,z);
 
