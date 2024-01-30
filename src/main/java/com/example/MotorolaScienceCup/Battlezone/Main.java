@@ -31,9 +31,7 @@ public class Main {
     static int WIDTH = Menu.WIDTH;
     static int HEIGHT = Menu.HEIGHT;
 
-    static double CAMERA_SPEED = 0.5;
-
-    static int rotation = 1;
+    static double CAMERA_SPEED = 1;
 
     static ArrayList<Object3D> objectList = new ArrayList<>();
 
@@ -44,8 +42,12 @@ public class Main {
     static String cubePath = "Cube.txt";
     static double H_FOV = 90;
 
+    static double MAX_BULLET_DISTANCE = 1000;
+
     public static AnchorPane root = new AnchorPane();
     public static Scene scene = new Scene(root,WIDTH,HEIGHT);
+
+    public static ArrayList<Bullet> bullets = new ArrayList<>();
 
     public static Camera camera;
 
@@ -67,11 +69,11 @@ public class Main {
         for (int i = 0; i < 10; i++) {
             Object3D obj = Util.convertOBJ(cubePath);
             System.out.println("BRUH");
-            Object3D obj1 = Util.generateOBJ(Math.random()*100-50,Math.random()*100-50,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D());
+            Object3D obj1 = Util.generateOBJ(Math.random()*100-50,Math.random()*100-50,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D(),Color.BLACK);
             obj1.displayObject();
         }
         Object3D obj3 = Util.convertOBJ("newTank.txt");
-        Object3D obj1 = Util.generateOBJ(0,0,0,obj3.getPoints3D(),obj3.getFaces3D());
+        Object3D obj1 = Util.generateOBJ(0,0,0,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED);
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
         }
@@ -87,6 +89,7 @@ public class Main {
 
     public static void control(){
         scene.setOnKeyPressed(keyEvent -> {
+            int rotation = camera.getRotation();
             Vertex camVert = camera.getPosition();
             double [] camArr = camVert.toArray();
             Vertex camForward = camera.getForward();
@@ -142,15 +145,15 @@ public class Main {
             }; // Rotate left
             if (keyEvent.getCode() == KeyCode.E){
                 camF = Util.multiplyTransform(Util.getRotationYMatrix(1), camF);
-                System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
+                System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
                 camera.setForward(Util.arrToVert(camF));
                 camR = Util.multiplyTransform(Util.getRotationYMatrix(1), camR);
                 camera.setRight(Util.arrToVert(camR));
                 rotation++;
-                if(rotation==361){
-                    rotation=1;
+                if(rotation==360){
+                    rotation=0;
                 }
-
+                camera.setRotation(rotation);
 
             };
             if (keyEvent.getCode() == KeyCode.Q){
@@ -160,11 +163,15 @@ public class Main {
                 camR = Util.multiplyTransform(Util.getRotationYMatrix(-1), camR);
                 camera.setRight(Util.arrToVert(camR));
                 rotation--;
-                if(rotation == 0){
-                    rotation = 360;
+                if(rotation == -1){
+                    rotation = 359;
                 }
+                camera.setRotation(rotation);
             };
-            if (keyEvent.getCode() == KeyCode.X);
+            if (keyEvent.getCode() == KeyCode.SPACE){
+                System.out.println("EEEEEEEEEEEEEEE");
+                camera.shootBullet();
+            };
 
         });
         System.out.println("LLLLLLLLLLLL");
@@ -190,13 +197,24 @@ public class Main {
                 root.getChildren().remove(text);
             }
             textList.clear();
-            text.setText(Integer.toString(rotation));
+            text.setText(Integer.toString(camera.getRotation()));
             text1.setText(Math.round(camera.getPosition().getX()) + " " + Math.round(camera.getPosition().getY()) + " " + Math.round(camera.getPosition().getZ()));
 
 
             for (Object3D object:objectList) {
                 object.rotY(0);
                 object.displayObject();
+            }
+            for (Bullet bullet:bullets){
+                System.out.println(">>>>>>>>>>>>>>>>>>");
+                bullet.translate(-bullet.getDirection().getX(),0,-bullet.getDirection().getZ());
+                double travelled = Math.sqrt(bullet.getDirection().getX()*bullet.getDirection().getX()+bullet.getDirection().getZ()*bullet.getDirection().getZ());
+                bullet.setDistanceCovered(bullet.getDistanceCovered()+travelled);
+                bullet.displayObject();
+                if(bullet.getDistanceCovered()>MAX_BULLET_DISTANCE){
+                    //bullets.remove(bullet);
+                }
+                System.out.println("<<<<<<<<<<<<<<<<<<");
             }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);

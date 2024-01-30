@@ -19,13 +19,11 @@ public class Camera extends Object3D{
     private  Vertex right;
 
 
-
-
-
     public Camera(ArrayList<Vertex> points3D, ArrayList<Face> faces3D, double x, double y, double z){
         super(points3D,faces3D);
         Vertex vertex = new Vertex(x,y,z);
         this.position = vertex;
+        int rotation = 0;
         this.H_FOV = Main.H_FOV;
         this.V_FOV = H_FOV*(Main.HEIGHT/Main.WIDTH);
         this.forward = new Vertex(0,0,1);
@@ -92,6 +90,16 @@ public class Camera extends Object3D{
                 {0, 0, 1, 0}
         };
         return matrix;
+    }
+
+    public void shootBullet(){
+        if(Main.bullets.isEmpty()||Main.bullets.isEmpty()){
+            Object3D obj = Util.convertOBJ("bullet.txt");
+            Vertex position = this.getPosition();
+            double[] dir = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), this.getForward().toArray());
+            Bullet bullet = Util.generateBullet(dir, this.getRotation(), this.position.getX(), this.position.getY(), this.position.getZ(), obj.getPoints3D(),obj.getFaces3D());
+            Main.bullets.add(bullet);
+        }
     }
 
     public static double gethFov() {

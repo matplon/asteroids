@@ -1,5 +1,7 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
+import javafx.scene.paint.Color;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -68,7 +70,16 @@ public class Util {
         return matrix;
     }
 
-    public static double[][] rotateVertexY;
+    public static Bullet generateBullet(double[] dir,double firingAngle, double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
+        System.out.println("PPPPPPPPP");
+        Bullet bullet = new Bullet(points3D,faces3D);
+        bullet.rotX(-90);
+        bullet.rotY(firingAngle);
+        bullet.moveTo(x,y,z);
+
+        bullet.setDirection(Util.arrToVert(dir));
+        return bullet;
+    }
 
 
 
@@ -107,12 +118,13 @@ public class Util {
         return vertex;
     }
 
-    public static Object3D generateOBJ (double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
+    public static Object3D generateOBJ (double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D, Color color){
         Object3D obj = new Object3D(points3D,faces3D);
         obj.convertVertecesToCentralOrigin();
         obj.moveTo(x,y,z);
         //obj.scale(0.1,0.1,0.1);
         Main.objectList.add(obj);
+        obj.setColor(color);
         return obj;
     }
 
@@ -162,7 +174,7 @@ public class Util {
             throw new RuntimeException(e);
         }
 
-        Object3D object3D = generateOBJ(0,0,0,vertices, faces);
+        Object3D object3D = new Object3D(vertices,faces);
         return object3D;
     }
 }

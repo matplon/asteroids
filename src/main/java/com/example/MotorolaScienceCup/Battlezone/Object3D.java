@@ -13,12 +13,14 @@ import java.util.List;
 
 public class Object3D {
 
+    private Color color;
+
     private double x;
     private double y;
 
     private double z;
 
-    private double rotation;
+    private int rotation;
     private ArrayList<Vertex> points3D = new ArrayList<>();
 
     private ArrayList<Face> faces3D = new ArrayList<>();
@@ -27,16 +29,19 @@ public class Object3D {
         this.points3D = points3D;
         this.faces3D = faces3D;
         this.rotation = 0;
+        this.color = Color.BLACK;
         this.x = 0;
         this.y = 0;
         this.z = 0;
 
     }
 
+
     public Object3D(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         this.points3D = points3D;
         this.faces3D = faces3D;
         this.rotation = 0;
+        this.color = Color.BLACK;
         this.x = 0;
         this.y = 0;
         this.z = 0;
@@ -121,6 +126,14 @@ public class Object3D {
         return arrlist;}else{return new ArrayList<>();}
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     public void displayObject(){
         ArrayList<Vertex> arrlist=this.toScreen();
         for (int i = 0; i < arrlist.size(); i++) {
@@ -152,9 +165,7 @@ public class Object3D {
 
               //  }else{
                     Polyline polyline1 = new Polyline(ax,ay,bx,by);
-                    if(this.getCenterX() > -1 && this.getCenterY() > -1 && this.getCenterZ() > -1 && this.getCenterX() < 1 && this.getCenterY() < 1 && this.getCenterZ() < 1){
-                        polyline1.setStroke(Color.RED);
-                    }
+                    polyline1.setStroke(this.getColor());
                     if(i==0 && j==0){
                         Text text = new Text();
                         text.setText(Math.round(this.getCenterX()) + " " + Math.round(this.getCenterY()) + " " + Math.round(this.getCenterZ()));
@@ -188,10 +199,10 @@ public class Object3D {
     }
 
     public void moveTo(double x, double y, double z){
-        double tx = x - this.getX();
-        double ty = y - this.getY();
-        double tz = z - this.getZ();
-        System.out.println(tx+" "+ty+" "+tz + "CFFF");
+        double tx = x - this.getCenterX();
+        double ty = y - this.getCenterY();
+        double tz = z - this.getCenterZ();
+        System.out.println(tx+" "+ty+" "+tz + " CFFF");
         System.out.println(x+" "+y+" "+z);
         translate(tx,ty,tz);
     }
@@ -200,11 +211,6 @@ public class Object3D {
         double x = this.getCenterX();
         double y = this.getCenterY();
         double z = this.getCenterZ();
-        this.rotation += angle;
-        if(rotation == 360 || rotation==-360){
-            angle = 0;
-            rotation = 0;
-        }
         System.out.println(rotation+" HHHHHHHHHHHHHHHHHHHH");
         this.moveTo(0,0,0);
         for (int i = 0; i < this.points3D.size(); i++) {
@@ -224,9 +230,10 @@ public class Object3D {
         double y = this.getCenterY();
         double z = this.getCenterZ();
         this.rotation += angle;
-        if(rotation == 360 || rotation==-360){
-            angle = 0;
+        if(rotation == 360){
             rotation = 0;
+        } else if (rotation == -1) {
+            rotation = 359;
         }
         System.out.println(rotation+" HHHHHHHHHHHHHHHHHHHH");
         this.moveTo(0,0,0);
@@ -249,11 +256,6 @@ public class Object3D {
         double x = this.getCenterX();
         double y = this.getCenterY();
         double z = this.getCenterZ();
-        this.rotation += angle;
-        if(rotation == 360 || rotation==-360){
-            angle = 0;
-            rotation = 0;
-        }
         System.out.println(rotation+" HHHHHHHHHHHHHHHHHHHH");
         this.moveTo(0,0,0);
         for (int i = 0; i < this.points3D.size(); i++) {
@@ -300,7 +302,7 @@ public class Object3D {
         return z;
     }
 
-    public double getRotation() {
+    public int getRotation() {
         return rotation;
     }
 
@@ -312,7 +314,7 @@ public class Object3D {
         return faces3D;
     }
 
-    public void setRotation(double rotation) {
+    public void setRotation(int rotation) {
         this.rotation = rotation;
     }
 
