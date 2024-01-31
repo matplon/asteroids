@@ -76,11 +76,11 @@ public class Main {
         for (int i = 0; i < 10; i++) {
             Object3D obj = Util.convertOBJ(cubePath);
             System.out.println("BRUH");
-            Object3D obj1 = Util.generateOBJ(Math.random()*100-50,0,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D(),Color.BLACK);
+            Object3D obj1 = Util.generateOBJ(Math.random()*10-5,0,Math.random()*10-5,obj.getPoints3D(),obj.getFaces3D(),Color.BLACK, new ArrayList<>());
             obj1.displayObject();
         }
         Object3D obj3 = Util.convertOBJ("Pyramid.txt");
-        Object3D obj1 = Util.generateOBJ(0,-0.6,0,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED);
+        Object3D obj1 = Util.generateOBJ(0,-0.6,0,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED, new ArrayList<>());
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
         }

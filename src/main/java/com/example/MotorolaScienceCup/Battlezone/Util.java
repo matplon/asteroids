@@ -120,7 +120,7 @@ public class Util {
         return vertex;
     }
 
-    public static Object3D generateOBJ (double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D, Color color){
+    public static Object3D generateOBJ (double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D, Color color, ArrayList<Vertex> hitboxBounds){
         Object3D obj = new Object3D(points3D,faces3D);
         obj.convertVertecesToCentralOrigin();
         obj.moveTo(x,y,z);
