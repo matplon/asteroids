@@ -23,14 +23,14 @@ public class Camera extends Object3D{
         super(points3D,faces3D);
         Vertex vertex = new Vertex(x,y,z);
         this.position = vertex;
-        int rotation = 0;
+        double rotation = 0;
         this.H_FOV = Main.H_FOV;
         this.V_FOV = H_FOV*(Main.HEIGHT/Main.WIDTH);
-        this.forward = new Vertex(0,0,-1);
-        this.up = new Vertex(0,-1,0);
-        this.right = new Vertex(-1,0,0);
-        this.near = 0.5 ;
-        this.far = 1000;
+        this.forward = new Vertex(0,0,1);
+        this.up = new Vertex(0,1,0);
+        this.right = new Vertex(1,0,0);
+        this.near = 0.5;
+        this.far = 100;
     }
 
     public double[][] getTranslateCamMatrix(){
@@ -81,7 +81,7 @@ public class Camera extends Object3D{
         double b = 2/(TOP - BOTTOM);
 
         System.out.println((V_FOV/2));
-        double c = -(far+near)/(far-near);
+        double c = (far+near)/(far-near);
         double d = (-2 * near * far) / (far - near);
         double [][] matrix = {
                 {a, 0, 0, 0},
@@ -96,7 +96,7 @@ public class Camera extends Object3D{
         if(Main.bullets.isEmpty()||Main.bullets.isEmpty()){
             Object3D obj = Util.convertOBJ("Pyramid.txt");
             Vertex position = this.getPosition();
-            double[] dir = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), this.getForward().toArray());
+            double[] dir =this.getForward().toArray();
             Bullet bullet = Util.generateBullet(dir, this.getRotation(), this.position.getX(), this.position.getY(), this.position.getZ(), obj.getPoints3D(),obj.getFaces3D());
             Main.bullets.add(bullet);
         }

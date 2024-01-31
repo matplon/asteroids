@@ -62,8 +62,8 @@ public class Util {
 
     public static double[][] getDisplayMatrix(){
         double[][] matrix = {
-                {Main.WIDTH,   0,          0,  Main.WIDTH},
-                {0,           -Main.HEIGHT,0,  Main.HEIGHT},
+                {(double) Main.WIDTH /2,   0,          0,  (double) Main.WIDTH /2},
+                {0,           (double) -Main.HEIGHT /2,0,  (double) Main.HEIGHT /2},
                 {0,            0,          1,  0},
                 {0,            0,          0,  1}
         };
@@ -74,7 +74,7 @@ public class Util {
         System.out.println("PPPPPPPPP");
         Bullet bullet = new Bullet(points3D,faces3D);
         bullet.moveTo(0,0,0);
-        bullet.scale(0.25,0.5,0.25);
+        bullet.scale(0.01,0.2,0.01);
         bullet.rotX(90);
         bullet.rotY(firingAngle);
         bullet.moveTo(x,y,z);

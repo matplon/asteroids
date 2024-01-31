@@ -32,6 +32,7 @@ public class Main {
     static int HEIGHT = Menu.HEIGHT;
 
     static double CAMERA_SPEED = 0.5;
+    static double CAMERA_ROT_SPEED = 2.5;
 
     static ArrayList<Object3D> objectList = new ArrayList<>();
 
@@ -43,6 +44,7 @@ public class Main {
     static double H_FOV = 90;
 
     static double MAX_BULLET_DISTANCE = 100;
+
 
     public static AnchorPane root = new AnchorPane();
     public static Scene scene = new Scene(root,WIDTH,HEIGHT);
@@ -64,32 +66,21 @@ public class Main {
         text1.setFont(Font.font(50));
         root.getChildren().addAll(text,text1);
 
-        camera = new Camera(new ArrayList<Vertex>(),new ArrayList<Face>(),0,0,-20);
+        camera = new Camera(new ArrayList<Vertex>(),new ArrayList<Face>(),0,0,0);
         Vertex camForward = camera.getForward();
         double [] camF = camForward.toArray();
         Vertex camUp = camera.getUp();
         double [] camU = camUp.toArray();
         Vertex camRight = camera.getRight();
         double [] camR = camRight.toArray();
-        camF = Util.multiplyTransform(Util.getRotationYMatrix(22.5), camF);
-        System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
-        camera.setForward(Util.arrToVert(camF));
-        camR = Util.multiplyTransform(Util.getRotationYMatrix(22.5), camR);
-        camera.setRight(Util.arrToVert(camR));
-        /*camF = Util.multiplyTransform(Util.getRotationXMatrix(22.5), camF);
-        System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
-        camera.setForward(Util.arrToVert(camF));
-        camU = Util.multiplyTransform(Util.getRotationXMatrix(22.5), camU);
-        camera.setRight(Util.arrToVert(camU));*/
-        //camera.setForward(Util.arrToVert(Util.multiplyTransform(Util.getRotationYMatrix(22.5), camera.getForward().toArray())));
         for (int i = 0; i < 10; i++) {
             Object3D obj = Util.convertOBJ(cubePath);
             System.out.println("BRUH");
-            Object3D obj1 = Util.generateOBJ(Math.random()*100-50,Math.random()*100-50,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D(),Color.BLACK);
+            Object3D obj1 = Util.generateOBJ(Math.random()*100-50,0,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D(),Color.BLACK);
             obj1.displayObject();
         }
-        Object3D obj3 = Util.convertOBJ("newTank.txt");
-        Object3D obj1 = Util.generateOBJ(0,0,0,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED);
+        Object3D obj3 = Util.convertOBJ("Pyramid.txt");
+        Object3D obj1 = Util.generateOBJ(0,-0.6,0,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED);
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
         }
@@ -105,7 +96,7 @@ public class Main {
 
     public static void control(){
         scene.setOnKeyPressed(keyEvent -> {
-            int rotation = camera.getRotation();
+            double rotation = camera.getRotation();
             Vertex camVert = camera.getPosition();
             double [] camArr = camVert.toArray();
             Vertex camForward = camera.getForward();
@@ -117,73 +108,76 @@ public class Main {
 
             if (keyEvent.getCode() == KeyCode.S){
                 System.out.println("lol");
-                camF = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), camF);
                 for (int i = 0; i < 4; i++) {
-                    camArr[i]+=camF[i]*CAMERA_SPEED;
+                    camArr[i]-=camF[i]*CAMERA_SPEED;
                 }
                 camera.setPosition(Util.arrToVert(camArr));
             };
             if (keyEvent.getCode() == KeyCode.W){
                 System.out.println("xd");
-                camF = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), camF);
                 for (int i = 0; i < 4; i++) {
-                    camArr[i]-=camF[i]*CAMERA_SPEED;
+                    camArr[i]+=camF[i]*CAMERA_SPEED;
                 }
                 camera.setPosition(Util.arrToVert(camArr));
             }; // Thrust forward
             if (keyEvent.getCode() == KeyCode.D){
                 System.out.println("xd1");
-                camR = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), camR);
                 for (int i = 0; i < 4; i++) {
-                    camArr[i]-=camR[i]*CAMERA_SPEED;
+                    camArr[i]+=camR[i]*CAMERA_SPEED;
                 }
                 camera.setPosition(Util.arrToVert(camArr));
             };   // Rotate right
             if (keyEvent.getCode() == KeyCode.A){
                 System.out.println("xd1");
-                camR = Util.multiplyTransform(Util.getRotationYMatrix(-1*H_FOV/4), camR);
                 for (int i = 0; i < 4; i++) {
-                    camArr[i]+=camR[i]*CAMERA_SPEED;
+                    camArr[i]-=camR[i]*CAMERA_SPEED;
                 }
                 camera.setPosition(Util.arrToVert(camArr));
             }; // Rotate left
             if (keyEvent.getCode() == KeyCode.UP){
-                for (int i = 0; i < 4; i++) {
-                    camArr[i]-=camU[i]*CAMERA_SPEED;
-                }
+                //for (int i = 0; i < 4; i++) {
+                    camArr[1]+=camU[1]*CAMERA_SPEED;
+                //}
                 camera.setPosition(Util.arrToVert(camArr));
             };   // Rotate right
             if (keyEvent.getCode() == KeyCode.DOWN){
-                for (int i = 0; i < 4; i++) {
-                    camArr[i]+=camU[i]*CAMERA_SPEED;
-                }
+                //for (int i = 0; i < 4; i++) {
+                    camArr[1]-=camU[1]*CAMERA_SPEED;
+               // }
                 camera.setPosition(Util.arrToVert(camArr));
             }; // Rotate left
             if (keyEvent.getCode() == KeyCode.E){
-                camF = Util.multiplyTransform(Util.getRotationYMatrix(1), camF);
+                camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
                 System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
                 camera.setForward(Util.arrToVert(camF));
-                camR = Util.multiplyTransform(Util.getRotationYMatrix(1), camR);
+                camR = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camR);
                 camera.setRight(Util.arrToVert(camR));
-                rotation++;
-                if(rotation==360){
-                    rotation=0;
-                }
-                camera.setRotation(rotation);
+                camera.updateRotation(CAMERA_ROT_SPEED);
 
             };
             if (keyEvent.getCode() == KeyCode.Q){
-                camF = Util.multiplyTransform(Util.getRotationYMatrix(-1), camF);
+                camF = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camF);
                 System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
                 camera.setForward(Util.arrToVert(camF));
-                camR = Util.multiplyTransform(Util.getRotationYMatrix(-1), camR);
+                camR = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camR);
                 camera.setRight(Util.arrToVert(camR));
-                rotation--;
-                if(rotation == -1){
-                    rotation = 359;
-                }
-                camera.setRotation(rotation);
+                camera.updateRotation(-CAMERA_ROT_SPEED);
             };
+            /*if (keyEvent.getCode() == KeyCode.R){
+                camF = Util.multiplyTransform(Util.getRotationXMatrix(-1), camF);
+                System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
+                camera.setForward(Util.arrToVert(camF));
+                camU = Util.multiplyTransform(Util.getRotationXMatrix(-1), camU);
+                camera.setUp(Util.arrToVert(camU));
+            };
+            if (keyEvent.getCode() == KeyCode.F){
+                camF = Util.multiplyTransform(Util.getRotationXMatrix(1), camF);
+                System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
+                camera.setForward(Util.arrToVert(camF));
+                camU = Util.multiplyTransform(Util.getRotationXMatrix(1), camU);
+                camera.setUp(Util.arrToVert(camU));
+
+            };*/
             if (keyEvent.getCode() == KeyCode.SPACE){
                 System.out.println("EEEEEEEEEEEEEEE");
                 camera.shootBullet();
@@ -213,7 +207,7 @@ public class Main {
                 root.getChildren().remove(text);
             }
             textList.clear();
-            text.setText(Integer.toString(camera.getRotation()));
+            text.setText(Double.toString(camera.getRotation()));
             text1.setText(Math.round(camera.getPosition().getX()) + " " + Math.round(camera.getPosition().getY()) + " " + Math.round(camera.getPosition().getZ()));
 
 
@@ -223,7 +217,7 @@ public class Main {
             }
             for (Bullet bullet:bullets){
                 System.out.println(">>>>>>>>>>>>>>>>>>");
-                bullet.translate(-bullet.getDirection().getX()*0.1,0,-bullet.getDirection().getZ()*0.1);
+                bullet.translate(bullet.getDirection().getX()*0.1,0,bullet.getDirection().getZ()*0.1);
                 double travelled = Math.sqrt(bullet.getDirection().getX()*bullet.getDirection().getX()+bullet.getDirection().getZ()*bullet.getDirection().getZ());
                 bullet.setDistanceCovered(bullet.getDistanceCovered()+travelled);
                 bullet.displayObject();

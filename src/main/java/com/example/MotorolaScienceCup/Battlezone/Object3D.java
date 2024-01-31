@@ -20,7 +20,7 @@ public class Object3D {
 
     private double z;
 
-    private int rotation;
+    private double rotation;
     private ArrayList<Vertex> points3D = new ArrayList<>();
 
     private ArrayList<Face> faces3D = new ArrayList<>();
@@ -71,6 +71,17 @@ public class Object3D {
         }
         double average = x/this.points3D.size();
         return average;
+    }
+
+    public void updateRotation(double angle){
+        double rot1 = this.getRotation();
+        rot1+=angle;
+        if(rot1>=360){
+            rot1=angle-(360-this.getRotation());
+        } else if (rot1<0) {
+            rot1=360+(angle-this.getRotation());
+        }
+        this.setRotation(rot1);
     }
 
     //DOES NOT WORK. DO NOT USE UNDER ANY CIRCUMSTANCES. ONLY USE Object.moveTo(0,0,0)
@@ -304,7 +315,7 @@ public class Object3D {
         return z;
     }
 
-    public int getRotation() {
+    public double getRotation() {
         return rotation;
     }
 
@@ -316,7 +327,7 @@ public class Object3D {
         return faces3D;
     }
 
-    public void setRotation(int rotation) {
+    public void setRotation(double rotation) {
         this.rotation = rotation;
     }
 
