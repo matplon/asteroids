@@ -25,6 +25,8 @@ public class Object3D {
 
     private ArrayList<Face> faces3D = new ArrayList<>();
 
+    private ArrayList<Vertex> hitBox2D = new ArrayList<>();
+
     public Object3D(ArrayList<Vertex> points3D, ArrayList<Face> faces3D, double x, double y, double z){
         this.points3D = points3D;
         this.faces3D = faces3D;
@@ -205,7 +207,7 @@ public class Object3D {
             this.points3D.set(i,Util.arrToVert(arr));
 
         }
-        System.out.println(this.getCenterZ());
+        if(this.getClass()!= Bullet.class){System.out.println(Arrays.toString(this.getHitBox2D().get(0).toArray())+" .......");}
         this.x = this.getCenterX();
         this.y = this.getCenterY();
         this.z = this.getCenterZ();
@@ -242,21 +244,13 @@ public class Object3D {
         double x = this.getCenterX();
         double y = this.getCenterY();
         double z = this.getCenterZ();
-        this.rotation += angle;
-        if(rotation == 360){
-            rotation = 0;
-        } else if (rotation == -1) {
-            rotation = 359;
-        }
+        this.updateRotation(angle);
         System.out.println(rotation+" HHHHHHHHHHHHHHHHHHHH");
         this.moveTo(0,0,0);
         for (int i = 0; i < this.points3D.size(); i++) {
             double [][] translationMatrix = Util.getRotationYMatrix(angle);
             double [] arr = this.points3D.get(i).toArray();
             arr = Util.multiplyTransform(translationMatrix, arr);
-            for (int j = 0; j < arr.length; j++) {
-                arr[j] = Math.round(arr[j] * 10000.0) / 10000.0;
-            }
             this.points3D.set(i,Util.arrToVert(arr));
 
         }
@@ -275,9 +269,6 @@ public class Object3D {
             double [][] translationMatrix = Util.getRotationZMatrix(angle);
             double [] arr = this.points3D.get(i).toArray();
             arr = Util.multiplyTransform(translationMatrix, arr);
-            for (int j = 0; j < arr.length; j++) {
-                arr[j] = Math.round(arr[j] * 10000.0) / 10000.0;
-            }
             this.points3D.set(i,Util.arrToVert(arr));
 
         }
@@ -291,9 +282,6 @@ public class Object3D {
             double [][] translationMatrix = Util.getScaleMatrix(x,y,z);
             double [] arr = this.points3D.get(i).toArray();
             arr = Util.multiplyTransform(translationMatrix, arr);
-            for (int j = 0; j < arr.length; j++) {
-                arr[j] = Math.round(arr[j] * 10000.0) / 10000.0;
-            }
             this.points3D.set(i,Util.arrToVert(arr));
 
         }
@@ -337,5 +325,13 @@ public class Object3D {
 
     public void setFaces3D(ArrayList<Face> faces3D) {
         this.faces3D = faces3D;
+    }
+
+    public ArrayList<Vertex> getHitBox2D() {
+        return hitBox2D;
+    }
+
+    public void setHitBox2D(ArrayList<Vertex> hitBox2D) {
+        this.hitBox2D = hitBox2D;
     }
 }

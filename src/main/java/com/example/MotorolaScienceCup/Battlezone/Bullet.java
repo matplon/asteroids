@@ -1,6 +1,7 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Bullet extends Object3D{
 
@@ -10,7 +11,6 @@ public class Bullet extends Object3D{
     public Bullet(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         super(points3D, faces3D);
         this.direction = new Vertex(0,0,0);
-        int rotation = 0;
     }
 
     public double getDistanceCovered() {
@@ -27,5 +27,10 @@ public class Bullet extends Object3D{
 
     public void setDirection(Vertex direction) {
         this.direction = direction;
+    }
+
+    public boolean checkForHits(Object3D object){
+        return true;
+
     }
 }

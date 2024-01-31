@@ -74,7 +74,7 @@ public class Util {
         System.out.println("PPPPPPPPP");
         Bullet bullet = new Bullet(points3D,faces3D);
         bullet.moveTo(0,0,0);
-        bullet.scale(0.01,0.2,0.01);
+        bullet.scale(0.1,0.2,0.1);
         bullet.rotX(90);
         bullet.rotY(firingAngle);
         bullet.moveTo(x,y,z);
@@ -122,11 +122,13 @@ public class Util {
 
     public static Object3D generateOBJ (double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D, Color color, ArrayList<Vertex> hitboxBounds){
         Object3D obj = new Object3D(points3D,faces3D);
+        obj.setHitBox2D(hitboxBounds);
         obj.convertVertecesToCentralOrigin();
         obj.moveTo(x,y,z);
         //obj.scale(0.1,0.1,0.1);
         Main.objectList.add(obj);
         obj.setColor(color);
+        System.out.println(Arrays.toString(obj.getHitBox2D().get(0).toArray())+"{{{{{{{");
         return obj;
     }
 

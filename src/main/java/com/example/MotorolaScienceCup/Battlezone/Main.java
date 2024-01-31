@@ -51,6 +51,7 @@ public class Main {
 
     public static ArrayList<Bullet> bullets = new ArrayList<>();
 
+
     public static Camera camera;
 
     public static Text text = new Text();
@@ -58,6 +59,7 @@ public class Main {
 
 
     public static void init(){
+
         text.setX(100);
         text.setY(100);
         text.setFont(Font.font(50));
@@ -74,13 +76,31 @@ public class Main {
         Vertex camRight = camera.getRight();
         double [] camR = camRight.toArray();
         for (int i = 0; i < 10; i++) {
+            ArrayList<Vertex> cubeHitbox = new ArrayList<>();
+            cubeHitbox.add(new Vertex(1,0,-1));
+            cubeHitbox.add(new Vertex(1,0,1));
+            cubeHitbox.add(new Vertex(-1,0,1));
+            cubeHitbox.add(new Vertex(-1,0,-1));
+            ArrayList<Vertex> hitBox = new ArrayList<>();
+                for (int j = 0; j < 4; j++) {
+                    hitBox.add(cubeHitbox.get(j));
+            }
             Object3D obj = Util.convertOBJ(cubePath);
             System.out.println("BRUH");
-            Object3D obj1 = Util.generateOBJ(Math.random()*10-5,0,Math.random()*10-5,obj.getPoints3D(),obj.getFaces3D(),Color.BLACK, new ArrayList<>());
+            Object3D obj1 = Util.generateOBJ(Math.random()*100-50,0,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D(),Color.BLACK, hitBox);
             obj1.displayObject();
         }
         Object3D obj3 = Util.convertOBJ("Pyramid.txt");
-        Object3D obj1 = Util.generateOBJ(0,-0.6,0,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED, new ArrayList<>());
+        ArrayList<Vertex> hitBox1 = new ArrayList<>();
+        ArrayList<Vertex> triangleHitbox = new ArrayList<>();
+        triangleHitbox.add(new Vertex(0.5,0,-0.5));
+        triangleHitbox.add(new Vertex(0.5,0,0.5));
+        triangleHitbox.add(new Vertex(-0.5,0,0.5));
+        triangleHitbox.add(new Vertex(-0.5,0,-0.5));
+        for (int j = 0; j < 4; j++) {
+            hitBox1.add(triangleHitbox.get(j));
+        }
+        Object3D obj1 = Util.generateOBJ(0,-0.6,0,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED, hitBox1);
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
         }
@@ -209,15 +229,20 @@ public class Main {
             textList.clear();
             text.setText(Double.toString(camera.getRotation()));
             text1.setText(Math.round(camera.getPosition().getX()) + " " + Math.round(camera.getPosition().getY()) + " " + Math.round(camera.getPosition().getZ()));
-
+            Polyline polyline = new Polyline(0,HEIGHT/2, WIDTH,HEIGHT/2);
+            root.getChildren().add(polyline);
 
             for (Object3D object:objectList) {
-                object.rotY(0);
                 object.displayObject();
+                if(!bullets.isEmpty()){
+                    if(bullets.get(0).checkForHits(object)){
+                        object.setColor(Color.GREEN);
+                    }
+                }
             }
             for (Bullet bullet:bullets){
                 System.out.println(">>>>>>>>>>>>>>>>>>");
-                bullet.translate(bullet.getDirection().getX()*0.1,0,bullet.getDirection().getZ()*0.1);
+                bullet.translate(bullet.getDirection().getX(),0,bullet.getDirection().getZ());
                 double travelled = Math.sqrt(bullet.getDirection().getX()*bullet.getDirection().getX()+bullet.getDirection().getZ()*bullet.getDirection().getZ());
                 bullet.setDistanceCovered(bullet.getDistanceCovered()+travelled);
                 bullet.displayObject();
