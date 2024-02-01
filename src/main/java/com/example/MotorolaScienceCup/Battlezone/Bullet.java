@@ -54,11 +54,13 @@ public class Bullet extends Object3D{
         ArrayList<Vertex> list = new ArrayList<>();
         for (int i = 0; i < hitbox.size(); i++) {
             if(i+1<hitbox.size()){
+                System.out.println("B");
                 Vertex vert = Util.lineIntersect(vertex,vertex1,hitbox.get(i),hitbox.get(i+1));
                 if(vert!=null){
                     list.add(vert);
                 }
             }else {
+                System.out.println("R");
                 Vertex vert = Util.lineIntersect(vertex,vertex1,hitbox.get(hitbox.size()-1),hitbox.get(0));
                 if(vert!=null){
                     list.add(vert);

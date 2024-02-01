@@ -248,7 +248,7 @@ public class Main {
                 object.displayObject();
                 if(!bullets.isEmpty()){
                     double dist = Math.sqrt(Math.pow((bullets.get(0).getX()-object.getX()),2)+Math.pow((bullets.get(0).getZ()-object.getZ()),2));
-                    if(dist<5){
+                    if(dist<1000000000){
                     if(bullets.get(0).checkForHits(object)!=null){
                         System.out.println("YYYYYYYYY");
                         object.setColor(Color.GREEN);

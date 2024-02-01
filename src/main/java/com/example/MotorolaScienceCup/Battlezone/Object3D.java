@@ -221,7 +221,6 @@ public class Object3D {
 
         }
 
-        if(this.getClass()!= Bullet.class){System.out.println(Arrays.toString(this.getHitBox2D().get(0).toArray())+" .......");}
         this.x = this.getCenterX();
         this.y = this.getCenterY();
         this.z = this.getCenterZ();
