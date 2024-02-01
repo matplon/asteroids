@@ -83,6 +83,46 @@ public class Util {
         return bullet;
     }
 
+    public static double getMaxX(ArrayList<Vertex> points){
+        double x = points.get(0).getX();
+        for (int i = 0; i < points.size(); i++) {
+            if(x<points.get(i).getX()){
+                x = points.get(i).getX();
+            }
+        }
+        return x;
+    }
+
+    public static double getMaxZ(ArrayList<Vertex> points){
+        double z = points.get(0).getZ();
+        for (int i = 0; i < points.size(); i++) {
+            if(z<points.get(i).getX()){
+                z = points.get(i).getZ();
+            }
+        }
+        return z;
+    }
+
+    public static double getMinX(ArrayList<Vertex> points){
+        double x = points.get(0).getX();
+        for (int i = 0; i < points.size(); i++) {
+            if(x>points.get(i).getX()){
+                x = points.get(i).getX();
+            }
+        }
+        return x;
+    }
+
+    public static double getMinZ(ArrayList<Vertex> points){
+        double z = points.get(0).getZ();
+        for (int i = 0; i < points.size(); i++) {
+            if(z>points.get(i).getX()){
+                z = points.get(i).getZ();
+            }
+        }
+        return z;
+    }
+
 
 
 

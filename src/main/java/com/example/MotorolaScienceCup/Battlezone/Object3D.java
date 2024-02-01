@@ -30,6 +30,7 @@ public class Object3D {
     public Object3D(ArrayList<Vertex> points3D, ArrayList<Face> faces3D, double x, double y, double z){
         this.points3D = points3D;
         this.faces3D = faces3D;
+        this.hitBox2D = new ArrayList<>();
         this.rotation = 0;
         this.color = Color.BLACK;
         this.x = 0;
@@ -49,6 +50,7 @@ public class Object3D {
         this.z = 0;
 
     }
+
 
     public double getCenterX(){
         double x = 0;
@@ -74,6 +76,8 @@ public class Object3D {
         double average = x/this.points3D.size();
         return average;
     }
+
+
 
     public void updateRotation(double angle){
         double rot1 = this.getRotation();
@@ -207,6 +211,16 @@ public class Object3D {
             this.points3D.set(i,Util.arrToVert(arr));
 
         }
+        for (int i = 0; i < this.hitBox2D.size(); i++) {
+            double [][] translationMatrix = Util.getTranslationMatrix(x,y,z);
+            double [] arr = this.hitBox2D.get(i).toArray();
+            System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+            arr = Util.multiplyTransform(translationMatrix, arr);
+            System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+            this.hitBox2D.set(i,Util.arrToVert(arr));
+
+        }
+
         if(this.getClass()!= Bullet.class){System.out.println(Arrays.toString(this.getHitBox2D().get(0).toArray())+" .......");}
         this.x = this.getCenterX();
         this.y = this.getCenterY();
@@ -252,6 +266,15 @@ public class Object3D {
             double [] arr = this.points3D.get(i).toArray();
             arr = Util.multiplyTransform(translationMatrix, arr);
             this.points3D.set(i,Util.arrToVert(arr));
+
+        }
+        for (int i = 0; i < this.hitBox2D.size(); i++) {
+            double [][] translationMatrix = Util.getRotationYMatrix(angle);
+            double [] arr = this.hitBox2D.get(i).toArray();
+            System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+            arr = Util.multiplyTransform(translationMatrix, arr);
+            System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+            this.hitBox2D.set(i,Util.arrToVert(arr));
 
         }
         this.moveTo(x,y,z);
