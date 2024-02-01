@@ -78,7 +78,7 @@ public class Util {
         bullet.rotX(90);
         bullet.rotY(firingAngle);
         bullet.moveTo(x,y,z);
-
+        bullet.setOrigin(new Vertex(x,0,z));
         bullet.setDirection(Util.arrToVert(dir));
         return bullet;
     }
@@ -123,7 +123,70 @@ public class Util {
         return z;
     }
 
-
+    public static Vertex lineIntersect(Vertex a1, Vertex a2, Vertex b1, Vertex b2){
+        ArrayList<Vertex> pointsA = new ArrayList<>();
+        ArrayList<Vertex> pointsB = new ArrayList<>();
+        pointsA.add(a1);
+        pointsA.add(a2);
+        pointsB.add(b1);
+        pointsB.add(b2);
+        double XmaxA = Util.getMaxX(pointsA);
+        System.out.println(XmaxA);
+        double ZmaxA = Util.getMaxZ(pointsA);
+        System.out.println(ZmaxA);
+        double XminA = Util.getMinX(pointsA);
+        System.out.println(XminA);
+        double ZminA = Util.getMinZ(pointsA);
+        System.out.println(ZminA);
+        double XmaxB = Util.getMaxX(pointsB);
+        System.out.println(XmaxB);
+        double ZmaxB = Util.getMaxZ(pointsB);
+        System.out.println(ZmaxB);
+        double XminB = Util.getMinX(pointsB);
+        System.out.println(XminB);
+        double ZminB = Util.getMinZ(pointsB);
+        System.out.println(ZminB);
+        double intersectX = 0;
+        double intersectZ = 0;
+        if(a1.getX()!=a2.getX()&&b1.getX()!=b2.getX()){
+            System.out.println("%");
+            double slopeA = (a1.getZ()-a2.getZ())/(a1.getX()-a2.getX());
+            double slopeB = (b1.getZ()-b2.getZ())/(b1.getX()-b2.getX());
+            if(slopeA==slopeB){
+                System.out.println("!");
+                return null;
+            }
+            double intersectA = -slopeA*a1.getX()+a1.getZ();
+            double intersectB = -slopeB*b1.getX()+b1.getZ();
+            intersectX = (intersectB-intersectA)/(slopeA-slopeB);
+            intersectZ = slopeA*intersectX + intersectA;
+        } else if (a1.getX()==a2.getX()&&b1.getX()!=b2.getX()) {
+            System.out.println("rofl");
+            double slopeB = (b1.getZ()-b2.getZ())/(b1.getX()-b2.getX());
+            System.out.println(slopeB);
+            double intersectB = -slopeB*b1.getX()+b1.getZ();
+            intersectZ = a1.getZ();
+            intersectX = (intersectZ-intersectB)/slopeB;
+        } else if (a1.getX()!=a2.getX()&&b1.getX()==b2.getX()) {
+            System.out.println("kek");
+            double slopeA = (a1.getZ()-a2.getZ())/(a1.getX()-a2.getX());
+            double intersectA = -slopeA*b1.getX()+a1.getZ();
+            intersectZ = b1.getZ();
+            intersectX = (intersectZ-intersectA)/slopeA;
+        } else if(a1.getX()==a2.getX()&&b1.getX()==b2.getX()){
+            System.out.println("*");
+            return null;
+        }
+        System.out.println(intersectX + " " + intersectZ+" dab");
+        if((intersectX<=XmaxA && intersectX>=XminA && intersectX<=XmaxB && intersectX>=XminB)&&
+                (intersectZ<=ZmaxA && intersectZ>=ZminA && intersectZ<=ZmaxB && intersectZ>=ZminB)){
+            System.out.println("?");
+            return new Vertex(intersectX,0,intersectZ);
+        }else{
+            System.out.println("^");
+            return null;
+        }
+    }
 
 
 

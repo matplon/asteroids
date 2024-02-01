@@ -75,7 +75,7 @@ public class Main {
         double [] camU = camUp.toArray();
         Vertex camRight = camera.getRight();
         double [] camR = camRight.toArray();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             ArrayList<Vertex> cubeHitbox = new ArrayList<>();
             cubeHitbox.add(new Vertex(1,0,-1));
             cubeHitbox.add(new Vertex(1,0,1));
@@ -229,17 +229,6 @@ public class Main {
             textList.clear();
             text.setText(Double.toString(camera.getRotation()));
             text1.setText(Math.round(camera.getPosition().getX()) + " " + Math.round(camera.getPosition().getY()) + " " + Math.round(camera.getPosition().getZ()));
-            Polyline polyline = new Polyline(0,HEIGHT/2, WIDTH,HEIGHT/2);
-            root.getChildren().add(polyline);
-
-            for (Object3D object:objectList) {
-                object.displayObject();
-                if(!bullets.isEmpty()){
-                    if(bullets.get(0).checkForHits(object)){
-                        object.setColor(Color.GREEN);
-                    }
-                }
-            }
             for (Bullet bullet:bullets){
                 System.out.println(">>>>>>>>>>>>>>>>>>");
                 bullet.translate(bullet.getDirection().getX(),0,bullet.getDirection().getZ());
@@ -248,8 +237,27 @@ public class Main {
                 bullet.displayObject();
                 if(bullet.getDistanceCovered()>MAX_BULLET_DISTANCE){
                     bullets.remove(bullet);
+                    bullets.clear();
                 }
                 System.out.println("<<<<<<<<<<<<<<<<<<");
+            }
+            Polyline polyline = new Polyline(0,HEIGHT/2, WIDTH,HEIGHT/2);
+            root.getChildren().add(polyline);
+
+            for (Object3D object:objectList) {
+                object.displayObject();
+                if(!bullets.isEmpty()){
+                    double dist = Math.sqrt(Math.pow((bullets.get(0).getX()-object.getX()),2)+Math.pow((bullets.get(0).getZ()-object.getZ()),2));
+                    if(dist<5){
+                    if(bullets.get(0).checkForHits(object)!=null){
+                        System.out.println("YYYYYYYYY");
+                        object.setColor(Color.GREEN);
+                        bullets.get(0).explode(bullets.get(0).checkForHits(object));
+                        bullets.remove(bullets.get(0));
+                        bullets.clear();
+
+                    }}
+                }
             }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);

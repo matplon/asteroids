@@ -7,6 +7,8 @@ public class Bullet extends Object3D{
 
     private double distanceCovered;
 
+    private Vertex origin;
+
     private Vertex direction;
     public Bullet(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         super(points3D, faces3D);
@@ -15,6 +17,14 @@ public class Bullet extends Object3D{
 
     public double getDistanceCovered() {
         return distanceCovered;
+    }
+
+    public Vertex getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(Vertex origin) {
+        this.origin = origin;
     }
 
     public void setDistanceCovered(double distanceCovered) {
@@ -29,29 +39,52 @@ public class Bullet extends Object3D{
         this.direction = direction;
     }
 
-    public boolean checkForHits(Object3D object){
-        double x = object.getCenterX();
-        double z = object.getCenterZ();
-        double rotation = object.getRotation();
-        object.translate(-x,0,-z);
-        object.rotY(-rotation);
-        this.translate(-x,0,-z);
-        this.rotY(-rotation);
-        Vertex vertex = this.getPoints3D().get(4);
+    public void explode(Vertex vertex){
+        System.out.println("lol");
+    }
+
+    public Vertex checkForHits(Object3D object){
+        Vertex vertex = new Vertex(this.getPoints3D().get(4).getX(), 0, this.getPoints3D().get(4).getZ());
+        Vertex vertex1 = new Vertex(this.getPoints3D().get(4).getX(), 0, this.getPoints3D().get(4).getZ());
+        double[] arr1 = vertex1.toArray();
+        arr1 = Util.multiplyTransform(Util.getTranslationMatrix(-this.getDirection().getX(),0,-this.getDirection().getZ()),arr1);
+        vertex1 = Util.arrToVert(arr1);
+
         ArrayList<Vertex> hitbox = object.getHitBox2D();
-        if(Util.getMaxX(hitbox)>vertex.getX()&&Util.getMaxZ(hitbox)>vertex.getZ()&&Util.getMinX(hitbox)<vertex.getX()&&Util.getMinZ(hitbox)<vertex.getZ()){
-            object.translate(x,0,z);
-            object.rotY(rotation);
-            this.translate(x,0,z);
-            this.rotY(rotation);
-            return true;
-        }else{
-            object.translate(x,0,z);
-            object.rotY(rotation);
-            this.translate(x,0,z);
-            this.rotY(rotation);
-            return false;
+        ArrayList<Vertex> list = new ArrayList<>();
+        for (int i = 0; i < hitbox.size(); i++) {
+            if(i+1<hitbox.size()){
+                Vertex vert = Util.lineIntersect(vertex,vertex1,hitbox.get(i),hitbox.get(i+1));
+                if(vert!=null){
+                    list.add(vert);
+                }
+            }else {
+                Vertex vert = Util.lineIntersect(vertex,vertex1,hitbox.get(hitbox.size()-1),hitbox.get(0));
+                if(vert!=null){
+                    list.add(vert);
+                }
+            }
         }
+        if(list.isEmpty()){
+            System.out.println("frick");
+            return null;
+        } else if (list.size()==1) {
+            System.out.println("heck");
+            return list.get(0);
+        }else{
+            System.out.println("omg");
+            double maxDistance = 0;
+            int ind = -1;
+            for (int i = 0; i < list.size(); i++) {
+                double travelled = Math.sqrt(Math.pow((list.get(i).getX()-this.getOrigin().getX()),2)+Math.pow((list.get(i).getZ()-this.getOrigin().getZ()),2));
+                if(travelled>maxDistance){
+                    maxDistance = travelled;
+                    ind = i;
+                }
+            }
+            return list.get(ind);
+        }
+        
 
     }
 }
