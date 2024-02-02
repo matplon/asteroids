@@ -75,7 +75,7 @@ public class Main {
         double [] camU = camUp.toArray();
         Vertex camRight = camera.getRight();
         double [] camR = camRight.toArray();
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 10; i++) {
             ArrayList<Vertex> cubeHitbox = new ArrayList<>();
             cubeHitbox.add(new Vertex(1,0,-1));
             cubeHitbox.add(new Vertex(1,0,1));
@@ -248,13 +248,14 @@ public class Main {
                 object.displayObject();
                 if(!bullets.isEmpty()){
                     double dist = Math.sqrt(Math.pow((bullets.get(0).getX()-object.getX()),2)+Math.pow((bullets.get(0).getZ()-object.getZ()),2));
-                    if(dist<1000000000){
-                    if(bullets.get(0).checkForHits(object)!=null){
-                        System.out.println("YYYYYYYYY");
-                        object.setColor(Color.GREEN);
-                        bullets.get(0).explode(bullets.get(0).checkForHits(object));
-                        bullets.remove(bullets.get(0));
-                        bullets.clear();
+                    if(dist<10){
+                        Vertex vertex = bullets.get(0).checkForHits(object);
+                        if(vertex!=null){
+                            System.out.println("YYYYYYYYY");
+                            object.setColor(Color.GREEN);
+                            bullets.get(0).explode(vertex);
+                            bullets.get(0).setDirection(new Vertex(0,0,0));
+                            bullets.get(0).moveTo(vertex.getX(), vertex.getY(), vertex.getZ());
 
                     }}
                 }
