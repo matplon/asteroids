@@ -59,6 +59,8 @@ public class Main {
 
 
     public static void init(){
+        Polyline polyline = new Polyline(0,(HEIGHT/2), WIDTH,(HEIGHT/2));
+        root.getChildren().add(polyline);
 
         text.setX(100);
         text.setY(100);
@@ -242,8 +244,6 @@ public class Main {
                 }
                 System.out.println("<<<<<<<<<<<<<<<<<<");
             }
-            Polyline polyline = new Polyline(0,HEIGHT/2, WIDTH,HEIGHT/2);
-            root.getChildren().add(polyline);
 
             for (Object3D object:objectList) {
                 object.displayObject();
