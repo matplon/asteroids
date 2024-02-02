@@ -90,7 +90,7 @@ public class Main {
             Object3D obj1 = Util.generateOBJ(Math.random()*100-50,0,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D(),Color.BLACK, hitBox);
             obj1.displayObject();
         }
-        Object3D obj3 = Util.convertOBJ("Pyramid.txt");
+        Object3D obj3 = Util.convertOBJ("lowPolyTank.txt");
         ArrayList<Vertex> hitBox1 = new ArrayList<>();
         ArrayList<Vertex> triangleHitbox = new ArrayList<>();
         triangleHitbox.add(new Vertex(0.5,0,-0.5));
@@ -214,7 +214,7 @@ public class Main {
     }
 
     public static void start() {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / Menu.FPS), actionEvent -> {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS/2)), actionEvent -> {
             control();
             Vertex camForward = camera.getForward();
             double [] camF = camForward.toArray();
@@ -229,7 +229,8 @@ public class Main {
             textList.clear();
             text.setText(Double.toString(camera.getRotation()));
             text1.setText(Math.round(camera.getPosition().getX()) + " " + Math.round(camera.getPosition().getY()) + " " + Math.round(camera.getPosition().getZ()));
-            for (Bullet bullet:bullets){
+            if(!bullets.isEmpty()){
+                Bullet bullet = bullets.get(0);
                 System.out.println(">>>>>>>>>>>>>>>>>>");
                 bullet.translate(bullet.getDirection().getX(),0,bullet.getDirection().getZ());
                 double travelled = Math.sqrt(bullet.getDirection().getX()*bullet.getDirection().getX()+bullet.getDirection().getZ()*bullet.getDirection().getZ());
@@ -248,15 +249,15 @@ public class Main {
                 object.displayObject();
                 if(!bullets.isEmpty()){
                     double dist = Math.sqrt(Math.pow((bullets.get(0).getX()-object.getX()),2)+Math.pow((bullets.get(0).getZ()-object.getZ()),2));
-                    if(dist<10){
+                    System.out.println(dist + " TROLOLOLOLOL");
+                    if(dist<3){
                         Vertex vertex = bullets.get(0).checkForHits(object);
                         if(vertex!=null){
                             System.out.println("YYYYYYYYY");
                             object.setColor(Color.GREEN);
                             bullets.get(0).explode(vertex);
-                            bullets.get(0).setDirection(new Vertex(0,0,0));
-                            bullets.get(0).moveTo(vertex.getX(), vertex.getY(), vertex.getZ());
-
+                            bullets.remove(bullets.get(0));
+                            bullets.clear();
                     }}
                 }
             }

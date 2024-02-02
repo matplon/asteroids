@@ -123,6 +123,10 @@ public class Util {
         return z;
     }
 
+    public static Vertex hitBoxIntersect(){
+        return new Vertex(0,0,0);
+    }
+
     public static Vertex lineIntersect(Vertex a1, Vertex a2, Vertex b1, Vertex b2){
         double ax = a2.getX() - a1.getX();
         double az = a2.getZ() - a1.getZ();
@@ -136,7 +140,7 @@ public class Util {
             double resultZ;
             double factor1 = (-az*(a1.getX()-b1.getX())+ax*(a1.getZ()-b1.getZ()))/delta;
             double factor2 = (bx*(a1.getZ()-b1.getZ())-bz*(a1.getX()-b1.getX()))/delta;
-            if(factor1 > 0 && factor1 < 1 && factor2 > 0 && factor2 < 1){
+            if(factor1 > 0 && factor1 <= 1 && factor2 > 0 && factor2 <= 1){
                 resultX = a1.getX() + (factor2 * ax);
                 resultZ = a1.getZ() + (factor2 * az);
                 return new Vertex(resultX, 0, resultZ);
