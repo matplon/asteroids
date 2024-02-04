@@ -265,12 +265,13 @@ public class Util {
                     double x = Double.parseDouble(cords[0]);
                     double y = Double.parseDouble(cords[1]);
                     double z = Double.parseDouble(cords[2]);
-                    if(path.equals("tank.txt")){
-                        y = y*5;
+                    if(path.equals("untitled.txt")){
+                        System.out.println(x+ " " + y + " " + z + " coords");
+                        /*y = y*5;
                         z = z*5;
-                        x = x*5;
+                        x = x*5;*/
                     }
-                    Vertex vertex = new Vertex(Math.round(x),Math.round(y),Math.round(z));
+                    Vertex vertex = new Vertex(x,y,z);
                     System.out.println(vertex.getW()+"WWWW");
                     vertices.add(vertex);
                 }
