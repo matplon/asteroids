@@ -1,6 +1,7 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polyline;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -82,6 +83,62 @@ public class Util {
         bullet.setOrigin(new Vertex(x,0,z));
         bullet.setDirection(Util.arrToVert(dir));
         return bullet;
+    }
+
+    public static void drawUnscopedReticle(){
+        Polyline polyline = new Polyline(Main.WIDTH/2, Main.HEIGHT/2 -100, Main.WIDTH/2, Main.HEIGHT/2 -200);
+        Polyline polyline1 = new Polyline(Main.WIDTH/2, Main.HEIGHT/2 +100, Main.WIDTH/2, Main.HEIGHT/2 +200);
+        Polyline polyline2 = new Polyline(Main.WIDTH/2 -100, Main.HEIGHT/2 -100, Main.WIDTH/2 +100, Main.HEIGHT/2 -100);
+        Polyline polyline3 = new Polyline(Main.WIDTH/2 -100, Main.HEIGHT/2 +100, Main.WIDTH/2+100, Main.HEIGHT/2 +100);
+        Polyline polyline4 = new Polyline(Main.WIDTH/2 -100, Main.HEIGHT/2 -100, Main.WIDTH/2 -100, Main.HEIGHT/2 -75);
+        Polyline polyline5 = new Polyline(Main.WIDTH/2 +100, Main.HEIGHT/2 -100, Main.WIDTH/2 +100, Main.HEIGHT/2 -75);
+        Polyline polyline6 = new Polyline(Main.WIDTH/2 -100, Main.HEIGHT/2 +100, Main.WIDTH/2 -100, Main.HEIGHT/2 +75);
+        Polyline polyline7 = new Polyline(Main.WIDTH/2 +100, Main.HEIGHT/2 +100, Main.WIDTH/2 +100, Main.HEIGHT/2 +75);
+        polyline.setStroke(Color.GREEN);
+        polyline1.setStroke(Color.GREEN);
+        polyline2.setStroke(Color.GREEN);
+        polyline3.setStroke(Color.GREEN);
+        polyline4.setStroke(Color.GREEN);
+        polyline5.setStroke(Color.GREEN);
+        polyline6.setStroke(Color.GREEN);
+        polyline7.setStroke(Color.GREEN);
+        Main.reticle.add(polyline);
+        Main.reticle.add(polyline1);
+        Main.reticle.add(polyline2);
+        Main.reticle.add(polyline3);
+        Main.reticle.add(polyline4);
+        Main.reticle.add(polyline5);
+        Main.reticle.add(polyline6);
+        Main.reticle.add(polyline7);
+        Main.root.getChildren().addAll(polyline,polyline1,polyline2,polyline3,polyline4,polyline5,polyline6,polyline7);
+    }
+
+    public static void drawScopedReticle(){
+        Polyline polyline = new Polyline(Main.WIDTH/2, Main.HEIGHT/2 -50, Main.WIDTH/2, Main.HEIGHT/2 -200);
+        Polyline polyline1 = new Polyline(Main.WIDTH/2, Main.HEIGHT/2 +50, Main.WIDTH/2, Main.HEIGHT/2 +200);
+        Polyline polyline2 = new Polyline(Main.WIDTH/2 -100, Main.HEIGHT/2 -100, Main.WIDTH/2 +100, Main.HEIGHT/2 -100);
+        Polyline polyline3 = new Polyline(Main.WIDTH/2 -100, Main.HEIGHT/2 +100, Main.WIDTH/2+100, Main.HEIGHT/2 +100);
+        Polyline polyline4 = new Polyline(Main.WIDTH/2 -100, Main.HEIGHT/2 -100, Main.WIDTH/2 -50, Main.HEIGHT/2 -50);
+        Polyline polyline5 = new Polyline(Main.WIDTH/2 +100, Main.HEIGHT/2 -100, Main.WIDTH/2 +50, Main.HEIGHT/2 -50);
+        Polyline polyline6 = new Polyline(Main.WIDTH/2 -100, Main.HEIGHT/2 +100, Main.WIDTH/2 -50, Main.HEIGHT/2 +50);
+        Polyline polyline7 = new Polyline(Main.WIDTH/2 +100, Main.HEIGHT/2 +100, Main.WIDTH/2 +50, Main.HEIGHT/2 +50);
+        polyline.setStroke(Color.GREEN);
+        polyline1.setStroke(Color.GREEN);
+        polyline2.setStroke(Color.GREEN);
+        polyline3.setStroke(Color.GREEN);
+        polyline4.setStroke(Color.GREEN);
+        polyline5.setStroke(Color.GREEN);
+        polyline6.setStroke(Color.GREEN);
+        polyline7.setStroke(Color.GREEN);
+        Main.reticle.add(polyline);
+        Main.reticle.add(polyline1);
+        Main.reticle.add(polyline2);
+        Main.reticle.add(polyline3);
+        Main.reticle.add(polyline4);
+        Main.reticle.add(polyline5);
+        Main.reticle.add(polyline6);
+        Main.reticle.add(polyline7);
+        Main.root.getChildren().addAll(polyline,polyline1,polyline2,polyline3,polyline4,polyline5,polyline6,polyline7);
     }
 
     public static double getMaxX(ArrayList<Vertex> points){

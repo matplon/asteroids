@@ -41,6 +41,8 @@ public class Main {
 
     static ArrayList<Polyline> lineList = new ArrayList<>();
 
+    static ArrayList<Polyline> reticle = new ArrayList<>();
+
     static ArrayList<Text> textList = new ArrayList<>();
 
     static String cubePath = "Cube.txt";
@@ -343,6 +345,21 @@ public class Main {
                         particles.remove(i);
                     }
                 }
+            }
+            for (int i = 0; i < reticle.size(); i++) {
+                root.getChildren().remove(reticle.get(i));
+            }
+            reticle.clear();
+            boolean check = false;
+            for (int i = 0; i < objectList.size(); i++) {
+                if(camera.checkReticle(objectList.get(i))){
+                    check = true;
+                }
+            }
+            if(check){
+                Util.drawScopedReticle();
+            }else{
+                Util.drawUnscopedReticle();
             }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);

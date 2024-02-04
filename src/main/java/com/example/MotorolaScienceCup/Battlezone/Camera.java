@@ -104,6 +104,32 @@ public class Camera extends Object3D{
             Main.bullets.add(bullet);
         }
     }
+    
+    public boolean checkReticle(Object3D object3D){
+        Vertex origin = new Vertex(this.getX(), this.getY(), this.getZ());
+        Vertex endpoint = new Vertex(this.getX()+this.getForward().getX()*100, this.getY()+this.getForward().getY()*100, this.getZ()+this.getForward().getZ()*100);
+        Vertex a1;
+        Vertex a2;
+        ArrayList<Vertex> result = new ArrayList<>();
+        for (int i = 0; i < object3D.getHitBox2D().size(); i++) {
+            if (i + 1 < object3D.getHitBox2D().size()) {
+                a1 = object3D.getHitBox2D().get(i);
+                a2 = object3D.getHitBox2D().get(i + 1);
+            } else {
+                a1 = object3D.getHitBox2D().get(object3D.getHitBox2D().size() - 1);
+                a2 = object3D.getHitBox2D().get(0);
+            }
+            Vertex vertex = Util.lineIntersect(origin,endpoint,a1,a2);
+            if(vertex!=null){
+                result.add(vertex);
+            }
+        }
+        if(result.size() == 0){
+            return false;
+        }else{
+            return true;
+        }
+    }
 
     @Override
     public double getX() {
