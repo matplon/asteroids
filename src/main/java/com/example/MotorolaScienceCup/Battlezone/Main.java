@@ -5,7 +5,6 @@ import com.example.MotorolaScienceCup.Asteroids.Asteroid;
 import com.example.MotorolaScienceCup.Asteroids.Enemy;
 import com.example.MotorolaScienceCup.Asteroids.HUD;
 import com.example.MotorolaScienceCup.Menu;
-import com.example.MotorolaScienceCup.Particle;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -54,6 +53,11 @@ public class Main {
     public static Scene scene = new Scene(root,WIDTH,HEIGHT);
 
     public static ArrayList<Bullet> bullets = new ArrayList<>();
+
+    public static ArrayList<Particle> particles = new ArrayList<>();
+    public static int MAX_PARTICLE_TICKS = 30;
+
+    public static double PARTICLE_SPEED = 0.05;
 
 
     public static Camera camera;
@@ -109,7 +113,7 @@ public class Main {
             Object3D obj1 = Util.generateOBJ(Math.random()*100-50,0,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D(),Color.GREEN, hitBox);
             obj1.displayObject();
         }
-        Object3D obj3 = Util.convertOBJ("untitled.txt");
+        Object3D obj3 = Util.convertOBJ("Pyramid.txt");
         ArrayList<Vertex> hitBox1 = new ArrayList<>();
         ArrayList<Vertex> triangleHitbox = new ArrayList<>();
         triangleHitbox.add(new Vertex(0.6,0,-0.6));
@@ -329,6 +333,17 @@ public class Main {
                     }}
                 }
             }}
+            if(!particles.isEmpty()){
+                for (int i = 0; i < particles.size(); i++) {
+                    Particle particle = particles.get(i);
+                    particle.displayObject();
+                    particle.translate(particle.getDirection().getX()*PARTICLE_SPEED, particle.getDirection().getY()*PARTICLE_SPEED, particle.getDirection().getZ()*PARTICLE_SPEED);
+                    particle.setTickrate(particle.getTickrate()+1);
+                    if(particle.getTickrate() > MAX_PARTICLE_TICKS){
+                        particles.remove(i);
+                    }
+                }
+            }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();

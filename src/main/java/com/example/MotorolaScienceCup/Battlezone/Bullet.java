@@ -1,9 +1,13 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Bullet extends Object3D{
+
+    public static int PARTICLE_COUNT = 12;
 
     private double distanceCovered;
 
@@ -40,7 +44,18 @@ public class Bullet extends Object3D{
     }
 
     public void explode(Vertex vertex){
-        System.out.println("lol");
+        for (int i = 0; i < PARTICLE_COUNT; i++) {
+            System.out.println(vertex.toString() + " ::::::::::::");
+            Object3D obj = Util.convertOBJ("Cube.txt");
+            obj.scale(0.001,0.001,0.001);
+            obj.translate(vertex.getX(),vertex.getY(),vertex.getZ());
+            ArrayList<Vertex> arr = new ArrayList<>();
+            arr.add(new Vertex(vertex.getX(),vertex.getY(),vertex.getZ()));
+            ArrayList<Face> arr1 = new ArrayList<>();
+            Particle particle = new Particle(obj.getPoints3D(),obj.getFaces3D(), new Vertex(Math.random()*2-1, Math.random()*2-1, Math.random()*2-1));
+            particle.setColor(Color.RED);
+            Main.particles.add(particle);
+        }
     }
 
     public Vertex checkForHits(Object3D object){
