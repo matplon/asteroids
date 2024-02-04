@@ -77,7 +77,24 @@ public class Object3D {
         return average;
     }
 
-
+    public boolean runCollisionCheck(double range, ArrayList<Vertex> myHitBox){
+        ArrayList<Vertex> arr = new ArrayList<>();
+        for (Object3D object:Main.objectList) {
+                    double dist = Math.sqrt(Math.pow((this.getX()-object.getX()),2)+Math.pow((this.getZ()-object.getZ()),2));
+                    System.out.println(dist + " TROLOLOLOLOL");
+                    if(dist<range){
+                      ArrayList<Vertex> res = Util.hitBoxIntersect(object.getHitBox2D(),myHitBox);
+                      for(Vertex vert:res){
+                          arr.add(vert);
+                      }
+                    }
+                }
+        if(arr.size() == 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     public void updateRotation(double angle){
         double rot1 = this.getRotation();
@@ -89,6 +106,8 @@ public class Object3D {
         }
         this.setRotation(rot1);
     }
+
+
 
     //DOES NOT WORK. DO NOT USE UNDER ANY CIRCUMSTANCES. ONLY USE Object.moveTo(0,0,0)
     public void convertVertecesToCentralOrigin(){
@@ -221,9 +240,9 @@ public class Object3D {
 
         }
 
-        this.x = this.getCenterX();
-        this.y = this.getCenterY();
-        this.z = this.getCenterZ();
+        this.setX(this.getCenterX());
+        this.setY(this.getCenterY());
+        this.setZ(this.getCenterZ());
     }
 
     public void moveTo(double x, double y, double z){
@@ -277,9 +296,9 @@ public class Object3D {
 
         }
         this.moveTo(x,y,z);
-        this.x = getCenterX();
-        this.y = getCenterY();
-        this.z = getCenterZ();
+        this.setX(this.getCenterX());
+        this.setY(this.getCenterY());
+        this.setZ(this.getCenterZ());
     }
     public void rotZ(double angle){
         double x = this.getCenterX();
@@ -323,6 +342,18 @@ public class Object3D {
 
     public double getZ() {
         return z;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void setZ(double z) {
+        this.z = z;
     }
 
     public double getRotation() {

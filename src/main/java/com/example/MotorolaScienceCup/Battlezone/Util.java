@@ -78,6 +78,7 @@ public class Util {
         bullet.rotX(90);
         bullet.rotY(firingAngle);
         bullet.moveTo(x,y,z);
+        bullet.setColor(Color.GREEN);
         bullet.setOrigin(new Vertex(x,0,z));
         bullet.setDirection(Util.arrToVert(dir));
         return bullet;
@@ -123,8 +124,37 @@ public class Util {
         return z;
     }
 
-    public static Vertex hitBoxIntersect(){
-        return new Vertex(0,0,0);
+    public static ArrayList<Vertex> hitBoxIntersect(ArrayList<Vertex> hitbox1, ArrayList<Vertex> hitbox2){
+        ArrayList<Vertex> result = new ArrayList<>();
+        Vertex a1;
+        Vertex a2;
+        Vertex b1;
+        Vertex b2;
+        for (int i = 0; i < hitbox1.size(); i++) {
+            if(i+1<hitbox1.size()){
+                  a1 = hitbox1.get(i);
+                  a2 = hitbox1.get(i+1);
+            }else{
+                  a1 = hitbox1.get(hitbox1.size()-1);
+                  a2 = hitbox1.get(0);
+            }
+            for (int j = 0; j < hitbox2.size(); j++) {
+                if(j+1<hitbox2.size()){
+                      b1 = hitbox2.get(j);
+                      b2 = hitbox2.get(j+1);
+                }else{
+                      b1 = hitbox2.get(hitbox2.size()-1);
+                      b2 = hitbox2.get(0);
+                }
+                Vertex vert = lineIntersect(a1,a2,b1,b2);
+                if(vert!=null){
+                    result.add(vert);
+                }
+            }
+        }
+        
+        
+        return result;
     }
 
     public static Vertex lineIntersect(Vertex a1, Vertex a2, Vertex b1, Vertex b2){
@@ -188,9 +218,9 @@ public class Util {
     public static Object3D generateOBJ (double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D, Color color, ArrayList<Vertex> hitboxBounds){
         Object3D obj = new Object3D(points3D,faces3D);
         obj.setHitBox2D(hitboxBounds);
-        obj.convertVertecesToCentralOrigin();
+        //obj.convertVertecesToCentralOrigin();
         obj.moveTo(x,y,z);
-        //obj.scale(0.1,0.1,0.1);
+        //obj.scale(1,1,5);
         Main.objectList.add(obj);
         obj.setColor(color);
         System.out.println(Arrays.toString(obj.getHitBox2D().get(0).toArray())+"{{{{{{{");
@@ -215,6 +245,11 @@ public class Util {
                     double x = Double.parseDouble(cords[0]);
                     double y = Double.parseDouble(cords[1]);
                     double z = Double.parseDouble(cords[2]);
+                    if(path.equals("lowPolyTank.txt")){
+                        y = y*5;
+                        z = z*5;
+                        x = x*5.5;
+                    }
                     Vertex vertex = new Vertex(Math.round(x),Math.round(y),Math.round(z));
                     System.out.println(vertex.getW()+"WWWW");
                     vertices.add(vertex);

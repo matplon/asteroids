@@ -10,9 +10,13 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
@@ -59,7 +63,10 @@ public class Main {
 
 
     public static void init(){
+        scene.setFill(Color.BLACK);
+        root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
         Polyline polyline = new Polyline(0,(HEIGHT/2), WIDTH,(HEIGHT/2));
+        polyline.setStroke(Color.GREEN);
         root.getChildren().add(polyline);
 
         text.setX(100);
@@ -68,9 +75,24 @@ public class Main {
         text1.setX(100);
         text1.setY(200);
         text1.setFont(Font.font(50));
+        text.setFill(Color.GREEN);
+        text1.setFill(Color.GREEN);
         root.getChildren().addAll(text,text1);
+        ArrayList<Vertex> cubeHitbox = new ArrayList<>();
+        cubeHitbox.add(new Vertex(1,0,-1));
+        cubeHitbox.add(new Vertex(1,0,1));
+        cubeHitbox.add(new Vertex(-1,0,1));
+        cubeHitbox.add(new Vertex(-1,0,-1));
+        ArrayList<Vertex> camHitbox = new ArrayList<>();
+        cubeHitbox.add(new Vertex(2,0,-2));
+        cubeHitbox.add(new Vertex(2,0,2));
+        cubeHitbox.add(new Vertex(-2,0,2));
+        cubeHitbox.add(new Vertex(-2,0,-2));
+        ArrayList<Vertex> camPos = new ArrayList<>();
+        camPos.add(new Vertex(0,0,0));
 
-        camera = new Camera(new ArrayList<Vertex>(),new ArrayList<Face>(),0,0,0);
+        camera = new Camera(camPos,new ArrayList<Face>(),0,0,0);
+        camera.setHitBox2D(cubeHitbox);
         Vertex camForward = camera.getForward();
         double [] camF = camForward.toArray();
         Vertex camUp = camera.getUp();
@@ -78,34 +100,30 @@ public class Main {
         Vertex camRight = camera.getRight();
         double [] camR = camRight.toArray();
         for (int i = 0; i < 10; i++) {
-            ArrayList<Vertex> cubeHitbox = new ArrayList<>();
-            cubeHitbox.add(new Vertex(1,0,-1));
-            cubeHitbox.add(new Vertex(1,0,1));
-            cubeHitbox.add(new Vertex(-1,0,1));
-            cubeHitbox.add(new Vertex(-1,0,-1));
             ArrayList<Vertex> hitBox = new ArrayList<>();
                 for (int j = 0; j < 4; j++) {
                     hitBox.add(cubeHitbox.get(j));
             }
             Object3D obj = Util.convertOBJ(cubePath);
             System.out.println("BRUH");
-            Object3D obj1 = Util.generateOBJ(Math.random()*100-50,0,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D(),Color.BLACK, hitBox);
+            Object3D obj1 = Util.generateOBJ(Math.random()*100-50,0,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D(),Color.GREEN, hitBox);
             obj1.displayObject();
         }
-        Object3D obj3 = Util.convertOBJ("lowPolyTank.txt");
+        Object3D obj3 = Util.convertOBJ("Pyramid.txt");
         ArrayList<Vertex> hitBox1 = new ArrayList<>();
         ArrayList<Vertex> triangleHitbox = new ArrayList<>();
-        triangleHitbox.add(new Vertex(0.5,0,-0.5));
-        triangleHitbox.add(new Vertex(0.5,0,0.5));
-        triangleHitbox.add(new Vertex(-0.5,0,0.5));
-        triangleHitbox.add(new Vertex(-0.5,0,-0.5));
+        triangleHitbox.add(new Vertex(0.55,0,-0.55));
+        triangleHitbox.add(new Vertex(0.55,0,0.55));
+        triangleHitbox.add(new Vertex(-0.55,0,0.55));
+        triangleHitbox.add(new Vertex(-0.55,0,-0.55));
         for (int j = 0; j < 4; j++) {
             hitBox1.add(triangleHitbox.get(j));
         }
-        Object3D obj1 = Util.generateOBJ(0,-0.6,0,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED, hitBox1);
+        Object3D obj1 = Util.generateOBJ(0,-0.6,10,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED, hitBox1);
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
         }
+
         obj1.displayObject();
 
         start();
@@ -117,9 +135,10 @@ public class Main {
 
 
     public static void control(){
+
         scene.setOnKeyPressed(keyEvent -> {
             double rotation = camera.getRotation();
-            Vertex camVert = camera.getPosition();
+            Vertex camVert = camera.getPoints3D().get(0);
             double [] camArr = camVert.toArray();
             Vertex camForward = camera.getForward();
             double [] camF = camForward.toArray();
@@ -130,43 +149,87 @@ public class Main {
 
             if (keyEvent.getCode() == KeyCode.S){
                 System.out.println("lol");
-                for (int i = 0; i < 4; i++) {
-                    camArr[i]-=camF[i]*CAMERA_SPEED;
+                ArrayList<Vertex> hitbox = camera.getHitBox2D();
+                ArrayList<Vertex> lol = new ArrayList<>();
+                for (int i = 0; i < hitbox.size(); i++) {
+                    Vertex vert = hitbox.get(i);
+                    double[] arr = vert.toArray();
+                    arr = Util.multiplyTransform(Util.getTranslationMatrix(-camF[0]*CAMERA_SPEED, -camF[1]*CAMERA_SPEED, -camF[2]*CAMERA_SPEED),arr);
+                    lol.add(Util.arrToVert(arr));
                 }
-                camera.setPosition(Util.arrToVert(camArr));
+                System.out.println("hihihi");
+                if(camera.runCollisionCheck(5,lol)) {
+                    System.out.println("LALALALA");
+                    camera.translate(-camF[0] * CAMERA_SPEED, -camF[1] * CAMERA_SPEED, -camF[2] * CAMERA_SPEED);
+                }
+
             };
             if (keyEvent.getCode() == KeyCode.W){
-                System.out.println("xd");
-                for (int i = 0; i < 4; i++) {
-                    camArr[i]+=camF[i]*CAMERA_SPEED;
+                ArrayList<Vertex> hitbox = camera.getHitBox2D();
+                ArrayList<Vertex> lol = new ArrayList<>();
+                for (int i = 0; i < hitbox.size(); i++) {
+                    Vertex vert = hitbox.get(i);
+                    double[] arr = vert.toArray();
+                    arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
+                    lol.add(Util.arrToVert(arr));
                 }
-                camera.setPosition(Util.arrToVert(camArr));
+                if(camera.runCollisionCheck(5,lol)){
+                        camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
+                    }
             }; // Thrust forward
             if (keyEvent.getCode() == KeyCode.D){
-                System.out.println("xd1");
-                for (int i = 0; i < 4; i++) {
-                    camArr[i]+=camR[i]*CAMERA_SPEED;
+                ArrayList<Vertex> hitbox = camera.getHitBox2D();
+                ArrayList<Vertex> lol = new ArrayList<>();
+                for (int i = 0; i < hitbox.size(); i++) {
+                    Vertex vert = hitbox.get(i);
+                    double[] arr = vert.toArray();
+                    arr = Util.multiplyTransform(Util.getTranslationMatrix(camR[0]*CAMERA_SPEED, camR[1]*CAMERA_SPEED, camR[2]*CAMERA_SPEED),arr);
+                    lol.add(Util.arrToVert(arr));
                 }
-                camera.setPosition(Util.arrToVert(camArr));
+                if(camera.runCollisionCheck(5,lol)){
+                   // for (int i = 0; i < 4; i++) {
+                        camera.translate( camR[0] * CAMERA_SPEED,  camR[1] * CAMERA_SPEED,  camR[2] * CAMERA_SPEED);
+                    }
             };   // Rotate right
             if (keyEvent.getCode() == KeyCode.A){
-                System.out.println("xd1");
-                for (int i = 0; i < 4; i++) {
-                    camArr[i]-=camR[i]*CAMERA_SPEED;
+                ArrayList<Vertex> hitbox = camera.getHitBox2D();
+                ArrayList<Vertex> lol = new ArrayList<>();
+                for (int i = 0; i < hitbox.size(); i++) {
+                    Vertex vert = hitbox.get(i);
+                    double[] arr = vert.toArray();
+                    arr = Util.multiplyTransform(Util.getTranslationMatrix(-camR[0]*CAMERA_SPEED, -camR[1]*CAMERA_SPEED, -camR[2]*CAMERA_SPEED),arr);
+                    lol.add(Util.arrToVert(arr));
                 }
-                camera.setPosition(Util.arrToVert(camArr));
+                if(camera.runCollisionCheck(5,lol)){
+                    //for (int i = 0; i < 4; i++) {
+                        camera.translate(  -camR[0] * CAMERA_SPEED,   -camR[1] * CAMERA_SPEED,   -camR[2] * CAMERA_SPEED);
+                    }
             }; // Rotate left
             if (keyEvent.getCode() == KeyCode.UP){
-                //for (int i = 0; i < 4; i++) {
-                    camArr[1]+=camU[1]*CAMERA_SPEED;
-                //}
-                camera.setPosition(Util.arrToVert(camArr));
+                ArrayList<Vertex> hitbox = camera.getHitBox2D();
+                for (int i = 0; i < hitbox.size(); i++) {
+                    Vertex vert = hitbox.get(i);
+                    double[] arr = vert.toArray();
+                    arr = Util.multiplyTransform(Util.getTranslationMatrix( camU[0]*CAMERA_SPEED,  camU[1]*CAMERA_SPEED,  camU[2]*CAMERA_SPEED),arr);
+                    hitbox.set(i, Util.arrToVert(arr));
+                }
+                if(camera.runCollisionCheck(3,hitbox)){
+                    for (int i = 0; i < 4; i++) {
+                        camera.translate( camU[0] * CAMERA_SPEED,  camU[1] * CAMERA_SPEED,  camU[2] * CAMERA_SPEED);
+                    }}
             };   // Rotate right
             if (keyEvent.getCode() == KeyCode.DOWN){
-                //for (int i = 0; i < 4; i++) {
-                    camArr[1]-=camU[1]*CAMERA_SPEED;
-               // }
-                camera.setPosition(Util.arrToVert(camArr));
+                ArrayList<Vertex> hitbox = camera.getHitBox2D();
+                for (int i = 0; i < hitbox.size(); i++) {
+                    Vertex vert = hitbox.get(i);
+                    double[] arr = vert.toArray();
+                    arr = Util.multiplyTransform(Util.getTranslationMatrix( -camU[0]*CAMERA_SPEED,  -camU[1]*CAMERA_SPEED,  -camU[2]*CAMERA_SPEED),arr);
+                    hitbox.set(i, Util.arrToVert(arr));
+                }
+                if(!camera.runCollisionCheck(3,hitbox)){
+                    for (int i = 0; i < 4; i++) {
+                        camera.translate( -camU[0] * CAMERA_SPEED,  -camU[1] * CAMERA_SPEED,  -camU[2] * CAMERA_SPEED);
+                    }}
             }; // Rotate left
             if (keyEvent.getCode() == KeyCode.E){
                 camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
@@ -174,7 +237,8 @@ public class Main {
                 camera.setForward(Util.arrToVert(camF));
                 camR = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camR);
                 camera.setRight(Util.arrToVert(camR));
-                camera.updateRotation(CAMERA_ROT_SPEED);
+                camera.rotY(CAMERA_ROT_SPEED);
+                //camera.updateRotation(CAMERA_ROT_SPEED);
 
             };
             if (keyEvent.getCode() == KeyCode.Q){
@@ -183,7 +247,8 @@ public class Main {
                 camera.setForward(Util.arrToVert(camF));
                 camR = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camR);
                 camera.setRight(Util.arrToVert(camR));
-                camera.updateRotation(-CAMERA_ROT_SPEED);
+                camera.rotY(-CAMERA_ROT_SPEED);
+                //camera.updateRotation(-CAMERA_ROT_SPEED);
             };
             /*if (keyEvent.getCode() == KeyCode.R){
                 camF = Util.multiplyTransform(Util.getRotationXMatrix(-1), camF);
@@ -207,7 +272,7 @@ public class Main {
 
         });
         System.out.println("LLLLLLLLLLLL");
-        System.out.println(camera.getPosition().toString());
+        //System.out.println(camera.getPosition().toString());
         System.out.println(camera.getForward().toString());
         System.out.println(camera.getUp().toString());
         System.out.println(camera.getRight().toString());
@@ -216,7 +281,7 @@ public class Main {
     }
 
     public static void start() {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS/2)), actionEvent -> {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
             control();
             Vertex camForward = camera.getForward();
             double [] camF = camForward.toArray();
@@ -230,7 +295,7 @@ public class Main {
             }
             textList.clear();
             text.setText(Double.toString(camera.getRotation()));
-            text1.setText(Math.round(camera.getPosition().getX()) + " " + Math.round(camera.getPosition().getY()) + " " + Math.round(camera.getPosition().getZ()));
+            text1.setText(Math.round(camera.getX()) + " " + Math.round(camera.getY()) + " " + Math.round(camera.getZ()));
             if(!bullets.isEmpty()){
                 Bullet bullet = bullets.get(0);
                 System.out.println(">>>>>>>>>>>>>>>>>>");
@@ -244,8 +309,9 @@ public class Main {
                 }
                 System.out.println("<<<<<<<<<<<<<<<<<<");
             }
-
+            //System.out.println(objectList.get(10).getPoints3D().size() + " " + objectList.get(10).getFaces3D().size() + " GGGGGG");
             for (Object3D object:objectList) {
+                if(object.getClass()!= Camera.class){
                 object.displayObject();
                 if(!bullets.isEmpty()){
                     double dist = Math.sqrt(Math.pow((bullets.get(0).getX()-object.getX()),2)+Math.pow((bullets.get(0).getZ()-object.getZ()),2));
@@ -254,13 +320,13 @@ public class Main {
                         Vertex vertex = bullets.get(0).checkForHits(object);
                         if(vertex!=null){
                             System.out.println("YYYYYYYYY");
-                            object.setColor(Color.GREEN);
+                            object.setColor(Color.BLUE);
                             bullets.get(0).explode(vertex);
                             bullets.remove(bullets.get(0));
                             bullets.clear();
                     }}
                 }
-            }
+            }}
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
