@@ -35,7 +35,7 @@ public class Main {
     static int WIDTH = Menu.WIDTH;
     static int HEIGHT = Menu.HEIGHT;
 
-    static double CAMERA_SPEED = 0.5;
+    static double CAMERA_SPEED = 0.3;
     static double CAMERA_ROT_SPEED = 2.5;
 
     static ArrayList<Object3D> objectList = new ArrayList<>();
@@ -79,20 +79,20 @@ public class Main {
         text1.setFill(Color.GREEN);
         root.getChildren().addAll(text,text1);
         ArrayList<Vertex> cubeHitbox = new ArrayList<>();
-        cubeHitbox.add(new Vertex(1,0,-1));
-        cubeHitbox.add(new Vertex(1,0,1));
-        cubeHitbox.add(new Vertex(-1,0,1));
-        cubeHitbox.add(new Vertex(-1,0,-1));
+        cubeHitbox.add(new Vertex(1.05,0,-1.05));
+        cubeHitbox.add(new Vertex(1.05,0,1.05));
+        cubeHitbox.add(new Vertex(-1.05,0,1.05));
+        cubeHitbox.add(new Vertex(-1.05,0,-1.05));
         ArrayList<Vertex> camHitbox = new ArrayList<>();
-        cubeHitbox.add(new Vertex(2,0,-2));
-        cubeHitbox.add(new Vertex(2,0,2));
-        cubeHitbox.add(new Vertex(-2,0,2));
-        cubeHitbox.add(new Vertex(-2,0,-2));
+        camHitbox.add(new Vertex(2,0,-2));
+        camHitbox.add(new Vertex(2,0,2));
+        camHitbox.add(new Vertex(-2,0,2));
+        camHitbox.add(new Vertex(-2,0,-2));
         ArrayList<Vertex> camPos = new ArrayList<>();
         camPos.add(new Vertex(0,0,0));
 
         camera = new Camera(camPos,new ArrayList<Face>(),0,0,0);
-        camera.setHitBox2D(cubeHitbox);
+        camera.setHitBox2D(camHitbox);
         Vertex camForward = camera.getForward();
         double [] camF = camForward.toArray();
         Vertex camUp = camera.getUp();
@@ -112,14 +112,15 @@ public class Main {
         Object3D obj3 = Util.convertOBJ("Pyramid.txt");
         ArrayList<Vertex> hitBox1 = new ArrayList<>();
         ArrayList<Vertex> triangleHitbox = new ArrayList<>();
-        triangleHitbox.add(new Vertex(0.55,0,-0.55));
-        triangleHitbox.add(new Vertex(0.55,0,0.55));
-        triangleHitbox.add(new Vertex(-0.55,0,0.55));
-        triangleHitbox.add(new Vertex(-0.55,0,-0.55));
+        triangleHitbox.add(new Vertex(0.6,0,-0.6));
+        triangleHitbox.add(new Vertex(0.6,0,0.6));
+        triangleHitbox.add(new Vertex(-0.6,0,0.6));
+        triangleHitbox.add(new Vertex(-0.6,0,-0.6));
         for (int j = 0; j < 4; j++) {
             hitBox1.add(triangleHitbox.get(j));
         }
-        Object3D obj1 = Util.generateOBJ(0,-0.6,10,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED, hitBox1);
+        double y = Util.getMinY(obj3.getPoints3D());
+        Object3D obj1 = Util.generateOBJ(0,0.5+y-0.1,10,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED, hitBox1);
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
         }
@@ -214,9 +215,9 @@ public class Main {
                     hitbox.set(i, Util.arrToVert(arr));
                 }
                 if(camera.runCollisionCheck(3,hitbox)){
-                    for (int i = 0; i < 4; i++) {
+                    //for (int i = 0; i < 4; i++) {
                         camera.translate( camU[0] * CAMERA_SPEED,  camU[1] * CAMERA_SPEED,  camU[2] * CAMERA_SPEED);
-                    }}
+                    }
             };   // Rotate right
             if (keyEvent.getCode() == KeyCode.DOWN){
                 ArrayList<Vertex> hitbox = camera.getHitBox2D();
@@ -226,10 +227,10 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix( -camU[0]*CAMERA_SPEED,  -camU[1]*CAMERA_SPEED,  -camU[2]*CAMERA_SPEED),arr);
                     hitbox.set(i, Util.arrToVert(arr));
                 }
-                if(!camera.runCollisionCheck(3,hitbox)){
-                    for (int i = 0; i < 4; i++) {
+                if(camera.runCollisionCheck(3,hitbox)){
+                    //for (int i = 0; i < 4; i++) {
                         camera.translate( -camU[0] * CAMERA_SPEED,  -camU[1] * CAMERA_SPEED,  -camU[2] * CAMERA_SPEED);
-                    }}
+                    }
             }; // Rotate left
             if (keyEvent.getCode() == KeyCode.E){
                 camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
@@ -310,6 +311,7 @@ public class Main {
                 System.out.println("<<<<<<<<<<<<<<<<<<");
             }
             //System.out.println(objectList.get(10).getPoints3D().size() + " " + objectList.get(10).getFaces3D().size() + " GGGGGG");
+            //objectList.get(10).rotY(1);
             for (Object3D object:objectList) {
                 if(object.getClass()!= Camera.class){
                 object.displayObject();

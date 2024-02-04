@@ -70,7 +70,7 @@ public class Util {
         return matrix;
     }
 
-    public static Bullet generateBullet(double[] dir,double firingAngle, double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
+    public static com.example.MotorolaScienceCup.Battlezone.Bullet generateBullet(double[] dir, double firingAngle, double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         System.out.println("PPPPPPPPP");
         Bullet bullet = new Bullet(points3D,faces3D);
         bullet.moveTo(0,0,0);
@@ -97,7 +97,7 @@ public class Util {
     public static double getMaxZ(ArrayList<Vertex> points){
         double z = points.get(0).getZ();
         for (int i = 0; i < points.size(); i++) {
-            if(z<points.get(i).getX()){
+            if(z<points.get(i).getZ()){
                 z = points.get(i).getZ();
             }
         }
@@ -117,11 +117,31 @@ public class Util {
     public static double getMinZ(ArrayList<Vertex> points){
         double z = points.get(0).getZ();
         for (int i = 0; i < points.size(); i++) {
-            if(z>points.get(i).getX()){
+            if(z>points.get(i).getZ()){
                 z = points.get(i).getZ();
             }
         }
         return z;
+    }
+
+    public static double getMaxY(ArrayList<Vertex> points){
+        double y = points.get(0).getY();
+        for (int i = 0; i < points.size(); i++) {
+            if(y<points.get(i).getY()){
+                y = points.get(i).getY();
+            }
+        }
+        return y;
+    }
+
+    public static double getMinY(ArrayList<Vertex> points){
+        double y = points.get(0).getY();
+        for (int i = 0; i < points.size(); i++) {
+            if(y>points.get(i).getY()){
+                y = points.get(i).getY();
+            }
+        }
+        return y;
     }
 
     public static ArrayList<Vertex> hitBoxIntersect(ArrayList<Vertex> hitbox1, ArrayList<Vertex> hitbox2){
@@ -218,7 +238,7 @@ public class Util {
     public static Object3D generateOBJ (double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D, Color color, ArrayList<Vertex> hitboxBounds){
         Object3D obj = new Object3D(points3D,faces3D);
         obj.setHitBox2D(hitboxBounds);
-        //obj.convertVertecesToCentralOrigin();
+        obj.convertVertecesToCentralOrigin();
         obj.moveTo(x,y,z);
         //obj.scale(1,1,5);
         Main.objectList.add(obj);
@@ -245,10 +265,10 @@ public class Util {
                     double x = Double.parseDouble(cords[0]);
                     double y = Double.parseDouble(cords[1]);
                     double z = Double.parseDouble(cords[2]);
-                    if(path.equals("lowPolyTank.txt")){
+                    if(path.equals("tank.txt")){
                         y = y*5;
                         z = z*5;
-                        x = x*5.5;
+                        x = x*5;
                     }
                     Vertex vertex = new Vertex(Math.round(x),Math.round(y),Math.round(z));
                     System.out.println(vertex.getW()+"WWWW");
