@@ -2,6 +2,7 @@ package com.example.MotorolaScienceCup.Battlezone;
 
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
@@ -179,32 +180,33 @@ public class Object3D {
         }
         for (int i = 0; i < this.faces3D.size(); i++) {
             Face face = this.faces3D.get(i);
+            if(this.faces3D.size() > 1 && this.getFaces3D().get(0).getIndexes().size() > 1){
             for (int j = 0; j < face.getIndexes().size(); j++) {
                 double ax;
                 double ay;
                 double bx;
                 double by;
-                if(arrlist.size()>0){
-                if(j+1<face.getIndexes().size()){
-                    ax = arrlist.get(face.getIndexes().get(j)).getX();
-                    ay = arrlist.get(face.getIndexes().get(j)).getY();
-                    bx = arrlist.get(face.getIndexes().get(j+1)).getX();
-                    by = arrlist.get(face.getIndexes().get(j+1)).getY();
-                }else{
-                    ax = arrlist.get(face.getIndexes().get(j)).getX();
-                    ay = arrlist.get(face.getIndexes().get(j)).getY();
-                    bx = arrlist.get(face.getIndexes().get(0)).getX();
-                    by = arrlist.get(face.getIndexes().get(0)).getY();
-                }
+                if(arrlist.size()>0) {
+                    if (j + 1 < face.getIndexes().size()) {
+                        ax = arrlist.get(face.getIndexes().get(j)).getX();
+                        ay = arrlist.get(face.getIndexes().get(j)).getY();
+                        bx = arrlist.get(face.getIndexes().get(j + 1)).getX();
+                        by = arrlist.get(face.getIndexes().get(j + 1)).getY();
+                    } else {
+                        ax = arrlist.get(face.getIndexes().get(j)).getX();
+                        ay = arrlist.get(face.getIndexes().get(j)).getY();
+                        bx = arrlist.get(face.getIndexes().get(0)).getX();
+                        by = arrlist.get(face.getIndexes().get(0)).getY();
+                    }
 
 
-                //if(ax > Main.WIDTH+Main.WIDTH || bx > Main.WIDTH+Main.WIDTH || ax < 0-Main.WIDTH || bx < 0-Main.WIDTH ||
-              //          ay > Main.HEIGHT+Main.HEIGHT|| by > Main.HEIGHT+Main.HEIGHT || ay < 0-Main.HEIGHT || by < 0-Main.HEIGHT){
+                    //if(ax > Main.WIDTH+Main.WIDTH || bx > Main.WIDTH+Main.WIDTH || ax < 0-Main.WIDTH || bx < 0-Main.WIDTH ||
+                    //          ay > Main.HEIGHT+Main.HEIGHT|| by > Main.HEIGHT+Main.HEIGHT || ay < 0-Main.HEIGHT || by < 0-Main.HEIGHT){
 
-              //  }else{
-                    Polyline polyline1 = new Polyline(ax,ay,bx,by);
+                    //  }else{
+                    Polyline polyline1 = new Polyline(ax, ay, bx, by);
                     polyline1.setStroke(this.getColor());
-                    if(i==0 && j==0){
+                    if (i == 0 && j == 0) {
                         Text text = new Text();
                         text.setText(Math.round(this.getCenterX()) + " " + Math.round(this.getCenterY()) + " " + Math.round(this.getCenterZ()));
                         text.setX(ax);
@@ -214,8 +216,14 @@ public class Object3D {
                     }
                     Main.lineList.add(polyline1);
                     Main.root.getChildren().add(polyline1);
-
-            }}
+                }
+            }}else{
+                double ax = arrlist.get(face.getIndexes().get(0)).getX();
+                double ay = arrlist.get(face.getIndexes().get(0)).getY();
+                Circle circle = new Circle(ax, ay, 1, Color.RED);
+                Main.decals.add(circle);
+                Main.root.getChildren().add(circle);
+            }
 
 
         }

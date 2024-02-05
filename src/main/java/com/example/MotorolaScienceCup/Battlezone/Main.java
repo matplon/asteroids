@@ -17,6 +17,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Shape;
@@ -40,6 +41,8 @@ public class Main {
     static ArrayList<Object3D> objectList = new ArrayList<>();
 
     static ArrayList<Polyline> lineList = new ArrayList<>();
+
+    static ArrayList<Circle> decals = new ArrayList<>();
 
     static ArrayList<Polyline> reticle = new ArrayList<>();
 
@@ -297,6 +300,10 @@ public class Main {
                 root.getChildren().remove(polyline);
             }
             lineList.clear();
+            for (Circle circle:decals) {
+                root.getChildren().remove(circle);
+            }
+            decals.clear();
             for (Text text:textList) {
                 root.getChildren().remove(text);
             }

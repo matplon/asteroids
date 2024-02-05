@@ -51,8 +51,12 @@ public class Bullet extends Object3D{
             obj.translate(vertex.getX(),vertex.getY(),vertex.getZ());
             ArrayList<Vertex> arr = new ArrayList<>();
             arr.add(new Vertex(vertex.getX(),vertex.getY(),vertex.getZ()));
-            ArrayList<Face> arr1 = new ArrayList<>();
-            Particle particle = new Particle(obj.getPoints3D(),obj.getFaces3D(), new Vertex(Math.random()*2-1, Math.random()*2-1, Math.random()*2-1));
+            ArrayList<Integer> arr1 = new ArrayList<>();
+            arr1.add(0);
+            ArrayList<Face> faces = new ArrayList<>();
+            Face face = new Face(arr1);
+            faces.add(face);
+            Particle particle = new Particle(arr,faces, new Vertex(Math.random()*2-1, Math.random()*2-1, Math.random()*2-1));
             particle.setColor(Color.RED);
             Main.particles.add(particle);
         }
