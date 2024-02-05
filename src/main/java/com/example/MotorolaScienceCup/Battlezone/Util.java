@@ -318,7 +318,7 @@ public class Util {
                     String line = nextLine.replace("v ", "");
                     System.out.println(line);
                     String [] cords = line.split(" ");
-                    System.out.println(Arrays.toString(cords));
+                    System.out.println(Arrays.toString(cords) +" JJJJJJJJJ");
                     double x = Double.parseDouble(cords[0]);
                     double y = Double.parseDouble(cords[1]);
                     double z = Double.parseDouble(cords[2]);
