@@ -312,6 +312,10 @@ public class Main {
         lineList.add(polyline1);
         lineList.add(polyline2);
         lineList.add(movingLine);
+        movingLine.setStroke(Color.RED);
+        polyline1.setStroke(Color.RED);
+        polyline2.setStroke(Color.RED);
+        root.getChildren().addAll(polyline1,polyline2,movingLine);
 
         double dist = Math.sqrt(Math.pow((camera.getX()-object.getCenterX()),2)+Math.pow((camera.getZ()-object.getCenterZ()),2));
         if(dist < 100){
