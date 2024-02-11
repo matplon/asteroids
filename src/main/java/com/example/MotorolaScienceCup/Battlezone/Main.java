@@ -10,6 +10,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
@@ -37,6 +38,8 @@ public class Main {
 
     static double CAMERA_SPEED = 0.3;
     static double CAMERA_ROT_SPEED = 2.5;
+    
+    static double RADAR_ROT = 0;
 
     static ArrayList<Object3D> objectList = new ArrayList<>();
 
@@ -290,6 +293,50 @@ public class Main {
 
     }
 
+    public static void drawRadar(){
+        Object3D object = objectList.get(10);
+        Circle circle = new Circle(WIDTH/2, 200, 100, Color.RED);
+        Circle circle1 = new Circle();
+        Circle circle2 = new Circle(WIDTH/2, 200, 3, Color.RED);
+        double x0 = WIDTH/2;
+        double y0 = 200;
+        double x1 = Math.cos(Math.toRadians(H_FOV/2)) * (0) - Math.sin(Math.toRadians(H_FOV/2)) * (-100) + x0;
+        double y1 = Math.sin(Math.toRadians(H_FOV/2)) * (0) + Math.cos(Math.toRadians(H_FOV/2)) * (-100) + y0;
+        double x2 = Math.cos(Math.toRadians(-H_FOV/2)) * (0) - Math.sin(Math.toRadians(-H_FOV/2)) * (-100) + x0;
+        double y2 = Math.sin(Math.toRadians(-H_FOV/2)) * (0) + Math.cos(Math.toRadians(-H_FOV/2)) * (-100) + y0;
+        Polyline polyline1 = new Polyline(x0,y0,x1,y1);
+        Polyline polyline2 = new Polyline(x0,y0,x2,y2);
+        double mX = Math.cos(Math.toRadians(RADAR_ROT)) * (0) - Math.sin(Math.toRadians(RADAR_ROT)) * (-100) + x0;
+        double mY = Math.sin(Math.toRadians(RADAR_ROT)) * (0) + Math.cos(Math.toRadians(RADAR_ROT)) * (-100) + y0;
+        Polyline movingLine = new Polyline(x0,y0,mX,mY);
+        lineList.add(polyline1);
+        lineList.add(polyline2);
+        lineList.add(movingLine);
+
+        double dist = Math.sqrt(Math.pow((camera.getX()-object.getCenterX()),2)+Math.pow((camera.getZ()-object.getCenterZ()),2));
+        if(dist < 100){
+            Vertex vertex = new Vertex(camera.getX(), camera.getY(), camera.getZ());
+            Vertex obj = new Vertex(object.getX(), object.getY(), object.getZ());
+            double[] arr = vertex.toArray();
+            arr = Util.multiplyTransform(Util.getRotationYMatrix(-camera.getRotation()), arr);
+            vertex = Util.arrToVert(arr);
+            double[] arr1 = obj.toArray();
+            arr1 = Util.multiplyTransform(Util.getRotationYMatrix(-camera.getRotation()), arr1);
+            obj = Util.arrToVert(arr1);
+            double x = obj.getX() - vertex.getX();
+            double y = obj.getZ() - vertex.getZ();
+            circle1 = new Circle(x, -y, 2, Color.RED);
+            circle1.setCenterX(circle1.getCenterX()+circle.getCenterX());
+            circle1.setCenterY(circle1.getCenterY()+circle.getCenterY());
+        }
+        circle.setFill(Color.TRANSPARENT);
+        circle.setStroke(Color.RED);
+        decals.add(circle);
+        decals.add(circle1);
+        decals.add(circle2);
+        root.getChildren().addAll(circle2,circle1,circle);
+    }
+
     public static void start() {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
             control();
@@ -324,7 +371,7 @@ public class Main {
                 System.out.println("<<<<<<<<<<<<<<<<<<");
             }
             //System.out.println(objectList.get(10).getPoints3D().size() + " " + objectList.get(10).getFaces3D().size() + " GGGGGG");
-            objectList.get(10).rotY(1);
+            //objectList.get(10).rotY(1);
             for (Object3D object:objectList) {
                 if(object.getClass()!= Camera.class){
                 object.displayObject();
@@ -353,6 +400,13 @@ public class Main {
                     }
                 }
             }
+            RADAR_ROT+=1;
+            if(RADAR_ROT>=360){
+                RADAR_ROT=1-(360-RADAR_ROT);
+            } else if (RADAR_ROT<0) {
+                RADAR_ROT=360+(1-RADAR_ROT);
+            }
+            drawRadar();
             for (int i = 0; i < reticle.size(); i++) {
                 root.getChildren().remove(reticle.get(i));
             }
