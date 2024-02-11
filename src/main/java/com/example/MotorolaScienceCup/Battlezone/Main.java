@@ -344,9 +344,6 @@ public class Main {
     public static void start() {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
             control();
-            Vertex camForward = camera.getForward();
-            double [] camF = camForward.toArray();
-            System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
             for (Polyline polyline:lineList) {
                 root.getChildren().remove(polyline);
             }
@@ -375,7 +372,7 @@ public class Main {
                 System.out.println("<<<<<<<<<<<<<<<<<<");
             }
             //System.out.println(objectList.get(10).getPoints3D().size() + " " + objectList.get(10).getFaces3D().size() + " GGGGGG");
-            //objectList.get(10).rotY(1);
+            objectList.get(10).rotY(1);
             for (Object3D object:objectList) {
                 if(object.getClass()!= Camera.class){
                 object.displayObject();
