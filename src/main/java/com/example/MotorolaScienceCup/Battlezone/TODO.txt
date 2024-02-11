@@ -1,4 +1,13 @@
+DONE:
+-3D object generation and manipulation
+-camera view
+-shooting with hit detection and decals
+-collision detection for objects
+-radar
+-status text
+
+TODO:
+
 ADD MODELS AND OTHER BASIC GAME LOGIC
 CODE CLEAN-UP (OPTIONAL)
 FIX THE TANK MODEL OR MAKE ONE IN BLENDER
-ADD STATUS TEXT

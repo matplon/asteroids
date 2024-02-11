@@ -52,6 +52,13 @@ public class Main {
     static ArrayList<Text> textList = new ArrayList<>();
 
     static String cubePath = "Cube.txt";
+
+    static String enemyDir = "";
+
+    static boolean enemyInRange = false;
+
+    static boolean collisionDir = false;
+
     static double H_FOV = 90;
 
     static double MAX_BULLET_DISTANCE = 100;
@@ -96,10 +103,14 @@ public class Main {
         cubeHitbox.add(new Vertex(-1.05,0,1.05));
         cubeHitbox.add(new Vertex(-1.05,0,-1.05));
         ArrayList<Vertex> camHitbox = new ArrayList<>();
-        camHitbox.add(new Vertex(2,0,-2));
-        camHitbox.add(new Vertex(2,0,2));
-        camHitbox.add(new Vertex(-2,0,2));
-        camHitbox.add(new Vertex(-2,0,-2));
+        camHitbox.add(new Vertex(2,0,0));
+        camHitbox.add(new Vertex(Math.sqrt(2),0,Math.sqrt(2)));
+        camHitbox.add(new Vertex(0,0,2));
+        camHitbox.add(new Vertex(-Math.sqrt(2),0,Math.sqrt(2)));
+        camHitbox.add(new Vertex(-2,0,0));
+        camHitbox.add(new Vertex(-Math.sqrt(2),0,-Math.sqrt(2)));
+        camHitbox.add(new Vertex(0,0,-2));
+        camHitbox.add(new Vertex(Math.sqrt(2),0,-Math.sqrt(2)));
         ArrayList<Vertex> camPos = new ArrayList<>();
         camPos.add(new Vertex(0,0,0));
 
@@ -169,11 +180,17 @@ public class Main {
                     double[] arr = vert.toArray();
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(-camF[0]*CAMERA_SPEED, -camF[1]*CAMERA_SPEED, -camF[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
+                    collisionDir = false;
                 }
                 System.out.println("hihihi");
                 if(camera.runCollisionCheck(5,lol)) {
                     System.out.println("LALALALA");
                     camera.translate(-camF[0] * CAMERA_SPEED, -camF[1] * CAMERA_SPEED, -camF[2] * CAMERA_SPEED);
+                }else{
+                    if(!collisionDir){
+                        impactAnim();
+                    }
+                    collisionDir = true;
                 }
 
             };
@@ -185,10 +202,16 @@ public class Main {
                     double[] arr = vert.toArray();
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
+                    collisionDir = false;
                 }
                 if(camera.runCollisionCheck(5,lol)){
                         camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
+                }else{
+                    if(!collisionDir){
+                        impactAnim();
                     }
+                    collisionDir = true;
+                }
             }; // Thrust forward
             if (keyEvent.getCode() == KeyCode.D){
                 ArrayList<Vertex> hitbox = camera.getHitBox2D();
@@ -198,11 +221,17 @@ public class Main {
                     double[] arr = vert.toArray();
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(camR[0]*CAMERA_SPEED, camR[1]*CAMERA_SPEED, camR[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
+                    collisionDir = false;
                 }
                 if(camera.runCollisionCheck(5,lol)){
                    // for (int i = 0; i < 4; i++) {
                         camera.translate( camR[0] * CAMERA_SPEED,  camR[1] * CAMERA_SPEED,  camR[2] * CAMERA_SPEED);
+                    }else{
+                    if(!collisionDir){
+                        impactAnim();
                     }
+                    collisionDir = true;
+                }
             };   // Rotate right
             if (keyEvent.getCode() == KeyCode.A){
                 ArrayList<Vertex> hitbox = camera.getHitBox2D();
@@ -212,11 +241,18 @@ public class Main {
                     double[] arr = vert.toArray();
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(-camR[0]*CAMERA_SPEED, -camR[1]*CAMERA_SPEED, -camR[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
+                    collisionDir = false;
                 }
                 if(camera.runCollisionCheck(5,lol)){
                     //for (int i = 0; i < 4; i++) {
                         camera.translate(  -camR[0] * CAMERA_SPEED,   -camR[1] * CAMERA_SPEED,   -camR[2] * CAMERA_SPEED);
+                }
+                else{
+                    if(!collisionDir){
+                        impactAnim();
                     }
+                    collisionDir = true;
+                }
             }; // Rotate left
             if (keyEvent.getCode() == KeyCode.UP){
                 ArrayList<Vertex> hitbox = camera.getHitBox2D();
@@ -319,6 +355,7 @@ public class Main {
 
         double dist = Math.sqrt(Math.pow((camera.getX()-object.getCenterX()),2)+Math.pow((camera.getZ()-object.getCenterZ()),2));
         if(dist < 100){
+            enemyInRange = true;
             Vertex vertex = new Vertex(camera.getX(), camera.getY(), camera.getZ());
             Vertex obj = new Vertex(object.getX(), object.getY(), object.getZ());
             double[] arr = vertex.toArray();
@@ -329,9 +366,25 @@ public class Main {
             obj = Util.arrToVert(arr1);
             double x = obj.getX() - vertex.getX();
             double y = obj.getZ() - vertex.getZ();
+            double angle = Math.toDegrees(Math.atan2(x,y));
+            if(angle < 0){
+                angle+=360;
+            }
+            System.out.println(angle + " angle");
+            if(angle >= 150 && angle <= 210){
+                enemyDir = "rear";
+            }else if(angle > 210 && angle < 315){
+                enemyDir = "left";
+            }else if(angle < 150 && angle > 45){
+                enemyDir = "right";
+            }else{
+                enemyDir="";
+            }
             circle1 = new Circle(x, -y, 2, Color.RED);
             circle1.setCenterX(circle1.getCenterX()+circle.getCenterX());
             circle1.setCenterY(circle1.getCenterY()+circle.getCenterY());
+        }else{
+            enemyInRange=false;
         }
         circle.setFill(Color.TRANSPARENT);
         circle.setStroke(Color.RED);
@@ -339,6 +392,40 @@ public class Main {
         decals.add(circle1);
         decals.add(circle2);
         root.getChildren().addAll(circle2,circle1,circle);
+    }
+
+    public static void drawStatusText(){
+        if(enemyInRange) {
+            Text t = new Text("Enemy in range");
+            t.setFont(Font.font(50));
+            t.setX(100);
+            t.setY(300);
+            t.setFill(Color.RED);
+            textList.add(t);
+            root.getChildren().add(t);
+        }
+        if(!enemyDir.equals("")){
+            Text t = new Text("Enemy to "+enemyDir);
+            t.setFont(Font.font(50));
+            t.setX(100);
+            t.setY(400);
+            t.setFill(Color.RED);
+            textList.add(t);
+            root.getChildren().add(t);
+        }
+        if(collisionDir){
+            Text t = new Text("Movement blocked by object");
+            t.setFont(Font.font(50));
+            t.setX(100);
+            t.setY(500);
+            t.setFill(Color.RED);
+            textList.add(t);
+            root.getChildren().add(t);
+        }
+    }
+
+    public static void impactAnim(){
+
     }
 
     public static void start() {
@@ -408,6 +495,7 @@ public class Main {
                 RADAR_ROT=360+(1-RADAR_ROT);
             }
             drawRadar();
+            drawStatusText();
             for (int i = 0; i < reticle.size(); i++) {
                 root.getChildren().remove(reticle.get(i));
             }
