@@ -41,6 +41,13 @@ public class Main {
     
     static double RADAR_ROT = 0;
 
+    static double TEXT_TICK = 0;
+
+    static boolean has_collided = false;
+
+    static int impact_ticks = 0;
+    static double impact_skip = 0.01;
+
     static ArrayList<Object3D> objectList = new ArrayList<>();
 
     static ArrayList<Polyline> lineList = new ArrayList<>();
@@ -84,9 +91,6 @@ public class Main {
     public static void init(){
         scene.setFill(Color.BLACK);
         root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
-        Polyline polyline = new Polyline(0,(HEIGHT/2), WIDTH,(HEIGHT/2));
-        polyline.setStroke(Color.GREEN);
-        root.getChildren().add(polyline);
 
         text.setX(100);
         text.setY(100);
@@ -180,12 +184,12 @@ public class Main {
                     double[] arr = vert.toArray();
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(-camF[0]*CAMERA_SPEED, -camF[1]*CAMERA_SPEED, -camF[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
-                    collisionDir = false;
                 }
                 System.out.println("hihihi");
                 if(camera.runCollisionCheck(5,lol)) {
                     System.out.println("LALALALA");
                     camera.translate(-camF[0] * CAMERA_SPEED, -camF[1] * CAMERA_SPEED, -camF[2] * CAMERA_SPEED);
+                    collisionDir = false;
                 }else{
                     if(!collisionDir){
                         impactAnim();
@@ -202,10 +206,10 @@ public class Main {
                     double[] arr = vert.toArray();
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
-                    collisionDir = false;
                 }
                 if(camera.runCollisionCheck(5,lol)){
-                        camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
+                    camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
+                    collisionDir = false;
                 }else{
                     if(!collisionDir){
                         impactAnim();
@@ -221,12 +225,12 @@ public class Main {
                     double[] arr = vert.toArray();
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(camR[0]*CAMERA_SPEED, camR[1]*CAMERA_SPEED, camR[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
-                    collisionDir = false;
                 }
                 if(camera.runCollisionCheck(5,lol)){
                    // for (int i = 0; i < 4; i++) {
-                        camera.translate( camR[0] * CAMERA_SPEED,  camR[1] * CAMERA_SPEED,  camR[2] * CAMERA_SPEED);
-                    }else{
+                    camera.translate( camR[0] * CAMERA_SPEED,  camR[1] * CAMERA_SPEED,  camR[2] * CAMERA_SPEED);
+                    collisionDir = false;
+                }else{
                     if(!collisionDir){
                         impactAnim();
                     }
@@ -241,11 +245,11 @@ public class Main {
                     double[] arr = vert.toArray();
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(-camR[0]*CAMERA_SPEED, -camR[1]*CAMERA_SPEED, -camR[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
-                    collisionDir = false;
                 }
                 if(camera.runCollisionCheck(5,lol)){
                     //for (int i = 0; i < 4; i++) {
                         camera.translate(  -camR[0] * CAMERA_SPEED,   -camR[1] * CAMERA_SPEED,   -camR[2] * CAMERA_SPEED);
+                        collisionDir = false;
                 }
                 else{
                     if(!collisionDir){
@@ -264,8 +268,8 @@ public class Main {
                 }
                 if(camera.runCollisionCheck(3,hitbox)){
                     //for (int i = 0; i < 4; i++) {
-                        camera.translate( camU[0] * CAMERA_SPEED,  camU[1] * CAMERA_SPEED,  camU[2] * CAMERA_SPEED);
-                    }
+                    camera.translate( camU[0] * CAMERA_SPEED,  camU[1] * CAMERA_SPEED,  camU[2] * CAMERA_SPEED);
+                }
             };   // Rotate right
             if (keyEvent.getCode() == KeyCode.DOWN){
                 ArrayList<Vertex> hitbox = camera.getHitBox2D();
@@ -277,8 +281,8 @@ public class Main {
                 }
                 if(camera.runCollisionCheck(3,hitbox)){
                     //for (int i = 0; i < 4; i++) {
-                        camera.translate( -camU[0] * CAMERA_SPEED,  -camU[1] * CAMERA_SPEED,  -camU[2] * CAMERA_SPEED);
-                    }
+                    camera.translate( -camU[0] * CAMERA_SPEED,  -camU[1] * CAMERA_SPEED,  -camU[2] * CAMERA_SPEED);
+                }
             }; // Rotate left
             if (keyEvent.getCode() == KeyCode.E){
                 camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
@@ -287,6 +291,7 @@ public class Main {
                 camR = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camR);
                 camera.setRight(Util.arrToVert(camR));
                 camera.rotY(CAMERA_ROT_SPEED);
+                collisionDir = false;
                 //camera.updateRotation(CAMERA_ROT_SPEED);
 
             };
@@ -297,6 +302,7 @@ public class Main {
                 camR = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camR);
                 camera.setRight(Util.arrToVert(camR));
                 camera.rotY(-CAMERA_ROT_SPEED);
+                collisionDir = false;
                 //camera.updateRotation(-CAMERA_ROT_SPEED);
             };
             /*if (keyEvent.getCode() == KeyCode.R){
@@ -395,7 +401,7 @@ public class Main {
     }
 
     public static void drawStatusText(){
-        if(enemyInRange) {
+        if(enemyInRange&&TEXT_TICK>15) {
             Text t = new Text("Enemy in range");
             t.setFont(Font.font(50));
             t.setX(100);
@@ -404,7 +410,7 @@ public class Main {
             textList.add(t);
             root.getChildren().add(t);
         }
-        if(!enemyDir.equals("")){
+        if(!enemyDir.equals("")&&TEXT_TICK > 15){
             Text t = new Text("Enemy to "+enemyDir);
             t.setFont(Font.font(50));
             t.setX(100);
@@ -413,7 +419,7 @@ public class Main {
             textList.add(t);
             root.getChildren().add(t);
         }
-        if(collisionDir){
+        if(collisionDir&&TEXT_TICK>10){
             Text t = new Text("Movement blocked by object");
             t.setFont(Font.font(50));
             t.setX(100);
@@ -425,11 +431,15 @@ public class Main {
     }
 
     public static void impactAnim(){
-
+        has_collided = true;
     }
 
     public static void start() {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
+            TEXT_TICK++;
+            if(TEXT_TICK>30){
+                TEXT_TICK=0;
+            }
             control();
             for (Polyline polyline:lineList) {
                 root.getChildren().remove(polyline);
@@ -445,6 +455,30 @@ public class Main {
             textList.clear();
             text.setText(Double.toString(camera.getRotation()));
             text1.setText(Math.round(camera.getX()) + " " + Math.round(camera.getY()) + " " + Math.round(camera.getZ()));
+            Polyline polyline = new Polyline();
+            polyline.setStroke(Color.GREEN);
+            if(has_collided){
+                if(impact_ticks < 5){
+                    camera.translate(0,impact_skip*3,0);
+                    polyline = new Polyline( 0,(HEIGHT/2)+(2), WIDTH,(HEIGHT/2)+(2));
+                    polyline.setStroke(Color.GREEN);
+                } else if (impact_ticks >= 5 && impact_ticks < 13) {
+                    camera.translate(0,-impact_skip*1.5,0);
+                    polyline = new Polyline( 0,(HEIGHT/2)-(1), WIDTH,(HEIGHT/2)-(1));
+                    polyline.setStroke(Color.GREEN);
+                }else{
+                    polyline = new Polyline( 0,(HEIGHT/2), WIDTH,(HEIGHT/2));
+                    polyline.setStroke(Color.GREEN);
+                    impact_ticks = 0;
+                    has_collided = false;
+                }
+                impact_ticks++;
+            }else{
+                polyline = new Polyline( 0,(HEIGHT/2), WIDTH,(HEIGHT/2));
+                polyline.setStroke(Color.GREEN);
+            }
+            lineList.add(polyline);
+            root.getChildren().add(polyline);
             if(!bullets.isEmpty()){
                 Bullet bullet = bullets.get(0);
                 System.out.println(">>>>>>>>>>>>>>>>>>");
