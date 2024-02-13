@@ -16,7 +16,7 @@ public class Player extends Particle {
     static final double FRICTION = 0.7;
     public Player(List<Double> points, double angle, double rotation, double velocity) {
         super(points, angle, rotation, velocity, FRICTION);
-        this.thrust = SHIP_THRUST;
+        this.acceleration = SHIP_THRUST;
         this.terminalVelocity = SHIP_TERMINAL_VELOCITY;
     }
 
@@ -89,11 +89,11 @@ public class Player extends Particle {
     }
 
     public void accelerate() {
-        isThrusting = true;
+        isAccelerating = true;
     }
 
     public void stopAcceleration() {
-        isThrusting = false;
+        isAccelerating = false;
     }
 
     public void setRotationRight() {

@@ -1,17 +1,16 @@
 package com.example.MotorolaScienceCup;
 
 public class Vector {
-    private double direction, magnitude;
+    private double direction;
     private double x, y;
 
     public Vector(double x, double y, double direction) {
+        this.direction = direction;
         this.x = x;
         this.y = y;
-        this.magnitude = Math.sqrt(x * x + y * y);
     }
 
     public Vector(double magnitude, double direction) {
-        this.magnitude = magnitude;
         this.direction = direction;
         this.x = magnitude * Math.cos(Math.toRadians(direction));
         this.y = magnitude * Math.sin(Math.toRadians(direction));
@@ -38,7 +37,6 @@ public class Vector {
     }
 
     public void setMagnitude(double magnitude) {
-        this.magnitude = magnitude;
         this.x = magnitude * Math.cos(Math.toRadians(direction));
         this.y = magnitude * Math.sin(Math.toRadians(direction));
     }
@@ -56,16 +54,11 @@ public class Vector {
         this.y *= scale;
     }
 
-    public static double inverseDirection(double direction) {
-        if (direction < 0) return (180 - Math.abs(direction));
-        return -(180 - direction);
-    }
-
     @Override
     public String toString() {
         return "Vector{" +
                 "direction=" + direction +
-                ", magnitude=" + magnitude +
+                ", magnitude=" + getMagnitude() +
                 ", x=" + x +
                 ", y=" + y +
                 '}';

@@ -3,182 +3,189 @@ package com.example.MotorolaScienceCup.Tempest;
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
-import javafx.geometry.Point2D;
+import com.example.MotorolaScienceCup.Vector;
+import javafx.scene.paint.Color;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
-public class Flipper extends Particle {
-    private static String filepath = "flipper.svg";
-    private static List<Double> defPoints = Util.SVGconverter(filepath);
-    private static Particle defPolygon;
-    private static final double initVelocity = 1;
+public class Flipper extends BetterPolygon {
+    /*  Points:
+     * Left top = 8, 9
+     * Right top - 12, 13
+     * Left center = 6, 7
+     * Right center = 14, 15
+     * Left bottom = 4, 5
+     * Right bottom = 0, 1
+     * Center (left) = 2, 3
+     * Center (right) = 10, 11
+     * */
+
     private static final int FRAMES_PER_MOVE = 360;
-
+    private static final double initVelocity = 0.1;
+    private static String filepath = "flipper.svg";
+    private static BetterPolygon defFlipper = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
+    private static List<Double> defPoints = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180).getPoints();
+    private static final List<Double> pointerPoints = Arrays.asList(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0);
     private Panel currentPanel;
-    public int step;
-    private boolean goingUp;
-    private double pivotX, pivotY;
+    private int step;
     private double h;
-    private double minScale;
-    private double maxScale;
-
-    private int frameOfMvmnt;
+    private double maxH;
+    private Particle pointer;
+    private double frameOfMovement;
+    private double rotationAngle;
+    private double pivotX, pivotY;
+    private boolean isChangingPanel;
 
     public Flipper(Panel startPanel) {
-        super(null, startPanel.getAngle(), 0, initVelocity, 0);
-        getPoints().setAll(defPoints);
-        rotate(startPanel.getAngle() - 90);
-        this.currentPanel = startPanel;
-        setAcceleration();
-        spawn();
-        double x = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
-        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast()) / 2;
-        moveTo(x, y);
-        goingUp = false;
+        super(null);
+        pointer = new Particle(pointerPoints, startPanel.getAngle(), 0, initVelocity, 0);
+        currentPanel = startPanel;
         step = 0;
         h = 0;
-        frameOfMvmnt = 0;
-        setThrusting(true);
-        setTerminalVelocity(Integer.MAX_VALUE);
+        frameOfMovement = 0;
+        maxH = currentPanel.getLength();
+        isChangingPanel = false;
+
+        double panelToHorizontalAngle = Math.toDegrees(Math.atan((startPanel.getSmallSide().getPoints().getLast() - startPanel.getSmallSide().getPoints().get(1))
+                / (startPanel.getSmallSide().getPoints().get(2) - startPanel.getSmallSide().getPoints().getFirst())));
+        if (Double.toString(panelToHorizontalAngle).equals("-0.0")) panelToHorizontalAngle = 180;
+        defPoints = BetterPolygon.rotate(new BetterPolygon(defFlipper.getPoints()), panelToHorizontalAngle).getPoints();
+
+        double x = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
+        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast()) / 2;
+        pointer.moveTo(x, y);
+        pointer.setAcceleration(pointerAcceleration());
+        pointer.setAccelerating(true);
+        pointer.setTerminalVelocity(Integer.MAX_VALUE);
+        getPoints().setAll(getFlipperPoints());
+
+        pointer.setStroke(Color.GREEN);
+        Main.root.getChildren().add(pointer);
     }
 
-
-    private void spawn() {
-        double x1 = currentPanel.getRightSide().getPoints().get(0);
-        double y1 = currentPanel.getRightSide().getPoints().get(1);
-        double x2 = currentPanel.getLeftSide().getPoints().get(0);
-        double y2 = currentPanel.getLeftSide().getPoints().get(1);
-
-        double scale = 0.01;
-        double topLength = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-        BetterPolygon tempFlipper = BetterPolygon.scale(this, scale);
-        double topLengthTemp = Math.sqrt(Math.pow(tempFlipper.getPoints().get(8) - tempFlipper.getPoints().get(12), 2) + Math.pow(tempFlipper.getPoints().get(9) - tempFlipper.getPoints().get(13), 2));
-        while (Math.round(topLength) != Math.round(topLengthTemp)) {
-            scale += 0.1;
-            tempFlipper = BetterPolygon.scale(this, scale);
-            topLengthTemp = Math.sqrt(Math.pow(tempFlipper.getPoints().get(8) - tempFlipper.getPoints().get(12), 2) + Math.pow(tempFlipper.getPoints().get(9) - tempFlipper.getPoints().get(13), 2));
+    private void updatePointer() {
+        pointer.setVelocity(new Vector(pointer.getVelocity().getMagnitude() + pointer.getAcceleration(), currentPanel.getAngle()));
+        for (int i = 0; i < pointer.getPoints().size(); i += 2) {
+            pointer.getPoints().set(i, pointer.getPoints().get(i) + pointer.getVelocity().getX());
+            pointer.getPoints().set(i+1, pointer.getPoints().get(i+1) + pointer.getVelocity().getY());
         }
-        minScale = 1;
-        this.getPoints().setAll(tempFlipper.getPoints());
-        moveTo((x2 + x1) / 2, (y1 + y2) / 2);
-
-        x1 = currentPanel.getRightSide().getPoints().get(2);
-        y1 = currentPanel.getRightSide().getPoints().get(3);
-        x2 = currentPanel.getLeftSide().getPoints().get(2);
-        y2 = currentPanel.getLeftSide().getPoints().get(3);
-
-        scale = 1.01;
-        topLength = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-        tempFlipper = BetterPolygon.scale(this, scale);
-        topLengthTemp = Math.sqrt(Math.pow(tempFlipper.getPoints().get(8) - tempFlipper.getPoints().get(12), 2) + Math.pow(tempFlipper.getPoints().get(9) - tempFlipper.getPoints().get(13), 2));
-        while (Math.round(topLength) != Math.round(topLengthTemp)) {
-            scale += 0.1;
-            tempFlipper = BetterPolygon.scale(this, scale);
-            topLengthTemp = Math.sqrt(Math.pow(tempFlipper.getPoints().get(8) - tempFlipper.getPoints().get(12), 2) + Math.pow(tempFlipper.getPoints().get(9) - tempFlipper.getPoints().get(13), 2));
-        }
-        maxScale = scale;
-        defPoints = this.getPoints();
-        defPolygon = new Particle(getPoints(), getAngle(), 0, getVelocity().getMagnitude(), 0);
-        defPolygon.setThrust(getThrust());
-        defPolygon.setThrusting(true);
-        defPolygon.setTerminalVelocity(Integer.MAX_VALUE);
-        System.out.println("fsfsf "+currentPanel.getLength());
-    }
-
-    private void setMaxH(){
-        BetterPolygon temp = new BetterPolygon(defPolygon.getPoints());
-        temp.scale(maxScale);
-        double x = (currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2)) / 2;
-        double y = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().get(3)) / 2;
-        temp.moveTo(x, y);
-
-    }
-
-    private boolean insidePanel(){
-        return true;
     }
 
     public void moveUp() {
-        updatePosition();
-        defPolygon.updatePosition();
-        generate();
-        frameOfMvmnt++;
-        updateH();
-        System.out.println(h);
-    }
-
-    private void generate() {
-        getPoints().setAll(defPolygon.getPoints());
-        scale(getScale());
-    }
-
-    private double getScale() {
-        double grad = (maxScale - minScale) / currentPanel.getLength();
-        return minScale + h * grad;
-    }
-
-    private void updateH(){
-        h = 0.5 * getThrust() * frameOfMvmnt *frameOfMvmnt;
-    }
-
-    private void setAcceleration(){
-        double s = currentPanel.getLength() * 2;
-        double t2 = FRAMES_PER_MOVE * FRAMES_PER_MOVE;
-        setThrust(s/t2);
-    }
-
-    public void move(boolean left) {
-        if (step == 0) {
-            pivotX = (currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2)) / 2;
-            pivotY = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().getLast()) / 2;
-            rotate(180, pivotX, pivotY);
-        } else if (step > 30) {
-            if (left) {
-                currentPanel = currentPanel.getLeftPanel();
-            } else {
-                currentPanel = currentPanel.getRightPanel();
-            }
-            step = -1;
-            pivotX = (currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2)) / 2;
-            pivotY = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().getLast()) / 2;
-        } else {
-            if (left) {
-                double triangleBaseXLeft = currentPanel.getLeftPanel().getLeftSide().getPoints().get(2);
-                double triangleBaseYLeft = currentPanel.getLeftPanel().getLeftSide().getPoints().get(3);
-                double triangleBaseXRight = currentPanel.getRightSide().getPoints().get(2);
-                double triangleBaseYRight = currentPanel.getRightSide().getPoints().get(3);
-
-                double angle = -getMovementAngle(triangleBaseXLeft, triangleBaseYLeft, triangleBaseXRight, triangleBaseYRight);
-                angle /= 30;
-
-                for (int i = 0; i < getPoints().size(); i += 2) {
-                    if (Objects.equals(getPoints().get(i), currentPanel.getLeftSide().getPoints().get(2)) && Objects.equals(getPoints().get(i + 1), currentPanel.getLeftSide().getPoints().getLast())) {
-                        rotate(angle, getPoints().get(i), getPoints().get(i + 1));
-                        break;
-                    }
-                }
-            } else {
-                double triangleBaseXLeft = currentPanel.getRightPanel().getRightSide().getPoints().get(2);
-                double triangleBaseYLeft = currentPanel.getRightPanel().getRightSide().getPoints().get(3);
-                double triangleBaseXRight = currentPanel.getLeftSide().getPoints().get(2);
-                double triangleBaseYRight = currentPanel.getLeftSide().getPoints().get(3);
-
-                double angle = -getMovementAngle(triangleBaseXLeft, triangleBaseYLeft, triangleBaseXRight, triangleBaseYRight);
-                angle /= 30;
-
-                for (int i = 0; i < getPoints().size(); i += 2) {
-                    if (Objects.equals(getPoints().get(i), currentPanel.getRightSide().getPoints().get(2)) && Objects.equals(getPoints().get(i + 1), currentPanel.getRightSide().getPoints().getLast())) {
-                        rotate(angle, getPoints().get(i), getPoints().get(i + 1));
-                        break;
-                    }
-                }
-            }
+        if (h < maxH) {
+            System.out.println(currentPanel.getLength());
+            updatePointer();
+            getPoints().setAll(getFlipperPoints());
+            updateH();
+            frameOfMovement++;
         }
-        step++;
     }
 
-    private double getMovementAngle(double triangleBaseXLeft, double triangleBaseYLeft, double triangleBaseXRight, double triangleBaseYRight) {
+    private double pointerAcceleration() {
+        double s = maxH;
+        double t = FRAMES_PER_MOVE;
+        double v0 = initVelocity;
+        return (s - v0 * t) / (0.5 * t * t);
+    }
+
+    private void updateH() {
+        h = (initVelocity * frameOfMovement) + (0.5 * pointer.getAcceleration() * frameOfMovement * frameOfMovement);
+    }
+
+    private void setNewH() {
+        double minX = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
+        double minY = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().get(3)) / 2;
+        double maxX = (currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2)) / 2;
+        double maxY = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().get(3)) / 2;
+
+        double gradX = (maxX - minX) / maxH;
+        double gradY = (maxY - minY) / maxH;
+
+        double c = (-gradX * minX) - (gradY * minY);
+
+        h = gradX * pointer.getCenterX() + gradY * pointer.getCenterY() + c;
+    }
+
+    private List<Double> getPointsOnSides() {
+        double minX1 = currentPanel.getRightSide().getPoints().getFirst();
+        double minY1 = currentPanel.getRightSide().getPoints().get(1);
+        double minX2 = currentPanel.getLeftSide().getPoints().getFirst();
+        double minY2 = currentPanel.getLeftSide().getPoints().get(1);
+        double maxX1 = currentPanel.getRightSide().getPoints().get(2);
+        double maxY1 = currentPanel.getRightSide().getPoints().getLast();
+        double maxX2 = currentPanel.getLeftSide().getPoints().get(2);
+        double maxY2 = currentPanel.getLeftSide().getPoints().getLast();
+
+        double gradX1 = (maxX1 - minX1) / maxH;
+        double gradY1 = (maxY1 - minY1) / maxH;
+        double gradX2 = (maxX2 - minX2) / maxH;
+        double gradY2 = (maxY2 - minY2) / maxH;
+
+        double x1 = minX1 + gradX1 * h;
+        double y1 = minY1 + gradY1 * h;
+        double x2 = minX2 + gradX2 * h;
+        double y2 = minY2 + gradY2 * h;
+
+        return Arrays.asList(x1, y1, x2, y2);
+    }
+
+    private List<Double> getFlipperPoints() {
+        List<Double> top = getPointsOnSides();
+        double v8 = top.getFirst();
+        double v9 = top.get(1);
+        double v12 = top.get(2);
+        double v13 = top.getLast();
+
+        double topLength = Math.sqrt(Math.pow(v8 - v12, 2) + Math.pow(v9 - v13, 2));
+        double defTopLength = Math.sqrt(Math.pow(defPoints.get(8) - defPoints.get(12), 2) + Math.pow(defPoints.get(9) - defPoints.get(13), 2));
+
+        double defTopToCenterLengthX = defPoints.get(12) - defPoints.get(2);
+        double ratio1 = defTopToCenterLengthX / defTopLength;
+        double v2 = v12 - ratio1 * topLength;
+        double v10 = v2;
+
+        double defTopToCenterLengthY = defPoints.get(13) - defPoints.get(3);
+        double ratio2 = defTopToCenterLengthY / defTopLength;
+        double v3 = v13 - ratio2 * topLength;
+        double v11 = v3;
+
+        double defCenterToLeftCenterLengthX = defPoints.get(2) - defPoints.get(6);
+        double ratio3 = defCenterToLeftCenterLengthX / defTopLength;
+        double v6 = v2 - ratio3 * topLength;
+
+        double defCenterToLeftCenterLengthY = defPoints.get(3) - defPoints.get(7);
+        double ratio4 = defCenterToLeftCenterLengthY / defTopLength;
+        double v7 = v3 - ratio4 * topLength;
+
+        double defCenterToRightCenterLengthX = defPoints.get(2) - defPoints.get(14);
+        double ratio5 = defCenterToRightCenterLengthX / defTopLength;
+        double v14 = v2 - ratio5 * topLength;
+
+        double defCenterToRightCenterLengthY = defPoints.get(3) - defPoints.get(15);
+        double ratio6 = defCenterToRightCenterLengthY / defTopLength;
+        double v15 = v3 - ratio6 * topLength;
+
+        double defLeftCenterToLeftBottomLengthX = defPoints.get(6) - defPoints.get(4);
+        double ratio7 = defLeftCenterToLeftBottomLengthX / defTopLength;
+        double v4 = v6 - ratio7 * topLength;
+
+        double defLeftCenterToLeftBottomLengthY = defPoints.get(7) - defPoints.get(5);
+        double ratio8 = defLeftCenterToLeftBottomLengthY / defTopLength;
+        double v5 = v7 - ratio8 * topLength;
+
+        double defRightCenterToRightBottomLengthX = defPoints.get(14) - defPoints.getFirst();
+        double ratio9 = defRightCenterToRightBottomLengthX / defTopLength;
+        double v0 = v14 - ratio9 * topLength;
+
+        double defRightCenterToRightBottomLengthY = defPoints.get(15) - defPoints.get(1);
+        double ratio10 = defRightCenterToRightBottomLengthY / defTopLength;
+        double v1 = v15 - ratio10 * topLength;
+
+        return Arrays.asList(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
+    }
+
+    private double changePanelAngle(double triangleBaseXLeft, double triangleBaseYLeft, double triangleBaseXRight, double triangleBaseYRight) {
         double triangleBaseLengthX = triangleBaseXRight - triangleBaseXLeft;
         double triangleBaseLengthY = triangleBaseYRight - triangleBaseYLeft;
         double triangleBaseLength = Math.sqrt(Math.pow(triangleBaseLengthX, 2) + Math.pow(triangleBaseLengthY, 2));
@@ -191,5 +198,69 @@ public class Flipper extends Particle {
             angle = 180;
         }
         return angle;
+    }
+
+    public void changePanel(boolean left) {
+        if (step == 0) {
+            rotate(180, pointer.getCenterX(), pointer.getCenterY());
+            isChangingPanel = true;
+        } else {
+            BetterPolygon temp = new BetterPolygon(getFlipperPoints());
+            temp.rotate(180, pointer.getCenterX(), pointer.getCenterY());
+            if (left) {
+                double triangleBaseXLeft = currentPanel.getLeftPanel().getLeftSide().getPoints().get(2);
+                double triangleBaseYLeft = currentPanel.getLeftPanel().getLeftSide().getPoints().get(3);
+                double triangleBaseXRight = currentPanel.getRightSide().getPoints().get(2);
+                double triangleBaseYRight = currentPanel.getRightSide().getPoints().get(3);
+
+                double angle = changePanelAngle(triangleBaseXLeft, triangleBaseYLeft, triangleBaseXRight, triangleBaseYRight);
+                angle /= 30;
+
+                pivotX = temp.getPoints().get(8);
+                pivotY = temp.getPoints().get(9);
+                rotationAngle += angle;
+            } else {
+                double triangleBaseXLeft = currentPanel.getRightPanel().getRightSide().getPoints().get(2);
+                double triangleBaseYLeft = currentPanel.getRightPanel().getRightSide().getPoints().get(3);
+                double triangleBaseXRight = currentPanel.getLeftSide().getPoints().get(2);
+                double triangleBaseYRight = currentPanel.getLeftSide().getPoints().get(3);
+
+                double angle = changePanelAngle(triangleBaseXLeft, triangleBaseYLeft, triangleBaseXRight, triangleBaseYRight);
+                angle /= 30;
+
+                pivotX = temp.getPoints().get(12);
+                pivotY = temp.getPoints().get(13);
+                rotationAngle += angle;
+            }
+            getPoints().setAll(temp.getPoints());
+            rotate(-rotationAngle, pivotX, pivotY);
+        }
+        step++;
+
+        if (step == 31) {
+            if (left) {
+                currentPanel = currentPanel.getLeftPanel();
+            } else {
+                currentPanel = currentPanel.getRightPanel();
+            }
+            step = 0;
+            maxH = currentPanel.getLength();
+
+            pointer.rotate(-rotationAngle, pivotX, pivotY);
+            pointer.setAngle(currentPanel.getAngle());
+//            double pointerX = (getPoints().get(8) + getPoints().get(12)) / 2;
+//            double pointerY = (getPoints().get(9) + getPoints().get(13)) / 2;
+//            pointer.moveTo(pointerX, pointerY);
+            pointer.setVelocity(new Vector(pointer.getVelocity().getMagnitude(), currentPanel.getAngle()));
+            setNewH();
+
+            double panelToHorizontalAngle = Math.toDegrees(Math.atan((currentPanel.getSmallSide().getPoints().getLast() - currentPanel.getSmallSide().getPoints().get(1))
+                    / (currentPanel.getSmallSide().getPoints().get(2) - currentPanel.getSmallSide().getPoints().getFirst())));
+            if (Double.toString(panelToHorizontalAngle).equals("-0.0")) panelToHorizontalAngle = 180;
+            defPoints = BetterPolygon.rotate(new BetterPolygon(defFlipper.getPoints()), panelToHorizontalAngle).getPoints();
+            getPoints().setAll(getFlipperPoints());
+
+            rotationAngle = 0;
+        }
     }
 }

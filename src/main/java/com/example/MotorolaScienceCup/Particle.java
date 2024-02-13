@@ -18,8 +18,8 @@ public class Particle extends BetterPolygon {
     protected double rotation;
     protected double angle;
     protected double terminalVelocity;
-    protected double thrust;
-    protected boolean isThrusting;
+    protected double acceleration;
+    protected boolean isAccelerating;
     protected Vector velocity;
     protected final double FPS = Menu.FPS;
 
@@ -33,18 +33,18 @@ public class Particle extends BetterPolygon {
         this.velocity = new Vector(velocity, angle);
         this.friction = friction;
         this.terminalVelocity = 0;
-        this.thrust = 0;
-        this.isThrusting = false;
+        this.acceleration = 0;
+        this.isAccelerating = false;
     }
 
     public void updatePosition() {
         updateAngle();
         rotate(-rotation);
         velocity.setDirection(-angle);
-        if (isThrusting && velocity.getMagnitude() < terminalVelocity) {
-            velocity.setX(velocity.getX() + thrust * Math.cos(Math.toRadians(angle)) / FPS);  // Update X component of velocity
-            velocity.setY(velocity.getY() - thrust * Math.sin(Math.toRadians(angle)) / FPS);  // Update Y component of velocity
-
+        if (isAccelerating && velocity.getMagnitude() < terminalVelocity) {
+            velocity.setX(velocity.getX() + acceleration * Math.cos(Math.toRadians(angle)) / FPS);  // Update X component of velocity
+            velocity.setY(velocity.getY() - acceleration * Math.sin(Math.toRadians(angle)) / FPS);  // Update Y component of velocity
+            System.out.println(velocity);
             if (velocity.getMagnitude() > terminalVelocity) {
                 velocity.scale(terminalVelocity / velocity.getMagnitude());
             }
@@ -116,16 +116,16 @@ public class Particle extends BetterPolygon {
         return velocity;
     }
 
-    public void setThrust(double thrust){
-        this.thrust = thrust;
+    public void setAcceleration(double acceleration){
+        this.acceleration = acceleration;
     }
 
-    public double getThrust() {
-        return thrust;
+    public double getAcceleration() {
+        return acceleration;
     }
 
-    public void setThrusting(boolean thrusting) {
-        isThrusting = thrusting;
+    public void setAccelerating(boolean accelerating) {
+        isAccelerating = accelerating;
     }
 
     public void setTerminalVelocity(double terminalVelocity) {

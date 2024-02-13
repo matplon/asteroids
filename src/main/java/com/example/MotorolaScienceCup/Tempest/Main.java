@@ -38,6 +38,7 @@ public class Main {
     static boolean shoot;
     static boolean goRight;
     static boolean goLeft;
+    static int counter = 0;
 
     static double bigSideLength;
 
@@ -54,6 +55,7 @@ public class Main {
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
+        scene.setFill(Color.BLACK);
 
         shoot = false;
         goLeft = false;
@@ -84,16 +86,17 @@ public class Main {
         points.add(x1);
         points.add(10.0);
 
-        Flipper flipper = new Flipper(panels.get(2));
+        Flipper flipper = new Flipper(panels.get(14));
         root.getChildren().add(flipper);
         flipper.setStroke(Color.RED);
-        panels.get(2).addFlipper(flipper);
+        panels.get(14).addFlipper(flipper);
 
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = true;
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = true;
             if (keyEvent.getCode() == KeyCode.X) shoot = true;
-            if (keyEvent.getCode() == KeyCode.SPACE) flipper.move(true);
+            if (keyEvent.getCode() == KeyCode.SPACE) flipper.changePanel(true);
+            if(keyEvent.getCode() == KeyCode.S) timeline.stop();
         });
         scene.setOnKeyReleased(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = false;
@@ -105,8 +108,7 @@ public class Main {
 
     public static void start() {
 
-
-        timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis((double) 3000 / Menu.FPS), actionEvent -> {
             double bulletsNumber = 0;
             for (Panel panel : panels) {
                 panel.updateBullets();
@@ -124,6 +126,7 @@ public class Main {
             for(Panel panel : panels){
                 for(Flipper flipper : panel.getFlippers()){
                     flipper.moveUp();
+                    flipper.changePanel(true);
                 }
             }
         }));
