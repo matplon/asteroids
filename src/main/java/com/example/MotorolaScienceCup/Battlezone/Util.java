@@ -74,6 +74,7 @@ public class Util {
     public static com.example.MotorolaScienceCup.Battlezone.Bullet generateBullet(double[] dir, double firingAngle, double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         System.out.println("PPPPPPPPP");
         Bullet bullet = new Bullet(points3D,faces3D);
+
         bullet.moveTo(0,0,0);
         bullet.scale(0.1,0.2,0.1);
         bullet.rotX(90);
@@ -83,6 +84,25 @@ public class Util {
         bullet.setOrigin(new Vertex(x,0,z));
         bullet.setDirection(Util.arrToVert(dir));
         return bullet;
+    }
+
+    public static EnemyTank generateEnemyTank(double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
+        System.out.println("PPPPPPPPP");
+        EnemyTank enemy = new EnemyTank(points3D,faces3D);
+        enemy.moveTo(0,0,0);
+        ArrayList<Vertex> hitbox = new ArrayList<>();
+        hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
+        hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
+        hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
+        hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
+        enemy.setHitBox2D(hitbox);
+        enemy.rotY(90);
+        enemy.setRotation(0);
+        enemy.setForward(new Vertex(0,0,1));
+        enemy.rotateTank(Math.random()*360);
+        enemy.moveTo(x,y,z);
+        enemy.setColor(Color.GREEN);
+        return enemy;
     }
 
     public static void drawUnscopedReticle(){

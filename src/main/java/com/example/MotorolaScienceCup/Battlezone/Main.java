@@ -136,7 +136,7 @@ public class Main {
             Object3D obj1 = Util.generateOBJ(Math.random()*100-50,0,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D(),Color.GREEN, hitBox);
             obj1.displayObject();
         }
-        Object3D obj3 = Util.convertOBJ("Pyramid.txt");
+        Object3D obj3 = Util.convertOBJ("normalTank.txt");
         ArrayList<Vertex> hitBox1 = new ArrayList<>();
         ArrayList<Vertex> triangleHitbox = new ArrayList<>();
         triangleHitbox.add(new Vertex(0.6,0,-0.6));
@@ -493,7 +493,7 @@ public class Main {
                 System.out.println("<<<<<<<<<<<<<<<<<<");
             }
             //System.out.println(objectList.get(10).getPoints3D().size() + " " + objectList.get(10).getFaces3D().size() + " GGGGGG");
-            objectList.get(10).rotY(1);
+            //objectList.get(10).rotY(1);
             for (Object3D object:objectList) {
                 if(object.getClass()!= Camera.class){
                 object.displayObject();
