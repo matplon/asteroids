@@ -97,6 +97,7 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.X) shoot = true;
             if (keyEvent.getCode() == KeyCode.SPACE) flipper.changePanel(true);
             if(keyEvent.getCode() == KeyCode.S) timeline.stop();
+            if(keyEvent.getCode() == KeyCode.R) timeline.play();
         });
         scene.setOnKeyReleased(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = false;
@@ -108,7 +109,7 @@ public class Main {
 
     public static void start() {
 
-        timeline = new Timeline(new KeyFrame(Duration.millis((double) 3000 / Menu.FPS), actionEvent -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis((double) 5000 / Menu.FPS), actionEvent -> {
             double bulletsNumber = 0;
             for (Panel panel : panels) {
                 panel.updateBullets();
