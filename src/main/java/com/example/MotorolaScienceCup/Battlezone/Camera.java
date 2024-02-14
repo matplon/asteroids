@@ -98,8 +98,7 @@ public class Camera extends Object3D{
     public void shootBullet(){
         if(Main.bullets.isEmpty()||Main.bullets.isEmpty()){
             Object3D obj = Util.convertOBJ("Pyramid.txt");
-            Vertex position = this.getPoints3D().get(0);
-            double[] dir =this.getForward().toArray();
+            double[] dir = this.getForward().toArray();
             Bullet bullet = Util.generateBullet(dir, this.getRotation(), this.getX(), this.getY()-0.1, this.getZ(), obj.getPoints3D(),obj.getFaces3D());
             Main.bullets.add(bullet);
         }

@@ -35,6 +35,7 @@ public class Main {
 
     static int WIDTH = Menu.WIDTH;
     static int HEIGHT = Menu.HEIGHT;
+    static Timeline timeline;
 
     static double CAMERA_SPEED = 0.3;
     static double CAMERA_ROT_SPEED = 2.5;
@@ -49,6 +50,8 @@ public class Main {
     static double impact_skip = 0.01;
 
     static ArrayList<Object3D> objectList = new ArrayList<>();
+
+    static ArrayList<EnemyTank> enemyTankList = new ArrayList<>();
 
     static ArrayList<Polyline> lineList = new ArrayList<>();
 
@@ -120,12 +123,6 @@ public class Main {
 
         camera = new Camera(camPos,new ArrayList<Face>(),0,0,0);
         camera.setHitBox2D(camHitbox);
-        Vertex camForward = camera.getForward();
-        double [] camF = camForward.toArray();
-        Vertex camUp = camera.getUp();
-        double [] camU = camUp.toArray();
-        Vertex camRight = camera.getRight();
-        double [] camR = camRight.toArray();
         for (int i = 0; i < 10; i++) {
             ArrayList<Vertex> hitBox = new ArrayList<>();
                 for (int j = 0; j < 4; j++) {
@@ -147,7 +144,7 @@ public class Main {
             hitBox1.add(triangleHitbox.get(j));
         }
         double y = Util.getMinY(obj3.getPoints3D());
-        Object3D obj1 = Util.generateOBJ(0,0.5+y-0.1,10,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED, hitBox1);
+        EnemyTank obj1 = Util.generateEnemyTank(0,0.5+y-0.1,10,obj3.getPoints3D(),obj3.getFaces3D());
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
         }
@@ -434,13 +431,22 @@ public class Main {
         has_collided = true;
     }
 
+    public static void onGotShot(){
+        //TODO:THIS
+    }
+
     public static void start() {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
             TEXT_TICK++;
             if(TEXT_TICK>30){
                 TEXT_TICK=0;
             }
             control();
+            if(Math.random()*1000<100){
+                for(EnemyTank enemyTank:enemyTankList){
+                    enemyTank.shootTank();
+                }
+            }
             for (Polyline polyline:lineList) {
                 root.getChildren().remove(polyline);
             }
@@ -491,6 +497,23 @@ public class Main {
                     bullets.clear();
                 }
                 System.out.println("<<<<<<<<<<<<<<<<<<");
+            }
+            for (int i = 0; i < enemyTankList.size(); i++) {
+                EnemyTank enemyTank = enemyTankList.get(i);
+
+                if(!enemyTank.getThisBullets().isEmpty()){
+                    Bullet bullet = enemyTank.getThisBullets().get(0);
+                    System.out.println(">>>>>>>>>>>>>>>>>>");
+                    bullet.translate(bullet.getDirection().getX(),0,bullet.getDirection().getZ());
+                    double travelled = Math.sqrt(bullet.getDirection().getX()*bullet.getDirection().getX()+bullet.getDirection().getZ()*bullet.getDirection().getZ());
+                    bullet.setDistanceCovered(bullet.getDistanceCovered()+travelled);
+                    bullet.displayObject();
+                    if(bullet.getDistanceCovered()>MAX_BULLET_DISTANCE){
+                        enemyTank.getThisBullets().remove(bullet);
+                        enemyTank.getThisBullets().clear();
+                    }
+                    System.out.println("<<<<<<<<<<<<<<<<<<");
+                }
             }
             //System.out.println(objectList.get(10).getPoints3D().size() + " " + objectList.get(10).getFaces3D().size() + " GGGGGG");
             //objectList.get(10).rotY(1);

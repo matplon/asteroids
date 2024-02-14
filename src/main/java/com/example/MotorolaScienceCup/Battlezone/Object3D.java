@@ -334,6 +334,15 @@ public class Object3D {
             this.points3D.set(i,Util.arrToVert(arr));
 
         }
+        for (int i = 0; i < this.hitBox2D.size(); i++) {
+            double [][] translationMatrix = Util.getScaleMatrix(x,y,z);
+            double [] arr = this.hitBox2D.get(i).toArray();
+            System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+            arr = Util.multiplyTransform(translationMatrix, arr);
+            System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+            this.hitBox2D.set(i,Util.arrToVert(arr));
+
+        }
         this.x = getCenterX();
         this.y = getCenterY();
         this.z = getCenterZ();

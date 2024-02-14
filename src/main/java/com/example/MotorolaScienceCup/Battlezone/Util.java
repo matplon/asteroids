@@ -89,19 +89,23 @@ public class Util {
     public static EnemyTank generateEnemyTank(double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         System.out.println("PPPPPPPPP");
         EnemyTank enemy = new EnemyTank(points3D,faces3D);
+        enemy.convertVertecesToCentralOrigin();
         enemy.moveTo(0,0,0);
+        enemy.rotY(90);
+        enemy.setForward(new Vertex(0,0,1));
+        enemy.scale(1.5,1.25,1.5);
         ArrayList<Vertex> hitbox = new ArrayList<>();
         hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
         hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
         hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
         hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
         enemy.setHitBox2D(hitbox);
-        enemy.rotY(90);
         enemy.setRotation(0);
-        enemy.setForward(new Vertex(0,0,1));
         enemy.rotateTank(Math.random()*360);
-        enemy.moveTo(x,y,z);
+        enemy.moveTo(x,-0.3,z);
         enemy.setColor(Color.GREEN);
+        Main.objectList.add(enemy);
+        Main.enemyTankList.add(enemy);
         return enemy;
     }
 
