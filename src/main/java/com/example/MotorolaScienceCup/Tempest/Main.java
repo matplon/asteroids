@@ -38,7 +38,7 @@ public class Main {
     static boolean shoot;
     static boolean goRight;
     static boolean goLeft;
-    static int counter = 0;
+    static int LEVEL = 0;
 
     static double bigSideLength;
 
@@ -95,7 +95,6 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = true;
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = true;
             if (keyEvent.getCode() == KeyCode.X) shoot = true;
-            if (keyEvent.getCode() == KeyCode.SPACE) flipper.changePanel(true);
             if(keyEvent.getCode() == KeyCode.S) timeline.stop();
             if(keyEvent.getCode() == KeyCode.R) timeline.play();
         });
@@ -126,8 +125,7 @@ public class Main {
             }
             for(Panel panel : panels){
                 for(Flipper flipper : panel.getFlippers()){
-                    flipper.moveUp();
-                    flipper.changePanel(true);
+                    flipper.move();
                 }
             }
         }));

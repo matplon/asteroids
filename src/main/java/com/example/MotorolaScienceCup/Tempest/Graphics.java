@@ -129,10 +129,6 @@ public class Graphics {
             double length = Math.sqrt(xLength * xLength + yLength * yLength);
             panel.setLength(length);
 
-//            double sideOpposite = y2 - y1;
-//            double side1 = x2 - x1;
-//            double angle = Math.toDegrees(Math.acos((sideOpposite * sideOpposite - length * length - side1 * side1) / (-2 * length * side1)));
-
             panel.setAngle(Math.toDegrees(Math.atan2(y2 - y1, x2 - x1)));
         }
 

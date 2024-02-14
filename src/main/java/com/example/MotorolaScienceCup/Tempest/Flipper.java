@@ -1,7 +1,6 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
-import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
 import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.paint.Color;
@@ -9,6 +8,7 @@ import javafx.scene.shape.Circle;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class Flipper extends BetterPolygon {
     /*  Points:
@@ -24,30 +24,31 @@ public class Flipper extends BetterPolygon {
 
     private static final int FRAMES_PER_MOVE = 360;
     private static final double initVelocity = 0.1;
-    private static String filepath = "flipper.svg";
+    private static final String filepath = "flipper.svg";
     private static BetterPolygon defFlipper = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
     private static List<Double> defPoints = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180).getPoints();
     private static final List<Double> pointerPoints = Arrays.asList(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0);
     private Panel currentPanel;
     private int step;
-    public double h;
-    public double maxH, tempMaxH;
-    private Particle pointer;
+    private double h;
+    private double maxH;
+    private BetterPolygon pointer;
     private double frameOfMovement;
     private double rotationAngle;
     private double pivotX, pivotY;
-    private boolean isChangingPanel;
     private boolean reachedTheEdge = false;
+    private boolean left;
+    private final double acceleration;
 
     public Flipper(Panel startPanel) {
         super(null);
-        pointer = new Particle(pointerPoints, startPanel.getAngle(), 0, initVelocity, 0);
+        pointer = new BetterPolygon(pointerPoints);
+
         currentPanel = startPanel;
         step = 0;
         h = 0;
         frameOfMovement = 0;
         maxH = currentPanel.getLength();
-        isChangingPanel = false;
 
         double panelToHorizontalAngle = Math.toDegrees(Math.atan((startPanel.getSmallSide().getPoints().getLast() - startPanel.getSmallSide().getPoints().get(1))
                 / (startPanel.getSmallSide().getPoints().get(2) - startPanel.getSmallSide().getPoints().getFirst())));
@@ -57,36 +58,29 @@ public class Flipper extends BetterPolygon {
         double x = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
         double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast()) / 2;
         pointer.moveTo(x, y);
-        pointer.setAcceleration(pointerAcceleration());
-        pointer.setAccelerating(true);
-        pointer.setTerminalVelocity(Integer.MAX_VALUE);
+        acceleration = pointerAcceleration();
         getPoints().setAll(getFlipperPoints());
+    }
 
-        pointer.setStroke(Color.GREEN);
-        Main.root.getChildren().add(pointer);
+    public void move() {
+        if (h < maxH) {
+            moveUp();
+        }
+        if (!(Main.LEVEL == 0 && !reachedTheEdge)) changePanel();
     }
 
     private void updatePointer() {
-        pointer.setVelocity(new Vector(pointer.getVelocity().getMagnitude() + pointer.getAcceleration(), currentPanel.getAngle()));
-        for (int i = 0; i < pointer.getPoints().size(); i += 2) {
-            pointer.getPoints().set(i, pointer.getPoints().get(i) + pointer.getVelocity().getX());
-            pointer.getPoints().set(i + 1, pointer.getPoints().get(i + 1) + pointer.getVelocity().getY());
-        }
-        if (h == maxH)
-            pointer.moveTo((currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2)) / 2,
-                    (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().getLast()) / 2);
+        double x = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
+        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast()) / 2;
+        Vector tempVector = new Vector(h, currentPanel.getAngle());
+        pointer.moveTo(x + tempVector.getX(), y + tempVector.getY());
     }
 
-    public void moveUp() {
-        if (h < maxH) {
-//            System.out.println(getPointsOnSides());
-//            System.out.println(pointer.getCenterX()+" "+pointer.getCenterY());
-            updateH();
-
-            updatePointer();
-            getPoints().setAll(getFlipperPoints());
-            frameOfMovement++;
-        }
+    private void moveUp() {
+        updateH();
+        updatePointer();
+        getPoints().setAll(getFlipperPoints());
+        frameOfMovement++;
     }
 
     private double pointerAcceleration() {
@@ -97,24 +91,11 @@ public class Flipper extends BetterPolygon {
     }
 
     private void updateH() {
-        h = (initVelocity * frameOfMovement) + (0.5 * pointer.getAcceleration() * frameOfMovement * frameOfMovement);
-        if(h >= maxH) h = maxH;
-    }
-
-    private void setNewH() {
-        double minX = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
-        double minY = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().get(3)) / 2;
-        double maxX = (currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2)) / 2;
-        double maxY = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().get(3)) / 2;
-
-        double gradX = (maxX - minX) / maxH;
-        double gradY = (maxY - minY) / maxH;
-
-        double c = (-gradX * minX) - (gradY * minY);
-
-        h = gradX * pointer.getCenterX() + gradY * pointer.getCenterY() + c;
-
-        if (h >= maxH) reachedTheEdge = true;
+        h = (initVelocity * frameOfMovement) + (0.5 * acceleration * frameOfMovement * frameOfMovement);
+        if (h >= maxH) {
+            h = maxH;
+            reachedTheEdge = true;
+        }
     }
 
     private List<Double> getPointsOnSides() {
@@ -210,12 +191,32 @@ public class Flipper extends BetterPolygon {
         return angle;
     }
 
-    public void changePanel(boolean left) {
+    private boolean chooseDirection() {
+        int distLeft = 0;
+        Panel nextPanel = currentPanel.getLeftPanel();
+        while (!nextPanel.equals(Main.player.getCurrentPanel())) {
+            distLeft++;
+            nextPanel = nextPanel.getLeftPanel();
+        }
+        int distRight = 0;
+        nextPanel = currentPanel.getRightPanel();
+        while (!nextPanel.equals(Main.player.getCurrentPanel())) {
+            distRight++;
+            nextPanel = nextPanel.getRightPanel();
+        }
+        if (distLeft < distRight) return true;
+        else if (distRight < distLeft) return false;
+        else {
+            Random random = new Random();
+            int dirChooser = random.nextInt(2);
+            return (dirChooser == 0);
+        }
+    }
+
+    private void changePanel() {
         if (step == 0) {
             rotate(180, pointer.getCenterX(), pointer.getCenterY());
-            isChangingPanel = true;
-//            tempMaxH = (left) ? currentPanel.getLeftPanel().getLength() : currentPanel.getRightPanel().getLength();
-
+            left = chooseDirection();
         } else {
             BetterPolygon temp = new BetterPolygon(getFlipperPoints());
             temp.rotate(180, pointer.getCenterX(), pointer.getCenterY());
@@ -245,7 +246,8 @@ public class Flipper extends BetterPolygon {
                 rotationAngle += angle;
             }
             getPoints().setAll(temp.getPoints());
-            rotate(-rotationAngle, pivotX, pivotY);
+            if (left) rotate(-rotationAngle, pivotX, pivotY);
+            else rotate(rotationAngle, pivotX, pivotY);
         }
         step++;
 
@@ -255,27 +257,13 @@ public class Flipper extends BetterPolygon {
             } else {
                 currentPanel = currentPanel.getRightPanel();
             }
-            step = 0;
+
+            if (left) pointer.rotate(-rotationAngle, getPointsOnSides().get(0), getPointsOnSides().get(1));
+            else pointer.rotate(rotationAngle, getPointsOnSides().get(2), getPointsOnSides().get(3));
+
+            double percentage = h / maxH;
             maxH = currentPanel.getLength();
-
-            double newX = (getPoints().get(8) + getPoints().get(12)) / 2;
-            double newY = (getPoints().get(9) + getPoints().get(13)) / 2;
-            // you have to take the points from a new flipper!!!
-//            Circle circle = new Circle(getPoints().get(8), getPoints().get(9), 5, Color.PINK);
-//            Main.root.getChildren().add(circle);
-
-            if(Math.round(rotationAngle) == 90) rotationAngle *= -1;
-
-//            pointer.rotate(rotationAngle, getPoints().get(8), getPoints().get(9));
-//            pointer.moveTo(newX, newY);
-            Circle circle = new Circle(getPointsOnSides().get(2), getPointsOnSides().get(3), 10, Color.PINK);
-            pointer.rotate(rotationAngle, getPointsOnSides().get(2), getPointsOnSides().get(3));
-
-            Main.root.getChildren().add(circle);
-            pointer.setAngle(currentPanel.getAngle());
-
-            pointer.setVelocity(new Vector(pointer.getVelocity().getMagnitude(), currentPanel.getAngle()));
-            setNewH();
+            h = percentage * maxH;
 
             double panelToHorizontalAngle = Math.toDegrees(Math.atan((currentPanel.getSmallSide().getPoints().getLast() - currentPanel.getSmallSide().getPoints().get(1))
                     / (currentPanel.getSmallSide().getPoints().get(2) - currentPanel.getSmallSide().getPoints().getFirst())));
@@ -284,8 +272,7 @@ public class Flipper extends BetterPolygon {
             getPoints().setAll(getFlipperPoints());
 
             rotationAngle = 0;
-
-            isChangingPanel = false;
+            step = 0;
         }
     }
 }
