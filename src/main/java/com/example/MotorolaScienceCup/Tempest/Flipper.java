@@ -5,6 +5,7 @@ import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
 import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +79,10 @@ public class Flipper extends BetterPolygon {
 
     public void moveUp() {
         if (h < maxH) {
+//            System.out.println(getPointsOnSides());
+//            System.out.println(pointer.getCenterX()+" "+pointer.getCenterY());
             updateH();
+
             updatePointer();
             getPoints().setAll(getFlipperPoints());
             frameOfMovement++;
@@ -256,7 +260,18 @@ public class Flipper extends BetterPolygon {
 
             double newX = (getPoints().get(8) + getPoints().get(12)) / 2;
             double newY = (getPoints().get(9) + getPoints().get(13)) / 2;
-            pointer.moveTo(newX, newY);
+            // you have to take the points from a new flipper!!!
+//            Circle circle = new Circle(getPoints().get(8), getPoints().get(9), 5, Color.PINK);
+//            Main.root.getChildren().add(circle);
+
+            if(Math.round(rotationAngle) == 90) rotationAngle *= -1;
+
+//            pointer.rotate(rotationAngle, getPoints().get(8), getPoints().get(9));
+//            pointer.moveTo(newX, newY);
+            Circle circle = new Circle(getPointsOnSides().get(2), getPointsOnSides().get(3), 10, Color.PINK);
+            pointer.rotate(rotationAngle, getPointsOnSides().get(2), getPointsOnSides().get(3));
+
+            Main.root.getChildren().add(circle);
             pointer.setAngle(currentPanel.getAngle());
 
             pointer.setVelocity(new Vector(pointer.getVelocity().getMagnitude(), currentPanel.getAngle()));

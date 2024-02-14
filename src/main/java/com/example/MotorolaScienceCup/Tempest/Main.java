@@ -109,7 +109,7 @@ public class Main {
 
     public static void start() {
 
-        timeline = new Timeline(new KeyFrame(Duration.millis((double) 5000 / Menu.FPS), actionEvent -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
             double bulletsNumber = 0;
             for (Panel panel : panels) {
                 panel.updateBullets();
