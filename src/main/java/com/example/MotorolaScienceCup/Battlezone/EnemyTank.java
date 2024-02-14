@@ -33,7 +33,6 @@ public class EnemyTank extends Object3D{
     }
 
     public void rotateTank(double angle){
-        //TODO:ADD FORWARD VECTOR ROTATION AND TRANSLATION FOR THIS FUNCTION
         double x = this.getCenterX();
         double y = this.getCenterY();
         double z = this.getCenterZ();

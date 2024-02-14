@@ -532,8 +532,26 @@ public class Main {
                             bullets.remove(bullets.get(0));
                             bullets.clear();
                     }}
+                }}
+                for (int i = 0; i < enemyTankList.size(); i++) {
+                    EnemyTank enemyTank = enemyTankList.get(i);
+
+                    if (!enemyTank.getThisBullets().isEmpty() && !object.equals(enemyTank)) {
+                        Bullet bullet = enemyTank.getThisBullets().get(0);
+                        double dist = Math.sqrt(Math.pow((enemyTank.getThisBullets().get(0).getX()-object.getX()),2)+Math.pow((enemyTank.getThisBullets().get(0).getZ()-object.getZ()),2));
+                        System.out.println(dist + " TROLOLOLOLOL");
+                        if(dist<3){
+                            Vertex vertex = enemyTank.getThisBullets().get(0).checkForHits(object);
+                            if(vertex!=null){
+                                System.out.println("YYYYYYYYY");
+                                object.setColor(Color.BLUE);
+                                enemyTank.getThisBullets().get(0).explode(vertex);
+                                enemyTank.getThisBullets().remove(enemyTank.getThisBullets().get(0));
+                                enemyTank.getThisBullets().clear();
+                            }}
+                    }
                 }
-            }}
+            }
             if(!particles.isEmpty()){
                 for (int i = 0; i < particles.size(); i++) {
                     Particle particle = particles.get(i);
