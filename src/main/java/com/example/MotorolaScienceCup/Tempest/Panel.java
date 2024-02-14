@@ -1,8 +1,6 @@
 package com.example.MotorolaScienceCup.Tempest;
 
-import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Particle;
-import com.example.MotorolaScienceCup.Util;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 
