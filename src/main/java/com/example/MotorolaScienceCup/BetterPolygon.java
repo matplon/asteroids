@@ -3,9 +3,10 @@ package com.example.MotorolaScienceCup;
 import java.util.List;
 
 public class BetterPolygon extends javafx.scene.shape.Polygon {
-    public BetterPolygon(List<Double> points){
+    public BetterPolygon(List<Double> points) {
         super();
-        getPoints().setAll(points);
+        if (points != null)
+            getPoints().setAll(points);
     }
 
     public double getCenterX() {    // Mean average of the X coordinates
@@ -43,7 +44,7 @@ public class BetterPolygon extends javafx.scene.shape.Polygon {
         }
     }
 
-    public static BetterPolygon scale(BetterPolygon polygon, double scale){
+    public static BetterPolygon scale(BetterPolygon polygon, double scale) {
         BetterPolygon tempPolygon = new BetterPolygon(polygon.getPoints());
         tempPolygon.scale(scale);
         return tempPolygon;
@@ -84,7 +85,6 @@ public class BetterPolygon extends javafx.scene.shape.Polygon {
     }
 
     public void rotate(double angle, double pivotX, double pivotY) {
-
         // Convert angle to radians
         double radianAngle = Math.toRadians(angle);
 
@@ -101,6 +101,11 @@ public class BetterPolygon extends javafx.scene.shape.Polygon {
             getPoints().set(i, rotatedX);
             getPoints().set(i + 1, rotatedY);
         }
+    }
+
+    public static BetterPolygon rotate(BetterPolygon polygon, double angle) {
+        polygon.rotate(angle);
+        return polygon;
     }
 
 }

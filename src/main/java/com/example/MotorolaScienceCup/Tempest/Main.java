@@ -38,6 +38,7 @@ public class Main {
     static boolean shoot;
     static boolean goRight;
     static boolean goLeft;
+    static int counter = 0;
 
     static double bigSideLength;
 
@@ -54,12 +55,13 @@ public class Main {
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
+        scene.setFill(Color.BLACK);
 
         shoot = false;
         goLeft = false;
         goRight = false;
 
-        Graphics.drawMap(testMap3, defaultPanelColor);
+        Graphics.drawMap(testMap2, defaultPanelColor);
 
         double bigSideLengthX = panels.get(0).getBigSide().getPoints().getFirst() - panels.get(0).getBigSide().getPoints().get(2);
         double bigSideLengthY = panels.get(0).getBigSide().getPoints().get(1) - panels.get(0).getBigSide().getPoints().getLast();
@@ -84,17 +86,18 @@ public class Main {
         points.add(x1);
         points.add(10.0);
 
-        Flipper flipper = new Flipper(points, panels.get(0));
+        Flipper flipper = new Flipper(panels.get(14));
         root.getChildren().add(flipper);
         flipper.setStroke(Color.RED);
-        flipper.moveTo((panels.get(0).getBigSide().getPoints().get(2) + panels.get(0).getBigSide().getPoints().get(0))/2, panels.get(0).getBigSide().getPoints().get(1) + 5);
-
+        panels.get(14).addFlipper(flipper);
 
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = true;
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = true;
             if (keyEvent.getCode() == KeyCode.X) shoot = true;
-            if (keyEvent.getCode() == KeyCode.SPACE) flipper.move(true);
+            if (keyEvent.getCode() == KeyCode.SPACE) flipper.changePanel(true);
+            if(keyEvent.getCode() == KeyCode.S) timeline.stop();
+            if(keyEvent.getCode() == KeyCode.R) timeline.play();
         });
         scene.setOnKeyReleased(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = false;
@@ -106,8 +109,7 @@ public class Main {
 
     public static void start() {
 
-
-        timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis((double) 5000 / Menu.FPS), actionEvent -> {
             double bulletsNumber = 0;
             for (Panel panel : panels) {
                 panel.updateBullets();
@@ -121,6 +123,12 @@ public class Main {
             }
             if(shoot && bulletsNumber < 5){
                 player.shoot();
+            }
+            for(Panel panel : panels){
+                for(Flipper flipper : panel.getFlippers()){
+                    flipper.moveUp();
+                    flipper.changePanel(true);
+                }
             }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);

@@ -12,34 +12,35 @@ public class Camera extends Object3D{
 
     private static double far;
 
-    private Vertex position;
+    private double x;
+    private double y;
+    private double z;
 
     private Vertex forward;
     private Vertex up;
     private  Vertex right;
 
 
-
-
-
     public Camera(ArrayList<Vertex> points3D, ArrayList<Face> faces3D, double x, double y, double z){
         super(points3D,faces3D);
-        Vertex vertex = new Vertex(x,y,z);
-        this.position = vertex;
+        this.x=x;
+        this.y=y;
+        this.z=z;
+        double rotation = 0;
         this.H_FOV = Main.H_FOV;
         this.V_FOV = H_FOV*(Main.HEIGHT/Main.WIDTH);
         this.forward = new Vertex(0,0,1);
         this.up = new Vertex(0,1,0);
         this.right = new Vertex(1,0,0);
-        this.near = 1 ;
+        this.near = 0.5;
         this.far = 100;
     }
 
     public double[][] getTranslateCamMatrix(){
         double[][] matrix = {
-                {1,0,0,-position.getX()},
-                {0,1,0,-position.getY()},
-                {0,0,1,-position.getZ()},
+                {1,0,0,-this.getX()},
+                {0,1,0,-this.getY()},
+                {0,0,1,-this.getZ()},
                 {0,0,0,1}
         };
         return matrix;
@@ -60,11 +61,17 @@ public class Camera extends Object3D{
                 {fx,fy,fz,0},
                 {0, 0, 0, 1}
         };
+        double[][] matrix1 = {
+                {rx,fx,ux,0},
+                {ry,fy,uy,0},
+                {rz,fz,uz,0},
+                {0, 0, 0, 1}
+        };
         return matrix;
     }
 
     public  double[][] getCamMatrix(){
-        double[][] matrix = Util.multiplyMatrices(getTranslateCamMatrix(),getRotateCamMatrix());
+        double[][] matrix = Util.multiplyMatrices(getTranslateCamMatrix(), getRotateCamMatrix());
         return matrix;
     }
 
@@ -76,8 +83,8 @@ public class Camera extends Object3D{
         double a = 2/(RIGHT - LEFT);
         double b = 2/(TOP - BOTTOM);
 
-        System.out.println((42.1875));
-        double c = -(far+near)/(far-near);
+        System.out.println((V_FOV/2));
+        double c = (far+near)/(far-near);
         double d = (-2 * near * far) / (far - near);
         double [][] matrix = {
                 {a, 0, 0, 0},
@@ -86,6 +93,69 @@ public class Camera extends Object3D{
                 {0, 0, 1, 0}
         };
         return matrix;
+    }
+
+    public void shootBullet(){
+        if(Main.bullets.isEmpty()||Main.bullets.isEmpty()){
+            Object3D obj = Util.convertOBJ("Pyramid.txt");
+            Vertex position = this.getPoints3D().get(0);
+            double[] dir =this.getForward().toArray();
+            Bullet bullet = Util.generateBullet(dir, this.getRotation(), this.getX(), this.getY()-0.1, this.getZ(), obj.getPoints3D(),obj.getFaces3D());
+            Main.bullets.add(bullet);
+        }
+    }
+    
+    public boolean checkReticle(Object3D object3D){
+        Vertex origin = new Vertex(this.getX(), this.getY(), this.getZ());
+        Vertex endpoint = new Vertex(this.getX()+this.getForward().getX()*100, this.getY()+this.getForward().getY()*100, this.getZ()+this.getForward().getZ()*100);
+        Vertex a1;
+        Vertex a2;
+        ArrayList<Vertex> result = new ArrayList<>();
+        for (int i = 0; i < object3D.getHitBox2D().size(); i++) {
+            if (i + 1 < object3D.getHitBox2D().size()) {
+                a1 = object3D.getHitBox2D().get(i);
+                a2 = object3D.getHitBox2D().get(i + 1);
+            } else {
+                a1 = object3D.getHitBox2D().get(object3D.getHitBox2D().size() - 1);
+                a2 = object3D.getHitBox2D().get(0);
+            }
+            Vertex vertex = Util.lineIntersect(origin,endpoint,a1,a2);
+            if(vertex!=null){
+                result.add(vertex);
+            }
+        }
+        if(result.size() == 0){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    @Override
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    @Override
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    @Override
+    public double getZ() {
+        return z;
+    }
+
+    public void setZ(double z) {
+        this.z = z;
     }
 
     public static double gethFov() {
@@ -104,9 +174,6 @@ public class Camera extends Object3D{
         return far;
     }
 
-    public  Vertex getPosition() {
-        return position;
-    }
 
     public Vertex getForward() {
         return forward;
@@ -118,10 +185,6 @@ public class Camera extends Object3D{
 
     public  Vertex getRight() {
         return right;
-    }
-
-    public  void setPosition(Vertex position) {
-        this.position = position;
     }
 
     public  void setForward(Vertex forward) { this.forward = forward;
