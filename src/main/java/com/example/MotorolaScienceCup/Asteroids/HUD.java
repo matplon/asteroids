@@ -11,9 +11,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class HUD {
 
@@ -123,7 +124,47 @@ public class HUD {
         Scene newScene = new Scene(newRoot, Main.WIDTH, Main.HEIGHT);
         newScene.setFill(Color.BLACK);
         Menu.stage.setScene(newScene);
-        Main.highscore();
+
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(new File("highscore.txt"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(scanner.hasNextLine());
+        if (scanner.hasNextLine()) {
+
+            int highscore = Integer.parseInt(scanner.nextLine());
+            System.out.println(highscore);
+            if (HUD.getPoints() > highscore) {
+                Writer writer = null;
+                try {
+                    writer = new FileWriter(new File("highscore.txt"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    writer.write(HUD.getPoints());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        else {
+            System.out.println(HUD.getPoints());
+            Writer writer = null;
+            try {
+                writer = new FileWriter(new File("highscore.txt"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                writer.write(HUD.getPoints());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
 
