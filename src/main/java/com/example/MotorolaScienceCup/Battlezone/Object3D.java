@@ -81,15 +81,17 @@ public class Object3D {
     public boolean runCollisionCheck(double range, ArrayList<Vertex> myHitBox){
         ArrayList<Vertex> arr = new ArrayList<>();
         for (Object3D object:Main.objectList) {
-                    double dist = Math.sqrt(Math.pow((this.getX()-object.getX()),2)+Math.pow((this.getZ()-object.getZ()),2));
-                    System.out.println(dist + " TROLOLOLOLOL");
-                    if(dist<range){
-                      ArrayList<Vertex> res = Util.hitBoxIntersect(object.getHitBox2D(),myHitBox);
-                      for(Vertex vert:res){
-                          arr.add(vert);
-                      }
+            if ((object.getClass()!= Camera.class)) {
+                double dist = Math.sqrt(Math.pow((this.getX() - object.getX()), 2) + Math.pow((this.getZ() - object.getZ()), 2));
+                System.out.println(dist + " TROLOLOLOLOL");
+                if (dist < range) {
+                    ArrayList<Vertex> res = Util.hitBoxIntersect(object.getHitBox2D(), myHitBox);
+                    for (Vertex vert : res) {
+                        arr.add(vert);
                     }
                 }
+            }
+        }
         if(arr.size() == 0){
             return true;
         }else{

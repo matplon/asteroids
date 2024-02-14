@@ -123,6 +123,7 @@ public class Main {
 
         camera = new Camera(camPos,new ArrayList<Face>(),0,0,0);
         camera.setHitBox2D(camHitbox);
+        objectList.add(camera);
         for (int i = 0; i < 10; i++) {
             ArrayList<Vertex> hitBox = new ArrayList<>();
                 for (int j = 0; j < 4; j++) {
@@ -333,9 +334,7 @@ public class Main {
     }
 
     public static void drawRadar(){
-        Object3D object = objectList.get(10);
         Circle circle = new Circle(WIDTH/2, 200, 100, Color.RED);
-        Circle circle1 = new Circle();
         Circle circle2 = new Circle(WIDTH/2, 200, 3, Color.RED);
         double x0 = WIDTH/2;
         double y0 = 200;
@@ -355,6 +354,11 @@ public class Main {
         polyline1.setStroke(Color.RED);
         polyline2.setStroke(Color.RED);
         root.getChildren().addAll(polyline1,polyline2,movingLine);
+        enemyInRange=false;
+
+        for (int i = 0; i < enemyTankList.size(); i++) {
+            Circle circle1 = new Circle();
+            EnemyTank object = enemyTankList.get(i);
 
         double dist = Math.sqrt(Math.pow((camera.getX()-object.getCenterX()),2)+Math.pow((camera.getZ()-object.getCenterZ()),2));
         if(dist < 100){
@@ -386,15 +390,16 @@ public class Main {
             circle1 = new Circle(x, -y, 2, Color.RED);
             circle1.setCenterX(circle1.getCenterX()+circle.getCenterX());
             circle1.setCenterY(circle1.getCenterY()+circle.getCenterY());
-        }else{
-            enemyInRange=false;
+            decals.add(circle1);
+            root.getChildren().addAll(circle1);
+            enemyInRange = true;
+        }
         }
         circle.setFill(Color.TRANSPARENT);
         circle.setStroke(Color.RED);
         decals.add(circle);
-        decals.add(circle1);
         decals.add(circle2);
-        root.getChildren().addAll(circle2,circle1,circle);
+        root.getChildren().addAll(circle2,circle);
     }
 
     public static void drawStatusText(){
