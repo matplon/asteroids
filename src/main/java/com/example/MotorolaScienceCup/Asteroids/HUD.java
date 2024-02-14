@@ -123,6 +123,7 @@ public class HUD {
         Scene newScene = new Scene(newRoot, Main.WIDTH, Main.HEIGHT);
         newScene.setFill(Color.BLACK);
         Menu.stage.setScene(newScene);
+        Main.highscore();
     }
 
 

@@ -19,6 +19,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -246,6 +247,22 @@ public class Main {
     public static void gameOver() {
         timeline.stop();
         HUD.gameOver();
+    }
+
+    public static void highscore() {
+        try {
+            Scanner scanner = new Scanner(new File("highscore.txt"));
+            int highscore = Integer.parseInt(scanner.nextLine());
+            if (HUD.getPoints() > highscore){
+                Writer writer = new FileWriter(new File("highscore.txt"), false);
+                writer.write(HUD.getPoints());
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 }
