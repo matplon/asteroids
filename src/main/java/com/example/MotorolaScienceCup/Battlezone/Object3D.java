@@ -85,11 +85,17 @@ public class Object3D {
                 double dist = Math.sqrt(Math.pow((this.getX() - object.getX()), 2) + Math.pow((this.getZ() - object.getZ()), 2));
                 System.out.println(dist + " TROLOLOLOLOL");
                 if (dist < range) {
-                    ArrayList<Vertex> res = Util.hitBoxIntersect(object.getHitBox2D(), myHitBox);
-                    for (Vertex vert : res) {
-                        arr.add(vert);
+                    if(object.getClass() != EnemyTank.class){
+                        ArrayList<Vertex> res = Util.hitBoxIntersect(object.getHitBox2D(), myHitBox);
+                        for (Vertex vert : res) {
+                            arr.add(vert);
+                    }}else{
+                        EnemyTank enemyTank = (EnemyTank) object;
+                        ArrayList<Vertex> res = Util.hitBoxIntersect(enemyTank.getCollideHitBox(), myHitBox);
+                        for (Vertex vert : res) {
+                            arr.add(vert);
                     }
-                }
+                }}
             }
         }
         if(arr.size() == 0){

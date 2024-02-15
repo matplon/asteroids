@@ -90,15 +90,8 @@ public class Util {
         System.out.println("PPPPPPPPP");
         EnemyTank enemy = new EnemyTank(points3D,faces3D);
         ArrayList<Vertex> hitbox = new ArrayList<>();
-        hitbox.add(new Vertex(-0.628809, 0.000000, 1.525483));
-        hitbox.add(new Vertex(0.634045, 0.000000, 1.523314));
-        hitbox.add(new Vertex(1.525483, 0.000000, 0.628808));
-        hitbox.add(new Vertex(1.523314, 0.000000, -0.634045));
-        hitbox.add(new Vertex(0.628808, 0.000000, -1.525483));
-        hitbox.add(new Vertex(-0.634045, 0.000000, -1.523314));
-        hitbox.add(new Vertex(-1.525483, 0.000000, -0.628809));
-        hitbox.add(new Vertex(-1.523314, 0.000000, 0.634044));
-        ArrayList<Vertex> hitbox1 = new ArrayList<>();
+        Object3D object3D = Util.convertOBJ("ring.txt");
+        ArrayList<Vertex> hitbox1 = new ArrayList<>(object3D.getPoints3D());
         hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
         hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
         hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));

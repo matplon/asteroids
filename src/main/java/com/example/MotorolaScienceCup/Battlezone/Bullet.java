@@ -69,11 +69,8 @@ public class Bullet extends Object3D{
         arr1 = Util.multiplyTransform(Util.getTranslationMatrix(-this.getDirection().getX(),0,-this.getDirection().getZ()),arr1);
         vertex1 = Util.arrToVert(arr1);
         ArrayList<Vertex> hitbox = new ArrayList<>();
-        if(object.getClass()!= EnemyTank.class){
-           hitbox = object.getHitBox2D();
-        }else{
-            hitbox = ((EnemyTank) object).getCollideHitBox();
-        }
+        hitbox = object.getHitBox2D();
+
         ArrayList<Vertex> list = new ArrayList<>();
         for (int i = 0; i < hitbox.size(); i++) {
             if(i+1<hitbox.size()){

@@ -107,7 +107,9 @@ public class EnemyTank extends Object3D{
             double [][] translationMatrix = Util.getRotationYMatrix(angle);
             double [] arr = this.getCollideHitBox().get(i).toArray();
             System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+            arr = Util.multiplyTransform(Util.getTranslationMatrix(-center.getX(),-center.getY(), -center.getZ()), arr);
             arr = Util.multiplyTransform(translationMatrix, arr);
+            arr = Util.multiplyTransform(Util.getTranslationMatrix(center.getX(),center.getY(), center.getZ()), arr);
             System.out.println(Arrays.toString(arr)+"XXXXXXXX");
             this.getCollideHitBox().set(i,Util.arrToVert(arr));
 
@@ -148,17 +150,16 @@ public class EnemyTank extends Object3D{
     }
 
     public boolean moveTank(Vertex direction){
-        ArrayList<Vertex> hitbox = this.getHitBox2D();
+        ArrayList<Vertex> hitbox = this.getCollideHitBox();
         ArrayList<Vertex> lol = new ArrayList<>();
         for (int i = 0; i < hitbox.size(); i++) {
             Vertex vert = hitbox.get(i);
             double[] arr = vert.toArray();
-            arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX()/2,direction.getY()/2,direction.getZ()/2),arr);
+            arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX()*TANK_SPEED,direction.getY()*TANK_SPEED,direction.getZ()*TANK_SPEED),arr);
             lol.add(Util.arrToVert(arr));
         }
         System.out.println("hihihi");
-        if(this.runCollisionCheck(5,lol,this)) {
-
+        if(this.runCollisionCheck(15,lol,this)) {
             System.out.println(getRotation() + " HHHHHHHHHHHHHHHHHHHH");
             Vertex vert = this.getCenter();
             double[] arr1 = vert.toArray();
@@ -209,4 +210,6 @@ public class EnemyTank extends Object3D{
     public void lookAtTarget(){
 
     }
+
+
 }
