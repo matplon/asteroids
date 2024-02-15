@@ -120,11 +120,11 @@ public class Main {
         camHitbox.add(new Vertex(Math.sqrt(2),0,-Math.sqrt(2)));
         ArrayList<Vertex> camPos = new ArrayList<>();
         camPos.add(new Vertex(0,0,0));
-
         camera = new Camera(camPos,new ArrayList<Face>(),0,0,0);
         camera.setHitBox2D(camHitbox);
+        camera.translate(0,0,-10);
         objectList.add(camera);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
             ArrayList<Vertex> hitBox = new ArrayList<>();
                 for (int j = 0; j < 4; j++) {
                     hitBox.add(cubeHitbox.get(j));
@@ -145,11 +145,10 @@ public class Main {
             hitBox1.add(triangleHitbox.get(j));
         }
         double y = Util.getMinY(obj3.getPoints3D());
-        EnemyTank obj1 = Util.generateEnemyTank(0,0.5+y-0.1,10,obj3.getPoints3D(),obj3.getFaces3D());
+        EnemyTank obj1 = Util.generateEnemyTank(0,-3.7,10,obj3.getPoints3D(),obj3.getFaces3D());
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
         }
-
         obj1.displayObject();
 
         start();
@@ -184,7 +183,7 @@ public class Main {
                     lol.add(Util.arrToVert(arr));
                 }
                 System.out.println("hihihi");
-                if(camera.runCollisionCheck(5,lol)) {
+                if(camera.runCollisionCheck(5,lol,camera)) {
                     System.out.println("LALALALA");
                     camera.translate(-camF[0] * CAMERA_SPEED, -camF[1] * CAMERA_SPEED, -camF[2] * CAMERA_SPEED);
                     collisionDir = false;
@@ -205,7 +204,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(5,lol)){
+                if(camera.runCollisionCheck(5,lol,camera)){
                     camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
                     collisionDir = false;
                 }else{
@@ -224,7 +223,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(camR[0]*CAMERA_SPEED, camR[1]*CAMERA_SPEED, camR[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(5,lol)){
+                if(camera.runCollisionCheck(5,lol,camera)){
                    // for (int i = 0; i < 4; i++) {
                     camera.translate( camR[0] * CAMERA_SPEED,  camR[1] * CAMERA_SPEED,  camR[2] * CAMERA_SPEED);
                     collisionDir = false;
@@ -244,7 +243,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(-camR[0]*CAMERA_SPEED, -camR[1]*CAMERA_SPEED, -camR[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(5,lol)){
+                if(camera.runCollisionCheck(5,lol,camera)){
                     //for (int i = 0; i < 4; i++) {
                         camera.translate(  -camR[0] * CAMERA_SPEED,   -camR[1] * CAMERA_SPEED,   -camR[2] * CAMERA_SPEED);
                         collisionDir = false;
@@ -264,7 +263,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix( camU[0]*CAMERA_SPEED,  camU[1]*CAMERA_SPEED,  camU[2]*CAMERA_SPEED),arr);
                     hitbox.set(i, Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(3,hitbox)){
+                if(camera.runCollisionCheck(3,hitbox,camera)){
                     //for (int i = 0; i < 4; i++) {
                     camera.translate( camU[0] * CAMERA_SPEED,  camU[1] * CAMERA_SPEED,  camU[2] * CAMERA_SPEED);
                 }
@@ -277,7 +276,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix( -camU[0]*CAMERA_SPEED,  -camU[1]*CAMERA_SPEED,  -camU[2]*CAMERA_SPEED),arr);
                     hitbox.set(i, Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(3,hitbox)){
+                if(camera.runCollisionCheck(3,hitbox,camera)){
                     //for (int i = 0; i < 4; i++) {
                     camera.translate( -camU[0] * CAMERA_SPEED,  -camU[1] * CAMERA_SPEED,  -camU[2] * CAMERA_SPEED);
                 }
@@ -468,6 +467,10 @@ public class Main {
             text1.setText(Math.round(camera.getX()) + " " + Math.round(camera.getY()) + " " + Math.round(camera.getZ()));
             Polyline polyline = new Polyline();
             polyline.setStroke(Color.GREEN);
+            for (int i = 0; i < enemyTankList.size(); i++) {
+                enemyTankList.get(i).moveTank(enemyTankList.get(i).getForward());
+                enemyTankList.get(i).rotateTank(1);
+            }
             if(has_collided){
                 if(impact_ticks < 5){
                     camera.translate(0,impact_skip*3,0);

@@ -78,10 +78,10 @@ public class Object3D {
         return average;
     }
 
-    public boolean runCollisionCheck(double range, ArrayList<Vertex> myHitBox){
+    public boolean runCollisionCheck(double range, ArrayList<Vertex> myHitBox, Object3D current){
         ArrayList<Vertex> arr = new ArrayList<>();
         for (Object3D object:Main.objectList) {
-            if ((object.getClass()!= Camera.class)) {
+            if (!(object.equals(current))) {
                 double dist = Math.sqrt(Math.pow((this.getX() - object.getX()), 2) + Math.pow((this.getZ() - object.getZ()), 2));
                 System.out.println(dist + " TROLOLOLOLOL");
                 if (dist < range) {
@@ -232,6 +232,7 @@ public class Object3D {
     }
 
     public void translate(double x, double y, double z){
+
         for (int i = 0; i < this.points3D.size(); i++) {
             double [][] translationMatrix = Util.getTranslationMatrix(x,y,z);
             double [] arr = this.points3D.get(i).toArray();
@@ -345,6 +346,7 @@ public class Object3D {
             this.hitBox2D.set(i,Util.arrToVert(arr));
 
         }
+
         this.x = getCenterX();
         this.y = getCenterY();
         this.z = getCenterZ();
