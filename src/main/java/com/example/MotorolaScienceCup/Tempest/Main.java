@@ -39,6 +39,7 @@ public class Main {
     static boolean goRight;
     static boolean goLeft;
     static int LEVEL = 0;
+    static int flippersNumber = 10;
 
     static double bigSideLength;
 
@@ -107,6 +108,7 @@ public class Main {
     }
 
     public static void start() {
+        Flipper.spawnSeeds(flippersNumber);
 
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
             double bulletsNumber = 0;
@@ -114,17 +116,17 @@ public class Main {
                 panel.updateBullets();
                 bulletsNumber += panel.getBullets().size();
             }
-            if(goRight){
+            if (goRight) {
                 player.move(false);
             }
-            if(goLeft){
+            if (goLeft) {
                 player.move(true);
             }
-            if(shoot && bulletsNumber < 5){
+            if (shoot && bulletsNumber < 5) {
                 player.shoot();
             }
-            for(Panel panel : panels){
-                for(Flipper flipper : panel.getFlippers()){
+            for (Panel panel : panels) {
+                for (Flipper flipper : panel.getFlippers()) {
                     flipper.move();
                 }
             }
