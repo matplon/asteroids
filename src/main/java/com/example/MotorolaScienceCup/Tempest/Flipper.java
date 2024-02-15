@@ -1,11 +1,20 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
+import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
 import com.example.MotorolaScienceCup.Vector;
+import javafx.animation.Animation;
+import javafx.animation.PathTransition;
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -24,10 +33,13 @@ public class Flipper extends BetterPolygon {
 
     private static final int FRAMES_PER_MOVE = 360;
     private static final double initVelocity = 0.1;
+    private final int bulletCooldown = 60;
     private static final String filepath = "flipper.svg";
     private static BetterPolygon defFlipper = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
     private static List<Double> defPoints = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180).getPoints();
     private static final List<Double> pointerPoints = Arrays.asList(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0);
+    private List<FlipperBullet> flipperBullets;
+    private static List<FlipperSeed> seedList;
     private Panel currentPanel;
     private int step;
     private double h;
@@ -39,6 +51,7 @@ public class Flipper extends BetterPolygon {
     private boolean reachedTheEdge = false;
     private boolean left;
     private final double acceleration;
+    private int bulletTimer;
 
     public Flipper(Panel startPanel) {
         super(null);
@@ -49,6 +62,9 @@ public class Flipper extends BetterPolygon {
         h = 0;
         frameOfMovement = 0;
         maxH = currentPanel.getLength();
+        flipperBullets = new ArrayList<>();
+        bulletTimer = 0;
+        seedList = new ArrayList<>();
 
         double panelToHorizontalAngle = Math.toDegrees(Math.atan((startPanel.getSmallSide().getPoints().getLast() - startPanel.getSmallSide().getPoints().get(1))
                 / (startPanel.getSmallSide().getPoints().get(2) - startPanel.getSmallSide().getPoints().getFirst())));
@@ -67,6 +83,11 @@ public class Flipper extends BetterPolygon {
             moveUp();
         }
         if (!(Main.LEVEL == 0 && !reachedTheEdge)) changePanel();
+        updateBullets();
+        if (!reachedTheEdge) {
+            bulletTimer--;
+            if (bulletTimer <= 0) shoot();
+        }
     }
 
     private void updatePointer() {
@@ -273,6 +294,194 @@ public class Flipper extends BetterPolygon {
 
             rotationAngle = 0;
             step = 0;
+        }
+    }
+
+    private void shoot() {
+        FlipperBullet flipperBullet = new FlipperBullet();
+        flipperBullets.add(flipperBullet);
+        bulletTimer = bulletCooldown;
+    }
+
+    private void updateBullets() {
+        List<FlipperBullet> bulletsToRemove = new ArrayList<>();
+        for (FlipperBullet bulletbullet : flipperBullets) {
+            bulletbullet.move();
+            Circle circle = new Circle(bulletbullet.innerSqr.getCenterX(), bulletbullet.innerSqr.getCenterY(), 3);
+            if (circle.intersects(currentPanel.getBigSide().getLayoutBounds())) {
+                bulletsToRemove.add(bulletbullet);
+            }
+        }
+        for (FlipperBullet bulletBullet : bulletsToRemove) {
+            bulletBullet.remove();
+            flipperBullets.remove(bulletBullet);
+        }
+    }
+
+    public static void spawnSeeds(double seedsNumber) {
+        for (int i = 0; i < seedsNumber; i++) {
+            FlipperSeed flipperSeed = new FlipperSeed();
+        }
+    }
+
+    private static class FlipperSeed {
+        private static final double CENTER_X = Graphics.mapCenterX;
+        private static final double CENTER_Y = Graphics.mapCenterY;
+        private static double RADIUS = 15;
+        private static final double ANGULAR_SPEED = 0.02;
+        private static double DEST_X;
+        private static double DEST_Y;
+        private BetterPolygon polygon;
+        private boolean spiral;
+        private boolean done;
+
+        private FlipperSeed() {
+            done = false;
+            Circle bounds = new Circle(Graphics.mapCenterX, Graphics.mapCenterY, 15);
+            Random random = new Random();
+            double x = random.nextDouble(Main.WIDTH);
+            double y = random.nextDouble(Main.HEIGHT);
+            Point2D point2D = new Point2D(x, y);
+            while (!bounds.contains(point2D)) {
+                x = random.nextDouble(Main.WIDTH);
+                y = random.nextDouble(Main.HEIGHT);
+                point2D = new Point2D(x, y);
+            }
+            polygon = new BetterPolygon(pointerPoints);
+            polygon.moveTo(x, y);
+            polygon.setStroke(Color.RED);
+            Main.root.getChildren().add(polygon);
+
+            chooseMotion();
+            choosePanel();
+        }
+
+        private void chooseMotion(){
+            Random random = new Random();
+            int chooser = random.nextInt(2);
+            spiral = (chooser == 0);
+        }
+
+        private void choosePanel(){
+            Random random = new Random();
+            int panel = random.nextInt(Main.panels.size());
+            List<Double> points = Main.panels.get(panel).getSmallSide().getPoints();
+
+            double randomT = Math.random();
+            DEST_X = points.getFirst() + randomT * (points.get(2) - points.getFirst());
+            DEST_Y = points.get(1) + randomT * (points.getLast() - points.get(1));
+        }
+
+        private void move(){
+            if(spiral){
+                double currentTime = System.currentTimeMillis();
+                double angle = ANGULAR_SPEED * currentTime;
+                double spiralX = CENTER_X + RADIUS * Math.cos(angle) * angle;
+                double spiralY = CENTER_Y + RADIUS * Math.sin(angle) * angle;
+
+                // Calculate the direction towards the destination point
+                double dirX = DEST_X - spiralX;
+                double dirY = DEST_Y - spiralY;
+
+                // Normalize the direction vector
+                double length = Math.sqrt(dirX * dirX + dirY * dirY);
+                dirX /= length;
+                dirY /= length;
+
+                // Move the particle towards the destination while spiraling
+                double speed = 1; // Adjust speed as needed
+                double newX = spiralX + dirX * speed;
+                double newY = spiralY + dirY * speed;
+
+                polygon.moveTo(newX, newY);
+            }
+            else{
+                Path path = new Path();
+                path.getElements().add(new MoveTo(50, 50));
+                path.getElements().add(new LineTo(DEST_X, DEST_Y));
+
+                // Create a path transition
+                PathTransition pathTransition = new PathTransition();
+                pathTransition.setDuration(Duration.seconds(3)); // Duration for the transition
+                pathTransition.setPath(path); // Set the path to follow
+                pathTransition.setNode(polygon); // Set the node to be animated
+                pathTransition.setCycleCount(Animation.INDEFINITE); // Make the transition cycle indefinitely
+                pathTransition.setAutoReverse(false); // Do not reverse the transition
+
+                // Start the animation
+                pathTransition.play();
+                done = true;
+            }
+        }
+
+        private void remove(){
+            Main.root.getChildren().remove(polygon);
+        }
+    }
+
+    private class FlipperBullet {
+        private final double outerScale = 10;
+        private final double innerScale = 5;
+        private final double speed = 7;
+        private List<BetterPolygon> outerPoints;
+        private List<BetterPolygon> innerPoints;
+        private Particle outerSqr;
+        private Particle innerSqr;
+
+        private FlipperBullet() {
+            outerSqr = new Particle(pointerPoints, currentPanel.getAngle(), 120, speed, 0);
+            innerSqr = new Particle(pointerPoints, currentPanel.getAngle(), 120, speed, 0);
+
+            outerSqr.scale(outerScale);
+            innerSqr.scale(innerScale);
+            innerSqr.rotate(45);
+
+            outerSqr.moveTo(getCenterX(), getCenterY());
+            innerSqr.moveTo(getCenterX(), getCenterY());
+
+            outerPoints = new ArrayList<>();
+            innerPoints = new ArrayList<>();
+
+            spawn();
+            updatePoints();
+        }
+
+        private void spawn() {
+            for (int i = 0; i < outerSqr.getPoints().size(); i += 2) {
+                BetterPolygon point = new BetterPolygon(pointerPoints);
+                BetterPolygon point2 = new BetterPolygon(pointerPoints);
+                point2.scale(2);
+                outerPoints.add(point2);
+                innerPoints.add(point);
+
+                point.setStroke(Color.RED);
+                point2.setStroke(Color.WHITE);
+
+                Main.root.getChildren().add(point);
+                Main.root.getChildren().add(point2);
+            }
+        }
+
+        private void updatePoints() {
+            int index = 0;
+            for (int i = 0; i < outerSqr.getPoints().size(); i += 2) {
+                outerPoints.get(index).moveTo(outerSqr.getPoints().get(i), outerSqr.getPoints().get(i + 1));
+                innerPoints.get(index).moveTo(innerSqr.getPoints().get(i), innerSqr.getPoints().get(i + 1));
+                index++;
+            }
+        }
+
+        public void move() {
+            outerSqr.updatePosition();
+            innerSqr.updatePosition();
+            updatePoints();
+        }
+
+        public void remove() {
+            for (int i = 0; i < outerPoints.size(); i++) {
+                Main.root.getChildren().remove(outerPoints.get(i));
+                Main.root.getChildren().remove(innerPoints.get(i));
+            }
         }
     }
 }
