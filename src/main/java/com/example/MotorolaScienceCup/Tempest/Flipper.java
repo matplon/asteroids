@@ -14,10 +14,7 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Flipper extends BetterPolygon {
     /*  Points:
@@ -39,7 +36,6 @@ public class Flipper extends BetterPolygon {
     private static List<Double> defPoints = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180).getPoints();
     private static final List<Double> pointerPoints = Arrays.asList(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0);
     private List<FlipperBullet> flipperBullets;
-    private static List<FlipperSeed> seedList;
     private Panel currentPanel;
     private int step;
     private double h;
@@ -52,6 +48,9 @@ public class Flipper extends BetterPolygon {
     private boolean left;
     private final double acceleration;
     private int bulletTimer;
+    private static PriorityQueue<FlipperSeed> seedQueue = new PriorityQueue<>();
+    private static List<FlipperSeed> seedList = new ArrayList<>();
+    static boolean seedsDone = false;
 
     public Flipper(Panel startPanel) {
         super(null);
@@ -64,7 +63,6 @@ public class Flipper extends BetterPolygon {
         maxH = currentPanel.getLength();
         flipperBullets = new ArrayList<>();
         bulletTimer = 0;
-        seedList = new ArrayList<>();
 
         double panelToHorizontalAngle = Math.toDegrees(Math.atan((startPanel.getSmallSide().getPoints().getLast() - startPanel.getSmallSide().getPoints().get(1))
                 / (startPanel.getSmallSide().getPoints().get(2) - startPanel.getSmallSide().getPoints().getFirst())));
@@ -321,19 +319,40 @@ public class Flipper extends BetterPolygon {
     public static void spawnSeeds(double seedsNumber) {
         for (int i = 0; i < seedsNumber; i++) {
             FlipperSeed flipperSeed = new FlipperSeed();
+            seedList.add(flipperSeed);
         }
     }
 
+    public static void updateSeeds(){
+        for (FlipperSeed seed : seedList){
+            if(!seed.done) seed.move();
+            else seedQueue.add(seed);
+        }
+        FlipperSeed topSeed = seedQueue.poll();
+        if(topSeed != null){
+            seedList.remove(topSeed);
+            topSeed.remove();
+
+            Flipper flipper = new Flipper(topSeed.chosenPanel);
+            Main.flippers.add(flipper);
+            Main.root.getChildren().add(flipper);
+            flipper.setStroke(Color.RED);
+        }
+        if(seedList.isEmpty() && seedQueue.isEmpty()) seedsDone = true;
+    }
+
     private static class FlipperSeed {
-        private static final double CENTER_X = Graphics.mapCenterX;
-        private static final double CENTER_Y = Graphics.mapCenterY;
-        private static double RADIUS = 15;
-        private static final double ANGULAR_SPEED = 0.02;
-        private static double DEST_X;
-        private static double DEST_Y;
-        private BetterPolygon polygon;
+        private final double CENTER_X = Graphics.mapCenterX;
+        private final double CENTER_Y = Graphics.mapCenterY;
+        private double RADIUS = 15.0;
+        private final double ANGULAR_SPEED = 0.02;
+        private final double linearSpeed = 7.0;
+        private double DEST_X;
+        private double DEST_Y;
+        private Particle seed;
         private boolean spiral;
         private boolean done;
+        private Panel chosenPanel;
 
         private FlipperSeed() {
             done = false;
@@ -347,10 +366,10 @@ public class Flipper extends BetterPolygon {
                 y = random.nextDouble(Main.HEIGHT);
                 point2D = new Point2D(x, y);
             }
-            polygon = new BetterPolygon(pointerPoints);
-            polygon.moveTo(x, y);
-            polygon.setStroke(Color.RED);
-            Main.root.getChildren().add(polygon);
+            seed = new Particle(pointerPoints, 0, 0, 0, 0);
+            seed.moveTo(x, y);
+            seed.setStroke(Color.RED);
+            Main.root.getChildren().add(seed);
 
             chooseMotion();
             choosePanel();
@@ -364,12 +383,14 @@ public class Flipper extends BetterPolygon {
 
         private void choosePanel(){
             Random random = new Random();
-            int panel = random.nextInt(Main.panels.size());
-            List<Double> points = Main.panels.get(panel).getSmallSide().getPoints();
+            int panelIndex = random.nextInt(Main.panels.size());
+            List<Double> points = Main.panels.get(panelIndex).getSmallSide().getPoints();
+            chosenPanel = Main.panels.get(panelIndex);
 
             double randomT = Math.random();
             DEST_X = points.getFirst() + randomT * (points.get(2) - points.getFirst());
             DEST_Y = points.get(1) + randomT * (points.getLast() - points.get(1));
+            seed.setVelocity(new Vector(linearSpeed, Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX())));
         }
 
         private void move(){
@@ -393,29 +414,17 @@ public class Flipper extends BetterPolygon {
                 double newX = spiralX + dirX * speed;
                 double newY = spiralY + dirY * speed;
 
-                polygon.moveTo(newX, newY);
+                seed.moveTo(newX, newY);
             }
             else{
-                Path path = new Path();
-                path.getElements().add(new MoveTo(50, 50));
-                path.getElements().add(new LineTo(DEST_X, DEST_Y));
-
-                // Create a path transition
-                PathTransition pathTransition = new PathTransition();
-                pathTransition.setDuration(Duration.seconds(3)); // Duration for the transition
-                pathTransition.setPath(path); // Set the path to follow
-                pathTransition.setNode(polygon); // Set the node to be animated
-                pathTransition.setCycleCount(Animation.INDEFINITE); // Make the transition cycle indefinitely
-                pathTransition.setAutoReverse(false); // Do not reverse the transition
-
-                // Start the animation
-                pathTransition.play();
-                done = true;
+                seed.updatePosition();
+                Circle destination = new Circle(DEST_X, DEST_Y, 1);
+                done = seed.intersects(destination.getLayoutBounds());
             }
         }
 
         private void remove(){
-            Main.root.getChildren().remove(polygon);
+            Main.root.getChildren().remove(seed);
         }
     }
 
