@@ -78,8 +78,9 @@ public class Object3D {
         return average;
     }
 
-    public boolean runCollisionCheck(double range, ArrayList<Vertex> myHitBox, Object3D current){
+    public ArrayList<Object3D> runCollisionCheck(double range, ArrayList<Vertex> myHitBox, Object3D current){
         ArrayList<Vertex> arr = new ArrayList<>();
+        ArrayList<Object3D> objArr = new ArrayList<>();
         for (Object3D object:Main.objectList) {
             if (!(object.equals(current))) {
                 double dist = Math.sqrt(Math.pow((this.getX() - object.getX()), 2) + Math.pow((this.getZ() - object.getZ()), 2));
@@ -88,21 +89,19 @@ public class Object3D {
                     if(object.getClass() != EnemyTank.class){
                         ArrayList<Vertex> res = Util.hitBoxIntersect(object.getHitBox2D(), myHitBox);
                         for (Vertex vert : res) {
+                            objArr.add(object);
                             arr.add(vert);
                     }}else{
                         EnemyTank enemyTank = (EnemyTank) object;
                         ArrayList<Vertex> res = Util.hitBoxIntersect(enemyTank.getCollideHitBox(), myHitBox);
                         for (Vertex vert : res) {
+                            objArr.add(object);
                             arr.add(vert);
                     }
                 }}
             }
         }
-        if(arr.size() == 0){
-            return true;
-        }else{
-            return false;
-        }
+        return objArr;
     }
 
     public void updateRotation(double angle){

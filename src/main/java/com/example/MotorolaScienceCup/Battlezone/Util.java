@@ -106,8 +106,13 @@ public class Util {
         enemy.setRotation(0);
         enemy.rotateTank(Math.random()*360);
         enemy.moveTank(new Vertex(x,y,z));
+        enemy.setTarget(new Vertex(enemy.getCenter().getX() + Math.random()*60-30,0,enemy.getCenter().getZ() + Math.random()*60-30));
         enemy.setColor(Color.GREEN);
         enemy.setAttackMode(false);
+        enemy.setWillShoot(false);
+        enemy.setRotating(true);
+        enemy.setRotateDir(-1);
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         Main.objectList.add(enemy);
         Main.enemyTankList.add(enemy);
         return enemy;
@@ -179,6 +184,10 @@ public class Util {
         return x;
     }
 
+    public static double getDistance(Vertex vertex1, Vertex vertex2){
+        double dist = Math.sqrt(Math.pow((vertex1.getX() - vertex2.getX()), 2) + Math.pow((vertex1.getZ() - vertex2.getZ()), 2));
+        return dist;
+    }
     public static double getMaxZ(ArrayList<Vertex> points){
         double z = points.get(0).getZ();
         for (int i = 0; i < points.size(); i++) {

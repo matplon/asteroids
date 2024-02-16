@@ -183,7 +183,7 @@ public class Main {
                     lol.add(Util.arrToVert(arr));
                 }
                 System.out.println("hihihi");
-                if(camera.runCollisionCheck(5,lol,camera)) {
+                if(camera.runCollisionCheck(5,lol,camera).size()==0) {
                     System.out.println("LALALALA");
                     camera.translate(-camF[0] * CAMERA_SPEED, -camF[1] * CAMERA_SPEED, -camF[2] * CAMERA_SPEED);
                     collisionDir = false;
@@ -204,7 +204,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(5,lol,camera)){
+                if(camera.runCollisionCheck(5,lol,camera).size()==0){
                     camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
                     collisionDir = false;
                 }else{
@@ -223,7 +223,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(camR[0]*CAMERA_SPEED, camR[1]*CAMERA_SPEED, camR[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(5,lol,camera)){
+                if(camera.runCollisionCheck(5,lol,camera).size()==0){
                    // for (int i = 0; i < 4; i++) {
                     camera.translate( camR[0] * CAMERA_SPEED,  camR[1] * CAMERA_SPEED,  camR[2] * CAMERA_SPEED);
                     collisionDir = false;
@@ -243,7 +243,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(-camR[0]*CAMERA_SPEED, -camR[1]*CAMERA_SPEED, -camR[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(5,lol,camera)){
+                if(camera.runCollisionCheck(5,lol,camera).size()==0){
                     //for (int i = 0; i < 4; i++) {
                         camera.translate(  -camR[0] * CAMERA_SPEED,   -camR[1] * CAMERA_SPEED,   -camR[2] * CAMERA_SPEED);
                         collisionDir = false;
@@ -263,7 +263,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix( camU[0]*CAMERA_SPEED,  camU[1]*CAMERA_SPEED,  camU[2]*CAMERA_SPEED),arr);
                     hitbox.set(i, Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(3,hitbox,camera)){
+                if(camera.runCollisionCheck(3,hitbox,camera).size()==0){
                     //for (int i = 0; i < 4; i++) {
                     camera.translate( camU[0] * CAMERA_SPEED,  camU[1] * CAMERA_SPEED,  camU[2] * CAMERA_SPEED);
                 }
@@ -276,7 +276,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix( -camU[0]*CAMERA_SPEED,  -camU[1]*CAMERA_SPEED,  -camU[2]*CAMERA_SPEED),arr);
                     hitbox.set(i, Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(3,hitbox,camera)){
+                if(camera.runCollisionCheck(3,hitbox,camera).size()==0){
                     //for (int i = 0; i < 4; i++) {
                     camera.translate( -camU[0] * CAMERA_SPEED,  -camU[1] * CAMERA_SPEED,  -camU[2] * CAMERA_SPEED);
                 }
@@ -446,11 +446,6 @@ public class Main {
                 TEXT_TICK=0;
             }
             control();
-            if(Math.random()*1000<100){
-                for(EnemyTank enemyTank:enemyTankList){
-                    enemyTank.shootTank();
-                }
-            }
             for (Polyline polyline:lineList) {
                 root.getChildren().remove(polyline);
             }
@@ -468,8 +463,7 @@ public class Main {
             Polyline polyline = new Polyline();
             polyline.setStroke(Color.GREEN);
             for (int i = 0; i < enemyTankList.size(); i++) {
-                enemyTankList.get(i).moveTank(enemyTankList.get(i).getForward());
-                enemyTankList.get(i).rotateTank(1);
+                enemyTankList.get(i).enemyBehavior();
             }
             if(has_collided){
                 if(impact_ticks < 5){
