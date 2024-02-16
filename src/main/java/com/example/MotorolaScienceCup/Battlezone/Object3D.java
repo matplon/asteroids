@@ -78,23 +78,30 @@ public class Object3D {
         return average;
     }
 
-    public boolean runCollisionCheck(double range, ArrayList<Vertex> myHitBox){
+    public ArrayList<Object3D> runCollisionCheck(double range, ArrayList<Vertex> myHitBox, Object3D current){
         ArrayList<Vertex> arr = new ArrayList<>();
+        ArrayList<Object3D> objArr = new ArrayList<>();
         for (Object3D object:Main.objectList) {
-                    double dist = Math.sqrt(Math.pow((this.getX()-object.getX()),2)+Math.pow((this.getZ()-object.getZ()),2));
-                    System.out.println(dist + " TROLOLOLOLOL");
-                    if(dist<range){
-                      ArrayList<Vertex> res = Util.hitBoxIntersect(object.getHitBox2D(),myHitBox);
-                      for(Vertex vert:res){
-                          arr.add(vert);
-                      }
+            if (!(object.equals(current))) {
+                double dist = Math.sqrt(Math.pow((this.getX() - object.getX()), 2) + Math.pow((this.getZ() - object.getZ()), 2));
+                System.out.println(dist + " TROLOLOLOLOL");
+                if (dist < range) {
+                    if(object.getClass() != EnemyTank.class){
+                        ArrayList<Vertex> res = Util.hitBoxIntersect(object.getHitBox2D(), myHitBox);
+                        for (Vertex vert : res) {
+                            objArr.add(object);
+                            arr.add(vert);
+                    }}else{
+                        EnemyTank enemyTank = (EnemyTank) object;
+                        ArrayList<Vertex> res = Util.hitBoxIntersect(enemyTank.getCollideHitBox(), myHitBox);
+                        for (Vertex vert : res) {
+                            objArr.add(object);
+                            arr.add(vert);
                     }
-                }
-        if(arr.size() == 0){
-            return true;
-        }else{
-            return false;
+                }}
+            }
         }
+        return objArr;
     }
 
     public void updateRotation(double angle){
@@ -230,6 +237,7 @@ public class Object3D {
     }
 
     public void translate(double x, double y, double z){
+
         for (int i = 0; i < this.points3D.size(); i++) {
             double [][] translationMatrix = Util.getTranslationMatrix(x,y,z);
             double [] arr = this.points3D.get(i).toArray();
@@ -334,6 +342,16 @@ public class Object3D {
             this.points3D.set(i,Util.arrToVert(arr));
 
         }
+        for (int i = 0; i < this.hitBox2D.size(); i++) {
+            double [][] translationMatrix = Util.getScaleMatrix(x,y,z);
+            double [] arr = this.hitBox2D.get(i).toArray();
+            System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+            arr = Util.multiplyTransform(translationMatrix, arr);
+            System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+            this.hitBox2D.set(i,Util.arrToVert(arr));
+
+        }
+
         this.x = getCenterX();
         this.y = getCenterY();
         this.z = getCenterZ();

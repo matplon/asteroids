@@ -18,6 +18,8 @@ public class Graphics {
     private static final int CONNECTORS_NUMBER = 16;
     private final static double baseOffset = 20;
     private static List<Polyline> connectors = Main.connectors;
+    static double mapCenterX;
+    static double mapCenterY;
 
     public static void drawMap(String filepath, Color color) {
         List<Double> smallShapePoints = Util.SVGconverter(filepath);
@@ -25,6 +27,8 @@ public class Graphics {
         BetterPolygon tempSmallShape = new BetterPolygon(smallShapePoints);
         tempSmallShape.moveTo((double) WIDTH / 2, (double) HEIGHT / 2 + baseOffset);
         smallShapePoints = tempSmallShape.getPoints();
+        mapCenterX = tempSmallShape.getCenterX();
+        mapCenterY = tempSmallShape.getCenterY();
 
         BetterPolygon tempPolygon = BetterPolygon.scale(tempSmallShape, 8);
         tempPolygon.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
@@ -128,10 +132,6 @@ public class Graphics {
             double yLength = y2 - y1;
             double length = Math.sqrt(xLength * xLength + yLength * yLength);
             panel.setLength(length);
-
-//            double sideOpposite = y2 - y1;
-//            double side1 = x2 - x1;
-//            double angle = Math.toDegrees(Math.acos((sideOpposite * sideOpposite - length * length - side1 * side1) / (-2 * length * side1)));
 
             panel.setAngle(Math.toDegrees(Math.atan2(y2 - y1, x2 - x1)));
         }

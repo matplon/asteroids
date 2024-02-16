@@ -35,6 +35,7 @@ public class Main {
 
     static int WIDTH = Menu.WIDTH;
     static int HEIGHT = Menu.HEIGHT;
+    static Timeline timeline;
 
     static double CAMERA_SPEED = 0.3;
     static double CAMERA_ROT_SPEED = 2.5;
@@ -49,6 +50,8 @@ public class Main {
     static double impact_skip = 0.01;
 
     static ArrayList<Object3D> objectList = new ArrayList<>();
+
+    static ArrayList<EnemyTank> enemyTankList = new ArrayList<>();
 
     static ArrayList<Polyline> lineList = new ArrayList<>();
 
@@ -117,16 +120,11 @@ public class Main {
         camHitbox.add(new Vertex(Math.sqrt(2),0,-Math.sqrt(2)));
         ArrayList<Vertex> camPos = new ArrayList<>();
         camPos.add(new Vertex(0,0,0));
-
         camera = new Camera(camPos,new ArrayList<Face>(),0,0,0);
         camera.setHitBox2D(camHitbox);
-        Vertex camForward = camera.getForward();
-        double [] camF = camForward.toArray();
-        Vertex camUp = camera.getUp();
-        double [] camU = camUp.toArray();
-        Vertex camRight = camera.getRight();
-        double [] camR = camRight.toArray();
-        for (int i = 0; i < 10; i++) {
+        camera.translate(0,0,-10);
+        objectList.add(camera);
+        for (int i = 0; i < 30; i++) {
             ArrayList<Vertex> hitBox = new ArrayList<>();
                 for (int j = 0; j < 4; j++) {
                     hitBox.add(cubeHitbox.get(j));
@@ -147,11 +145,10 @@ public class Main {
             hitBox1.add(triangleHitbox.get(j));
         }
         double y = Util.getMinY(obj3.getPoints3D());
-        Object3D obj1 = Util.generateOBJ(0,0.5+y-0.1,10,obj3.getPoints3D(),obj3.getFaces3D(), Color.RED, hitBox1);
+        EnemyTank obj1 = Util.generateEnemyTank(0,-3.7,10,obj3.getPoints3D(),obj3.getFaces3D());
         for (int i = 0; i < obj1.getPoints3D().size(); i++) {
             System.out.println(obj1.getPoints3D().get(i).toString() + "01");
         }
-
         obj1.displayObject();
 
         start();
@@ -186,7 +183,7 @@ public class Main {
                     lol.add(Util.arrToVert(arr));
                 }
                 System.out.println("hihihi");
-                if(camera.runCollisionCheck(5,lol)) {
+                if(camera.runCollisionCheck(5,lol,camera).size()==0) {
                     System.out.println("LALALALA");
                     camera.translate(-camF[0] * CAMERA_SPEED, -camF[1] * CAMERA_SPEED, -camF[2] * CAMERA_SPEED);
                     collisionDir = false;
@@ -207,7 +204,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(5,lol)){
+                if(camera.runCollisionCheck(5,lol,camera).size()==0){
                     camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
                     collisionDir = false;
                 }else{
@@ -226,7 +223,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(camR[0]*CAMERA_SPEED, camR[1]*CAMERA_SPEED, camR[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(5,lol)){
+                if(camera.runCollisionCheck(5,lol,camera).size()==0){
                    // for (int i = 0; i < 4; i++) {
                     camera.translate( camR[0] * CAMERA_SPEED,  camR[1] * CAMERA_SPEED,  camR[2] * CAMERA_SPEED);
                     collisionDir = false;
@@ -246,7 +243,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(-camR[0]*CAMERA_SPEED, -camR[1]*CAMERA_SPEED, -camR[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(5,lol)){
+                if(camera.runCollisionCheck(5,lol,camera).size()==0){
                     //for (int i = 0; i < 4; i++) {
                         camera.translate(  -camR[0] * CAMERA_SPEED,   -camR[1] * CAMERA_SPEED,   -camR[2] * CAMERA_SPEED);
                         collisionDir = false;
@@ -266,7 +263,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix( camU[0]*CAMERA_SPEED,  camU[1]*CAMERA_SPEED,  camU[2]*CAMERA_SPEED),arr);
                     hitbox.set(i, Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(3,hitbox)){
+                if(camera.runCollisionCheck(3,hitbox,camera).size()==0){
                     //for (int i = 0; i < 4; i++) {
                     camera.translate( camU[0] * CAMERA_SPEED,  camU[1] * CAMERA_SPEED,  camU[2] * CAMERA_SPEED);
                 }
@@ -279,7 +276,7 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix( -camU[0]*CAMERA_SPEED,  -camU[1]*CAMERA_SPEED,  -camU[2]*CAMERA_SPEED),arr);
                     hitbox.set(i, Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(3,hitbox)){
+                if(camera.runCollisionCheck(3,hitbox,camera).size()==0){
                     //for (int i = 0; i < 4; i++) {
                     camera.translate( -camU[0] * CAMERA_SPEED,  -camU[1] * CAMERA_SPEED,  -camU[2] * CAMERA_SPEED);
                 }
@@ -336,9 +333,7 @@ public class Main {
     }
 
     public static void drawRadar(){
-        Object3D object = objectList.get(10);
         Circle circle = new Circle(WIDTH/2, 200, 100, Color.RED);
-        Circle circle1 = new Circle();
         Circle circle2 = new Circle(WIDTH/2, 200, 3, Color.RED);
         double x0 = WIDTH/2;
         double y0 = 200;
@@ -358,6 +353,11 @@ public class Main {
         polyline1.setStroke(Color.RED);
         polyline2.setStroke(Color.RED);
         root.getChildren().addAll(polyline1,polyline2,movingLine);
+        enemyInRange=false;
+
+        for (int i = 0; i < enemyTankList.size(); i++) {
+            Circle circle1 = new Circle();
+            EnemyTank object = enemyTankList.get(i);
 
         double dist = Math.sqrt(Math.pow((camera.getX()-object.getCenterX()),2)+Math.pow((camera.getZ()-object.getCenterZ()),2));
         if(dist < 100){
@@ -389,15 +389,16 @@ public class Main {
             circle1 = new Circle(x, -y, 2, Color.RED);
             circle1.setCenterX(circle1.getCenterX()+circle.getCenterX());
             circle1.setCenterY(circle1.getCenterY()+circle.getCenterY());
-        }else{
-            enemyInRange=false;
+            decals.add(circle1);
+            root.getChildren().addAll(circle1);
+            enemyInRange = true;
+        }
         }
         circle.setFill(Color.TRANSPARENT);
         circle.setStroke(Color.RED);
         decals.add(circle);
-        decals.add(circle1);
         decals.add(circle2);
-        root.getChildren().addAll(circle2,circle1,circle);
+        root.getChildren().addAll(circle2,circle);
     }
 
     public static void drawStatusText(){
@@ -434,8 +435,12 @@ public class Main {
         has_collided = true;
     }
 
+    public static void onGotShot(){
+        //TODO:THIS
+    }
+
     public static void start() {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
             TEXT_TICK++;
             if(TEXT_TICK>30){
                 TEXT_TICK=0;
@@ -457,6 +462,9 @@ public class Main {
             text1.setText(Math.round(camera.getX()) + " " + Math.round(camera.getY()) + " " + Math.round(camera.getZ()));
             Polyline polyline = new Polyline();
             polyline.setStroke(Color.GREEN);
+            for (int i = 0; i < enemyTankList.size(); i++) {
+                enemyTankList.get(i).enemyBehavior();
+            }
             if(has_collided){
                 if(impact_ticks < 5){
                     camera.translate(0,impact_skip*3,0);
@@ -492,6 +500,23 @@ public class Main {
                 }
                 System.out.println("<<<<<<<<<<<<<<<<<<");
             }
+            for (int i = 0; i < enemyTankList.size(); i++) {
+                EnemyTank enemyTank = enemyTankList.get(i);
+
+                if(!enemyTank.getThisBullets().isEmpty()){
+                    Bullet bullet = enemyTank.getThisBullets().get(0);
+                    System.out.println(">>>>>>>>>>>>>>>>>>");
+                    bullet.translate(bullet.getDirection().getX(),0,bullet.getDirection().getZ());
+                    double travelled = Math.sqrt(bullet.getDirection().getX()*bullet.getDirection().getX()+bullet.getDirection().getZ()*bullet.getDirection().getZ());
+                    bullet.setDistanceCovered(bullet.getDistanceCovered()+travelled);
+                    bullet.displayObject();
+                    if(bullet.getDistanceCovered()>MAX_BULLET_DISTANCE){
+                        enemyTank.getThisBullets().remove(bullet);
+                        enemyTank.getThisBullets().clear();
+                    }
+                    System.out.println("<<<<<<<<<<<<<<<<<<");
+                }
+            }
             //System.out.println(objectList.get(10).getPoints3D().size() + " " + objectList.get(10).getFaces3D().size() + " GGGGGG");
             //objectList.get(10).rotY(1);
             for (Object3D object:objectList) {
@@ -509,8 +534,26 @@ public class Main {
                             bullets.remove(bullets.get(0));
                             bullets.clear();
                     }}
+                }}
+                for (int i = 0; i < enemyTankList.size(); i++) {
+                    EnemyTank enemyTank = enemyTankList.get(i);
+
+                    if (!enemyTank.getThisBullets().isEmpty() && !object.equals(enemyTank)) {
+                        Bullet bullet = enemyTank.getThisBullets().get(0);
+                        double dist = Math.sqrt(Math.pow((enemyTank.getThisBullets().get(0).getX()-object.getX()),2)+Math.pow((enemyTank.getThisBullets().get(0).getZ()-object.getZ()),2));
+                        System.out.println(dist + " TROLOLOLOLOL");
+                        if(dist<3){
+                            Vertex vertex = enemyTank.getThisBullets().get(0).checkForHits(object);
+                            if(vertex!=null){
+                                System.out.println("YYYYYYYYY");
+                                object.setColor(Color.BLUE);
+                                enemyTank.getThisBullets().get(0).explode(vertex);
+                                enemyTank.getThisBullets().remove(enemyTank.getThisBullets().get(0));
+                                enemyTank.getThisBullets().clear();
+                            }}
+                    }
                 }
-            }}
+            }
             if(!particles.isEmpty()){
                 for (int i = 0; i < particles.size(); i++) {
                     Particle particle = particles.get(i);

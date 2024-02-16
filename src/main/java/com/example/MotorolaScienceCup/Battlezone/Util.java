@@ -89,19 +89,32 @@ public class Util {
     public static EnemyTank generateEnemyTank(double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         System.out.println("PPPPPPPPP");
         EnemyTank enemy = new EnemyTank(points3D,faces3D);
-        enemy.moveTo(0,0,0);
         ArrayList<Vertex> hitbox = new ArrayList<>();
+        Object3D object3D = Util.convertOBJ("ring.txt");
+        ArrayList<Vertex> hitbox1 = new ArrayList<>(object3D.getPoints3D());
         hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
         hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
         hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
         hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
         enemy.setHitBox2D(hitbox);
-        enemy.rotY(90);
+        enemy.setCollideHitBox(hitbox1);
+        enemy.setForward(new Vertex(-1,0,0));
+        enemy.setCenter(new Vertex(0,0,0));
+        enemy.scaleTank(1.5,1.15,1.5);
+        enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
+        enemy.rotateTank(90);
         enemy.setRotation(0);
-        enemy.setForward(new Vertex(0,0,1));
         enemy.rotateTank(Math.random()*360);
-        enemy.moveTo(x,y,z);
+        enemy.moveTank(new Vertex(x,y,z));
+        enemy.setTarget(new Vertex(enemy.getCenter().getX() + Math.random()*60-30,0,enemy.getCenter().getZ() + Math.random()*60-30));
         enemy.setColor(Color.GREEN);
+        enemy.setAttackMode(false);
+        enemy.setWillShoot(false);
+        enemy.setRotating(true);
+        enemy.setRotateDir(-1);
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
+        Main.objectList.add(enemy);
+        Main.enemyTankList.add(enemy);
         return enemy;
     }
 
@@ -171,6 +184,10 @@ public class Util {
         return x;
     }
 
+    public static double getDistance(Vertex vertex1, Vertex vertex2){
+        double dist = Math.sqrt(Math.pow((vertex1.getX() - vertex2.getX()), 2) + Math.pow((vertex1.getZ() - vertex2.getZ()), 2));
+        return dist;
+    }
     public static double getMaxZ(ArrayList<Vertex> points){
         double z = points.get(0).getZ();
         for (int i = 0; i < points.size(); i++) {
