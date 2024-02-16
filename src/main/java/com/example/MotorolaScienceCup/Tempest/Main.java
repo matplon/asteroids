@@ -39,7 +39,7 @@ public class Main {
     static boolean shoot;
     static boolean goRight;
     static boolean goLeft;
-    static int LEVEL = 0;
+    static int LEVEL = 1;
     static int flippersNumber = 10;
 
     static double bigSideLength;
@@ -93,6 +93,7 @@ public class Main {
 //        root.getChildren().add(flipper);
 //        flipper.setStroke(Color.RED);
 //        panels.get(14).addFlipper(flipper);
+//        flippers.add(flipper);
 
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = true;
@@ -133,7 +134,7 @@ public class Main {
             for (Flipper flipper : flippers){
                 flipper.move();
             }
-            System.out.println(flippers.size());
+//            System.out.println(flippers.size());
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();

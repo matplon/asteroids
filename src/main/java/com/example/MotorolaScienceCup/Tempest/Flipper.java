@@ -305,10 +305,7 @@ public class Flipper extends BetterPolygon {
         List<FlipperBullet> bulletsToRemove = new ArrayList<>();
         for (FlipperBullet bulletbullet : flipperBullets) {
             bulletbullet.move();
-            Circle circle = new Circle(bulletbullet.innerSqr.getCenterX(), bulletbullet.innerSqr.getCenterY(), 3);
-            if (circle.intersects(currentPanel.getBigSide().getLayoutBounds())) {
-                bulletsToRemove.add(bulletbullet);
-            }
+            if (bulletbullet.checkIfOutisde()) bulletsToRemove.add(bulletbullet);
         }
         for (FlipperBullet bulletBullet : bulletsToRemove) {
             bulletBullet.remove();
@@ -323,13 +320,13 @@ public class Flipper extends BetterPolygon {
         }
     }
 
-    public static void updateSeeds(){
-        for (FlipperSeed seed : seedList){
-            if(!seed.done) seed.move();
+    public static void updateSeeds() {
+        for (FlipperSeed seed : seedList) {
+            if (!seed.done) seed.move();
             else seedQueue.add(seed);
         }
         FlipperSeed topSeed = seedQueue.poll();
-        if(topSeed != null){
+        if (topSeed != null) {
             seedList.remove(topSeed);
             topSeed.remove();
 
@@ -338,13 +335,13 @@ public class Flipper extends BetterPolygon {
             Main.root.getChildren().add(flipper);
             flipper.setStroke(Color.RED);
         }
-        if(seedList.isEmpty() && seedQueue.isEmpty()) seedsDone = true;
+        if (seedList.isEmpty() && seedQueue.isEmpty()) seedsDone = true;
     }
 
     private static class FlipperSeed {
         private final double CENTER_X = Graphics.mapCenterX;
         private final double CENTER_Y = Graphics.mapCenterY;
-        private double RADIUS = 15.0;
+        private double RADIUS = 4.0;
         private final double ANGULAR_SPEED = 0.02;
         private final double linearSpeed = 7.0;
         private double DEST_X;
@@ -353,6 +350,7 @@ public class Flipper extends BetterPolygon {
         private boolean spiral;
         private boolean done;
         private Panel chosenPanel;
+        private double T;
 
         private FlipperSeed() {
             done = false;
@@ -375,13 +373,13 @@ public class Flipper extends BetterPolygon {
             choosePanel();
         }
 
-        private void chooseMotion(){
+        private void chooseMotion() {
             Random random = new Random();
             int chooser = random.nextInt(2);
             spiral = (chooser == 0);
         }
 
-        private void choosePanel(){
+        private void choosePanel() {
             Random random = new Random();
             int panelIndex = random.nextInt(Main.panels.size());
             List<Double> points = Main.panels.get(panelIndex).getSmallSide().getPoints();
@@ -391,10 +389,14 @@ public class Flipper extends BetterPolygon {
             DEST_X = points.getFirst() + randomT * (points.get(2) - points.getFirst());
             DEST_Y = points.get(1) + randomT * (points.getLast() - points.get(1));
             seed.setVelocity(new Vector(linearSpeed, Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX())));
+            seed.setAngle(Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX()));
+
+            double s = Math.sqrt(Math.pow(DEST_Y - seed.getCenterY(), 2) + Math.pow(DEST_X - seed.getCenterX(), 2));
+            T = s / linearSpeed;
         }
 
-        private void move(){
-            if(spiral){
+        private void move() {
+            if (spiral) {
                 double currentTime = System.currentTimeMillis();
                 double angle = ANGULAR_SPEED * currentTime;
                 double spiralX = CENTER_X + RADIUS * Math.cos(angle) * angle;
@@ -415,15 +417,14 @@ public class Flipper extends BetterPolygon {
                 double newY = spiralY + dirY * speed;
 
                 seed.moveTo(newX, newY);
-            }
-            else{
+            } else {
                 seed.updatePosition();
-                Circle destination = new Circle(DEST_X, DEST_Y, 1);
-                done = seed.intersects(destination.getLayoutBounds());
+                T--;
+                if(T <= 0) done = true;
             }
         }
 
-        private void remove(){
+        private void remove() {
             Main.root.getChildren().remove(seed);
         }
     }
@@ -445,8 +446,8 @@ public class Flipper extends BetterPolygon {
             innerSqr.scale(innerScale);
             innerSqr.rotate(45);
 
-            outerSqr.moveTo(getCenterX(), getCenterY());
-            innerSqr.moveTo(getCenterX(), getCenterY());
+            outerSqr.moveTo(pointer.getCenterX(), pointer.getCenterY());
+            innerSqr.moveTo(pointer.getCenterX(), pointer.getCenterY());
 
             outerPoints = new ArrayList<>();
             innerPoints = new ArrayList<>();
@@ -470,6 +471,41 @@ public class Flipper extends BetterPolygon {
                 Main.root.getChildren().add(point2);
             }
         }
+
+        private boolean checkIfOutisde() {
+            double x1 = currentPanel.getRightSide().getPoints().get(2);
+            double y1 = currentPanel.getRightSide().getPoints().get(3);
+
+            double x2 = currentPanel.getLeftSide().getPoints().get(2);
+            double y2 = currentPanel.getLeftSide().getPoints().get(3);
+
+            if (x1 < x2) {
+                if(y1 < y2){
+                    if ((innerSqr.getCenterX() > (x1 + x2) / 2) || innerSqr.getCenterY() < (y1 + y2) / 2) return true;
+                }
+                else if(y1 > y2){
+                    if ((innerSqr.getCenterX() < (x1 + x2) / 2) || (innerSqr.getCenterY() > (y1 + y2) / 2)) return true;
+                }
+                else if(innerSqr.getCenterY() < (y1 + y2)/2) return true;
+            }
+            else if(x1 > x2){
+                if(y1 < y2){
+                    if ((innerSqr.getCenterY() > (x1 + x2) / 2) || (innerSqr.getCenterY() > (y1 + y2) / 2)) return true;
+                }
+                else if(y1 > y2){
+                    if ((innerSqr.getCenterX() < (x1 + x2) / 2) || (innerSqr.getCenterY() > (y1 + y2) / 2)) return true;
+                }
+                else if(innerSqr.getCenterY() > (y1 + y2)/2) return true;
+            }
+            else if(y1 < y2){
+                if(innerSqr.getCenterX() > (x1 + x2)/2) return true;
+            }
+            else if(y1 > y2){
+                if(innerSqr.getCenterX() < (x1 + x2)/2) return true;
+            }
+            return false;
+        }
+
 
         private void updatePoints() {
             int index = 0;
