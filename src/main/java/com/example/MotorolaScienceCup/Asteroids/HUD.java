@@ -27,7 +27,7 @@ public class HUD {
     private static final int pointsTextX = 15;
     private static final int pointsTextY = 100;
     private static final int fontSize = 50;
-    private static final String fontStyle = "Times New Roman";
+    private static final String fontStyle = "Public Pixel";
     private static List<Double> pointsHeart;
 
     private static Font font = new Font(fontStyle, fontSize);
