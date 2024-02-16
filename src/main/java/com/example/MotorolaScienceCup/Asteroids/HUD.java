@@ -144,7 +144,8 @@ public class HUD {
                     throw new RuntimeException(e);
                 }
                 try {
-                    writer.write(HUD.getPoints());
+                    writer.write(HUD.getPoints() + "");
+                    writer.close();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -159,7 +160,8 @@ public class HUD {
                 throw new RuntimeException(e);
             }
             try {
-                writer.write(HUD.getPoints());
+                writer.write(HUD.getPoints() + "");
+                writer.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
