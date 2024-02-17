@@ -86,9 +86,11 @@ public class Util {
         return bullet;
     }
 
-    public static EnemyTank generateEnemyTank(double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
+    public static EnemyTank generateEnemyTank(double x, double y, double z){
         System.out.println("PPPPPPPPP");
-        EnemyTank enemy = new EnemyTank(points3D,faces3D);
+        Object3D object = convertOBJ("normalTank.txt");
+        ArrayList<Vertex> points3D = object.getPoints3D();
+        EnemyTank enemy = new EnemyTank(object.getPoints3D(),object.getFaces3D());
         ArrayList<Vertex> hitbox = new ArrayList<>();
         Object3D object3D = Util.convertOBJ("ring.txt");
         ArrayList<Vertex> hitbox1 = new ArrayList<>(object3D.getPoints3D());
@@ -106,15 +108,55 @@ public class Util {
         enemy.setRotation(0);
         enemy.rotateTank(Math.random()*360);
         enemy.moveTank(new Vertex(x,y,z));
-        enemy.setTarget(new Vertex(enemy.getCenter().getX() + Math.random()*60-30,0,enemy.getCenter().getZ() + Math.random()*60-30));
+        enemy.setTarget(new Vertex(enemy.getCenter().getX() + Math.random()*50-25,0,enemy.getCenter().getZ() + Math.random()*50-25));
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         enemy.setColor(Color.GREEN);
         enemy.setAttackMode(false);
         enemy.setWillShoot(false);
         enemy.setRotating(true);
-        enemy.setRotateDir(-1);
+        enemy.setMoveDir(1);
+        enemy.setRotateDir(enemy.getExactRotationDir());
         enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         Main.objectList.add(enemy);
         Main.enemyTankList.add(enemy);
+        return enemy;
+    }
+
+    public static SuperTank generateSuperTank(double x, double y, double z){
+        System.out.println("PPPPPPPPP");
+        Object3D object = convertOBJ("superTank.txt");
+        ArrayList<Vertex> points3D = object.getPoints3D();
+        SuperTank enemy = new SuperTank(object.getPoints3D(),object.getFaces3D());
+        ArrayList<Vertex> hitbox = new ArrayList<>();
+        Object3D object3D = Util.convertOBJ("superRing.txt");
+        ArrayList<Vertex> hitbox1 = new ArrayList<>(object3D.getPoints3D());
+        hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
+        hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
+        hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
+        hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
+        enemy.setHitBox2D(hitbox);
+        enemy.setCollideHitBox(hitbox1);
+        enemy.setForward(new Vertex(-1,0,0));
+        enemy.setCenter(new Vertex(0,0,0));
+        enemy.scaleTank(2,1.5,2);
+        enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
+        enemy.rotateTank(90);
+        enemy.setRotation(0.2);
+        enemy.rotateTank(Math.random()*360);
+        enemy.moveTank(new Vertex(2*x,2*y,2*z));
+        enemy.setTarget(new Vertex(Main.camera.getX() + Math.random()*30-15,0,Main.camera.getZ() + Math.random()*30-15));
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
+        enemy.setColor(Color.GREEN);
+        enemy.setAttackMode(true);
+        enemy.setWillShoot(true);
+        enemy.setRotating(true);
+        enemy.setMoving(false);
+        enemy.setMoveDir(1);
+        enemy.setRotateDir(enemy.getExactRotationDir());
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
+        enemy.setHP(2);
+        Main.objectList.add(enemy);
+        Main.SuperTankList.add(enemy);
         return enemy;
     }
 

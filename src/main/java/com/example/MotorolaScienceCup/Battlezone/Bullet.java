@@ -13,6 +13,8 @@ public class Bullet extends Object3D{
 
     private Vertex origin;
 
+    private Object3D parent;
+
     private Vertex direction;
     public Bullet(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         super(points3D, faces3D);
@@ -41,6 +43,14 @@ public class Bullet extends Object3D{
 
     public void setDirection(Vertex direction) {
         this.direction = direction;
+    }
+
+    public Object3D getParent() {
+        return parent;
+    }
+
+    public void setParent(Object3D parent) {
+        this.parent = parent;
     }
 
     public void explode(Vertex vertex){

@@ -53,6 +53,10 @@ public class Main {
 
     static ArrayList<EnemyTank> enemyTankList = new ArrayList<>();
 
+    static ArrayList<SuperTank> SuperTankList = new ArrayList<>();
+
+    static ArrayList<EnemyTank> fullTankList = new ArrayList<>();
+
     static ArrayList<Polyline> lineList = new ArrayList<>();
 
     static ArrayList<Circle> decals = new ArrayList<>();
@@ -77,7 +81,7 @@ public class Main {
     public static AnchorPane root = new AnchorPane();
     public static Scene scene = new Scene(root,WIDTH,HEIGHT);
 
-    public static ArrayList<Bullet> bullets = new ArrayList<>();
+    public static ArrayList<Bullet> allBullets = new ArrayList<>();
 
     public static ArrayList<Particle> particles = new ArrayList<>();
     public static int MAX_PARTICLE_TICKS = 30;
@@ -134,7 +138,6 @@ public class Main {
             Object3D obj1 = Util.generateOBJ(Math.random()*100-50,0,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D(),Color.GREEN, hitBox);
             obj1.displayObject();
         }
-        Object3D obj3 = Util.convertOBJ("normalTank.txt");
         ArrayList<Vertex> hitBox1 = new ArrayList<>();
         ArrayList<Vertex> triangleHitbox = new ArrayList<>();
         triangleHitbox.add(new Vertex(0.6,0,-0.6));
@@ -144,12 +147,10 @@ public class Main {
         for (int j = 0; j < 4; j++) {
             hitBox1.add(triangleHitbox.get(j));
         }
-        double y = Util.getMinY(obj3.getPoints3D());
-        EnemyTank obj1 = Util.generateEnemyTank(0,-3.7,10,obj3.getPoints3D(),obj3.getFaces3D());
-        for (int i = 0; i < obj1.getPoints3D().size(); i++) {
-            System.out.println(obj1.getPoints3D().get(i).toString() + "01");
-        }
+        EnemyTank obj1 = Util.generateEnemyTank(0,-1.15,10);
+        SuperTank super1 = Util.generateSuperTank(10,-0.495,20);
         obj1.displayObject();
+        super1.displayObject();
 
         start();
 
@@ -354,10 +355,11 @@ public class Main {
         polyline2.setStroke(Color.RED);
         root.getChildren().addAll(polyline1,polyline2,movingLine);
         enemyInRange=false;
+        
 
-        for (int i = 0; i < enemyTankList.size(); i++) {
+        for (int i = 0; i < fullTankList.size(); i++) {
             Circle circle1 = new Circle();
-            EnemyTank object = enemyTankList.get(i);
+            Object3D object = fullTankList.get(i);
 
         double dist = Math.sqrt(Math.pow((camera.getX()-object.getCenterX()),2)+Math.pow((camera.getZ()-object.getCenterZ()),2));
         if(dist < 100){
@@ -441,7 +443,18 @@ public class Main {
 
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
+            fullTankList.clear();
+            fullTankList.addAll(enemyTankList);
+            fullTankList.addAll(SuperTankList);
             TEXT_TICK++;
+            if(camera.magTimer>=0){
+                camera.magTimer--;
+            }
+            for (int i = 0; i < fullTankList.size(); i++) {
+                if(fullTankList.get(i).getMagTimer()>=0) {
+                    fullTankList.get(i).setMagTimer(fullTankList.get(i).getMagTimer() - 1);
+                }
+            }
             if(TEXT_TICK>30){
                 TEXT_TICK=0;
             }
@@ -462,8 +475,8 @@ public class Main {
             text1.setText(Math.round(camera.getX()) + " " + Math.round(camera.getY()) + " " + Math.round(camera.getZ()));
             Polyline polyline = new Polyline();
             polyline.setStroke(Color.GREEN);
-            for (int i = 0; i < enemyTankList.size(); i++) {
-                enemyTankList.get(i).enemyBehavior();
+            for (int i = 0; i < fullTankList.size(); i++) {
+                fullTankList.get(i).enemyBehavior();
             }
             if(has_collided){
                 if(impact_ticks < 5){
@@ -479,6 +492,7 @@ public class Main {
                     polyline.setStroke(Color.GREEN);
                     impact_ticks = 0;
                     has_collided = false;
+                    camera.moveTo(camera.getX(),0,camera.getZ());
                 }
                 impact_ticks++;
             }else{
@@ -487,72 +501,50 @@ public class Main {
             }
             lineList.add(polyline);
             root.getChildren().add(polyline);
-            if(!bullets.isEmpty()){
-                Bullet bullet = bullets.get(0);
-                System.out.println(">>>>>>>>>>>>>>>>>>");
-                bullet.translate(bullet.getDirection().getX(),0,bullet.getDirection().getZ());
-                double travelled = Math.sqrt(bullet.getDirection().getX()*bullet.getDirection().getX()+bullet.getDirection().getZ()*bullet.getDirection().getZ());
-                bullet.setDistanceCovered(bullet.getDistanceCovered()+travelled);
-                bullet.displayObject();
-                if(bullet.getDistanceCovered()>MAX_BULLET_DISTANCE){
-                    bullets.remove(bullet);
-                    bullets.clear();
-                }
-                System.out.println("<<<<<<<<<<<<<<<<<<");
-            }
-            for (int i = 0; i < enemyTankList.size(); i++) {
-                EnemyTank enemyTank = enemyTankList.get(i);
-
-                if(!enemyTank.getThisBullets().isEmpty()){
-                    Bullet bullet = enemyTank.getThisBullets().get(0);
+            for (Bullet bullet: allBullets) {
                     System.out.println(">>>>>>>>>>>>>>>>>>");
                     bullet.translate(bullet.getDirection().getX(),0,bullet.getDirection().getZ());
                     double travelled = Math.sqrt(bullet.getDirection().getX()*bullet.getDirection().getX()+bullet.getDirection().getZ()*bullet.getDirection().getZ());
                     bullet.setDistanceCovered(bullet.getDistanceCovered()+travelled);
                     bullet.displayObject();
                     if(bullet.getDistanceCovered()>MAX_BULLET_DISTANCE){
-                        enemyTank.getThisBullets().remove(bullet);
-                        enemyTank.getThisBullets().clear();
+                        allBullets.remove(bullet);
                     }
                     System.out.println("<<<<<<<<<<<<<<<<<<");
-                }
+            }
+            if(allBullets.isEmpty()){
+                allBullets.clear();
             }
             //System.out.println(objectList.get(10).getPoints3D().size() + " " + objectList.get(10).getFaces3D().size() + " GGGGGG");
             //objectList.get(10).rotY(1);
-            for (Object3D object:objectList) {
-                if(object.getClass()!= Camera.class){
-                object.displayObject();
-                if(!bullets.isEmpty()){
-                    double dist = Math.sqrt(Math.pow((bullets.get(0).getX()-object.getX()),2)+Math.pow((bullets.get(0).getZ()-object.getZ()),2));
-                    System.out.println(dist + " TROLOLOLOLOL");
-                    if(dist<3){
-                        Vertex vertex = bullets.get(0).checkForHits(object);
-                        if(vertex!=null){
-                            System.out.println("YYYYYYYYY");
-                            object.setColor(Color.BLUE);
-                            bullets.get(0).explode(vertex);
-                            bullets.remove(bullets.get(0));
-                            bullets.clear();
-                    }}
-                }}
-                for (int i = 0; i < enemyTankList.size(); i++) {
-                    EnemyTank enemyTank = enemyTankList.get(i);
-
-                    if (!enemyTank.getThisBullets().isEmpty() && !object.equals(enemyTank)) {
-                        Bullet bullet = enemyTank.getThisBullets().get(0);
-                        double dist = Math.sqrt(Math.pow((enemyTank.getThisBullets().get(0).getX()-object.getX()),2)+Math.pow((enemyTank.getThisBullets().get(0).getZ()-object.getZ()),2));
+            for (int i=0;i<objectList.size();i++) {
+                Object3D object = objectList.get(i);
+                if(object.getClass()!= Camera.class) {
+                    object.displayObject();
+                }
+                if(!allBullets.isEmpty()){
+                    for (int j = 0; j < allBullets.size(); j++) {
+                        if(!allBullets.get(j).getParent().equals(object)){
+                        double dist = Math.sqrt(Math.pow((allBullets.get(j).getX()-object.getX()),2)+Math.pow((allBullets.get(j).getZ()-object.getZ()),2));
                         System.out.println(dist + " TROLOLOLOLOL");
                         if(dist<3){
-                            Vertex vertex = enemyTank.getThisBullets().get(0).checkForHits(object);
+                            Vertex vertex = allBullets.get(0).checkForHits(object);
                             if(vertex!=null){
                                 System.out.println("YYYYYYYYY");
                                 object.setColor(Color.BLUE);
-                                enemyTank.getThisBullets().get(0).explode(vertex);
-                                enemyTank.getThisBullets().remove(enemyTank.getThisBullets().get(0));
-                                enemyTank.getThisBullets().clear();
-                            }}
-                    }
-                }
+                                allBullets.get(0).explode(vertex);
+                                allBullets.remove(allBullets.get(0));
+                                allBullets.clear();
+                                if(fullTankList.contains(object)){
+                                    ((EnemyTank) object).takeHit();
+                                }
+                                if(object.equals(camera)){
+                                    onGotShot();
+                                }
+                            }
+                        }
+                }}}
+
             }
             if(!particles.isEmpty()){
                 for (int i = 0; i < particles.size(); i++) {
