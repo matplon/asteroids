@@ -86,7 +86,7 @@ public class Object3D {
                 double dist = Math.sqrt(Math.pow((this.getX() - object.getX()), 2) + Math.pow((this.getZ() - object.getZ()), 2));
                 System.out.println(dist + " TROLOLOLOLOL");
                 if (dist < range) {
-                    if(object.getClass() != EnemyTank.class){
+                    if(!(object instanceof EnemyTank)){
                         ArrayList<Vertex> res = Util.hitBoxIntersect(object.getHitBox2D(), myHitBox);
                         for (Vertex vert : res) {
                             objArr.add(object);

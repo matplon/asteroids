@@ -7,7 +7,7 @@ public class SuperTank extends EnemyTank{
 
     private int HP;
     
-    public static double SUPER_SPEED = 0.4;
+    public static double SUPER_SPEED = 0.4*0.25;
     public static double SUPER_ROT_SPEED = 1;
     public SuperTank(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         super(points3D, faces3D);
@@ -58,7 +58,7 @@ public class SuperTank extends EnemyTank{
             if(getWaitTimer()<0){
                 setWaitTimer(-1);
                 double rand = Math.random();
-                if(rand<0.85){
+                if(rand<2){
                     setWaiting(false);
                     setRotating(true);
                     setWillShoot(true);

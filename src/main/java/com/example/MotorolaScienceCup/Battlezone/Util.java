@@ -107,7 +107,7 @@ public class Util {
         enemy.rotateTank(90);
         enemy.setRotation(0);
         enemy.rotateTank(Math.random()*360);
-        enemy.moveTank(new Vertex(x,y,z));
+        enemy.moveTank(new Vertex(x,-0.3,z));
         enemy.setTarget(new Vertex(enemy.getCenter().getX() + Math.random()*50-25,0,enemy.getCenter().getZ() + Math.random()*50-25));
         enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         enemy.setColor(Color.GREEN);
@@ -119,6 +119,49 @@ public class Util {
         enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         Main.objectList.add(enemy);
         Main.enemyTankList.add(enemy);
+        return enemy;
+    }
+
+    public static Missile generateMissile(double x, double y, double z){
+        System.out.println("PPPPPPPPP");
+        Object3D object = convertOBJ("missile.txt");
+        ArrayList<Vertex> points3D = object.getPoints3D();
+        Missile enemy = new Missile(object.getPoints3D(),object.getFaces3D());
+        ArrayList<Vertex> hitbox1 = new ArrayList<>();
+        hitbox1.add(object.getPoints3D().get(1));
+        hitbox1.add(object.getPoints3D().get(3));
+        hitbox1.add(object.getPoints3D().get(7));
+        ArrayList<Vertex> hitbox = new ArrayList<>();
+        hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
+        hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
+        hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
+        hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
+        enemy.setHitBox2D(hitbox1);
+        enemy.setCollideHitBox(hitbox);
+        enemy.setForward(new Vertex(1,0,0));
+        enemy.setCenter(new Vertex(0,0,0));
+        enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
+        enemy.rotateTank(270);
+        enemy.setRotation(0);
+        enemy.rotateTank(Math.random()*360);
+        enemy.moveTank(new Vertex(x,y,z));
+        Vertex vertex = enemy.getCenter();
+        double[] arr = vertex.toArray();
+        arr = Util.multiplyTransform(Util.getTranslationMatrix(enemy.getForward().getX()*20-enemy.getCenter().getX(), 0,enemy.getForward().getZ()*20-enemy.getCenter().getZ()),arr);
+        arr = Util.multiplyTransform(Util.getRotationYMatrix(Math.random()*160-80),arr);
+        enemy.setTarget(Util.arrToVert(arr));
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
+        enemy.setColor(Color.GREEN);
+        enemy.setRotating(true);
+        enemy.setWaiting(false);
+        enemy.setMoving(false);
+        enemy.setMoveDir(1);
+        enemy.setRotateDir(enemy.getExactRotationDir());
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
+        enemy.setHasSpawned(true);
+        enemy.setFlying(true);
+        Main.objectList.add(enemy);
+        Main.missileList.add(enemy);
         return enemy;
     }
 
@@ -141,9 +184,9 @@ public class Util {
         enemy.scaleTank(2,1.5,2);
         enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
         enemy.rotateTank(90);
-        enemy.setRotation(0.2);
+        enemy.setRotation(0);
         enemy.rotateTank(Math.random()*360);
-        enemy.moveTank(new Vertex(2*x,2*y,2*z));
+        enemy.moveTank(new Vertex(x,-0.25,z));
         enemy.setTarget(new Vertex(Main.camera.getX() + Math.random()*30-15,0,Main.camera.getZ() + Math.random()*30-15));
         enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         enemy.setColor(Color.GREEN);

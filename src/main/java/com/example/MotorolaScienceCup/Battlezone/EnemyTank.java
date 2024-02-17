@@ -43,7 +43,7 @@ public class EnemyTank extends Object3D{
 
     private double magTimer;
 
-    public static double TANK_SPEED = 0.25;
+    public static double TANK_SPEED = 0.25*0.25;
 
     public static double TANK_ROT_SPEED = 0.75;
 
@@ -179,26 +179,26 @@ public class EnemyTank extends Object3D{
         for (int i = 0; i < hitbox.size(); i++) {
             Vertex vert = hitbox.get(i);
             double[] arr = vert.toArray();
-            arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX()*TANK_SPEED,direction.getY()*TANK_SPEED,direction.getZ()*TANK_SPEED),arr);
+            arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX(),direction.getY(),direction.getZ()),arr);
             lol.add(Util.arrToVert(arr));
         }
         System.out.println("hihihi");
         ArrayList<Object3D> array = this.runCollisionCheck(5,lol,this);
-        if(array.size()==0) {
+        if(array.isEmpty()) {
             System.out.println(getRotation() + " HHHHHHHHHHHHHHHHHHHH");
             Vertex vert = this.getCenter();
             double[] arr1 = vert.toArray();
-            arr1 = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX()*TANK_SPEED,direction.getY()*TANK_SPEED,direction.getZ()*TANK_SPEED),arr1);
+            arr1 = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX(),direction.getY(),direction.getZ()),arr1);
             this.setCenter(Util.arrToVert(arr1));
             for (int i = 0; i < this.getPoints3D().size(); i++) {
-                double[][] translationMatrix = Util.getTranslationMatrix(direction.getX()*TANK_SPEED, direction.getY()*TANK_SPEED, direction.getZ()*TANK_SPEED);
+                double[][] translationMatrix = Util.getTranslationMatrix(direction.getX(), direction.getY(), direction.getZ());
                 double[] arr = this.getPoints3D().get(i).toArray();
                 arr = Util.multiplyTransform(translationMatrix, arr);
                 this.getPoints3D().set(i, Util.arrToVert(arr));
 
             }
             for (int i = 0; i < this.getHitBox2D().size(); i++) {
-                double[][] translationMatrix = Util.getTranslationMatrix(direction.getX()*TANK_SPEED, direction.getY()*TANK_SPEED, direction.getZ()*TANK_SPEED);
+                double[][] translationMatrix = Util.getTranslationMatrix(direction.getX(), direction.getY(), direction.getZ());
                 double[] arr = this.getHitBox2D().get(i).toArray();
                 System.out.println(Arrays.toString(arr) + "ZZZZZZZZZZ");
                 arr = Util.multiplyTransform(translationMatrix, arr);
@@ -207,7 +207,7 @@ public class EnemyTank extends Object3D{
 
             }
             for (int i = 0; i < this.getCollideHitBox().size(); i++) {
-                double [][] translationMatrix = Util.getTranslationMatrix(direction.getX()*TANK_SPEED, direction.getY()*TANK_SPEED, direction.getZ()*TANK_SPEED);
+                double [][] translationMatrix = Util.getTranslationMatrix(direction.getX(), direction.getY(), direction.getZ());
                 double [] arr = this.getCollideHitBox().get(i).toArray();
                 System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
                 arr = Util.multiplyTransform(translationMatrix, arr);
@@ -219,22 +219,23 @@ public class EnemyTank extends Object3D{
             this.setY(this.getCenter().getY());
             this.setZ(this.getCenter().getZ());
         }else{
-            if(!array.contains(Main.camera)) {
-                this.setTarget(new Vertex(this.getCenter().getX() - this.getForward().getX() * 10, 0, this.getCenter().getZ() - this.getForward().getZ() * 10));
-                this.setAttackMode(true);
-                this.setMoving(true);
-                this.setWaiting(false);
-                this.setRotating(false);
-                this.setMoveDir(-1);
-            }else{
-                this.setTarget(new Vertex(Main.camera.getX(), 0, Main.camera.getZ()));
-                this.setAttackMode(true);
-                this.setMoving(false);
-                this.setRotating(true);
-                setWillShoot(true);
-                this.setTargetRotation(this.getLookAt(this.getTarget()));
-                setRotateDir(getExactRotationDir());
-            }
+                System.out.println("]]]]]]]]]]]]]]]]]]");
+                if(!array.contains(Main.camera)) {
+                    this.setTarget(new Vertex(this.getCenter().getX() - this.getForward().getX() * 10, 0, this.getCenter().getZ() - this.getForward().getZ() * 10));
+                    this.setAttackMode(true);
+                    this.setMoving(true);
+                    this.setWaiting(false);
+                    this.setRotating(false);
+                    this.setMoveDir(-1);
+                }else{
+                    this.setTarget(new Vertex(Main.camera.getX(), 0, Main.camera.getZ()));
+                    this.setAttackMode(true);
+                    this.setMoving(false);
+                    this.setRotating(true);
+                    setWillShoot(true);
+                    this.setTargetRotation(this.getLookAt(this.getTarget()));
+                    setRotateDir(getExactRotationDir());
+                }
         }
     }
     public void shootTank(){

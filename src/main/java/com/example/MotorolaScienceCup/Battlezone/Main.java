@@ -55,6 +55,8 @@ public class Main {
 
     static ArrayList<SuperTank> superTankList = new ArrayList<>();
 
+    static ArrayList<Missile> missileList = new ArrayList<>();
+
     static ArrayList<EnemyTank> fullTankList = new ArrayList<>();
 
     static ArrayList<Polyline> lineList = new ArrayList<>();
@@ -130,7 +132,7 @@ public class Main {
         camera.setHitBox2D(camHitbox);
         camera.translate(0,0,-10);
         objectList.add(camera);
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 60; i++) {
             ArrayList<Vertex> hitBox = new ArrayList<>();
                 for (int j = 0; j < 4; j++) {
                     hitBox.add(cubeHitbox.get(j));
@@ -149,8 +151,9 @@ public class Main {
         for (int j = 0; j < 4; j++) {
             hitBox1.add(triangleHitbox.get(j));
         }
-        EnemyTank obj1 = Util.generateEnemyTank(0,-1.15,10);
-        SuperTank super1 = Util.generateSuperTank(10,-0.495,20);
+        EnemyTank obj1 = Util.generateEnemyTank(0,0,10);
+        SuperTank super1 = Util.generateSuperTank(10,0,20);
+        Missile missile = Util.generateMissile(00,50,100);
         obj1.displayObject();
         super1.displayObject();
 
@@ -448,12 +451,13 @@ public class Main {
             fullTankList.clear();
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
+            fullTankList.addAll(missileList);
             TEXT_TICK++;
             if(camera.magTimer>=0){
                 camera.magTimer--;
             }
             for (int i = 0; i < fullTankList.size(); i++) {
-                if(fullTankList.get(i).getMagTimer()>=0) {
+                if(fullTankList.get(i).getMagTimer()>=0 && !(fullTankList.get(i) instanceof Missile || fullTankList.get(i) instanceof Ufo)) {
                     fullTankList.get(i).setMagTimer(fullTankList.get(i).getMagTimer() - 1);
                 }
             }
@@ -524,7 +528,7 @@ public class Main {
                 if(object.getClass()!= Camera.class) {
                     object.displayObject();
                 }
-                if(!allBullets.isEmpty()){
+                if(!allBullets.isEmpty()&&!(object instanceof Bullet)){
                     for (int j = 0; j < allBullets.size(); j++) {
                         if(!allBullets.get(j).getParent().equals(object)){
                         double dist = Math.sqrt(Math.pow((allBullets.get(j).getX()-object.getX()),2)+Math.pow((allBullets.get(j).getZ()-object.getZ()),2));
