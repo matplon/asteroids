@@ -138,6 +138,7 @@ public class Util {
         hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
         enemy.setHitBox2D(hitbox1);
         enemy.setCollideHitBox(hitbox);
+        enemy.scale(0.75,0.75,0.75);
         enemy.setForward(new Vertex(1,0,0));
         enemy.setCenter(new Vertex(0,0,0));
         enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));

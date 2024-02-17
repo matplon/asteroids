@@ -6,7 +6,7 @@ import java.util.Arrays;
 public class Missile extends EnemyTank {
 
 
-    public static double MISSILE_SPEED = 0.25;
+    public static double MISSILE_SPEED = 0.7;
     public static double MISSILE_ROT_SPEED = 10;
 
     private boolean isFlying;
