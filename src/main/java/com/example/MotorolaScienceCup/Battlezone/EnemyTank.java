@@ -4,6 +4,7 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import static java.lang.Math.abs;
 
@@ -282,11 +283,35 @@ public class EnemyTank extends Object3D{
     }
 
     public void explode(){
-
+        ArrayList<Face> faces = this.getFaces3D();
+        for (int i = 0; i < 6; i++) {
+            int pick = new Random().nextInt(faces.size());
+            Face face = faces.get(pick);
+            faces.remove(pick);
+            ArrayList<Vertex> points = new ArrayList<>();
+            ArrayList<Integer> faceInd = new ArrayList<>();
+            for (int j = 0; j < face.getIndexes().size(); j++) {
+                points.add(this.getPoints3D().get(face.getIndexes().get(j)));
+            }
+            for (int j = 0; j < points.size(); j++) {
+                faceInd.add(j);
+            }
+            Face face1 = new Face(faceInd);
+            ArrayList<Face> facesFinal = new ArrayList<>();
+            facesFinal.add(face1);
+            Particle particle = new Particle(points,facesFinal, new Vertex(Math.random()*10-5, Math.random()*7, Math.random()*10-5));
+            particle.rotX(Math.random()*360);
+            particle.rotY(Math.random()*360);
+            particle.rotZ(Math.random()*360);
+            particle.setRotationVert(new Vertex(Math.random()*10-5, Math.random()*10, Math.random()*10-5));
+            particle.setColor(Color.GREEN);
+            Main.particles.add(particle);
+        }
     }
     public void takeHit(){
         Main.enemyTankList.remove(this);
         Main.fullTankList.remove(this);
+        Main.objectList.remove(this);
         explode();
     }
     public void enemyBehavior(){

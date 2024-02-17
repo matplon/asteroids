@@ -53,7 +53,7 @@ public class Main {
 
     static ArrayList<EnemyTank> enemyTankList = new ArrayList<>();
 
-    static ArrayList<SuperTank> SuperTankList = new ArrayList<>();
+    static ArrayList<SuperTank> superTankList = new ArrayList<>();
 
     static ArrayList<EnemyTank> fullTankList = new ArrayList<>();
 
@@ -87,6 +87,8 @@ public class Main {
     public static int MAX_PARTICLE_TICKS = 30;
 
     public static double PARTICLE_SPEED = 0.05;
+
+    public static double PARTICLE_ROT_SPEED = 1;
 
 
     public static Camera camera;
@@ -445,7 +447,7 @@ public class Main {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
             fullTankList.clear();
             fullTankList.addAll(enemyTankList);
-            fullTankList.addAll(SuperTankList);
+            fullTankList.addAll(superTankList);
             TEXT_TICK++;
             if(camera.magTimer>=0){
                 camera.magTimer--;
@@ -528,12 +530,12 @@ public class Main {
                         double dist = Math.sqrt(Math.pow((allBullets.get(j).getX()-object.getX()),2)+Math.pow((allBullets.get(j).getZ()-object.getZ()),2));
                         System.out.println(dist + " TROLOLOLOLOL");
                         if(dist<3){
-                            Vertex vertex = allBullets.get(0).checkForHits(object);
+                            Vertex vertex = allBullets.get(j).checkForHits(object);
                             if(vertex!=null){
                                 System.out.println("YYYYYYYYY");
                                 object.setColor(Color.BLUE);
-                                allBullets.get(0).explode(vertex);
-                                allBullets.remove(allBullets.get(0));
+                                allBullets.get(j).explode(vertex);
+                                allBullets.remove(allBullets.get(j));
                                 allBullets.clear();
                                 if(fullTankList.contains(object)){
                                     ((EnemyTank) object).takeHit();
@@ -551,6 +553,11 @@ public class Main {
                     Particle particle = particles.get(i);
                     particle.displayObject();
                     particle.translate(particle.getDirection().getX()*PARTICLE_SPEED, particle.getDirection().getY()*PARTICLE_SPEED, particle.getDirection().getZ()*PARTICLE_SPEED);
+                    if(particle.getRotationVert()!=null){
+                        particle.rotX(particle.getRotationVert().getX()*PARTICLE_ROT_SPEED);
+                        particle.rotY(particle.getRotationVert().getY()*PARTICLE_ROT_SPEED);
+                        particle.rotZ(particle.getRotationVert().getZ()*PARTICLE_ROT_SPEED);
+                    }
                     particle.setTickrate(particle.getTickrate()+1);
                     if(particle.getTickrate() > MAX_PARTICLE_TICKS){
                         particles.remove(i);

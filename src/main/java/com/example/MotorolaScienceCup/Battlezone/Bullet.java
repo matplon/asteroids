@@ -55,10 +55,6 @@ public class Bullet extends Object3D{
 
     public void explode(Vertex vertex){
         for (int i = 0; i < PARTICLE_COUNT; i++) {
-            System.out.println(vertex.toString() + " ::::::::::::");
-            Object3D obj = Util.convertOBJ("Cube.txt");
-            obj.scale(0.001,0.001,0.001);
-            obj.translate(vertex.getX(),vertex.getY(),vertex.getZ());
             ArrayList<Vertex> arr = new ArrayList<>();
             arr.add(new Vertex(vertex.getX(),vertex.getY(),vertex.getZ()));
             ArrayList<Integer> arr1 = new ArrayList<>();

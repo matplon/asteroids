@@ -24,6 +24,9 @@ public class SuperTank extends EnemyTank{
     public void takeHit(){
         setHP(getHP()-1);
         if(HP<=0){
+            Main.objectList.remove(this);
+            Main.superTankList.remove(this);
+            Main.fullTankList.remove(this);
             explode();
         }
     }

@@ -187,7 +187,7 @@ public class Object3D {
         }
         for (int i = 0; i < this.faces3D.size(); i++) {
             Face face = this.faces3D.get(i);
-            if(this.faces3D.size() > 1 && this.getFaces3D().get(0).getIndexes().size() > 1){
+            if(this.faces3D.size() >= 1 && this.getFaces3D().get(0).getIndexes().size() > 1){
             for (int j = 0; j < face.getIndexes().size(); j++) {
                 double ax;
                 double ay;
