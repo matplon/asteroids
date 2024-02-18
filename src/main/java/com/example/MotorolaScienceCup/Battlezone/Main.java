@@ -376,7 +376,7 @@ public class Main {
             Object3D object = fullTankList.get(i);
 
         double dist = Math.sqrt(Math.pow((camera.getX()-object.getCenterX()),2)+Math.pow((camera.getZ()-object.getCenterZ()),2));
-        if(dist < 1000){
+        if(dist < 100){
             enemyInRange = true;
             Vertex vertex = new Vertex(camera.getX(), camera.getY(), camera.getZ());
             Vertex obj = new Vertex(object.getX(), object.getY(), object.getZ());
@@ -536,7 +536,8 @@ public class Main {
             //objectList.get(10).rotY(1);
             for (int i=0;i<objectList.size();i++) {
                 Object3D object = objectList.get(i);
-                if(object.getClass()!= Camera.class) {
+                double distance = Util.getDistance(new Vertex(camera.getX(),camera.getY(),camera.getZ()),new Vertex(object.getX(), object.getY(), object.getZ()));
+                if(object.getClass()!= Camera.class && distance<150) {
                     object.displayObject();
                 }
                 boolean flying = false;
@@ -545,7 +546,7 @@ public class Main {
                     flying = ((Missile) object).isFlying();
                     grounded = ((Missile) object).isGrounded();
                 }
-                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&!(object instanceof Mine)&&(!flying||grounded)){
+                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&!(object instanceof Mine)&&(!flying||grounded)&&distance<150){
                     for (int j = 0; j < allBullets.size(); j++) {
                         if(!allBullets.get(j).getParent().equals(object)){
                         double dist = Math.sqrt(Math.pow((allBullets.get(j).getX()-object.getX()),2)+Math.pow((allBullets.get(j).getZ()-object.getZ()),2));

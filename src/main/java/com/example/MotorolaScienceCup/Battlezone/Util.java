@@ -123,19 +123,12 @@ public class Util {
         Object3D object = convertOBJ("UFO.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
         Object3D ring = convertOBJ("ufoRing.txt");
+        Object3D ring2 = convertOBJ("ringUfo.txt");
         Ufo enemy = new Ufo(object.getPoints3D(),object.getFaces3D());
-        ArrayList<Vertex> hitbox = new ArrayList<>(object.getPoints3D());
-        hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
-        hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
-        hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
-        hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
-        ArrayList<Vertex> hitbox2 = new ArrayList<>();
-        Face face1 = object.getFaces3D().get(8);
-        for (int i = 0; i < face1.getIndexes().size(); i++) {
-            hitbox2.add(points3D.get(face1.getIndexes().get(i)));
-        }
+        ArrayList<Vertex> hitbox2 = ring2.getPoints3D();
+
         enemy.setHitBox2D(hitbox2);
-        enemy.setCollideHitBox(ring.getPoints3D());
+        enemy.setCollideHitBox(new ArrayList<>(ring.getPoints3D()));
         enemy.setForward(new Vertex(0,0,1));
         enemy.setCenter(new Vertex(0,0,0));
         enemy.scale(1,0.7,1);
@@ -162,12 +155,9 @@ public class Util {
         EnemyTank enemy = new EnemyTank(object.getPoints3D(),object.getFaces3D());
         ArrayList<Vertex> hitbox = new ArrayList<>();
         Object3D object3D = Util.convertOBJ("ring.txt");
+        Object3D ring = Util.convertOBJ("tankHit.txt");
         ArrayList<Vertex> hitbox1 = new ArrayList<>(object3D.getPoints3D());
-        hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
-        hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
-        hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
-        hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
-        enemy.setHitBox2D(hitbox);
+        enemy.setHitBox2D(new ArrayList<>(ring.getPoints3D()));
         enemy.setCollideHitBox(hitbox1);
         enemy.setForward(new Vertex(-1,0,0));
         enemy.setCenter(new Vertex(0,0,0));
@@ -242,13 +232,10 @@ public class Util {
         Object3D object = convertOBJ("superTank.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
         SuperTank enemy = new SuperTank(object.getPoints3D(),object.getFaces3D());
-        ArrayList<Vertex> hitbox = new ArrayList<>();
+        Object3D ring = Util.convertOBJ("superTankHit.txt");
+        ArrayList<Vertex> hitbox = new ArrayList<>(ring.getPoints3D());
         Object3D object3D = Util.convertOBJ("superRing.txt");
         ArrayList<Vertex> hitbox1 = new ArrayList<>(object3D.getPoints3D());
-        hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
-        hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
-        hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
-        hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
         enemy.setHitBox2D(hitbox);
         enemy.setCollideHitBox(hitbox1);
         enemy.setForward(new Vertex(-1,0,0));
