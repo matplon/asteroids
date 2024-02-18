@@ -58,7 +58,7 @@ public class SuperTank extends EnemyTank{
             if(getWaitTimer()<0){
                 setWaitTimer(-1);
                 double rand = Math.random();
-                if(rand<2){
+                if(rand<0.9){
                     setWaiting(false);
                     setRotating(true);
                     setWillShoot(true);

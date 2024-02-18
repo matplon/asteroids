@@ -2,11 +2,12 @@ package com.example.MotorolaScienceCup.Battlezone;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Missile extends EnemyTank {
 
 
-    public static double MISSILE_SPEED = 0.7;
+    public static double MISSILE_SPEED = 0.35;
     public static double MISSILE_ROT_SPEED = 10;
 
     private boolean isFlying;
@@ -101,7 +102,7 @@ public class Missile extends EnemyTank {
         }
         if(array.isEmpty()&&isFlying&&!hasSpawned){
             if(getPoints3D().get(1).getY() > 0){
-                moveTank(new Vertex(0,-MISSILE_SPEED-100000,0));
+                moveTank(new Vertex(0,-getPoints3D().get(1).getY(),0));
             }else{
                 setFlying(false);
             }
@@ -115,12 +116,12 @@ public class Missile extends EnemyTank {
             System.out.println("QQQQQQQQQQQQQQ");
             if(getPoints3D().get(1).getY() > 1 && hasSpawned){
                 moveTank(new Vertex(0,-MISSILE_SPEED,0));
-            }else if(getPoints3D().get(1).getY() < 1 && getPoints3D().get(1).getY() !=0){
+            }else if(getPoints3D().get(1).getY() < 1 && getPoints3D().get(1).getY() !=0 && hasSpawned){
                 moveTank(new Vertex(0,-getPoints3D().get(1).getY(),0));
                 setHasSpawned(false);
                 setFlying(false);
             }
-            if(Util.getDistance(getTarget(), this.getCenter())<7){
+            if(Util.getDistance(getTarget(), this.getCenter())<5){
                 setWaiting(true);
                 setMoving(false);
                 setWaitTimer(Math.random()*2);
@@ -135,7 +136,7 @@ public class Missile extends EnemyTank {
             if(getWaitTimer()<0){
                 setWaitTimer(-1);
                 double rand = Math.random();
-                if(Util.getDistance(this.getCenter(), new Vertex(Main.camera.getX(), Main.camera.getY(), Main.camera.getZ()))<50){
+                if(Util.getDistance(this.getCenter(), new Vertex(Main.camera.getX(), Main.camera.getY(), Main.camera.getZ()))<40){
                     setWaiting(false);
                     setRotating(true);
                     setMoving(false);
@@ -147,11 +148,14 @@ public class Missile extends EnemyTank {
                     setWaiting(false);
                     setRotating(true);
                     setMoving(false);
-                    Vertex vertex = getCenter();
+                    Vertex vertex = getCenter().getVertDif(new Vertex(Main.camera.getX(),Main.camera.getY(),Main.camera.getZ()));
                     double[] arr = vertex.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix(getForward().getX()*20-getCenter().getX(), 0,getForward().getZ()*20-getCenter().getZ()),arr);
-                    arr = Util.multiplyTransform(Util.getRotationYMatrix(Math.random()*160-80),arr);
-                    setTarget(Util.arrToVert(arr));
+                    arr = Util.multiplyTransform(Util.getRotationYMatrix(new Random().nextDouble(-60,60)),arr);
+                    double offset = -Math.random()/4 - 0.25;
+                    for (int i = 0; i < arr.length; i++) {
+                        arr[i]*=offset;
+                    }
+                    setTarget(getCenter().getVertSum(Util.arrToVert(arr)));
                     setMoveDir(1);
                     setTargetRotation(getLookAt(getTarget()));
                     setRotateDir(getExactRotationDir());

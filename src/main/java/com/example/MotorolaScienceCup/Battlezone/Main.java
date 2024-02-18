@@ -57,6 +57,8 @@ public class Main {
 
     static ArrayList<Missile> missileList = new ArrayList<>();
 
+    static ArrayList<Ufo> ufoList = new ArrayList<>();
+
     static ArrayList<EnemyTank> fullTankList = new ArrayList<>();
 
     static ArrayList<Polyline> lineList = new ArrayList<>();
@@ -132,7 +134,7 @@ public class Main {
         camera.setHitBox2D(camHitbox);
         camera.translate(0,0,-10);
         objectList.add(camera);
-        for (int i = 0; i < 60; i++) {
+        for (int i = 0; i < 10; i++) {
             ArrayList<Vertex> hitBox = new ArrayList<>();
                 for (int j = 0; j < 4; j++) {
                     hitBox.add(cubeHitbox.get(j));
@@ -153,9 +155,8 @@ public class Main {
         }
         EnemyTank obj1 = Util.generateEnemyTank(0,0,10);
         SuperTank super1 = Util.generateSuperTank(10,0,20);
-        Missile missile = Util.generateMissile(00,50,100);
-        obj1.displayObject();
-        super1.displayObject();
+        Missile missile = Util.generateMissile(0,50,100);
+        Ufo ufo = Util.generateUfo(-10,0,10);
 
         start();
 
@@ -367,7 +368,7 @@ public class Main {
             Object3D object = fullTankList.get(i);
 
         double dist = Math.sqrt(Math.pow((camera.getX()-object.getCenterX()),2)+Math.pow((camera.getZ()-object.getCenterZ()),2));
-        if(dist < 100){
+        if(dist < 1000){
             enemyInRange = true;
             Vertex vertex = new Vertex(camera.getX(), camera.getY(), camera.getZ());
             Vertex obj = new Vertex(object.getX(), object.getY(), object.getZ());
@@ -484,6 +485,9 @@ public class Main {
             for (int i = 0; i < fullTankList.size(); i++) {
                 fullTankList.get(i).enemyBehavior();
             }
+            for (int i = 0; i < ufoList.size(); i++) {
+                ufoList.get(i).enemyBehavior();
+            }
             if(has_collided){
                 if(impact_ticks < 5){
                     camera.translate(0,impact_skip*3,0);
@@ -507,7 +511,8 @@ public class Main {
             }
             lineList.add(polyline);
             root.getChildren().add(polyline);
-            for (Bullet bullet: allBullets) {
+            for (int i = 0 ; i<allBullets.size() ; i++) {
+                Bullet bullet = allBullets.get(i);
                     System.out.println(">>>>>>>>>>>>>>>>>>");
                     bullet.translate(bullet.getDirection().getX(),0,bullet.getDirection().getZ());
                     double travelled = Math.sqrt(bullet.getDirection().getX()*bullet.getDirection().getX()+bullet.getDirection().getZ()*bullet.getDirection().getZ());
@@ -528,7 +533,11 @@ public class Main {
                 if(object.getClass()!= Camera.class) {
                     object.displayObject();
                 }
-                if(!allBullets.isEmpty()&&!(object instanceof Bullet)){
+                boolean flying = false;
+                if(object instanceof Missile){
+                    flying = ((Missile) object).isFlying();
+                }
+                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&!flying){
                     for (int j = 0; j < allBullets.size(); j++) {
                         if(!allBullets.get(j).getParent().equals(object)){
                         double dist = Math.sqrt(Math.pow((allBullets.get(j).getX()-object.getX()),2)+Math.pow((allBullets.get(j).getZ()-object.getZ()),2));
@@ -541,7 +550,7 @@ public class Main {
                                 allBullets.get(j).explode(vertex);
                                 allBullets.remove(allBullets.get(j));
                                 allBullets.clear();
-                                if(fullTankList.contains(object)){
+                                if(object instanceof EnemyTank){
                                     ((EnemyTank) object).takeHit();
                                 }
                                 if(object.equals(camera)){

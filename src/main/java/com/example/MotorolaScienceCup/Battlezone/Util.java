@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Util {
@@ -86,6 +87,52 @@ public class Util {
         return bullet;
     }
 
+    public static Ufo generateUfo(double x, double y, double z){
+        System.out.println("PPPPPPPPP");
+        Object3D object = convertOBJ("UFO.txt");
+        ArrayList<Vertex> points3D = object.getPoints3D();
+        Ufo enemy = new Ufo(object.getPoints3D(),object.getFaces3D());
+        Face face = enemy.getFaces3D().get(8);
+        ArrayList<Vertex> hitbox = new ArrayList<>(object.getPoints3D());
+        hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
+        hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
+        hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
+        hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
+        ArrayList<Vertex> hitbox2 = new ArrayList<>();
+        Face face1 = object.getFaces3D().get(8);
+        for (int i = 0; i < face1.getIndexes().size(); i++) {
+            hitbox2.add(points3D.get(face1.getIndexes().get(i)));
+        }
+        enemy.setHitBox2D(hitbox2);
+        ArrayList<Vertex> hitbox10 = new ArrayList<>();
+        for (int i = 0; i < hitbox2.size(); i++) {
+            double[] arr = hitbox2.get(i).toArray();
+            for (int j = 0; j < arr.length; j++) {
+                arr[j] = arr[j]*100;
+            }
+            hitbox10.add(Util.arrToVert(arr));
+        }
+        enemy.setCollideHitBox(hitbox10);
+        enemy.setForward(new Vertex(-1,0,0));
+        enemy.setCenter(new Vertex(0,0,0));
+        enemy.scaleTank(1.5,1.15,1.5);
+        enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
+        enemy.rotateTank(90);
+        enemy.setRotation(0);
+        enemy.rotateTank(Math.random()*360);
+        enemy.moveTank(new Vertex(x,1,z));
+        enemy.setTarget(new Vertex(enemy.getCenter().getX() + Math.random()*50-25,0,enemy.getCenter().getZ() + Math.random()*50-25));
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
+        enemy.setColor(Color.GREEN);
+        enemy.setRotating(true);
+        enemy.setMoveDir(1);
+        enemy.setRotateDir(enemy.getExactRotationDir());
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
+        Main.objectList.add(enemy);
+        Main.ufoList.add(enemy);
+        return enemy;
+    }
+
     public static EnemyTank generateEnemyTank(double x, double y, double z){
         System.out.println("PPPPPPPPP");
         Object3D object = convertOBJ("normalTank.txt");
@@ -144,13 +191,15 @@ public class Util {
         enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
         enemy.rotateTank(270);
         enemy.setRotation(0);
-        enemy.rotateTank(Math.random()*360);
         enemy.moveTank(new Vertex(x,y,z));
-        Vertex vertex = enemy.getCenter();
+        Vertex vertex = enemy.getCenter().getVertDif(new Vertex(Main.camera.getX(),Main.camera.getY(),Main.camera.getZ()));
         double[] arr = vertex.toArray();
-        arr = Util.multiplyTransform(Util.getTranslationMatrix(enemy.getForward().getX()*20-enemy.getCenter().getX(), 0,enemy.getForward().getZ()*20-enemy.getCenter().getZ()),arr);
-        arr = Util.multiplyTransform(Util.getRotationYMatrix(Math.random()*160-80),arr);
-        enemy.setTarget(Util.arrToVert(arr));
+        arr = Util.multiplyTransform(Util.getRotationYMatrix(new Random().nextDouble(-30,30)),arr);
+        double offset = -Math.random()/2 - 0.25;
+        for (int i = 0; i < arr.length; i++) {
+            arr[i]*=offset;
+        }
+        enemy.setTarget(enemy.getCenter().getVertSum(Util.arrToVert(arr)));
         enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         enemy.setColor(Color.GREEN);
         enemy.setRotating(true);

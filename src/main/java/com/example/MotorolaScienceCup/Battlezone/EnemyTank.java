@@ -220,7 +220,7 @@ public class EnemyTank extends Object3D{
             this.setZ(this.getCenter().getZ());
         }else{
                 System.out.println("]]]]]]]]]]]]]]]]]]");
-                if(!array.contains(Main.camera)) {
+                if(!array.contains(Main.camera)||(this instanceof Ufo)) {
                     this.setTarget(new Vertex(this.getCenter().getX() - this.getForward().getX() * 10, 0, this.getCenter().getZ() - this.getForward().getZ() * 10));
                     this.setAttackMode(true);
                     this.setMoving(true);
@@ -355,7 +355,7 @@ public class EnemyTank extends Object3D{
             }
             if(isRotating){
                 if(targetRotation < getRotation() + 1 && targetRotation>getRotation() - 1){
-                    double offset = Math.random()*2-1;
+                    double offset = (Math.random()*2)-1;
                     rotateTank(getRotDifference()+offset);
                     setTargetRotation(getTargetRotation()+getRotDifference()+offset);
                     setTargetRotation(getTargetRotation()+getRotDifference());
