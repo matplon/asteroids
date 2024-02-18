@@ -314,10 +314,15 @@ public class EnemyTank extends Object3D{
             Main.particles.add(particle);
         }
     }
-    public void takeHit(){
+    public void takeHit(Object3D object3D){
+        System.out.println("###########");
         Main.enemyTankList.remove(this);
         Main.fullTankList.remove(this);
         Main.objectList.remove(this);
+        if(object3D instanceof Camera) {
+            System.out.println("============");
+            Main.score += 1000;
+        }
         explode();
     }
     public void enemyBehavior(){
@@ -437,6 +442,12 @@ public class EnemyTank extends Object3D{
                     rotateTank(TANK_ROT_SPEED*rotateDir);
                 }
             }
+        }
+        double distance = Util.getDistance(getCenter(), new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
+        if(distance>120){
+            Main.objectList.remove(this);
+            Main.enemyTankList.remove(this);
+            Main.fullTankList.remove(this);
         }
     }
 

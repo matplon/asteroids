@@ -88,7 +88,7 @@ public class Util {
         return bullet;
     }
 
-    public static Mine generateMine(double x, double y, double z){
+    public static Mine generateMine(double x,double z){
         System.out.println("PPPPPPPPP");
         Object3D object = convertOBJ("mine.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
@@ -118,7 +118,7 @@ public class Util {
         return enemy;
     }
 
-    public static Ufo generateUfo(double x, double y, double z){
+    public static Ufo generateUfo(double x, double z){
         System.out.println("PPPPPPPPP");
         Object3D object = convertOBJ("UFO.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
@@ -148,7 +148,7 @@ public class Util {
         return enemy;
     }
 
-    public static EnemyTank generateEnemyTank(double x, double y, double z){
+    public static EnemyTank generateEnemyTank(double x, double z){
         System.out.println("PPPPPPPPP");
         Object3D object = convertOBJ("normalTank.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
@@ -181,7 +181,7 @@ public class Util {
         return enemy;
     }
 
-    public static Missile generateMissile(double x, double y, double z){
+    public static Missile generateMissile(double x, double z){
         System.out.println("PPPPPPPPP");
         Object3D object = convertOBJ("missile.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
@@ -203,7 +203,7 @@ public class Util {
         enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
         enemy.rotateTank(270);
         enemy.setRotation(0);
-        enemy.moveTank(new Vertex(x,y,z));
+        enemy.moveTank(new Vertex(x,50,z));
         Vertex vertex = enemy.getCenter().getVertDif(new Vertex(Main.camera.getX(),Main.camera.getY(),Main.camera.getZ()));
         double[] arr = vertex.toArray();
         arr = Util.multiplyTransform(Util.getRotationYMatrix(new Random().nextDouble(-30,30)),arr);
@@ -227,7 +227,7 @@ public class Util {
         return enemy;
     }
 
-    public static SuperTank generateSuperTank(double x, double y, double z){
+    public static SuperTank generateSuperTank(double x, double z){
         System.out.println("PPPPPPPPP");
         Object3D object = convertOBJ("superTank.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();

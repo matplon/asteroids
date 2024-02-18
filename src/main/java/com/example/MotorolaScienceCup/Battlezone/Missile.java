@@ -2,6 +2,7 @@ package com.example.MotorolaScienceCup.Battlezone;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 
 public class Missile extends EnemyTank {
@@ -19,10 +20,13 @@ public class Missile extends EnemyTank {
         super(points3D, faces3D);
     }
 
-    public void takeHit(){
+    public void takeHit(Object3D object3D){
         Main.missileList.remove(this);
         Main.fullTankList.remove(this);
         Main.objectList.remove(this);
+        if(object3D instanceof Camera) {
+            Main.score += 2000;
+        }
         explode();
     }
 
@@ -219,5 +223,11 @@ public class Missile extends EnemyTank {
         }
 
 
-
-}}
+        double distance = Util.getDistance(getCenter(), new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
+        if(distance>120){
+            Main.objectList.remove(this);
+            Main.missileList.remove(this);
+            Main.fullTankList.remove(this);
+        }
+        }
+}

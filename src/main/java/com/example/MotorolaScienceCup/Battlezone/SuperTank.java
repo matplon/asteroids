@@ -21,12 +21,15 @@ public class SuperTank extends EnemyTank{
         this.HP = HP;
     }
 
-    public void takeHit(){
+    public void takeHit(Object3D object3D){
         setHP(getHP()-1);
         if(HP<=0){
             Main.objectList.remove(this);
             Main.superTankList.remove(this);
             Main.fullTankList.remove(this);
+            if(object3D instanceof Camera) {
+                Main.score += 3000;
+            }
             explode();
         }
     }
@@ -108,6 +111,12 @@ public class SuperTank extends EnemyTank{
             }else{
                 rotateTank(SUPER_ROT_SPEED*getRotateDir());
             }
+        }
+        double distance = Util.getDistance(getCenter(), new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
+        if(distance>120){
+            Main.objectList.remove(this);
+            Main.superTankList.remove(this);
+            Main.fullTankList.remove(this);
         }
     }
 

@@ -9,7 +9,7 @@ public class Mine extends EnemyTank{
         super(points3D, faces3D);
     }
 
-    public void takeHit(){
+    public void takeHit(Object3D object3D){
         Main.objectList.remove(this);
         Main.mineList.remove(this);
         explode();
@@ -18,7 +18,7 @@ public class Mine extends EnemyTank{
     public void checkCamera(){
         if(!Util.hitBoxIntersect(getCollideHitBox(), Main.camera.getHitBox2D()).isEmpty()){
             Main.wasHit = true;
-            takeHit();
+            takeHit(Main.camera);
         }
     }
 }

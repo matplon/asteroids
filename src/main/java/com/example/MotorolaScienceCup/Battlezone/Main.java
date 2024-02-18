@@ -30,6 +30,7 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Main {
 
@@ -38,6 +39,8 @@ public class Main {
     static Timeline timeline;
 
     public static boolean wasHit = false;
+
+    public static int score = 0;
 
     static double CAMERA_SPEED = 0.3;
     static double CAMERA_ROT_SPEED = 2.5;
@@ -64,6 +67,8 @@ public class Main {
     static ArrayList<Ufo> ufoList = new ArrayList<>();
 
     static ArrayList<EnemyTank> fullTankList = new ArrayList<>();
+
+    static ArrayList<Chunk> chunkList = new ArrayList<>();
 
     static ArrayList<Polyline> lineList = new ArrayList<>();
 
@@ -104,7 +109,9 @@ public class Main {
     public static Text text1 = new Text();
 
 
+
     public static void init(){
+        score = 0;
         scene.setFill(Color.BLACK);
         root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
 
@@ -156,11 +163,11 @@ public class Main {
         for (int j = 0; j < 4; j++) {
             hitBox1.add(triangleHitbox.get(j));
         }
-        EnemyTank obj1 = Util.generateEnemyTank(0,0,10);
-        SuperTank super1 = Util.generateSuperTank(10,0,20);
-        Missile missile = Util.generateMissile(0,50,100);
-        Ufo ufo = Util.generateUfo(0,-10,0);
-        Mine mine = Util.generateMine(-10,0,10);
+        EnemyTank obj1 = Util.generateEnemyTank(0,10);
+        SuperTank super1 = Util.generateSuperTank(10,20);
+        Missile missile = Util.generateMissile(0,100);
+        Ufo ufo = Util.generateUfo(0,0);
+        Mine mine = Util.generateMine(-10,10);
 
         start();
 
@@ -446,6 +453,13 @@ public class Main {
             textList.add(t);
             root.getChildren().add(t);
         }
+        Text s = new Text(String.valueOf(score));
+        s.setFont(Font.font(50));
+        s.setX(WIDTH-200);
+        s.setY(100);
+        s.setFill(Color.RED);
+        textList.add(s);
+        root.getChildren().add(s);
     }
 
     public static void impactAnim(){
@@ -453,11 +467,18 @@ public class Main {
     }
 
     public static void onGotShot(){
-        //TODO:THIS
+        Text s = new Text("HIT !");
+        s.setFont(Font.font(50));
+        s.setX(WIDTH-200);
+        s.setY(200);
+        s.setFill(Color.RED);
+        textList.add(s);
+        root.getChildren().add(s);
     }
 
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
+            wasHit = false;
             fullTankList.clear();
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
@@ -537,7 +558,7 @@ public class Main {
             for (int i=0;i<objectList.size();i++) {
                 Object3D object = objectList.get(i);
                 double distance = Util.getDistance(new Vertex(camera.getX(),camera.getY(),camera.getZ()),new Vertex(object.getX(), object.getY(), object.getZ()));
-                if(object.getClass()!= Camera.class && distance<150) {
+                if(object.getClass()!= Camera.class && distance<120) {
                     object.displayObject();
                 }
                 boolean flying = false;
@@ -546,7 +567,7 @@ public class Main {
                     flying = ((Missile) object).isFlying();
                     grounded = ((Missile) object).isGrounded();
                 }
-                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&!(object instanceof Mine)&&(!flying||grounded)&&distance<150){
+                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&!(object instanceof Mine)&&(!flying||grounded)&&distance<120){
                     for (int j = 0; j < allBullets.size(); j++) {
                         if(!allBullets.get(j).getParent().equals(object)){
                         double dist = Math.sqrt(Math.pow((allBullets.get(j).getX()-object.getX()),2)+Math.pow((allBullets.get(j).getZ()-object.getZ()),2));
@@ -556,15 +577,15 @@ public class Main {
                             if(vertex!=null){
                                 System.out.println("YYYYYYYYY");
                                 object.setColor(Color.BLUE);
-                                allBullets.get(j).explode(vertex);
-                                allBullets.remove(allBullets.get(j));
                                 if(object instanceof EnemyTank){
-                                    ((EnemyTank) object).takeHit();
+                                    ((EnemyTank) object).takeHit(allBullets.get(j).getParent());
                                 }
                                 if(object.equals(camera)){
                                     onGotShot();
                                     wasHit = false;
                                 }
+                                allBullets.get(j).explode(vertex);
+                                allBullets.remove(allBullets.get(j));
                             }
                         }
                 }}}

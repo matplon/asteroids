@@ -10,9 +10,12 @@ public class Ufo extends EnemyTank{
         super(points3D, faces3D);
     }
 
-    public void takeHit(){
+    public void takeHit(Object3D object3D){
         Main.ufoList.remove(this);
         Main.objectList.remove(this);
+        if(object3D instanceof Camera) {
+            Main.score += 5000;
+        }
     }
 
     public void enemyBehavior(){
@@ -56,6 +59,11 @@ public class Ufo extends EnemyTank{
                     rotateTank(UFO_ROT_SPEED*getRotateDir());
                 }
             }
+        double distance = Util.getDistance(getCenter(), new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
+        if(distance>120){
+            Main.ufoList.remove(this);
+            Main.objectList.remove(this);
+        }
         }
     }
 
