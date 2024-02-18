@@ -176,10 +176,14 @@ public class EnemyTank extends Object3D{
     public void moveTank(Vertex direction){
         ArrayList<Vertex> hitbox = this.getCollideHitBox();
         ArrayList<Vertex> lol = new ArrayList<>();
+        double multi = 1;
+        if(this instanceof Ufo){
+            multi = 5;
+        }
         for (int i = 0; i < hitbox.size(); i++) {
             Vertex vert = hitbox.get(i);
             double[] arr = vert.toArray();
-            arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX(),direction.getY(),direction.getZ()),arr);
+            arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX()*multi,direction.getY()*multi,direction.getZ()*multi),arr);
             lol.add(Util.arrToVert(arr));
         }
         System.out.println("hihihi");
