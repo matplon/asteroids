@@ -114,7 +114,7 @@ public class Camera extends Object3D{
         Vertex a1;
         Vertex a2;
         ArrayList<Vertex> result = new ArrayList<>();
-        if(object3D.getClass() != Camera.class){
+        if(object3D instanceof EnemyTank && object3D.getClass() != Mine.class){
         for (int i = 0; i < object3D.getHitBox2D().size(); i++) {
             if (i + 1 < object3D.getHitBox2D().size()) {
                 a1 = object3D.getHitBox2D().get(i);

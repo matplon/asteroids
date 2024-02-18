@@ -7,7 +7,7 @@ import java.util.Random;
 public class Missile extends EnemyTank {
 
 
-    public static double MISSILE_SPEED = 0.35;
+    public static double MISSILE_SPEED = 0.5;
     public static double MISSILE_ROT_SPEED = 10;
 
     private boolean isFlying;
@@ -48,11 +48,17 @@ public class Missile extends EnemyTank {
         for (int i = 0; i < hitbox.size(); i++) {
             Vertex vert = hitbox.get(i);
             double[] arr = vert.toArray();
-            arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX()*16,direction.getY()*4,direction.getZ()*16),arr);
+            arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX()*2,direction.getY()*2,direction.getZ()*2),arr);
             lol.add(Util.arrToVert(arr));
         }
         System.out.println("hihihi");
         ArrayList<Object3D> array = this.runCollisionCheck(5,lol,this);
+        boolean hasMine = false;
+        for (Object3D object3D:array){
+            if(object3D instanceof Mine){
+                hasMine = true;
+            }
+        }
             System.out.println(getRotation() + " HHHHHHHHHHHHHHHHHHHH");
             Vertex vert = this.getCenter();
             double[] arr1 = vert.toArray();
@@ -86,11 +92,11 @@ public class Missile extends EnemyTank {
             this.setX(this.getCenter().getX());
             this.setY(this.getCenter().getY());
             this.setZ(this.getCenter().getZ());
-        if(array.contains(Main.camera)&&(isGrounded||!isFlying)){
+        if(array.contains(Main.camera)&&(isGrounded&&!isFlying)){
             Main.wasHit = true;
             this.setForward(new Vertex(0,0,0));
         }else{
-        if(!array.isEmpty()&&!isFlying&&!hasSpawned){
+        if(!array.isEmpty()&&!isFlying&&!hasSpawned&&!(array.size()==1&&hasMine)){
             double maxY = Util.getMaxY(array.get(0).getPoints3D());
             double currentY = Util.getMinY(getPoints3D());
             for (int i = 0; i < array.size(); i++) {
@@ -100,16 +106,16 @@ public class Missile extends EnemyTank {
             }
             if(maxY-0.0001>currentY) {
                 setGrounded(false);
-                moveTank(new Vertex(0, (maxY - currentY)/15, 0));
+                moveTank(new Vertex(0, (maxY - currentY), 0));
             }else{
                 setFlying(true);
             }
 
         }
-        if(array.isEmpty()&&!isGrounded&&!hasSpawned){
+        if(array.isEmpty()&&!isGrounded&&!hasSpawned&&!(array.size()==1&&hasMine)){
             if(getPoints3D().get(1).getY() > 0.00001){
                 setFlying(false);
-                moveTank(new Vertex(0,-getPoints3D().get(1).getY()/15,0));
+                moveTank(new Vertex(0,-getPoints3D().get(1).getY(),0));
             }else{
                 setGrounded(true);
             }
@@ -159,7 +165,7 @@ public class Missile extends EnemyTank {
                     setMoving(false);
                     Vertex vertex = getCenter().getVertDif(new Vertex(Main.camera.getX(),Main.camera.getY(),Main.camera.getZ()));
                     double[] arr = vertex.toArray();
-                    double offset = -10;
+                    double offset = -1000;
                     for (int i = 0; i < arr.length; i++) {
                         arr[i]*=offset;
                     }

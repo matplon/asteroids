@@ -17,7 +17,8 @@ public class Ufo extends EnemyTank{
 
     public void enemyBehavior(){
             if(isMoving()){
-                //rotY(1);
+                rotY(1);
+                setRotation(getRotation()-1);
                 System.out.println("KOKOKOKKO");
                 if(Util.getDistance(getTarget(), this.getCenter())<7){
                     setWaiting(true);
@@ -29,7 +30,8 @@ public class Ufo extends EnemyTank{
                 }
             }
             if(isWaiting()){
-                //rotY(1);
+                rotY(1);
+                setRotation(getRotation()-1);
                 setWaitTimer(getWaitTimer()-1);
                 if(getWaitTimer()<0){
                     setWaitTimer(-1);

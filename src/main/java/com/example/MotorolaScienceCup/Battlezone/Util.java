@@ -88,13 +88,11 @@ public class Util {
         return bullet;
     }
 
-    public static Ufo generateUfo(double x, double y, double z){
+    public static Mine generateMine(double x, double y, double z){
         System.out.println("PPPPPPPPP");
-        Object3D object = convertOBJ("duman.txt");
+        Object3D object = convertOBJ("mine.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
-        Object3D ring = convertOBJ("ufoRing.txt");
-        Ufo enemy = new Ufo(object.getPoints3D(),object.getFaces3D());
-        Face face = enemy.getFaces3D().get(8);
+        Mine enemy = new Mine(object.getPoints3D(),object.getFaces3D());
         ArrayList<Vertex> hitbox = new ArrayList<>(object.getPoints3D());
         hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
         hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
@@ -102,6 +100,37 @@ public class Util {
         hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
         ArrayList<Vertex> hitbox2 = new ArrayList<>();
         Face face1 = object.getFaces3D().get(9);
+        for (int i = 0; i < face1.getIndexes().size(); i++) {
+            hitbox2.add(points3D.get(face1.getIndexes().get(i)));
+        }
+        enemy.setForward(new Vertex(0,0,1));
+        enemy.setHitBox2D(hitbox);
+        enemy.setCollideHitBox(hitbox2);
+        enemy.setCenter(new Vertex(0,0,0));
+        enemy.scale(0.5,0.5,0.5);
+        enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
+        enemy.rotateTank(0);
+        enemy.setRotation(0);
+        enemy.moveTank(new Vertex(x,-0.75,z));
+        enemy.setColor(Color.GREEN);
+        Main.objectList.add(enemy);
+        Main.mineList.add(enemy);
+        return enemy;
+    }
+
+    public static Ufo generateUfo(double x, double y, double z){
+        System.out.println("PPPPPPPPP");
+        Object3D object = convertOBJ("UFO.txt");
+        ArrayList<Vertex> points3D = object.getPoints3D();
+        Object3D ring = convertOBJ("ufoRing.txt");
+        Ufo enemy = new Ufo(object.getPoints3D(),object.getFaces3D());
+        ArrayList<Vertex> hitbox = new ArrayList<>(object.getPoints3D());
+        hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
+        hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
+        hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
+        hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
+        ArrayList<Vertex> hitbox2 = new ArrayList<>();
+        Face face1 = object.getFaces3D().get(8);
         for (int i = 0; i < face1.getIndexes().size(); i++) {
             hitbox2.add(points3D.get(face1.getIndexes().get(i)));
         }

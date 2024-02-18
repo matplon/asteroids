@@ -59,6 +59,8 @@ public class Main {
 
     static ArrayList<Missile> missileList = new ArrayList<>();
 
+    static ArrayList<Mine> mineList = new ArrayList<>();
+
     static ArrayList<Ufo> ufoList = new ArrayList<>();
 
     static ArrayList<EnemyTank> fullTankList = new ArrayList<>();
@@ -82,7 +84,6 @@ public class Main {
     static double H_FOV = 90;
 
     static double MAX_BULLET_DISTANCE = 100;
-
 
     public static AnchorPane root = new AnchorPane();
     public static Scene scene = new Scene(root,WIDTH,HEIGHT);
@@ -159,6 +160,7 @@ public class Main {
         SuperTank super1 = Util.generateSuperTank(10,0,20);
         Missile missile = Util.generateMissile(0,50,100);
         Ufo ufo = Util.generateUfo(0,-10,0);
+        Mine mine = Util.generateMine(-10,0,10);
 
         start();
 
@@ -192,7 +194,8 @@ public class Main {
                     lol.add(Util.arrToVert(arr));
                 }
                 System.out.println("hihihi");
-                if(camera.runCollisionCheck(7,lol,camera).size()==0) {
+                ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
+                if(array.size()==0) {
                     System.out.println("LALALALA");
                     camera.translate(-camF[0] * CAMERA_SPEED, -camF[1] * CAMERA_SPEED, -camF[2] * CAMERA_SPEED);
                     collisionDir = false;
@@ -213,7 +216,8 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(7,lol,camera).size()==0){
+                ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
+                if(array.size()==0){
                     camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
                     collisionDir = false;
                 }else{
@@ -232,7 +236,8 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(camR[0]*CAMERA_SPEED, camR[1]*CAMERA_SPEED, camR[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(7,lol,camera).size()==0){
+                ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
+                if(array.size()==0){
                    // for (int i = 0; i < 4; i++) {
                     camera.translate( camR[0] * CAMERA_SPEED,  camR[1] * CAMERA_SPEED,  camR[2] * CAMERA_SPEED);
                     collisionDir = false;
@@ -252,7 +257,8 @@ public class Main {
                     arr = Util.multiplyTransform(Util.getTranslationMatrix(-camR[0]*CAMERA_SPEED, -camR[1]*CAMERA_SPEED, -camR[2]*CAMERA_SPEED),arr);
                     lol.add(Util.arrToVert(arr));
                 }
-                if(camera.runCollisionCheck(7,lol,camera).size()==0){
+                ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
+                if(array.size()==0){
                     //for (int i = 0; i < 4; i++) {
                         camera.translate(  -camR[0] * CAMERA_SPEED,   -camR[1] * CAMERA_SPEED,   -camR[2] * CAMERA_SPEED);
                         collisionDir = false;
@@ -534,12 +540,12 @@ public class Main {
                     object.displayObject();
                 }
                 boolean flying = false;
-                boolean grounded = false;
+                boolean grounded = true;
                 if(object instanceof Missile){
                     flying = ((Missile) object).isFlying();
                     grounded = ((Missile) object).isGrounded();
                 }
-                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&(!flying||grounded)){
+                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&!(object instanceof Mine)&&(!flying||grounded)){
                     for (int j = 0; j < allBullets.size(); j++) {
                         if(!allBullets.get(j).getParent().equals(object)){
                         double dist = Math.sqrt(Math.pow((allBullets.get(j).getX()-object.getX()),2)+Math.pow((allBullets.get(j).getZ()-object.getZ()),2));
@@ -551,7 +557,6 @@ public class Main {
                                 object.setColor(Color.BLUE);
                                 allBullets.get(j).explode(vertex);
                                 allBullets.remove(allBullets.get(j));
-                                allBullets.clear();
                                 if(object instanceof EnemyTank){
                                     ((EnemyTank) object).takeHit();
                                 }
@@ -602,6 +607,9 @@ public class Main {
                 Util.drawScopedReticle();
             }else{
                 Util.drawUnscopedReticle();
+            }
+            for (Mine mine : mineList){
+                mine.checkCamera();
             }
             if(wasHit){
                 onGotShot();

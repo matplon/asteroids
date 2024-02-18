@@ -86,7 +86,7 @@ public class Object3D {
             if(object instanceof Missile){
                 flying = ((Missile) object).isFlying();
             }
-            if (!(object.equals(current))&&!flying) {
+            if (!(object.equals(current))&&!flying&&!((current instanceof Camera)&&(object instanceof Mine))) {
                 double dist = Math.sqrt(Math.pow((this.getX() - object.getX()), 2) + Math.pow((this.getZ() - object.getZ()), 2));
                 System.out.println(dist + " TROLOLOLOLOL");
                 if (dist < range) {
@@ -327,7 +327,7 @@ public class Object3D {
             this.hitBox2D.set(i,Util.arrToVert(arr));
 
         }
-        if(this instanceof Ufo){
+        /*if(this instanceof Ufo){
             for (int i = 0; i < ((EnemyTank) this).getCollideHitBox().size(); i++) {
                 double [][] translationMatrix = Util.getRotationYMatrix(angle);
                 double [] arr = ((EnemyTank) this).getCollideHitBox().get(i).toArray();
@@ -337,7 +337,7 @@ public class Object3D {
                 ((EnemyTank) this).getCollideHitBox().set(i,Util.arrToVert(arr));
 
             }
-        }
+        }*/
         this.moveTo(x,y,z);
         this.setX(this.getCenterX());
         this.setY(this.getCenterY());

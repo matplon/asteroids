@@ -224,7 +224,7 @@ public class EnemyTank extends Object3D{
             this.setZ(this.getCenter().getZ());
         }else{
                 System.out.println("]]]]]]]]]]]]]]]]]]");
-                if(!array.contains(Main.camera)) {
+                if(!array.contains(Main.camera)||this instanceof Ufo) {
                     this.setTarget(new Vertex(this.getCenter().getX() - this.getForward().getX() * 10, 0, this.getCenter().getZ() - this.getForward().getZ() * 10));
                     this.setAttackMode(true);
                     this.setMoving(true);
@@ -288,8 +288,10 @@ public class EnemyTank extends Object3D{
 
     public void explode(){
         ArrayList<Face> faces = this.getFaces3D();
+        System.out.println(faces.size()+"///////////////");
         for (int i = 0; i < 6; i++) {
             int pick = new Random().nextInt(faces.size());
+            System.out.println(faces.size());
             Face face = faces.get(pick);
             faces.remove(pick);
             ArrayList<Vertex> points = new ArrayList<>();

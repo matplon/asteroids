@@ -69,7 +69,9 @@ public class Bullet extends Object3D{
     }
 
     public Vertex checkForHits(Object3D object){
+        ArrayList<Vertex> list = new ArrayList<>();
 
+        if(!(object instanceof Bullet)){
             Vertex vertex = new Vertex(this.getPoints3D().get(4).getX(), 0, this.getPoints3D().get(4).getZ());
             Vertex vertex1 = new Vertex(this.getPoints3D().get(4).getX(), 0, this.getPoints3D().get(4).getZ());
             double[] arr1 = vertex1.toArray();
@@ -82,7 +84,6 @@ public class Bullet extends Object3D{
             ArrayList<Vertex> hitbox = new ArrayList<>();
             hitbox = object.getHitBox2D();
 
-            ArrayList<Vertex> list = new ArrayList<>();
             for (int i = 0; i < hitbox.size(); i++) {
                 if (i + 1 < hitbox.size()) {
                     System.out.println("B");
@@ -97,7 +98,7 @@ public class Bullet extends Object3D{
                         list.add(vert);
                     }
                 }
-            }
+            }}
             if (list.isEmpty()) {
                 System.out.println("frick");
                 return null;
