@@ -12,6 +12,7 @@ public class Missile extends EnemyTank {
 
     private boolean isFlying;
 
+    private boolean isGrounded;
     private boolean hasSpawned;
 
     public Missile(ArrayList<Vertex> points3D, ArrayList<Face> faces3D) {
@@ -47,7 +48,7 @@ public class Missile extends EnemyTank {
         for (int i = 0; i < hitbox.size(); i++) {
             Vertex vert = hitbox.get(i);
             double[] arr = vert.toArray();
-            arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX()*2,direction.getY()*2,direction.getZ()*2),arr);
+            arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX()*16,direction.getY()*4,direction.getZ()*16),arr);
             lol.add(Util.arrToVert(arr));
         }
         System.out.println("hihihi");
@@ -85,6 +86,10 @@ public class Missile extends EnemyTank {
             this.setX(this.getCenter().getX());
             this.setY(this.getCenter().getY());
             this.setZ(this.getCenter().getZ());
+        if(array.contains(Main.camera)&&(isGrounded||!isFlying)){
+            Main.wasHit = true;
+            this.setForward(new Vertex(0,0,0));
+        }else{
         if(!array.isEmpty()&&!isFlying&&!hasSpawned){
             double maxY = Util.getMaxY(array.get(0).getPoints3D());
             double currentY = Util.getMinY(getPoints3D());
@@ -93,21 +98,31 @@ public class Missile extends EnemyTank {
                     maxY = Util.getMaxY(array.get(i).getPoints3D());
                 }
             }
-            if(maxY>currentY) {
-                moveTank(new Vertex(0, maxY - currentY, 0));
+            if(maxY-0.0001>currentY) {
+                setGrounded(false);
+                moveTank(new Vertex(0, (maxY - currentY)/15, 0));
             }else{
                 setFlying(true);
             }
 
         }
-        if(array.isEmpty()&&isFlying&&!hasSpawned){
-            if(getPoints3D().get(1).getY() > 0){
-                moveTank(new Vertex(0,-getPoints3D().get(1).getY(),0));
-            }else{
+        if(array.isEmpty()&&!isGrounded&&!hasSpawned){
+            if(getPoints3D().get(1).getY() > 0.00001){
                 setFlying(false);
+                moveTank(new Vertex(0,-getPoints3D().get(1).getY()/15,0));
+            }else{
+                setGrounded(true);
             }
 
-        }
+        }}
+    }
+
+    public boolean isGrounded() {
+        return isGrounded;
+    }
+
+    public void setGrounded(boolean grounded) {
+        isGrounded = grounded;
     }
 
     public void enemyBehavior(){
@@ -119,12 +134,13 @@ public class Missile extends EnemyTank {
             }else if(getPoints3D().get(1).getY() < 1 && getPoints3D().get(1).getY() !=0 && hasSpawned){
                 moveTank(new Vertex(0,-getPoints3D().get(1).getY(),0));
                 setHasSpawned(false);
+                setGrounded(true);
                 setFlying(false);
             }
-            if(Util.getDistance(getTarget(), this.getCenter())<5){
+            if(Util.getDistance(getTarget(), this.getCenter())<0.3){
                 setWaiting(true);
                 setMoving(false);
-                setWaitTimer(Math.random()*2);
+                setWaitTimer(0);
             }else{
                 System.out.println("YOYOOYY");
                 moveTank(new Vertex(this.getForward().getX()*MISSILE_SPEED*getMoveDir(),0,this.getForward().getZ()*MISSILE_SPEED*getMoveDir()));
@@ -136,15 +152,36 @@ public class Missile extends EnemyTank {
             if(getWaitTimer()<0){
                 setWaitTimer(-1);
                 double rand = Math.random();
-                if(Util.getDistance(this.getCenter(), new Vertex(Main.camera.getX(), Main.camera.getY(), Main.camera.getZ()))<40){
+                double dist = Util.getDistance(this.getCenter(), new Vertex(Main.camera.getX(), Main.camera.getY(), Main.camera.getZ()));
+                if(dist<10){
                     setWaiting(false);
                     setRotating(true);
                     setMoving(false);
-                    setTarget(new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
+                    Vertex vertex = getCenter().getVertDif(new Vertex(Main.camera.getX(),Main.camera.getY(),Main.camera.getZ()));
+                    double[] arr = vertex.toArray();
+                    double offset = -10;
+                    for (int i = 0; i < arr.length; i++) {
+                        arr[i]*=offset;
+                    }
+                    setTarget(getCenter().getVertSum(Util.arrToVert(arr)));
                     setMoveDir(1);
                     setTargetRotation(getLookAt(getTarget()));
                     setRotateDir(getExactRotationDir());
-                }else{
+                } else if (dist>=10&&dist<40) {
+                    setWaiting(false);
+                    setRotating(true);
+                    setMoving(false);
+                    Vertex vertex = getCenter().getVertDif(new Vertex(Main.camera.getX(),Main.camera.getY(),Main.camera.getZ()));
+                    double[] arr = vertex.toArray();
+                    double offset = -0.1;
+                    for (int i = 0; i < arr.length; i++) {
+                        arr[i]*=offset;
+                    }
+                    setTarget(getCenter().getVertSum(Util.arrToVert(arr)));
+                    setMoveDir(1);
+                    setTargetRotation(getLookAt(getTarget()));
+                    setRotateDir(getExactRotationDir());
+                } else{
                     setWaiting(false);
                     setRotating(true);
                     setMoving(false);

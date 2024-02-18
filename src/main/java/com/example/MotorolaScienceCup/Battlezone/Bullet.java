@@ -73,7 +73,7 @@ public class Bullet extends Object3D{
             Vertex vertex = new Vertex(this.getPoints3D().get(4).getX(), 0, this.getPoints3D().get(4).getZ());
             Vertex vertex1 = new Vertex(this.getPoints3D().get(4).getX(), 0, this.getPoints3D().get(4).getZ());
             double[] arr1 = vertex1.toArray();
-            if(!(object instanceof Missile)&&!(object instanceof Ufo)){
+            if(!(object instanceof Missile)){
                 arr1 = Util.multiplyTransform(Util.getTranslationMatrix(-this.getDirection().getX(), 0, -this.getDirection().getZ()), arr1);
             }else{
                 arr1 = Util.multiplyTransform(Util.getTranslationMatrix(-this.getDirection().getX()*2, 0, -this.getDirection().getZ()*2), arr1);

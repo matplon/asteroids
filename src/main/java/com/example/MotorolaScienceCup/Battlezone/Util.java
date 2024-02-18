@@ -72,9 +72,10 @@ public class Util {
         return matrix;
     }
 
-    public static com.example.MotorolaScienceCup.Battlezone.Bullet generateBullet(double[] dir, double firingAngle, double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
+    public static com.example.MotorolaScienceCup.Battlezone.Bullet generateBullet(double[] dir, double firingAngle, double x, double y, double z){
         System.out.println("PPPPPPPPP");
-        Bullet bullet = new Bullet(points3D,faces3D);
+        Object3D object3D = Util.convertOBJ("Pyramid.txt");
+        Bullet bullet = new Bullet(object3D.getPoints3D(),object3D.getFaces3D());
 
         bullet.moveTo(0,0,0);
         bullet.scale(0.1,0.2,0.1);
@@ -89,8 +90,9 @@ public class Util {
 
     public static Ufo generateUfo(double x, double y, double z){
         System.out.println("PPPPPPPPP");
-        Object3D object = convertOBJ("UFO.txt");
+        Object3D object = convertOBJ("duman.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
+        Object3D ring = convertOBJ("ufoRing.txt");
         Ufo enemy = new Ufo(object.getPoints3D(),object.getFaces3D());
         Face face = enemy.getFaces3D().get(8);
         ArrayList<Vertex> hitbox = new ArrayList<>(object.getPoints3D());
@@ -99,35 +101,26 @@ public class Util {
         hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
         hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
         ArrayList<Vertex> hitbox2 = new ArrayList<>();
-        Face face1 = object.getFaces3D().get(8);
+        Face face1 = object.getFaces3D().get(9);
         for (int i = 0; i < face1.getIndexes().size(); i++) {
             hitbox2.add(points3D.get(face1.getIndexes().get(i)));
         }
         enemy.setHitBox2D(hitbox2);
-        ArrayList<Vertex> hitbox10 = new ArrayList<>();
-        for (int i = 0; i < hitbox2.size(); i++) {
-            double[] arr = hitbox2.get(i).toArray();
-            for (int j = 0; j < arr.length; j++) {
-                arr[j] = arr[j]*100;
-            }
-            hitbox10.add(Util.arrToVert(arr));
-        }
-        enemy.setCollideHitBox(hitbox10);
-        enemy.setForward(new Vertex(-1,0,0));
+        enemy.setCollideHitBox(ring.getPoints3D());
+        enemy.setForward(new Vertex(0,0,1));
         enemy.setCenter(new Vertex(0,0,0));
-        enemy.scaleTank(1.5,1.15,1.5);
+        enemy.scale(1,0.7,1);
         enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
-        enemy.rotateTank(90);
+        enemy.rotateTank(0);
         enemy.setRotation(0);
         enemy.rotateTank(Math.random()*360);
-        enemy.moveTank(new Vertex(x,1,z));
+        enemy.moveTank(new Vertex(x,0.65,z));
         enemy.setTarget(new Vertex(enemy.getCenter().getX() + Math.random()*50-25,0,enemy.getCenter().getZ() + Math.random()*50-25));
         enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         enemy.setColor(Color.GREEN);
         enemy.setRotating(true);
         enemy.setMoveDir(1);
         enemy.setRotateDir(enemy.getExactRotationDir());
-        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         Main.objectList.add(enemy);
         Main.ufoList.add(enemy);
         return enemy;

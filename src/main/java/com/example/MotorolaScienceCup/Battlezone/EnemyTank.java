@@ -183,11 +183,11 @@ public class EnemyTank extends Object3D{
         for (int i = 0; i < hitbox.size(); i++) {
             Vertex vert = hitbox.get(i);
             double[] arr = vert.toArray();
-            arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX()*multi,direction.getY()*multi,direction.getZ()*multi),arr);
+            arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX(),direction.getY(),direction.getZ()),arr);
             lol.add(Util.arrToVert(arr));
         }
         System.out.println("hihihi");
-        ArrayList<Object3D> array = this.runCollisionCheck(5,lol,this);
+        ArrayList<Object3D> array = this.runCollisionCheck(10,lol,this);
         if(array.isEmpty()) {
             System.out.println(getRotation() + " HHHHHHHHHHHHHHHHHHHH");
             Vertex vert = this.getCenter();
@@ -224,7 +224,7 @@ public class EnemyTank extends Object3D{
             this.setZ(this.getCenter().getZ());
         }else{
                 System.out.println("]]]]]]]]]]]]]]]]]]");
-                if(!array.contains(Main.camera)||(this instanceof Ufo)) {
+                if(!array.contains(Main.camera)) {
                     this.setTarget(new Vertex(this.getCenter().getX() - this.getForward().getX() * 10, 0, this.getCenter().getZ() - this.getForward().getZ() * 10));
                     this.setAttackMode(true);
                     this.setMoving(true);
@@ -244,9 +244,8 @@ public class EnemyTank extends Object3D{
     }
     public void shootTank(){
         if(magTimer<0){
-            Object3D obj = Util.convertOBJ("Pyramid.txt");
             double[] dir = this.getForward().toArray();
-            Bullet bullet = Util.generateBullet(dir, this.getRotation(), this.getX()+this.getForward().getX()*0.5, this.getY()+0.25, this.getZ()+this.getForward().getZ()*0.5, obj.getPoints3D(),obj.getFaces3D());
+            Bullet bullet = Util.generateBullet(dir, this.getRotation(), this.getX()+this.getForward().getX()*0.5, this.getY()+0.25, this.getZ()+this.getForward().getZ()*0.5);
             bullet.setParent(this);
             Main.allBullets.add(bullet);
             setMagTimer(120);

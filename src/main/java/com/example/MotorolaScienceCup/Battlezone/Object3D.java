@@ -90,12 +90,13 @@ public class Object3D {
                 double dist = Math.sqrt(Math.pow((this.getX() - object.getX()), 2) + Math.pow((this.getZ() - object.getZ()), 2));
                 System.out.println(dist + " TROLOLOLOLOL");
                 if (dist < range) {
-                    if(!(object instanceof EnemyTank)||(object instanceof Ufo)){
+                    if(!(object instanceof EnemyTank)){
                         ArrayList<Vertex> res = Util.hitBoxIntersect(object.getHitBox2D(), myHitBox);
                         for (Vertex vert : res) {
                             objArr.add(object);
                             arr.add(vert);
-                    }}else{
+                        }
+                    }else{
                         EnemyTank enemyTank = (EnemyTank) object;
                         ArrayList<Vertex> res = Util.hitBoxIntersect(enemyTank.getCollideHitBox(), myHitBox);
                         for (Vertex vert : res) {
@@ -259,7 +260,7 @@ public class Object3D {
             this.hitBox2D.set(i,Util.arrToVert(arr));
 
         }
-        if(this instanceof Ufo){
+       /* if(this instanceof EnemyTank){
             for (int i = 0; i < ((EnemyTank) this).getCollideHitBox().size(); i++) {
                 double [][] translationMatrix = Util.getTranslationMatrix(x,y,z);
                 double [] arr = ((EnemyTank) this).getCollideHitBox().get(i).toArray();
@@ -269,7 +270,7 @@ public class Object3D {
                 ((EnemyTank) this).getCollideHitBox().set(i,Util.arrToVert(arr));
 
             }
-        }
+        }*/
 
         this.setX(this.getCenterX());
         this.setY(this.getCenterY());
