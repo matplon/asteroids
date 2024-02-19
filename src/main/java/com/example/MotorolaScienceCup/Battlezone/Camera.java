@@ -16,6 +16,8 @@ public class Camera extends Object3D{
     private double y;
     private double z;
 
+    double magTimer;
+
     private Vertex forward;
     private Vertex up;
     private  Vertex right;
@@ -96,11 +98,12 @@ public class Camera extends Object3D{
     }
 
     public void shootBullet(){
-        if(Main.bullets.isEmpty()||Main.bullets.isEmpty()){
-            Object3D obj = Util.convertOBJ("Pyramid.txt");
+        if(magTimer<0){
             double[] dir = this.getForward().toArray();
-            Bullet bullet = Util.generateBullet(dir, this.getRotation(), this.getX(), this.getY()-0.1, this.getZ(), obj.getPoints3D(),obj.getFaces3D());
-            Main.bullets.add(bullet);
+            Bullet bullet = Util.generateBullet(dir, this.getRotation(), this.getX(), this.getY()-0.1, this.getZ());
+            bullet.setParent(this);
+            Main.allBullets.add(bullet);
+            this.magTimer = 120;
         }
     }
     
@@ -111,23 +114,21 @@ public class Camera extends Object3D{
         Vertex a1;
         Vertex a2;
         ArrayList<Vertex> result = new ArrayList<>();
-        if(object3D.getClass() != Camera.class){
+        if(object3D instanceof EnemyTank && object3D.getClass() != Mine.class){
         for (int i = 0; i < object3D.getHitBox2D().size(); i++) {
-            if (object3D.getClass() != Camera.class) {
-                if (i + 1 < object3D.getHitBox2D().size()) {
-                    a1 = object3D.getHitBox2D().get(i);
-                    a2 = object3D.getHitBox2D().get(i + 1);
-                } else {
-                    a1 = object3D.getHitBox2D().get(object3D.getHitBox2D().size() - 1);
-                    a2 = object3D.getHitBox2D().get(0);
-                }
-                Vertex vertex = Util.lineIntersect(origin, endpoint, a1, a2);
-                if (vertex != null) {
-                    result.add(vertex);
-                }
+            if (i + 1 < object3D.getHitBox2D().size()) {
+                a1 = object3D.getHitBox2D().get(i);
+                a2 = object3D.getHitBox2D().get(i + 1);
+            } else {
+                a1 = object3D.getHitBox2D().get(object3D.getHitBox2D().size() - 1);
+                a2 = object3D.getHitBox2D().get(0);
+            }
+            Vertex vertex = Util.lineIntersect(origin, endpoint, a1, a2);
+            if (vertex != null) {
+                result.add(vertex);
             }
         }}
-        if(result.size() == 0){
+        if(result.isEmpty()){
             return false;
         }else{
             return true;

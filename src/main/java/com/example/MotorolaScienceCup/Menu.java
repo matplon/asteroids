@@ -19,7 +19,7 @@ public class Menu extends Application {
     public static AnchorPane root;
     public static Stage stage;
     public static Scene scene;
-
+    public static int battlzoneHighscore = 0;
     public static void resetMenu() throws IOException {
         root = FXMLLoader.load(Menu.class.getResource("Main.fxml"));
         scene = new Scene(root, WIDTH,HEIGHT);

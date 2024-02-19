@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Util {
@@ -71,9 +72,10 @@ public class Util {
         return matrix;
     }
 
-    public static com.example.MotorolaScienceCup.Battlezone.Bullet generateBullet(double[] dir, double firingAngle, double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
+    public static com.example.MotorolaScienceCup.Battlezone.Bullet generateBullet(double[] dir, double firingAngle, double x, double y, double z){
         System.out.println("PPPPPPPPP");
-        Bullet bullet = new Bullet(points3D,faces3D);
+        Object3D object3D = Util.convertOBJ("Pyramid.txt");
+        Bullet bullet = new Bullet(object3D.getPoints3D(),object3D.getFaces3D());
 
         bullet.moveTo(0,0,0);
         bullet.scale(0.1,0.2,0.1);
@@ -86,17 +88,76 @@ public class Util {
         return bullet;
     }
 
-    public static EnemyTank generateEnemyTank(double x, double y, double z, ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
+    public static Mine generateMine(double x,double z){
         System.out.println("PPPPPPPPP");
-        EnemyTank enemy = new EnemyTank(points3D,faces3D);
-        ArrayList<Vertex> hitbox = new ArrayList<>();
-        Object3D object3D = Util.convertOBJ("ring.txt");
-        ArrayList<Vertex> hitbox1 = new ArrayList<>(object3D.getPoints3D());
+        Object3D object = convertOBJ("mine.txt");
+        ArrayList<Vertex> points3D = object.getPoints3D();
+        Mine enemy = new Mine(object.getPoints3D(),object.getFaces3D());
+        ArrayList<Vertex> hitbox = new ArrayList<>(object.getPoints3D());
         hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
         hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
         hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
         hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
+        ArrayList<Vertex> hitbox2 = new ArrayList<>();
+        Face face1 = object.getFaces3D().get(9);
+        for (int i = 0; i < face1.getIndexes().size(); i++) {
+            hitbox2.add(points3D.get(face1.getIndexes().get(i)));
+        }
+        enemy.setForward(new Vertex(0,0,1));
         enemy.setHitBox2D(hitbox);
+        enemy.setCollideHitBox(hitbox2);
+        enemy.setCenter(new Vertex(0,0,0));
+        enemy.scale(0.5,0.5,0.5);
+        enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
+        enemy.rotateTank(0);
+        enemy.setRotation(0);
+        enemy.moveTank(new Vertex(x,-0.75,z));
+        enemy.setColor(Color.GREEN);
+        Main.objectList.add(enemy);
+        Main.mineList.add(enemy);
+        return enemy;
+    }
+
+    public static Ufo generateUfo(double x, double z){
+        System.out.println("PPPPPPPPP");
+        Object3D object = convertOBJ("UFO.txt");
+        ArrayList<Vertex> points3D = object.getPoints3D();
+        Object3D ring = convertOBJ("ufoRing.txt");
+        Object3D ring2 = convertOBJ("ringUfo.txt");
+        Ufo enemy = new Ufo(object.getPoints3D(),object.getFaces3D());
+        ArrayList<Vertex> hitbox2 = ring2.getPoints3D();
+
+        enemy.setHitBox2D(hitbox2);
+        enemy.setCollideHitBox(new ArrayList<>(ring.getPoints3D()));
+        enemy.setForward(new Vertex(0,0,1));
+        enemy.setCenter(new Vertex(0,0,0));
+        enemy.scale(1,0.7,1);
+        enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
+        enemy.rotateTank(0);
+        enemy.setRotation(0);
+        enemy.rotateTank(Math.random()*360);
+        enemy.moveTank(new Vertex(x,0.65,z));
+        enemy.setTarget(new Vertex(enemy.getCenter().getX() + Math.random()*50-25,0,enemy.getCenter().getZ() + Math.random()*50-25));
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
+        enemy.setColor(Color.GREEN);
+        enemy.setRotating(true);
+        enemy.setMoveDir(1);
+        enemy.setRotateDir(enemy.getExactRotationDir());
+        Main.objectList.add(enemy);
+        Main.ufoList.add(enemy);
+        return enemy;
+    }
+
+    public static EnemyTank generateEnemyTank(double x, double z){
+        System.out.println("PPPPPPPPP");
+        Object3D object = convertOBJ("normalTank.txt");
+        ArrayList<Vertex> points3D = object.getPoints3D();
+        EnemyTank enemy = new EnemyTank(object.getPoints3D(),object.getFaces3D());
+        ArrayList<Vertex> hitbox = new ArrayList<>();
+        Object3D object3D = Util.convertOBJ("ring.txt");
+        Object3D ring = Util.convertOBJ("tankHit.txt");
+        ArrayList<Vertex> hitbox1 = new ArrayList<>(object3D.getPoints3D());
+        enemy.setHitBox2D(new ArrayList<>(ring.getPoints3D()));
         enemy.setCollideHitBox(hitbox1);
         enemy.setForward(new Vertex(-1,0,0));
         enemy.setCenter(new Vertex(0,0,0));
@@ -105,16 +166,99 @@ public class Util {
         enemy.rotateTank(90);
         enemy.setRotation(0);
         enemy.rotateTank(Math.random()*360);
-        enemy.moveTank(new Vertex(x,y,z));
-        enemy.setTarget(new Vertex(enemy.getCenter().getX() + Math.random()*60-30,0,enemy.getCenter().getZ() + Math.random()*60-30));
+        enemy.moveTank(new Vertex(x,-0.3,z));
+        enemy.setTarget(new Vertex(enemy.getCenter().getX() + Math.random()*50-25,0,enemy.getCenter().getZ() + Math.random()*50-25));
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         enemy.setColor(Color.GREEN);
         enemy.setAttackMode(false);
         enemy.setWillShoot(false);
         enemy.setRotating(true);
-        enemy.setRotateDir(-1);
+        enemy.setMoveDir(1);
+        enemy.setRotateDir(enemy.getExactRotationDir());
         enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         Main.objectList.add(enemy);
         Main.enemyTankList.add(enemy);
+        return enemy;
+    }
+
+    public static Missile generateMissile(double x, double z){
+        System.out.println("PPPPPPPPP");
+        Object3D object = convertOBJ("missile.txt");
+        ArrayList<Vertex> points3D = object.getPoints3D();
+        Missile enemy = new Missile(object.getPoints3D(),object.getFaces3D());
+        ArrayList<Vertex> hitbox1 = new ArrayList<>();
+        hitbox1.add(object.getPoints3D().get(1));
+        hitbox1.add(object.getPoints3D().get(3));
+        hitbox1.add(object.getPoints3D().get(7));
+        ArrayList<Vertex> hitbox = new ArrayList<>();
+        hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
+        hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
+        hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
+        hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
+        enemy.setHitBox2D(hitbox1);
+        enemy.setCollideHitBox(hitbox);
+        enemy.scale(0.75,0.75,0.75);
+        enemy.setForward(new Vertex(1,0,0));
+        enemy.setCenter(new Vertex(0,0,0));
+        enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
+        enemy.rotateTank(270);
+        enemy.setRotation(0);
+        enemy.moveTank(new Vertex(x,50,z));
+        Vertex vertex = enemy.getCenter().getVertDif(new Vertex(Main.camera.getX(),Main.camera.getY(),Main.camera.getZ()));
+        double[] arr = vertex.toArray();
+        arr = Util.multiplyTransform(Util.getRotationYMatrix(new Random().nextDouble(-30,30)),arr);
+        double offset = -Math.random()/2 - 0.25;
+        for (int i = 0; i < arr.length; i++) {
+            arr[i]*=offset;
+        }
+        enemy.setTarget(enemy.getCenter().getVertSum(Util.arrToVert(arr)));
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
+        enemy.setColor(Color.GREEN);
+        enemy.setRotating(true);
+        enemy.setWaiting(false);
+        enemy.setMoving(false);
+        enemy.setMoveDir(1);
+        enemy.setRotateDir(enemy.getExactRotationDir());
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
+        enemy.setHasSpawned(true);
+        enemy.setFlying(true);
+        Main.objectList.add(enemy);
+        Main.missileList.add(enemy);
+        return enemy;
+    }
+
+    public static SuperTank generateSuperTank(double x, double z){
+        System.out.println("PPPPPPPPP");
+        Object3D object = convertOBJ("superTank.txt");
+        ArrayList<Vertex> points3D = object.getPoints3D();
+        SuperTank enemy = new SuperTank(object.getPoints3D(),object.getFaces3D());
+        Object3D ring = Util.convertOBJ("superTankHit.txt");
+        ArrayList<Vertex> hitbox = new ArrayList<>(ring.getPoints3D());
+        Object3D object3D = Util.convertOBJ("superRing.txt");
+        ArrayList<Vertex> hitbox1 = new ArrayList<>(object3D.getPoints3D());
+        enemy.setHitBox2D(hitbox);
+        enemy.setCollideHitBox(hitbox1);
+        enemy.setForward(new Vertex(-1,0,0));
+        enemy.setCenter(new Vertex(0,0,0));
+        enemy.scaleTank(2,1.5,2);
+        enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
+        enemy.rotateTank(90);
+        enemy.setRotation(0);
+        enemy.rotateTank(Math.random()*360);
+        enemy.moveTank(new Vertex(x,-0.25,z));
+        enemy.setTarget(new Vertex(Main.camera.getX() + Math.random()*30-15,0,Main.camera.getZ() + Math.random()*30-15));
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
+        enemy.setColor(Color.GREEN);
+        enemy.setAttackMode(true);
+        enemy.setWillShoot(true);
+        enemy.setRotating(true);
+        enemy.setMoving(false);
+        enemy.setMoveDir(1);
+        enemy.setRotateDir(enemy.getExactRotationDir());
+        enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
+        enemy.setHP(2);
+        Main.objectList.add(enemy);
+        Main.superTankList.add(enemy);
         return enemy;
     }
 

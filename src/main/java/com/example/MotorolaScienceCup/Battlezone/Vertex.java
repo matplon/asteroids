@@ -32,6 +32,20 @@ public class Vertex {
         return array1;
     }
 
+    public Vertex getVertDif(Vertex vertex){
+        double x = this.getX() - vertex.getX();
+        double y = this.getY() - vertex.getY();
+        double z = this.getZ() - vertex.getZ();
+        return new Vertex(x,y,z);
+    }
+
+    public Vertex getVertSum(Vertex vertex){
+        double x = this.getX() + vertex.getX();
+        double y = this.getY() + vertex.getY();
+        double z = this.getZ() + vertex.getZ();
+        return new Vertex(x,y,z);
+    }
+
     public double getX() {
         return x;
     }

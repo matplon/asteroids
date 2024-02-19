@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.MotorolaScienceCup.Battlezone.Chunk.sideLength;
+
 public class Object3D {
 
     private Color color;
@@ -82,16 +84,21 @@ public class Object3D {
         ArrayList<Vertex> arr = new ArrayList<>();
         ArrayList<Object3D> objArr = new ArrayList<>();
         for (Object3D object:Main.objectList) {
-            if (!(object.equals(current))) {
+            boolean flying = false;
+            if(object instanceof Missile){
+                flying = ((Missile) object).isFlying();
+            }
+            if (!(object.equals(current))&&!flying&&!((current instanceof Camera)&&(object instanceof Mine))) {
                 double dist = Math.sqrt(Math.pow((this.getX() - object.getX()), 2) + Math.pow((this.getZ() - object.getZ()), 2));
                 System.out.println(dist + " TROLOLOLOLOL");
                 if (dist < range) {
-                    if(object.getClass() != EnemyTank.class){
+                    if(!(object instanceof EnemyTank)){
                         ArrayList<Vertex> res = Util.hitBoxIntersect(object.getHitBox2D(), myHitBox);
                         for (Vertex vert : res) {
                             objArr.add(object);
                             arr.add(vert);
-                    }}else{
+                        }
+                    }else{
                         EnemyTank enemyTank = (EnemyTank) object;
                         ArrayList<Vertex> res = Util.hitBoxIntersect(enemyTank.getCollideHitBox(), myHitBox);
                         for (Vertex vert : res) {
@@ -187,7 +194,7 @@ public class Object3D {
         }
         for (int i = 0; i < this.faces3D.size(); i++) {
             Face face = this.faces3D.get(i);
-            if(this.faces3D.size() > 1 && this.getFaces3D().get(0).getIndexes().size() > 1){
+            if(this.faces3D.size() >= 1 && this.getFaces3D().get(0).getIndexes().size() > 1){
             for (int j = 0; j < face.getIndexes().size(); j++) {
                 double ax;
                 double ay;
@@ -255,6 +262,17 @@ public class Object3D {
             this.hitBox2D.set(i,Util.arrToVert(arr));
 
         }
+       /* if(this instanceof EnemyTank){
+            for (int i = 0; i < ((EnemyTank) this).getCollideHitBox().size(); i++) {
+                double [][] translationMatrix = Util.getTranslationMatrix(x,y,z);
+                double [] arr = ((EnemyTank) this).getCollideHitBox().get(i).toArray();
+                System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+                arr = Util.multiplyTransform(translationMatrix, arr);
+                System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+                ((EnemyTank) this).getCollideHitBox().set(i,Util.arrToVert(arr));
+
+            }
+        }*/
 
         this.setX(this.getCenterX());
         this.setY(this.getCenterY());
@@ -311,6 +329,17 @@ public class Object3D {
             this.hitBox2D.set(i,Util.arrToVert(arr));
 
         }
+        /*if(this instanceof Ufo){
+            for (int i = 0; i < ((EnemyTank) this).getCollideHitBox().size(); i++) {
+                double [][] translationMatrix = Util.getRotationYMatrix(angle);
+                double [] arr = ((EnemyTank) this).getCollideHitBox().get(i).toArray();
+                System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+                arr = Util.multiplyTransform(translationMatrix, arr);
+                System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+                ((EnemyTank) this).getCollideHitBox().set(i,Util.arrToVert(arr));
+
+            }
+        }*/
         this.moveTo(x,y,z);
         this.setX(this.getCenterX());
         this.setY(this.getCenterY());
@@ -355,6 +384,16 @@ public class Object3D {
         this.x = getCenterX();
         this.y = getCenterY();
         this.z = getCenterZ();
+    }
+
+    public Chunk checkChunk(){
+        Chunk chunk1 = new Chunk(0,0,new ArrayList<>());
+        for (Chunk chunk:Main.chunkList){
+            if(getX()<=chunk.getX()+ sideLength/2 && getX()>=chunk.getX()-sideLength/2 && getZ()<=chunk.getZ()+sideLength/2 && chunk.getZ()>=z-sideLength/2){
+                chunk1 = chunk;
+            }
+        }
+        return  chunk1;
     }
 
 
