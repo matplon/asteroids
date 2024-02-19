@@ -36,7 +36,7 @@ public class HUD {
         BetterPolygon heart = new Particle(pointsHeart, 0, 0, 0, 0);
         heart.setStroke(Color.RED);
         if(hearts.size() > 0)
-            heart.setLayoutX(hearts.get(hearts.size()-1).getLayoutX() + hearts.get(hearts.size() - 1).getRadius() + 5);
+            heart.setLayoutX(hearts.get(hearts.size()-1).getLayoutX() + hearts.get(hearts.size() - 1).getRadius() + 20);
         else
             heart.setLayoutX(pointsTextX);
         heart.setLayoutY(pointsTextY + fontSize + 10);

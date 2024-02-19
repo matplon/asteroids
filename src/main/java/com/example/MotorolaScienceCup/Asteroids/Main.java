@@ -97,7 +97,7 @@ public class Main {
         // Spawn the big asteroids
         Asteroid.spawnAsteroids(ASTEROID_COUNT);
 
-        HUD.init(highscore(), Util.SVGconverter(shipFilePath));
+        HUD.init(highscore(), Util.SVGconverter("heart.svg"));
 
         start();
         Menu.stage.setScene(scene);
