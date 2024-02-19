@@ -378,9 +378,8 @@ public class Main {
         enemyInRange=false;
         
 
-        for (int i = 0; i < fullTankList.size(); i++) {
+        for (Object3D object:fullTankList) {
             Circle circle1 = new Circle();
-            Object3D object = fullTankList.get(i);
 
         double dist = Math.sqrt(Math.pow((camera.getX()-object.getCenterX()),2)+Math.pow((camera.getZ()-object.getCenterZ()),2));
         if(dist < 100){
@@ -476,6 +475,16 @@ public class Main {
         root.getChildren().add(s);
     }
 
+    public static void spawnEnemy(){
+
+    }
+
+    public static void spawnUfo(){
+    }
+
+    public static void generateInitChunks(){
+    }
+
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
             wasHit = false;
@@ -483,13 +492,19 @@ public class Main {
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
             fullTankList.addAll(missileList);
+            if(fullTankList.isEmpty()&&Math.random()*300<1){
+                spawnEnemy();
+            }
+            if(ufoList.isEmpty()&&Math.random()*1000<1){
+                spawnUfo();
+            }
             TEXT_TICK++;
             if(camera.magTimer>=0){
                 camera.magTimer--;
             }
-            for (int i = 0; i < fullTankList.size(); i++) {
-                if(fullTankList.get(i).getMagTimer()>=0 && !(fullTankList.get(i) instanceof Missile || fullTankList.get(i) instanceof Ufo)) {
-                    fullTankList.get(i).setMagTimer(fullTankList.get(i).getMagTimer() - 1);
+            for (EnemyTank enemyTank:fullTankList) {
+                if(enemyTank.getMagTimer()>=0 && !(enemyTank instanceof Missile || enemyTank instanceof Ufo)) {
+                    enemyTank.setMagTimer(enemyTank.getMagTimer() - 1);
                 }
             }
             if(TEXT_TICK>30){
@@ -636,6 +651,14 @@ public class Main {
             if(wasHit){
                 onGotShot();
             }
+            ArrayList<Chunk> awaitingChunks = new ArrayList<>();
+            for (Chunk chunk:chunkList){
+                if(Math.abs(chunk.checkDistanceX(Chunk.getCenter()))>(Chunk.sideLength/2)-0.5 || Math.abs(chunk.checkDistanceZ(Chunk.getCenter()))>(Chunk.sideLength/2)-0.5){
+                    chunk.unloadChunk(awaitingChunks);
+                }
+            }
+            chunkList.addAll(awaitingChunks);
+            awaitingChunks.clear();
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();

@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.MotorolaScienceCup.Battlezone.Chunk.sideLength;
+
 public class Object3D {
 
     private Color color;
@@ -382,6 +384,16 @@ public class Object3D {
         this.x = getCenterX();
         this.y = getCenterY();
         this.z = getCenterZ();
+    }
+
+    public Chunk checkChunk(){
+        Chunk chunk1 = new Chunk(0,0,new ArrayList<>());
+        for (Chunk chunk:Main.chunkList){
+            if(getX()<=chunk.getX()+ sideLength/2 && getX()>=chunk.getX()-sideLength/2 && getZ()<=chunk.getZ()+sideLength/2 && chunk.getZ()>=z-sideLength/2){
+                chunk1 = chunk;
+            }
+        }
+        return  chunk1;
     }
 
 

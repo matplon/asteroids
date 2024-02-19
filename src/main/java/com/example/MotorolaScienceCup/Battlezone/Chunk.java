@@ -19,24 +19,25 @@ public class Chunk {
 
     private ArrayList<Mine> chunkMines = new ArrayList<>();
 
-    public Chunk(int x, int z){
+    public Chunk(int x, int z, ArrayList<Chunk> arr){
         this.x = x;
         this.z = z;
         fillChunk();
+        arr.add(this);
     }
 
-    public int checkCenterDistanceX(Chunk chunk){
+    public int checkDistanceX(Chunk chunk){
         double x = this.getX() - chunk.getX();
         return (int) x/sideLength;
 
     }
 
-    public int checkCenterDistanceZ(Chunk chunk){
+    public int checkDistanceZ(Chunk chunk){
         double z = this.getZ() - chunk.getZ();
         return (int) z/sideLength;
 
     }
-    public void unloadChunk(){
+    public void unloadChunk(ArrayList<Chunk> arr){
         for(Object3D object3D: chunkObjects){
             Main.objectList.remove(object3D);
         }
@@ -45,11 +46,11 @@ public class Chunk {
             Main.mineList.remove(mine);
         }
         Main.chunkList.remove(this);
-        int x = -checkCenterDistanceX(oldCenter);
-        int z = -checkCenterDistanceZ(oldCenter);
+        int x = -checkDistanceX(oldCenter);
+        int z = -checkDistanceZ(oldCenter);
         x = (int)(center.getX() + x);
         z = (int)(center.getZ() + z);
-        Chunk chunk = new Chunk(x,z);
+        Chunk chunk = new Chunk(x,z,arr);
 
     }
 
