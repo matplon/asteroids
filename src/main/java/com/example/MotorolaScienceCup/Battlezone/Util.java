@@ -90,28 +90,29 @@ public class Util {
 
     public static Mine generateMine(double x,double z){
         System.out.println("PPPPPPPPP");
-        Object3D object = convertOBJ("mine.txt");
+        Object3D object = convertOBJ("Pyramid.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
+        ArrayList<Vertex> triangleHitbox = new ArrayList<>();
+        triangleHitbox.add(new Vertex(0.4,0,-0.4));
+        triangleHitbox.add(new Vertex(0.4,0,0.4));
+        triangleHitbox.add(new Vertex(-0.4,0,0.4));
+        triangleHitbox.add(new Vertex(-0.4,0,-0.4));
         Mine enemy = new Mine(object.getPoints3D(),object.getFaces3D());
         ArrayList<Vertex> hitbox = new ArrayList<>(object.getPoints3D());
         hitbox.add(new Vertex(getMaxX(points3D),0, getMaxZ(points3D)));
         hitbox.add(new Vertex(getMaxX(points3D),0, getMinZ(points3D)));
         hitbox.add(new Vertex(getMinX(points3D),0, getMinZ(points3D)));
         hitbox.add(new Vertex(getMinX(points3D),0, getMaxZ(points3D)));
-        ArrayList<Vertex> hitbox2 = new ArrayList<>();
-        Face face1 = object.getFaces3D().get(9);
-        for (int i = 0; i < face1.getIndexes().size(); i++) {
-            hitbox2.add(points3D.get(face1.getIndexes().get(i)));
-        }
+        ArrayList<Vertex> hitbox2 = new ArrayList<>(triangleHitbox);
         enemy.setForward(new Vertex(0,0,1));
         enemy.setHitBox2D(hitbox);
         enemy.setCollideHitBox(hitbox2);
         enemy.setCenter(new Vertex(0,0,0));
-        enemy.scale(0.5,0.5,0.5);
+        enemy.scale(0.4,0.15,0.4);
         enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
         enemy.rotateTank(0);
         enemy.setRotation(0);
-        enemy.moveTank(new Vertex(x,-0.75,z));
+        enemy.moveTank(new Vertex(x,-0.9,z));
         enemy.setColor(Color.GREEN);
         Main.objectList.add(enemy);
         Main.mineList.add(enemy);
@@ -260,6 +261,49 @@ public class Util {
         Main.objectList.add(enemy);
         Main.superTankList.add(enemy);
         return enemy;
+    }
+
+    public static Object3D generateCube(double x, double z){
+        System.out.println("PPPPPPPPP");
+        Object3D object = convertOBJ("Cube.txt");
+        ArrayList<Vertex> cubeHitbox = new ArrayList<>();
+        cubeHitbox.add(new Vertex(1.05,0,-1.05));
+        cubeHitbox.add(new Vertex(1.05,0,1.05));
+        cubeHitbox.add(new Vertex(-1.05,0,1.05));
+        cubeHitbox.add(new Vertex(-1.05,0,-1.05));
+        object.setColor(Color.GREEN);
+        object.setHitBox2D(cubeHitbox);
+        object.moveTo(x,0,z);
+        Main.objectList.add(object);
+        return object;
+    }
+    public static Object3D generateCone(double x, double z){
+        System.out.println("PPPPPPPPP");
+        Object3D object = convertOBJ("Pyramid.txt");
+        ArrayList<Vertex> triangleHitbox = new ArrayList<>();
+        triangleHitbox.add(new Vertex(0.6,0,-0.6));
+        triangleHitbox.add(new Vertex(0.6,0,0.6));
+        triangleHitbox.add(new Vertex(-0.6,0,0.6));
+        triangleHitbox.add(new Vertex(-0.6,0,-0.6));
+        object.setColor(Color.GREEN);
+        object.setHitBox2D(triangleHitbox);
+        object.moveTo(x,-0.6,z);
+        Main.objectList.add(object);
+        return object;
+    }
+    public static Object3D generateHalfCube(double x, double z){
+        System.out.println("PPPPPPPPP");
+        Object3D object = convertOBJ("Half-Cube.txt");
+        ArrayList<Vertex> cubeHitbox = new ArrayList<>();
+        cubeHitbox.add(new Vertex(1.05,0,-1.05));
+        cubeHitbox.add(new Vertex(1.05,0,1.05));
+        cubeHitbox.add(new Vertex(-1.05,0,1.05));
+        cubeHitbox.add(new Vertex(-1.05,0,-1.05));
+        object.setColor(Color.GREEN);
+        object.setHitBox2D(cubeHitbox);
+        object.moveTo(x,-0.6,z);
+        Main.objectList.add(object);
+        return object;
     }
 
     public static void drawUnscopedReticle(){
@@ -538,6 +582,11 @@ public class Util {
         }
 
         Object3D object3D = new Object3D(vertices,faces);
+        if(path.equals("Half-Cube.txt")){
+            object3D.setHalfCube(true);
+        }else{
+            object3D.setHalfCube(false);
+        }
         return object3D;
     }
 }

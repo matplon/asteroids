@@ -70,8 +70,10 @@ public class Bullet extends Object3D{
 
     public Vertex checkForHits(Object3D object){
         ArrayList<Vertex> list = new ArrayList<>();
+        ArrayList<Vertex> hitbox = new ArrayList<>();
+        hitbox = object.getHitBox2D();
 
-        if(!(object instanceof Bullet)){
+        if(!(object instanceof Bullet)&&(!object.isHalfCube())){
             Vertex vertex = new Vertex(this.getPoints3D().get(4).getX(), 0, this.getPoints3D().get(4).getZ());
             Vertex vertex1 = new Vertex(this.getPoints3D().get(4).getX(), 0, this.getPoints3D().get(4).getZ());
             double[] arr1 = vertex1.toArray();
@@ -81,8 +83,7 @@ public class Bullet extends Object3D{
                 arr1 = Util.multiplyTransform(Util.getTranslationMatrix(-this.getDirection().getX()*2, 0, -this.getDirection().getZ()*2), arr1);
             }
             vertex1 = Util.arrToVert(arr1);
-            ArrayList<Vertex> hitbox = new ArrayList<>();
-            hitbox = object.getHitBox2D();
+
 
             for (int i = 0; i < hitbox.size(); i++) {
                 if (i + 1 < hitbox.size()) {

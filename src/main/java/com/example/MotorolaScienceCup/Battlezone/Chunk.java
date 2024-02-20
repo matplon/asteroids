@@ -1,43 +1,48 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Chunk {
 
-    public static int sideLength = 40;
+    public static int sideLength = 60;
 
-    public static int chunkHiveSideLenght = 3;
+    public static int chunkHiveSideLength = 7;
 
-    public static int chunkObjCount = 1;
+    public static int chunkObjCount = 2;
     public static int chunkMineCount = 1;
 
     public static Chunk center;
     public static Chunk oldCenter;
     private int x;
     private int z;
+
+    private int indexX;
+    private int indexZ;
     private ArrayList<Object3D> chunkObjects = new ArrayList<>();
 
     private ArrayList<Mine> chunkMines = new ArrayList<>();
 
-    public Chunk(int x, int z, ArrayList<Chunk> arr){
+    public Chunk(int x, int z, int indexX, int indexZ){
         this.x = x;
         this.z = z;
+        this.indexX = indexX;
+        this.indexZ = indexZ;
         fillChunk();
-        arr.add(this);
     }
 
     public int checkDistanceX(Chunk chunk){
         double x = this.getX() - chunk.getX();
-        return (int) x/sideLength;
+        return (int) Math.round(x);
 
     }
 
     public int checkDistanceZ(Chunk chunk){
         double z = this.getZ() - chunk.getZ();
-        return (int) z/sideLength;
+        return (int) Math.round(z);
 
     }
-    public void unloadChunk(ArrayList<Chunk> arr){
+    public void unloadChunk(){
         for(Object3D object3D: chunkObjects){
             Main.objectList.remove(object3D);
         }
@@ -45,26 +50,74 @@ public class Chunk {
             Main.objectList.remove(mine);
             Main.mineList.remove(mine);
         }
-        Main.chunkList.remove(this);
-        int x = -checkDistanceX(oldCenter);
-        int z = -checkDistanceZ(oldCenter);
-        x = (int)(center.getX() + x);
-        z = (int)(center.getZ() + z);
-        Chunk chunk = new Chunk(x,z,arr);
 
     }
+
+    public void moveToRandom(Object3D object3D){
+        double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
+        double z = getZ()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
+        object3D.moveTo(x,0,z);
+        boolean notCollided = object3D.runCollisionCheck(5, object3D.getHitBox2D(), object3D).isEmpty();
+        if(notCollided){
+            return;
+        }else{
+            moveToRandom(object3D);
+        }
+    }
+
 
 
     public void fillChunk(){
-
+        for (int i = 0; i < chunkObjCount; i++) {
+            double check = new Random().nextDouble(10);
+            if(check<4){
+                double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
+                double z = getZ()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
+                Object3D object3D = Util.generateCube(x,z);
+                boolean notCollided = object3D.runCollisionCheck(5, object3D.getHitBox2D(), object3D).isEmpty();
+                if(!notCollided){
+                    moveToRandom(object3D);
+                }
+                this.getChunkObjects().add(object3D);
+            } else if(check>=4&&check<8){
+                double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
+                double z = getZ()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
+                Object3D object3D = Util.generateCone(x,z);
+                boolean notCollided = object3D.runCollisionCheck(5, object3D.getHitBox2D(), object3D).isEmpty();
+                if(!notCollided){
+                    moveToRandom(object3D);
+                }
+                this.getChunkObjects().add(object3D);
+            } else if(check>=8){
+                double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
+                double z = getZ()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
+                Object3D object3D = Util.generateHalfCube(x,z);
+                boolean notCollided = object3D.runCollisionCheck(5, object3D.getHitBox2D(), object3D).isEmpty();
+                if(!notCollided){
+                    moveToRandom(object3D);
+                }
+                this.getChunkObjects().add(object3D);
+            }
+        }
+        for (int i = 0; i < chunkMineCount; i++) {
+            double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
+            double z = getZ()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
+            Mine object3D = Util.generateMine(x,z);
+            boolean notCollided = object3D.runCollisionCheck(5, object3D.getHitBox2D(), object3D).isEmpty();
+            if(!notCollided){
+                moveToRandom(object3D);
+            }
+            this.getChunkMines().add(object3D);
+        }
     }
 
     public void checkHasPlayer(){
-        if(Main.camera.getX()<=x+sideLength/2 && Main.camera.getX()>=x-sideLength/2 && Main.camera.getZ()<=z+sideLength/2 && Main.camera.getZ()>=z-sideLength/2){
-            if(!this.equals(center)){
-                setOldCenter(getCenter());
+        System.out.println("_______________");
+        if(Main.camera.getX()<x+ (double) sideLength /2 && Main.camera.getX()>x- (double) sideLength /2 && Main.camera.getZ()<z+ (double) sideLength /2 && Main.camera.getZ()>z- (double) sideLength /2){
+                setOldCenter(center);
                 setCenter(this);
-            }
+            System.out.println("^^^^^^^^^");
+
         }
     }
 
@@ -122,5 +175,21 @@ public class Chunk {
 
     public void setChunkMines(ArrayList<Mine> chunkMines) {
         this.chunkMines = chunkMines;
+    }
+
+    public int getIndexX() {
+        return indexX;
+    }
+
+    public void setIndexX(int indexX) {
+        this.indexX = indexX;
+    }
+
+    public int getIndexZ() {
+        return indexZ;
+    }
+
+    public void setIndexZ(int indexZ) {
+        this.indexZ = indexZ;
     }
 }
