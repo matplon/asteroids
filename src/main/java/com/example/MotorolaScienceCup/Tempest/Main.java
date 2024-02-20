@@ -40,7 +40,7 @@ public class Main {
     static boolean goRight;
     static boolean goLeft;
     static int LEVEL = 1;
-    static int flippersNumber = 10;
+    static int flippersNumber = 5;
 
     static double bigSideLength;
 
@@ -130,6 +130,7 @@ public class Main {
             }
             if(!Flipper.seedsDone){
                 Flipper.updateSeeds();
+                System.out.println(flippers.size());
             }
             for (Flipper flipper : flippers){
                 flipper.move();

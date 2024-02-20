@@ -48,7 +48,7 @@ public class Flipper extends BetterPolygon {
     private boolean left;
     private final double acceleration;
     private int bulletTimer;
-    private static PriorityQueue<FlipperSeed> seedQueue = new PriorityQueue<>();
+    private static Queue<FlipperSeed> seedQueue = new LinkedList<>();
     private static List<FlipperSeed> seedList = new ArrayList<>();
     static boolean seedsDone = false;
 
@@ -341,13 +341,16 @@ public class Flipper extends BetterPolygon {
     private static class FlipperSeed {
         private final double CENTER_X = Graphics.mapCenterX;
         private final double CENTER_Y = Graphics.mapCenterY;
-        private double RADIUS = 4.0;
-        private final double ANGULAR_SPEED = 0.02;
-        private final double linearSpeed = 7.0;
+        private double RADIUS = 0;
+        private final double ANGULAR_SPEED = 0.2;
+        private final double linearSpeed = 1.0;
         private double DEST_X;
         private double DEST_Y;
+        private double ANGLE = 0;
+        private double ANGLE_INC = 0.1;
+        private double RADIUS_INC = 0.05;
         private Particle seed;
-        private boolean spiral;
+        private boolean spiral = true;
         private boolean done;
         private Panel chosenPanel;
         private double T;
@@ -369,58 +372,44 @@ public class Flipper extends BetterPolygon {
             seed.setStroke(Color.RED);
             Main.root.getChildren().add(seed);
 
-            chooseMotion();
             choosePanel();
-        }
-
-        private void chooseMotion() {
-            Random random = new Random();
-            int chooser = random.nextInt(2);
-            spiral = (chooser == 0);
         }
 
         private void choosePanel() {
             Random random = new Random();
             int panelIndex = random.nextInt(Main.panels.size());
-            List<Double> points = Main.panels.get(panelIndex).getSmallSide().getPoints();
             chosenPanel = Main.panels.get(panelIndex);
-
-            double randomT = Math.random();
-            DEST_X = points.getFirst() + randomT * (points.get(2) - points.getFirst());
-            DEST_Y = points.get(1) + randomT * (points.getLast() - points.get(1));
-            seed.setVelocity(new Vector(linearSpeed, Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX())));
-            seed.setAngle(Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX()));
-
-            double s = Math.sqrt(Math.pow(DEST_Y - seed.getCenterY(), 2) + Math.pow(DEST_X - seed.getCenterX(), 2));
-            T = s / linearSpeed;
         }
 
         private void move() {
+            if (!spiral) {
+                Random random = new Random();
+                double randomInt = random.nextInt(10);
+                spiral = (randomInt <= 8);
+                if (spiral) {
+                    List<Double> points = chosenPanel.getSmallSide().getPoints();
+                    double randomT = Math.random();
+                    DEST_X = points.getFirst() + randomT * (points.get(2) - points.getFirst());
+                    DEST_Y = points.get(1) + randomT * (points.getLast() - points.get(1));
+                    seed.setVelocity(new Vector(linearSpeed, Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX())));
+                    seed.setAngle(Math.toDegrees(Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX())));
+
+                    double s = Math.sqrt(Math.pow(DEST_Y - seed.getCenterY(), 2) + Math.pow(DEST_X - seed.getCenterX(), 2));
+                    T = s / linearSpeed;
+                }
+            }
             if (spiral) {
-                double currentTime = System.currentTimeMillis();
-                double angle = ANGULAR_SPEED * currentTime;
-                double spiralX = CENTER_X + RADIUS * Math.cos(angle) * angle;
-                double spiralY = CENTER_Y + RADIUS * Math.sin(angle) * angle;
+                double x = CENTER_X + RADIUS * Math.cos(ANGLE);
+                double y = CENTER_Y + RADIUS * Math.sin(ANGLE);
 
-                // Calculate the direction towards the destination point
-                double dirX = DEST_X - spiralX;
-                double dirY = DEST_Y - spiralY;
+                seed.moveTo(x, y);
 
-                // Normalize the direction vector
-                double length = Math.sqrt(dirX * dirX + dirY * dirY);
-                dirX /= length;
-                dirY /= length;
-
-                // Move the particle towards the destination while spiraling
-                double speed = 1; // Adjust speed as needed
-                double newX = spiralX + dirX * speed;
-                double newY = spiralY + dirY * speed;
-
-                seed.moveTo(newX, newY);
+                ANGLE += ANGLE_INC;
+                RADIUS += RADIUS_INC;
             } else {
                 seed.updatePosition();
                 T--;
-                if(T <= 0) done = true;
+                if (T <= 0) done = true;
             }
         }
 
@@ -480,28 +469,21 @@ public class Flipper extends BetterPolygon {
             double y2 = currentPanel.getLeftSide().getPoints().get(3);
 
             if (x1 < x2) {
-                if(y1 < y2){
+                if (y1 < y2) {
                     if ((innerSqr.getCenterX() > (x1 + x2) / 2) || innerSqr.getCenterY() < (y1 + y2) / 2) return true;
-                }
-                else if(y1 > y2){
+                } else if (y1 > y2) {
                     if ((innerSqr.getCenterX() < (x1 + x2) / 2) || (innerSqr.getCenterY() > (y1 + y2) / 2)) return true;
-                }
-                else if(innerSqr.getCenterY() < (y1 + y2)/2) return true;
-            }
-            else if(x1 > x2){
-                if(y1 < y2){
+                } else if (innerSqr.getCenterY() < (y1 + y2) / 2) return true;
+            } else if (x1 > x2) {
+                if (y1 < y2) {
                     if ((innerSqr.getCenterY() > (x1 + x2) / 2) || (innerSqr.getCenterY() > (y1 + y2) / 2)) return true;
-                }
-                else if(y1 > y2){
+                } else if (y1 > y2) {
                     if ((innerSqr.getCenterX() < (x1 + x2) / 2) || (innerSqr.getCenterY() > (y1 + y2) / 2)) return true;
-                }
-                else if(innerSqr.getCenterY() > (y1 + y2)/2) return true;
-            }
-            else if(y1 < y2){
-                if(innerSqr.getCenterX() > (x1 + x2)/2) return true;
-            }
-            else if(y1 > y2){
-                if(innerSqr.getCenterX() < (x1 + x2)/2) return true;
+                } else if (innerSqr.getCenterY() > (y1 + y2) / 2) return true;
+            } else if (y1 < y2) {
+                if (innerSqr.getCenterX() > (x1 + x2) / 2) return true;
+            } else if (y1 > y2) {
+                if (innerSqr.getCenterX() < (x1 + x2) / 2) return true;
             }
             return false;
         }
