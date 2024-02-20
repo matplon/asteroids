@@ -27,10 +27,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Main {
 
@@ -68,7 +65,7 @@ public class Main {
 
     static ArrayList<EnemyTank> fullTankList = new ArrayList<>();
 
-    static Chunk[][] chunkList = new Chunk[Chunk.chunkHiveSideLength][Chunk.chunkHiveSideLength];
+    static ArrayList<Chunk> chunkList = new ArrayList<>();
 
     static ArrayList<Polyline> lineList = new ArrayList<>();
 
@@ -139,11 +136,12 @@ public class Main {
         camera.setHitBox2D(camHitbox);
         camera.translate(0,0,-10);
         objectList.add(camera);
-       /* EnemyTank obj1 = Util.generateEnemyTank(0,10);
-        SuperTank super1 = Util.generateSuperTank(10,20);
+       /* *//*EnemyTank obj1 = Util.generateEnemyTank(0,10);
+        SuperTank super1 = Util.generateSuperTank(10,20);*//*
         Missile missile = Util.generateMissile(0,100);
         Ufo ufo = Util.generateUfo(0,0);*/
         generateInitChunks();
+        spawnEnemy();
 
         start();
 
@@ -451,19 +449,81 @@ public class Main {
         root.getChildren().add(s);
     }
 
+
+
     public static void spawnEnemy(){
+        double check = new Random().nextDouble(13);
+        if(check<4){
+            Vertex vertex = camera.getForward();
+            double[] arr = vertex.toArray();
+            double offset = Math.random()*120-60;
+            arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+            double scale = Math.random()*50+25;
+            for (int i = 0; i < arr.length; i++) {
+                arr[i]*=scale;
+            }
+            vertex = Util.arrToVert(arr);
+            EnemyTank enemyTank = Util.generateEnemyTank(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
+            boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
+            if(!notCollided){
+                enemyTank.moveToRandom(60,15);
+            }
+        } else if(check>=4&&check<8){
+            Vertex vertex = camera.getForward();
+            double[] arr = vertex.toArray();
+            double offset = Math.random()*200-100;
+            arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+            double scale = Math.random()*50+25;
+            for (int i = 0; i < arr.length; i++) {
+                arr[i]*=scale;
+            }
+            vertex = Util.arrToVert(arr);
+            SuperTank enemyTank = Util.generateSuperTank(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
+            boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
+            if(!notCollided){
+                enemyTank.moveToRandom(100,15);
+            }
+        } else if(check>=8){
+            Vertex vertex = camera.getForward();
+            double[] arr = vertex.toArray();
+            double offset = Math.random()*60-30;
+            arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+            double scale = 115;
+            for (int i = 0; i < arr.length; i++) {
+                arr[i]*=scale;
+            }
+            vertex = Util.arrToVert(arr);
+            Missile enemyTank = Util.generateMissile(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
+            boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
+            if(!notCollided){
+                enemyTank.moveToRandom(30,115);
+            }
+        }
+
 
     }
 
     public static void spawnUfo(){
-
+            Vertex vertex = camera.getForward();
+            double[] arr = vertex.toArray();
+            double offset = Math.random()*150-75;
+            arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+            double scale = Math.random()*50+25;
+            for (int i = 0; i < arr.length; i++) {
+                arr[i]*=scale;
+            }
+            vertex = Util.arrToVert(arr);
+            Ufo enemyTank = Util.generateUfo(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
+            boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
+            if(!notCollided){
+                enemyTank.moveToRandom(75,25);
+            }
     }
 
     public static void generateInitChunks(){
         for (int i = -3; i < 4; i++) {
             for (int j = -3; j < 4; j++) {
-                Chunk chunk = new Chunk((int)Math.round(i*Chunk.getSideLength()), (int)Math.round(j*Chunk.getSideLength()),i,j);
-                chunkList[i+3][j+3]=chunk;
+                Chunk chunk = new Chunk((int)Math.round(i*Chunk.getSideLength()), (int)Math.round(j*Chunk.getSideLength()),chunkList);
                 if(i==0&&j==0){
                     Chunk.setCenter(chunk);
                 }
@@ -478,10 +538,10 @@ public class Main {
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
             fullTankList.addAll(missileList);
-            if(fullTankList.isEmpty()&&Math.random()*300<1){
+            if(fullTankList.isEmpty()&&Math.random()*200<1){
                 spawnEnemy();
             }
-            if(ufoList.isEmpty()&&Math.random()*1000<1){
+            if(ufoList.isEmpty()&&Math.random()*500<1){
                 spawnUfo();
             }
             TEXT_TICK++;
@@ -633,6 +693,25 @@ public class Main {
             }
             for (Mine mine : mineList){
                 mine.checkCamera();
+            }
+            for (Chunk chunk:chunkList){
+                chunk.checkHasPlayer();
+            }
+            ArrayList<Chunk> tempChunk = new ArrayList<>();
+            for (int i = 0; i < chunkList.size(); i++) {
+                Chunk chunk = chunkList.get(i);
+                if(Math.abs(chunk.checkDistanceX(Chunk.center))>Chunk.sideLength*3){
+                    int x = -chunk.checkDistanceX(Chunk.getOldCenter());
+                    Chunk chunk1 = new Chunk((int)Math.round(Chunk.getCenter().getX()+x), (int)Math.round(chunk.getZ()), tempChunk);
+                    chunk.unloadChunk();
+                }else if(Math.abs(chunk.checkDistanceZ(Chunk.center))>Chunk.sideLength*3){
+                    int z = -chunk.checkDistanceZ(Chunk.getOldCenter());
+                    Chunk chunk1 = new Chunk((int)Math.round(chunk.getX()), (int)Math.round(Chunk.getCenter().getZ()+z), tempChunk);
+                    chunk.unloadChunk();
+                }
+            }
+            for(Chunk chunk:tempChunk){
+                chunkList.add(chunk);
             }
             if(wasHit){
                 onGotShot();
