@@ -47,7 +47,7 @@ public class Main {
     static boolean goRight;
     static boolean goLeft;
     static int LEVEL = 1;
-    static int flippersNumber = 5;
+    static int flippersNumber = 3;
 
     static double bigSideLength;
 

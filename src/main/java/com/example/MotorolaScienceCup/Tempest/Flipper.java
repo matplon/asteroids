@@ -32,9 +32,9 @@ public class Flipper extends BetterPolygon {
     private static final double initVelocity = 0.1;
     private final int bulletCooldown = 60;
     private static final String filepath = "flipper.svg";
-    private static BetterPolygon defFlipper = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
-    private static List<Double> defPoints = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180).getPoints();
-    private static final List<Double> pointerPoints = Arrays.asList(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0);
+    private BetterPolygon defFlipper = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
+    private List<Double> defPoints = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180).getPoints();
+    static final List<Double> pointerPoints = Arrays.asList(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0);
     private List<FlipperBullet> flipperBullets;
     private Panel currentPanel;
     private int step;
@@ -342,7 +342,6 @@ public class Flipper extends BetterPolygon {
         private final double CENTER_X = Graphics.mapCenterX;
         private final double CENTER_Y = Graphics.mapCenterY;
         private double RADIUS = 0;
-        private final double ANGULAR_SPEED = 0.2;
         private final double linearSpeed = 1.0;
         private double DEST_X;
         private double DEST_Y;
@@ -351,12 +350,11 @@ public class Flipper extends BetterPolygon {
         private double RADIUS_INC = 0.05;
         private Particle seed;
         private boolean spiral = true;
-        private boolean done;
-        private Panel chosenPanel;
+        public boolean done = false;
+        public Panel chosenPanel;
         private double T;
 
-        private FlipperSeed() {
-            done = false;
+        public FlipperSeed() {
             Circle bounds = new Circle(Graphics.mapCenterX, Graphics.mapCenterY, 15);
             Random random = new Random();
             double x = random.nextDouble(Main.WIDTH);
@@ -367,7 +365,7 @@ public class Flipper extends BetterPolygon {
                 y = random.nextDouble(Main.HEIGHT);
                 point2D = new Point2D(x, y);
             }
-            seed = new Particle(pointerPoints, 0, 0, 0, 0);
+            seed = new Particle(Flipper.pointerPoints, 0, 0, 0, 0);
             seed.moveTo(x, y);
             seed.setStroke(Color.RED);
             Main.root.getChildren().add(seed);
@@ -381,18 +379,19 @@ public class Flipper extends BetterPolygon {
             chosenPanel = Main.panels.get(panelIndex);
         }
 
-        private void move() {
-            if (!spiral) {
+        public void move() {
+            if (spiral) {
                 Random random = new Random();
                 double randomInt = random.nextInt(10);
-                spiral = (randomInt <= 8);
-                if (spiral) {
+                spiral = (randomInt <= 5);
+                if (!spiral) {
                     List<Double> points = chosenPanel.getSmallSide().getPoints();
                     double randomT = Math.random();
                     DEST_X = points.getFirst() + randomT * (points.get(2) - points.getFirst());
                     DEST_Y = points.get(1) + randomT * (points.getLast() - points.get(1));
-                    seed.setVelocity(new Vector(linearSpeed, Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX())));
-                    seed.setAngle(Math.toDegrees(Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX())));
+                    double angle = Math.toDegrees(Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX()));
+                    seed.setVelocity(new Vector(linearSpeed, angle));
+                    seed.setAngle(angle);
 
                     double s = Math.sqrt(Math.pow(DEST_Y - seed.getCenterY(), 2) + Math.pow(DEST_X - seed.getCenterX(), 2));
                     T = s / linearSpeed;
@@ -413,7 +412,7 @@ public class Flipper extends BetterPolygon {
             }
         }
 
-        private void remove() {
+        public void remove() {
             Main.root.getChildren().remove(seed);
         }
     }
