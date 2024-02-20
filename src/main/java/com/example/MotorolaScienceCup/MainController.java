@@ -1,91 +1,48 @@
 package com.example.MotorolaScienceCup;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import com.example.MotorolaScienceCup.Asteroids.Main;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.control.Label;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
-import javafx.util.Duration;
-
-import java.io.File;
-import java.net.MalformedURLException;
-
-import static javafx.application.Application.launch;
+import javafx.scene.control.Button;
 
 public class MainController {
-    @FXML
-    private Label welcomeText;
-    @FXML
-    private AnchorPane anchorPane;
 
     @FXML
-    private ImageView tempest;
+    private ResourceBundle resources;
 
     @FXML
-    private ImageView first;
+    private URL location;
 
     @FXML
-    private ImageView battleZone;
-
-
-    @FXML
-    private MediaView mediaView;
-
-
+    private Button Asteroids;
 
     @FXML
-    void initialize() {
-        first.setImage(new Image("file:images\\first.jpg"));
-        tempest.setImage(new Image("file:images\\tempest.jpg"));
-        battleZone.setImage(new Image("file:images\\battlezone.jpg"));
-    }
+    private Button Battlezone;
 
     @FXML
-    void animation() {
-        Media media = null;
-        try {
-            media = new Media(new File("images\\img.mp4").toURI().toURL().toString());
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.play();
-        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-
-        mediaView = new MediaView(mediaPlayer);
-
-        mediaPlayer.setOnEndOfMedia(new Runnable() {
-            @Override
-            public void run() {
-                mediaPlayer.seek(Duration.ZERO);
-                mediaPlayer.play();
-            }
-        });
-        anchorPane.getChildren().add(mediaView);
-
-
-    }
+    private Button Tempest;
 
     @FXML
-    protected void clickedAsteroids() {
+    void asteroids(ActionEvent event) {
         Main.init();
     }
 
     @FXML
-    protected void clickedBattleZone() {
+    void battlezone(ActionEvent event) {
         com.example.MotorolaScienceCup.Battlezone.Main.init();
     }
 
     @FXML
-    protected void clickedTempest() {
+    void tempest(ActionEvent event) {
         com.example.MotorolaScienceCup.Tempest.Main.init();
     }
 
+    @FXML
+    void initialize() {
 
+
+    }
 }

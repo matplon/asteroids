@@ -11,9 +11,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class HUD {
 
@@ -26,7 +27,7 @@ public class HUD {
     private static final int pointsTextX = 15;
     private static final int pointsTextY = 100;
     private static final int fontSize = 50;
-    private static final String fontStyle = "Times New Roman";
+    private static final String fontStyle = "Public Pixel";
     private static List<Double> pointsHeart;
 
     private static Font font = new Font(fontStyle, fontSize);
@@ -35,7 +36,7 @@ public class HUD {
         BetterPolygon heart = new Particle(pointsHeart, 0, 0, 0, 0);
         heart.setStroke(Color.RED);
         if(hearts.size() > 0)
-            heart.setLayoutX(hearts.get(hearts.size()-1).getLayoutX() + hearts.get(hearts.size() - 1).getRadius() + 5);
+            heart.setLayoutX(hearts.get(hearts.size()-1).getLayoutX() + hearts.get(hearts.size() - 1).getRadius() + 20);
         else
             heart.setLayoutX(pointsTextX);
         heart.setLayoutY(pointsTextY + fontSize + 10);
@@ -123,6 +124,49 @@ public class HUD {
         Scene newScene = new Scene(newRoot, Main.WIDTH, Main.HEIGHT);
         newScene.setFill(Color.BLACK);
         Menu.stage.setScene(newScene);
+
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(new File("highscore.txt"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(scanner.hasNextLine());
+        if (scanner.hasNextLine()) {
+
+            int highscore = Integer.parseInt(scanner.nextLine());
+            System.out.println(highscore);
+            if (HUD.getPoints() > highscore) {
+                Writer writer = null;
+                try {
+                    writer = new FileWriter(new File("highscore.txt"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    writer.write(HUD.getPoints() + "");
+                    writer.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        else {
+            System.out.println(HUD.getPoints());
+            Writer writer = null;
+            try {
+                writer = new FileWriter(new File("highscore.txt"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                writer.write(HUD.getPoints() + "");
+                writer.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
 

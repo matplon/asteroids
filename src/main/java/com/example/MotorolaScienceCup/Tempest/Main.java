@@ -5,9 +5,13 @@ import com.example.MotorolaScienceCup.Util;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 import javafx.stage.Stage;
@@ -40,7 +44,7 @@ public class Main {
     static boolean goRight;
     static boolean goLeft;
     static int LEVEL = 1;
-    static int flippersNumber = 10;
+    static int flippersNumber = 3;
 
     static double bigSideLength;
 
@@ -59,6 +63,7 @@ public class Main {
         scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
         scene.setFill(Color.BLACK);
+        root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
 
         shoot = false;
         goLeft = false;
