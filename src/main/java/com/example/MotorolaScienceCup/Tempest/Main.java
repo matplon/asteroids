@@ -43,14 +43,15 @@ public class Main {
     static boolean shoot;
     static boolean goRight;
     static boolean goLeft;
-    static int LEVEL = 1;
-    static int flippersNumber = 3;
+    static int LEVEL = 0;
+    static int flippersNumber = 5;
 
     static double bigSideLength;
 
     static String bullet = "testoctagon.svg";
     static String testMap2 = "testsquareKTORYDZIALA.svg";
     static String testMap3 = "mapa 3.svg";
+    static String testMap4 = "map4.svg";
     static String testShip = "ship1.svg";
 
     public static void init() {
@@ -69,7 +70,7 @@ public class Main {
         goLeft = false;
         goRight = false;
 
-        Graphics.drawMap(testMap2, defaultPanelColor);
+        Graphics.drawMap(testMap3, defaultPanelColor);
 
         double bigSideLengthX = panels.get(0).getBigSide().getPoints().getFirst() - panels.get(0).getBigSide().getPoints().get(2);
         double bigSideLengthY = panels.get(0).getBigSide().getPoints().get(1) - panels.get(0).getBigSide().getPoints().getLast();
@@ -139,7 +140,6 @@ public class Main {
             for (Flipper flipper : flippers){
                 flipper.move();
             }
-//            System.out.println(flippers.size());
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
