@@ -251,7 +251,7 @@ public class Util {
         enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         enemy.setColor(Color.GREEN);
         enemy.setAttackMode(true);
-        enemy.setWillShoot(true);
+        enemy.setWillShoot(false);
         enemy.setRotating(true);
         enemy.setMoving(false);
         enemy.setMoveDir(1);

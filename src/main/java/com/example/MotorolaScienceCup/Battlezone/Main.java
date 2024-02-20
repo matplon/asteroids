@@ -39,8 +39,8 @@ public class Main {
 
     public static int score = 0;
 
-    static double CAMERA_SPEED = 0.3;
-    static double CAMERA_ROT_SPEED = 2.5;
+    static double CAMERA_SPEED = 0.1;
+    static double CAMERA_ROT_SPEED = 0.5;
     
     static double RADAR_ROT = 0;
 
@@ -82,6 +82,13 @@ public class Main {
     static boolean enemyInRange = false;
 
     static boolean collisionDir = false;
+
+    static boolean forwardPressed = false;
+    static boolean rearPressed = false;
+    static boolean rightPressed = false;
+    static boolean leftPressed = false;
+    static boolean rotRightPressed = false;
+    static boolean rotLeftPressed = false;
 
     static double H_FOV = 90;
 
@@ -152,172 +159,62 @@ public class Main {
 
 
     public static void control(){
-
+        double rotation = camera.getRotation();
+        Vertex camVert = new Vertex(camera.getX(),camera.getY(),camera.getZ());
+        double [] camArr = camVert.toArray();
+        Vertex camForward = camera.getForward();
+        double [] camF = camForward.toArray();
+        Vertex camUp = camera.getUp();
+        double [] camU = camUp.toArray();
+        Vertex camRight = camera.getRight();
+        double [] camR = camRight.toArray();
         scene.setOnKeyPressed(keyEvent -> {
-            double rotation = camera.getRotation();
-            Vertex camVert = new Vertex(camera.getX(),camera.getY(),camera.getZ());
-            double [] camArr = camVert.toArray();
-            Vertex camForward = camera.getForward();
-            double [] camF = camForward.toArray();
-            Vertex camUp = camera.getUp();
-            double [] camU = camUp.toArray();
-            Vertex camRight = camera.getRight();
-            double [] camR = camRight.toArray();
 
             if (keyEvent.getCode() == KeyCode.S){
-                System.out.println("lol");
-                ArrayList<Vertex> hitbox = camera.getHitBox2D();
-                ArrayList<Vertex> lol = new ArrayList<>();
-                for (int i = 0; i < hitbox.size(); i++) {
-                    Vertex vert = hitbox.get(i);
-                    double[] arr = vert.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix(-camF[0]*CAMERA_SPEED, -camF[1]*CAMERA_SPEED, -camF[2]*CAMERA_SPEED),arr);
-                    lol.add(Util.arrToVert(arr));
-                }
-                System.out.println("hihihi");
-                ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
-                if(array.size()==0) {
-                    System.out.println("LALALALA");
-                    camera.translate(-camF[0] * CAMERA_SPEED, -camF[1] * CAMERA_SPEED, -camF[2] * CAMERA_SPEED);
-                    collisionDir = false;
-                }else{
-                    if(!collisionDir){
-                        impactAnim();
-                    }
-                    collisionDir = true;
-                }
-
+                rearPressed = true;
             };
             if (keyEvent.getCode() == KeyCode.W){
-                ArrayList<Vertex> hitbox = camera.getHitBox2D();
-                ArrayList<Vertex> lol = new ArrayList<>();
-                for (int i = 0; i < hitbox.size(); i++) {
-                    Vertex vert = hitbox.get(i);
-                    double[] arr = vert.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
-                    lol.add(Util.arrToVert(arr));
-                }
-                ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
-                if(array.size()==0){
-                    camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
-                    collisionDir = false;
-                }else{
-                    if(!collisionDir){
-                        impactAnim();
-                    }
-                    collisionDir = true;
-                }
+                forwardPressed = true;
             }; // Thrust forward
             if (keyEvent.getCode() == KeyCode.D){
-                ArrayList<Vertex> hitbox = camera.getHitBox2D();
-                ArrayList<Vertex> lol = new ArrayList<>();
-                for (int i = 0; i < hitbox.size(); i++) {
-                    Vertex vert = hitbox.get(i);
-                    double[] arr = vert.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix(camR[0]*CAMERA_SPEED, camR[1]*CAMERA_SPEED, camR[2]*CAMERA_SPEED),arr);
-                    lol.add(Util.arrToVert(arr));
-                }
-                ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
-                if(array.size()==0){
-                   // for (int i = 0; i < 4; i++) {
-                    camera.translate( camR[0] * CAMERA_SPEED,  camR[1] * CAMERA_SPEED,  camR[2] * CAMERA_SPEED);
-                    collisionDir = false;
-                }else{
-                    if(!collisionDir){
-                        impactAnim();
-                    }
-                    collisionDir = true;
-                }
+                rightPressed = true;
             };   // Rotate right
             if (keyEvent.getCode() == KeyCode.A){
-                ArrayList<Vertex> hitbox = camera.getHitBox2D();
-                ArrayList<Vertex> lol = new ArrayList<>();
-                for (int i = 0; i < hitbox.size(); i++) {
-                    Vertex vert = hitbox.get(i);
-                    double[] arr = vert.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix(-camR[0]*CAMERA_SPEED, -camR[1]*CAMERA_SPEED, -camR[2]*CAMERA_SPEED),arr);
-                    lol.add(Util.arrToVert(arr));
-                }
-                ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
-                if(array.size()==0){
-                    //for (int i = 0; i < 4; i++) {
-                        camera.translate(  -camR[0] * CAMERA_SPEED,   -camR[1] * CAMERA_SPEED,   -camR[2] * CAMERA_SPEED);
-                        collisionDir = false;
-                }
-                else{
-                    if(!collisionDir){
-                        impactAnim();
-                    }
-                    collisionDir = true;
-                }
-            }; // Rotate left
-            if (keyEvent.getCode() == KeyCode.UP){
-                ArrayList<Vertex> hitbox = camera.getHitBox2D();
-                for (int i = 0; i < hitbox.size(); i++) {
-                    Vertex vert = hitbox.get(i);
-                    double[] arr = vert.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix( camU[0]*CAMERA_SPEED,  camU[1]*CAMERA_SPEED,  camU[2]*CAMERA_SPEED),arr);
-                    hitbox.set(i, Util.arrToVert(arr));
-                }
-                if(camera.runCollisionCheck(7,hitbox,camera).size()==0){
-                    //for (int i = 0; i < 4; i++) {
-                    camera.translate( camU[0] * CAMERA_SPEED,  camU[1] * CAMERA_SPEED,  camU[2] * CAMERA_SPEED);
-                }
-            };   // Rotate right
-            if (keyEvent.getCode() == KeyCode.DOWN){
-                ArrayList<Vertex> hitbox = camera.getHitBox2D();
-                for (int i = 0; i < hitbox.size(); i++) {
-                    Vertex vert = hitbox.get(i);
-                    double[] arr = vert.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix( -camU[0]*CAMERA_SPEED,  -camU[1]*CAMERA_SPEED,  -camU[2]*CAMERA_SPEED),arr);
-                    hitbox.set(i, Util.arrToVert(arr));
-                }
-                if(camera.runCollisionCheck(7,hitbox,camera).size()==0){
-                    //for (int i = 0; i < 4; i++) {
-                    camera.translate( -camU[0] * CAMERA_SPEED,  -camU[1] * CAMERA_SPEED,  -camU[2] * CAMERA_SPEED);
-                }
+                leftPressed = true;
             }; // Rotate left
             if (keyEvent.getCode() == KeyCode.E){
-                camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
-                System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
-                camera.setForward(Util.arrToVert(camF));
-                camR = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camR);
-                camera.setRight(Util.arrToVert(camR));
-                camera.rotY(CAMERA_ROT_SPEED);
-                collisionDir = false;
-                //camera.updateRotation(CAMERA_ROT_SPEED);
+                rotRightPressed = true;
 
             };
             if (keyEvent.getCode() == KeyCode.Q){
-                camF = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camF);
-                System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
-                camera.setForward(Util.arrToVert(camF));
-                camR = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camR);
-                camera.setRight(Util.arrToVert(camR));
-                camera.rotY(-CAMERA_ROT_SPEED);
-                collisionDir = false;
-                //camera.updateRotation(-CAMERA_ROT_SPEED);
+                rotLeftPressed = true;
             };
-            /*if (keyEvent.getCode() == KeyCode.R){
-                camF = Util.multiplyTransform(Util.getRotationXMatrix(-1), camF);
-                System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
-                camera.setForward(Util.arrToVert(camF));
-                camU = Util.multiplyTransform(Util.getRotationXMatrix(-1), camU);
-                camera.setUp(Util.arrToVert(camU));
-            };
-            if (keyEvent.getCode() == KeyCode.F){
-                camF = Util.multiplyTransform(Util.getRotationXMatrix(1), camF);
-                System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
-                camera.setForward(Util.arrToVert(camF));
-                camU = Util.multiplyTransform(Util.getRotationXMatrix(1), camU);
-                camera.setUp(Util.arrToVert(camU));
-
-            };*/
             if (keyEvent.getCode() == KeyCode.SPACE){
                 System.out.println("EEEEEEEEEEEEEEE");
                 camera.shootBullet();
             };
 
+        });
+        scene.setOnKeyReleased(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.S){
+                rearPressed = false;
+            };
+            if (keyEvent.getCode() == KeyCode.W){
+                forwardPressed = false;
+            }; // Thrust forward
+            if (keyEvent.getCode() == KeyCode.D){
+                rightPressed = false;
+            };   // Rotate right
+            if (keyEvent.getCode() == KeyCode.A){
+                leftPressed = false;
+            }; // Rotate left
+            if (keyEvent.getCode() == KeyCode.E){
+                rotRightPressed = false;
+
+            };
+            if (keyEvent.getCode() == KeyCode.Q){
+                rotLeftPressed = false;
+            };
         });
         System.out.println("LLLLLLLLLLLL");
         //System.out.println(camera.getPosition().toString());
@@ -325,6 +222,127 @@ public class Main {
         System.out.println(camera.getUp().toString());
         System.out.println(camera.getRight().toString());
         System.out.println("WWWWWWWWWWWWW");
+        if (rearPressed){
+            System.out.println("lol");
+            ArrayList<Vertex> hitbox = camera.getHitBox2D();
+            ArrayList<Vertex> lol = new ArrayList<>();
+            for (int i = 0; i < hitbox.size(); i++) {
+                Vertex vert = hitbox.get(i);
+                double[] arr = vert.toArray();
+                arr = Util.multiplyTransform(Util.getTranslationMatrix(-camF[0]*CAMERA_SPEED, -camF[1]*CAMERA_SPEED, -camF[2]*CAMERA_SPEED),arr);
+                lol.add(Util.arrToVert(arr));
+            }
+            System.out.println("hihihi");
+            ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
+            if(array.size()==0) {
+                System.out.println("LALALALA");
+                camera.translate(-camF[0] * CAMERA_SPEED, -camF[1] * CAMERA_SPEED, -camF[2] * CAMERA_SPEED);
+                collisionDir = false;
+            }else{
+                if(!collisionDir){
+                    impactAnim();
+                }
+                collisionDir = true;
+            }
+
+        };
+        if (forwardPressed){
+            ArrayList<Vertex> hitbox = camera.getHitBox2D();
+            ArrayList<Vertex> lol = new ArrayList<>();
+            for (int i = 0; i < hitbox.size(); i++) {
+                Vertex vert = hitbox.get(i);
+                double[] arr = vert.toArray();
+                arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
+                lol.add(Util.arrToVert(arr));
+            }
+            ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
+            if(array.size()==0){
+                camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
+                collisionDir = false;
+            }else{
+                if(!collisionDir){
+                    impactAnim();
+                }
+                collisionDir = true;
+            }
+        }; // Thrust forward
+        if (rightPressed){
+            camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
+            System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
+            camera.setForward(Util.arrToVert(camF));
+            camR = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camR);
+            camera.setRight(Util.arrToVert(camR));
+            camera.rotY(CAMERA_ROT_SPEED);
+            collisionDir = false;
+            ArrayList<Vertex> hitbox = camera.getHitBox2D();
+            ArrayList<Vertex> lol = new ArrayList<>();
+            for (int i = 0; i < hitbox.size(); i++) {
+                Vertex vert = hitbox.get(i);
+                double[] arr = vert.toArray();
+                arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
+                lol.add(Util.arrToVert(arr));
+            }
+            ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
+            if(array.size()==0){
+                camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
+                collisionDir = false;
+            }else{
+                if(!collisionDir){
+                    impactAnim();
+                }
+                collisionDir = true;
+            }
+            //camera.updateRotation(CAMERA_ROT_SPEED);
+        };   // Rotate right
+        if (leftPressed){
+            camF = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camF);
+            System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
+            camera.setForward(Util.arrToVert(camF));
+            camR = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camR);
+            camera.setRight(Util.arrToVert(camR));
+            camera.rotY(-CAMERA_ROT_SPEED);
+            collisionDir = false;
+            //camera.updateRotation(-CAMERA_ROT_SPEED);
+            ArrayList<Vertex> hitbox = camera.getHitBox2D();
+            ArrayList<Vertex> lol = new ArrayList<>();
+            for (int i = 0; i < hitbox.size(); i++) {
+                Vertex vert = hitbox.get(i);
+                double[] arr = vert.toArray();
+                arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
+                lol.add(Util.arrToVert(arr));
+            }
+            ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
+            if(array.size()==0){
+                camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
+                collisionDir = false;
+            }else{
+                if(!collisionDir){
+                    impactAnim();
+                }
+                collisionDir = true;
+            }
+        }; // Rotate left
+        if (rotRightPressed){
+            camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
+            System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
+            camera.setForward(Util.arrToVert(camF));
+            camR = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camR);
+            camera.setRight(Util.arrToVert(camR));
+            camera.rotY(CAMERA_ROT_SPEED);
+            collisionDir = false;
+            //camera.updateRotation(CAMERA_ROT_SPEED);
+
+        };
+        if (rotLeftPressed){
+            camF = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camF);
+            System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
+            camera.setForward(Util.arrToVert(camF));
+            camR = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camR);
+            camera.setRight(Util.arrToVert(camR));
+            camera.rotY(-CAMERA_ROT_SPEED);
+            collisionDir = false;
+            //camera.updateRotation(-CAMERA_ROT_SPEED);
+        };
 
     }
 
