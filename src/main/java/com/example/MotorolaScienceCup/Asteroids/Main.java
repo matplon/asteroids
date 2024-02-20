@@ -19,6 +19,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -56,7 +57,7 @@ public class Main {
 
 
     static AnchorPane root = new AnchorPane();
-    public static Scene scene = new Scene(root,WIDTH,HEIGHT);
+    public static Scene scene = new Scene(root, WIDTH, HEIGHT);
 
     public static void init() {
 
@@ -96,7 +97,7 @@ public class Main {
         // Spawn the big asteroids
         Asteroid.spawnAsteroids(ASTEROID_COUNT);
 
-        HUD.init(0, Util.SVGconverter(shipFilePath));
+        HUD.init(highscore(), Util.SVGconverter("heart.svg"));
 
         start();
         Menu.stage.setScene(scene);
@@ -149,12 +150,12 @@ public class Main {
             }
             enemyShootTimer++;
             Enemy.updateEnemy(leftDirections, rightDirections);
-            if(!Enemy.enemyList.isEmpty()){
+            if (!Enemy.enemyList.isEmpty()) {
                 Enemy enemy = Enemy.enemyList.get(0);
-                if(enemy.getType() == 1 && enemyShootTimer == 90){
+                if (enemy.getType() == 1 && enemyShootTimer == 90) {
                     Enemy.shootBullet();
                     enemyShootTimer = 0;
-                }else if(enemy.getType() == 2 && enemyShootTimer == 60){
+                } else if (enemy.getType() == 2 && enemyShootTimer == 60) {
                     Enemy.shootBullet();
                     enemyShootTimer = 0;
                 }
@@ -216,11 +217,12 @@ public class Main {
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
 
+
     }
 
-    public static void resetData(){
+    public static void resetData() {
         root = new AnchorPane();
-        scene = new Scene(root,WIDTH,HEIGHT);
+        scene = new Scene(root, WIDTH, HEIGHT);
         scene.setFill(Color.BLACK);
         root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
         timeline = new Timeline();
@@ -246,6 +248,23 @@ public class Main {
     public static void gameOver() {
         timeline.stop();
         HUD.gameOver();
+    }
+
+    public static int highscore() {
+        try {
+            Scanner scanner = new Scanner(new File("highscore.txt"));
+            if (scanner.hasNextLine()) {
+
+                int highscore1 = Integer.parseInt(scanner.nextLine());
+
+                return highscore1;
+            }
+            else {
+                return 0;
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

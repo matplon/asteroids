@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Asteroid extends Particle {
     static final double BIG_ASTEROID_SPEED = 1.5;
-    static final double BIG_ASTEROID_RADIUS = Main.WIDTH * 0.04;
+    static final double BIG_ASTEROID_RADIUS = Main.WIDTH * 0.025;
     static final HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
         put(3, 20);
         put(2, 50);
