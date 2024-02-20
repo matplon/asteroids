@@ -222,7 +222,7 @@ public class Main {
         System.out.println(camera.getUp().toString());
         System.out.println(camera.getRight().toString());
         System.out.println("WWWWWWWWWWWWW");
-        if (rearPressed){
+        if (rearPressed&&!rightPressed&&!leftPressed){
             System.out.println("lol");
             ArrayList<Vertex> hitbox = camera.getHitBox2D();
             ArrayList<Vertex> lol = new ArrayList<>();
@@ -246,7 +246,7 @@ public class Main {
             }
 
         };
-        if (forwardPressed){
+        if (forwardPressed&&!rightPressed&&!leftPressed){
             ArrayList<Vertex> hitbox = camera.getHitBox2D();
             ArrayList<Vertex> lol = new ArrayList<>();
             for (int i = 0; i < hitbox.size(); i++) {
@@ -322,7 +322,7 @@ public class Main {
                 collisionDir = true;
             }
         }; // Rotate left
-        if (rotRightPressed){
+        if (rotRightPressed&&!rightPressed&&!leftPressed){
             camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
             System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
             camera.setForward(Util.arrToVert(camF));
@@ -333,7 +333,7 @@ public class Main {
             //camera.updateRotation(CAMERA_ROT_SPEED);
 
         };
-        if (rotLeftPressed){
+        if (rotLeftPressed&&!rightPressed&&!leftPressed){
             camF = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camF);
             System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
             camera.setForward(Util.arrToVert(camF));
