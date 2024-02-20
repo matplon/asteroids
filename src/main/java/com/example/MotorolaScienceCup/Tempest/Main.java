@@ -1,13 +1,19 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.Menu;
+import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 import javafx.stage.Stage;
@@ -35,6 +41,7 @@ public class Main {
     static List<Polyline> connectors;
     static List<Panel> panels;
     static List<Flipper> flippers;
+    static List<Tanker> tankers;
 
     static boolean shoot;
     static boolean goRight;
@@ -55,11 +62,12 @@ public class Main {
         smallShape = new ArrayList<>();
         panels = new ArrayList<>();
         flippers = new ArrayList<>();
+        tankers = new ArrayList<>();
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
         scene.setFill(Color.BLACK);
-
+        root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
         shoot = false;
         goLeft = false;
         goRight = false;
@@ -111,9 +119,17 @@ public class Main {
     }
 
     public static void start() {
-        Flipper.spawnSeeds(flippersNumber);
+        //Flipper.spawnSeeds(flippersNumber);
+        Tanker tanker = new Tanker(panels.get(14));
+        tankers.add(tanker);
+
+        root.getChildren().add(tanker);
+        tanker.setStroke(Color.RED);
+        panels.get(14).addTanker(tanker);
+
 
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
+            highlightPanel(player);
             double bulletsNumber = 0;
             for (Panel panel : panels) {
                 panel.updateBullets();
@@ -128,18 +144,43 @@ public class Main {
             if (shoot && bulletsNumber < 5) {
                 player.shoot();
             }
-            if(!Flipper.seedsDone){
+            tanker.move();
+            destroy(tanker);
+/*            if(!Flipper.seedsDone){
                 Flipper.updateSeeds();
                 System.out.println(flippers.size());
             }
             for (Flipper flipper : flippers){
                 flipper.move();
-            }
+            }*/
 //            System.out.println(flippers.size());
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
 
 
+    }
+    public static void highlightPanel(Player player) {
+        if (player.getCurrentPanel().getLeftPanel().getColor() == Color.YELLOW){
+            player.getCurrentPanel().getLeftPanel().changeColorBigSide(Color.BLUE);
+            player.getCurrentPanel().getLeftPanel().changeColorRightSide(Color.BLUE);
+            player.getCurrentPanel().getLeftPanel().changeColorLeftSide(Color.BLUE);
+        }
+        if (player.getCurrentPanel().getRightPanel().getColor() == Color.YELLOW){
+            player.getCurrentPanel().getRightPanel().changeColorBigSide(Color.BLUE);
+            player.getCurrentPanel().getRightPanel().changeColorRightSide(Color.BLUE);
+            player.getCurrentPanel().getRightPanel().changeColorLeftSide(Color.BLUE);
+        }
+        player.getCurrentPanel().changeColorBigSide(Color.YELLOW);
+        player.getCurrentPanel().changeColorLeftSide(Color.YELLOW);
+        player.getCurrentPanel().changeColorRightSide(Color.YELLOW);
+    }
+    public static void destroy (Tanker tanker) {
+        for (Particle particle: tanker.getCurrentPanel().getBullets()){
+            if (particle.intersects(tanker.getLayoutBounds())){
+                Flipper rightFlipper = new Flipper(tanker.getCurrentPanel().getRightPanel());
+                Flipper leftFlipper = new Flipper(tanker.getCurrentPanel().getLeftPanel());
+            }
+        }
     }
 }

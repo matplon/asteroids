@@ -23,6 +23,8 @@ public class Panel {
 
     private double length;
     private double angle;
+    private Color color;
+
 
     public Panel() {
     }
@@ -64,27 +66,38 @@ public class Panel {
     public void addFlipper(Flipper flipper){
         flippers.add(flipper);
     }
+     public void  addTanker(Tanker tanker){
+
+     }
 
     public void addBullet(Particle bullet){bullets.add(bullet);}
 
     public void changeColorSmallSide(Color color) {
         smallSide.setStroke(color);
         smallSide.setFill(color);
+        this.color = Color.YELLOW;
     }
 
     public void changeColorBigSide(Color color) {
         bigSide.setStroke(color);
         bigSide.setFill(color);
+        this.color = Color.YELLOW;
     }
 
     public void changeColorRightSide(Color color) {
         rightSide.setStroke(color);
         rightSide.setFill(color);
+        this.color = Color.YELLOW;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public void changeColorLeftSide(Color color) {
         leftSide.setStroke(color);
         leftSide.setFill(color);
+        this.color = Color.YELLOW;
     }
 
     public void changeColor(Color color) {
