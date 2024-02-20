@@ -30,6 +30,20 @@ public class Object3D {
 
     private ArrayList<Vertex> hitBox2D = new ArrayList<>();
 
+    private boolean isHalfCube;
+
+    public void setPoints3D(ArrayList<Vertex> points3D) {
+        this.points3D = points3D;
+    }
+
+    public boolean isHalfCube() {
+        return isHalfCube;
+    }
+
+    public void setHalfCube(boolean halfCube) {
+        isHalfCube = halfCube;
+    }
+
     public Object3D(ArrayList<Vertex> points3D, ArrayList<Face> faces3D, double x, double y, double z){
         this.points3D = points3D;
         this.faces3D = faces3D;
@@ -386,15 +400,6 @@ public class Object3D {
         this.z = getCenterZ();
     }
 
-    public Chunk checkChunk(){
-        Chunk chunk1 = new Chunk(0,0,new ArrayList<>());
-        for (Chunk chunk:Main.chunkList){
-            if(getX()<=chunk.getX()+ sideLength/2 && getX()>=chunk.getX()-sideLength/2 && getZ()<=chunk.getZ()+sideLength/2 && chunk.getZ()>=z-sideLength/2){
-                chunk1 = chunk;
-            }
-        }
-        return  chunk1;
-    }
 
 
     public double getX() {

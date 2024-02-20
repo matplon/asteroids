@@ -68,7 +68,7 @@ public class Main {
 
     static ArrayList<EnemyTank> fullTankList = new ArrayList<>();
 
-    static ArrayList<Chunk> chunkList = new ArrayList<>();
+    static Chunk[][] chunkList = new Chunk[Chunk.chunkHiveSideLength][Chunk.chunkHiveSideLength];
 
     static ArrayList<Polyline> lineList = new ArrayList<>();
 
@@ -124,11 +124,6 @@ public class Main {
         text.setFill(Color.GREEN);
         text1.setFill(Color.GREEN);
         root.getChildren().addAll(text,text1);
-        ArrayList<Vertex> cubeHitbox = new ArrayList<>();
-        cubeHitbox.add(new Vertex(1.05,0,-1.05));
-        cubeHitbox.add(new Vertex(1.05,0,1.05));
-        cubeHitbox.add(new Vertex(-1.05,0,1.05));
-        cubeHitbox.add(new Vertex(-1.05,0,-1.05));
         ArrayList<Vertex> camHitbox = new ArrayList<>();
         camHitbox.add(new Vertex(2,0,0));
         camHitbox.add(new Vertex(Math.sqrt(2),0,Math.sqrt(2)));
@@ -144,30 +139,11 @@ public class Main {
         camera.setHitBox2D(camHitbox);
         camera.translate(0,0,-10);
         objectList.add(camera);
-        for (int i = 0; i < 30; i++) {
-            ArrayList<Vertex> hitBox = new ArrayList<>();
-                for (int j = 0; j < 4; j++) {
-                    hitBox.add(cubeHitbox.get(j));
-            }
-            Object3D obj = Util.convertOBJ(cubePath);
-            System.out.println("BRUH");
-            Object3D obj1 = Util.generateOBJ(Math.random()*100-50,0,Math.random()*100-50,obj.getPoints3D(),obj.getFaces3D(),Color.GREEN, hitBox);
-            obj1.displayObject();
-        }
-        ArrayList<Vertex> hitBox1 = new ArrayList<>();
-        ArrayList<Vertex> triangleHitbox = new ArrayList<>();
-        triangleHitbox.add(new Vertex(0.6,0,-0.6));
-        triangleHitbox.add(new Vertex(0.6,0,0.6));
-        triangleHitbox.add(new Vertex(-0.6,0,0.6));
-        triangleHitbox.add(new Vertex(-0.6,0,-0.6));
-        for (int j = 0; j < 4; j++) {
-            hitBox1.add(triangleHitbox.get(j));
-        }
-        EnemyTank obj1 = Util.generateEnemyTank(0,10);
+       /* EnemyTank obj1 = Util.generateEnemyTank(0,10);
         SuperTank super1 = Util.generateSuperTank(10,20);
         Missile missile = Util.generateMissile(0,100);
-        Ufo ufo = Util.generateUfo(0,0);
-        Mine mine = Util.generateMine(-10,10);
+        Ufo ufo = Util.generateUfo(0,0);*/
+        generateInitChunks();
 
         start();
 
@@ -480,9 +456,19 @@ public class Main {
     }
 
     public static void spawnUfo(){
+
     }
 
     public static void generateInitChunks(){
+        for (int i = -3; i < 4; i++) {
+            for (int j = -3; j < 4; j++) {
+                Chunk chunk = new Chunk((int)Math.round(i*Chunk.getSideLength()), (int)Math.round(j*Chunk.getSideLength()),i,j);
+                chunkList[i+3][j+3]=chunk;
+                if(i==0&&j==0){
+                    Chunk.setCenter(chunk);
+                }
+            }
+        }
     }
 
     public static void start() {
@@ -573,7 +559,7 @@ public class Main {
             for (int i=0;i<objectList.size();i++) {
                 Object3D object = objectList.get(i);
                 double distance = Util.getDistance(new Vertex(camera.getX(),camera.getY(),camera.getZ()),new Vertex(object.getX(), object.getY(), object.getZ()));
-                if(object.getClass()!= Camera.class && distance<120) {
+                if(object.getClass()!= Camera.class && distance < camera.getFar()) {
                     object.displayObject();
                 }
                 boolean flying = false;
@@ -651,14 +637,7 @@ public class Main {
             if(wasHit){
                 onGotShot();
             }
-            ArrayList<Chunk> awaitingChunks = new ArrayList<>();
-            for (Chunk chunk:chunkList){
-                if(Math.abs(chunk.checkDistanceX(Chunk.getCenter()))>(Chunk.sideLength/2)-0.5 || Math.abs(chunk.checkDistanceZ(Chunk.getCenter()))>(Chunk.sideLength/2)-0.5){
-                    chunk.unloadChunk(awaitingChunks);
-                }
-            }
-            chunkList.addAll(awaitingChunks);
-            awaitingChunks.clear();
+
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();

@@ -35,7 +35,7 @@ public class Camera extends Object3D{
         this.up = new Vertex(0,1,0);
         this.right = new Vertex(1,0,0);
         this.near = 0.5;
-        this.far = 100;
+        this.far = 150;
     }
 
     public double[][] getTranslateCamMatrix(){
@@ -114,7 +114,7 @@ public class Camera extends Object3D{
         Vertex a1;
         Vertex a2;
         ArrayList<Vertex> result = new ArrayList<>();
-        if(object3D instanceof EnemyTank && object3D.getClass() != Mine.class){
+        if(object3D instanceof EnemyTank && object3D.getClass() != Mine.class && !object3D.isHalfCube()){
         for (int i = 0; i < object3D.getHitBox2D().size(); i++) {
             if (i + 1 < object3D.getHitBox2D().size()) {
                 a1 = object3D.getHitBox2D().get(i);
@@ -200,5 +200,29 @@ public class Camera extends Object3D{
 
     public  void setRight(Vertex right) {
         this.right = right;
+    }
+
+    public static void sethFov(double hFov) {
+        H_FOV = hFov;
+    }
+
+    public static void setvFov(double vFov) {
+        V_FOV = vFov;
+    }
+
+    public static void setNear(double near) {
+        Camera.near = near;
+    }
+
+    public static void setFar(double far) {
+        Camera.far = far;
+    }
+
+    public double getMagTimer() {
+        return magTimer;
+    }
+
+    public void setMagTimer(double magTimer) {
+        this.magTimer = magTimer;
     }
 }
