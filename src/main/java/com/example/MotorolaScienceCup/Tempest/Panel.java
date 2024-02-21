@@ -18,8 +18,9 @@ public class Panel {
     private Panel leftPanel;
     private Panel rightPanel;
 
-    private List<Particle> bullets = new ArrayList<>();
+    public List<Particle> bullets = new ArrayList<>();
     private List<Flipper> flippers = new ArrayList<>();
+    public List<Enemy> enemies = new ArrayList<>();
 
     private double length;
     private double angle;

@@ -467,4 +467,8 @@ public class Flipper extends Enemy{
             }
         }
     }
+
+    public void removeFlipper() {
+        System.out.println("jprdl");
+    }
 }

@@ -5,6 +5,7 @@ import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.MotorolaScienceCup.Tempest.Main.*;
@@ -13,7 +14,8 @@ public class Player extends BetterPolygon {
     private double xStepLeft, xStepRight;
     private double yStepLeft, yStepRight;
     private double leftRightDiffX, leftRightDiffY;
-    private Panel currentPanel;
+    private  static Panel currentPanel;
+
 
     public Player(List<Double> points, Panel currentPanel) {
         super(points);
@@ -108,6 +110,27 @@ public class Player extends BetterPolygon {
         currentPanel.addBullet(bullet);
 
         root.getChildren().add(bullet);
+    }
+    public static void collision() {
+        List<Enemy> enemiesToRemove = new ArrayList<>();
+        for (Panel panel: panels){
+            for (Particle bullet: panel.getBullets()){
+                for (Enemy enemy: panel.enemies){
+                    if (bullet.intersects(enemy.getLayoutBounds())){
+                        enemiesToRemove.add(enemy);
+                    }
+                }
+            }
+        }
+        for (Enemy enemy:enemiesToRemove){
+            if (Flipper.class.isInstance(enemy)){
+                Flipper flipper = (Flipper) (enemy);
+
+            }else if (Tanker.class.isInstance(enemy)){
+
+            }
+        }
+
     }
 
     public Panel getCurrentPanel() {

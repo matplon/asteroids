@@ -27,6 +27,7 @@ public class Enemy extends BetterPolygon {
         frameOfMovement = 0;
         maxH = currentPanel.getLength();
         acceleration = getPointerAcceleration();
+        currentPanel.enemies.add(this);
     }
 
     protected void moveUp() {

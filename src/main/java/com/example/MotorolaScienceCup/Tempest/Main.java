@@ -39,6 +39,7 @@ public class Main {
     static List<Polyline> connectors;
     static List<Panel> panels;
     static List<Flipper> flippers;
+    static List<Tanker> tankers;
 
     static boolean shoot;
     static boolean goRight;
@@ -60,6 +61,7 @@ public class Main {
         smallShape = new ArrayList<>();
         panels = new ArrayList<>();
         flippers = new ArrayList<>();
+        tankers = new ArrayList<>();
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
@@ -101,6 +103,7 @@ public class Main {
 //        panels.get(14).addFlipper(flipper);
 //        flippers.add(flipper);
 
+
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = true;
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = true;
@@ -117,9 +120,14 @@ public class Main {
     }
 
     public static void start() {
-        Flipper.spawnSeeds(flippersNumber);
-
+        //Flipper.spawnSeeds(flippersNumber);
+        Tanker tanker = new Tanker(panels.get(4));
+        root.getChildren().add(tanker);
+        tanker.setStroke(Color.RED);
+        panels.get(4).addTanker(tanker);
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
+            highlightPanel(player);
+            tanker.move();
             double bulletsNumber = 0;
             for (Panel panel : panels) {
                 panel.updateBullets();
@@ -134,16 +142,28 @@ public class Main {
             if (shoot && bulletsNumber < 5) {
                 player.shoot();
             }
-            if(!Flipper.seedsDone){
+
+           /* if(!Flipper.seedsDone){
                 Flipper.updateSeeds();
             }
             for (Flipper flipper : flippers){
                 flipper.move();
-            }
+            }*/
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
 
 
+    }
+
+    public static void highlightPanel(Player player) {
+        if (player.getCurrentPanel().getLeftPanel().getColor() == Color.YELLOW){
+            player.getCurrentPanel().getLeftPanel().changeColor(Color.BLUE);
+        }
+        if (player.getCurrentPanel().getRightPanel().getColor() == Color.YELLOW){
+            player.getCurrentPanel().getRightPanel().changeColor(Color.BLUE);
+        }
+
+        player.getCurrentPanel().changeColor(Color.YELLOW);
     }
 }
