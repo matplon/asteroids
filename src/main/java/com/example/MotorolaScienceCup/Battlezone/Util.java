@@ -244,14 +244,14 @@ public class Util {
         enemy.scaleTank(2,1.5,2);
         enemy.moveTank(new Vertex(-enemy.getCenterX(),0,-enemy.getCenterZ()));
         enemy.rotateTank(90);
-        enemy.setRotation(0);
+        enemy.setRotation(0.5);
         enemy.rotateTank(Math.random()*360);
         enemy.moveTank(new Vertex(x,-0.25,z));
         enemy.setTarget(new Vertex(Main.camera.getX() + Math.random()*30-15,0,Main.camera.getZ() + Math.random()*30-15));
         enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         enemy.setColor(Color.GREEN);
         enemy.setAttackMode(true);
-        enemy.setWillShoot(true);
+        enemy.setWillShoot(false);
         enemy.setRotating(true);
         enemy.setMoving(false);
         enemy.setMoveDir(1);

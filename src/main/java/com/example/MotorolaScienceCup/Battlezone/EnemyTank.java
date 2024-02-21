@@ -173,6 +173,28 @@ public class EnemyTank extends Object3D{
 
     }
 
+    public void moveToRandom(double rotOffset, double scaleOffset){
+        Vertex vertex = Main.camera.getForward();
+        double[] arr = vertex.toArray();
+        double offset = Math.random()*rotOffset*2-rotOffset;
+        arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+        double scale;
+        if(!(this instanceof Missile)){
+            scale = Math.random()*scaleOffset*2+scaleOffset;
+        }else{
+           scale = scaleOffset;
+        }
+        for (int i = 0; i < arr.length; i++) {
+            arr[i]*=scale;
+        }
+        vertex = Util.arrToVert(arr);
+        this.moveTo(vertex.getX(), this.getY(), vertex.getZ());
+        boolean notCollided = this.runCollisionCheck(5, this.getCollideHitBox(), this).isEmpty();
+        if(!notCollided){
+            this.moveToRandom(rotOffset,scaleOffset);
+        }
+    }
+
     public void moveTank(Vertex direction){
         ArrayList<Vertex> hitbox = this.getCollideHitBox();
         ArrayList<Vertex> lol = new ArrayList<>();

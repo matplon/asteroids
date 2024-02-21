@@ -106,6 +106,13 @@ public class Panel {
         changeColorRightSide(color);
     }
 
+    public boolean isBottomPanel(){
+        double midYRight = (rightSide.getPoints().get(1) + rightSide.getPoints().get(3)) / 2;
+        double midYLeft = (leftSide.getPoints().get(1) + leftSide.getPoints().get(3)) / 2;
+
+        return (midYRight > Graphics.mapCenterY || midYLeft > Graphics.mapCenterY);
+    }
+
     public void setSmallSide(Polyline smallSide) {
         this.smallSide = smallSide;
     }

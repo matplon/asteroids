@@ -23,12 +23,11 @@ public class Chunk {
 
     private ArrayList<Mine> chunkMines = new ArrayList<>();
 
-    public Chunk(int x, int z, int indexX, int indexZ){
+    public Chunk(int x, int z, ArrayList<Chunk> thisArray){
         this.x = x;
         this.z = z;
-        this.indexX = indexX;
-        this.indexZ = indexZ;
         fillChunk();
+        thisArray.add(this);
     }
 
     public int checkDistanceX(Chunk chunk){
@@ -50,6 +49,7 @@ public class Chunk {
             Main.objectList.remove(mine);
             Main.mineList.remove(mine);
         }
+        Main.chunkList.remove(this);
 
     }
 
@@ -68,7 +68,8 @@ public class Chunk {
 
 
     public void fillChunk(){
-        for (int i = 0; i < chunkObjCount; i++) {
+        int random = new Random().nextInt(chunkObjCount);
+        for (int i = 0; i < random+1; i++) {
             double check = new Random().nextDouble(10);
             if(check<4){
                 double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
@@ -114,8 +115,10 @@ public class Chunk {
     public void checkHasPlayer(){
         System.out.println("_______________");
         if(Main.camera.getX()<x+ (double) sideLength /2 && Main.camera.getX()>x- (double) sideLength /2 && Main.camera.getZ()<z+ (double) sideLength /2 && Main.camera.getZ()>z- (double) sideLength /2){
-                setOldCenter(center);
-                setCenter(this);
+               if(!this.equals(center)){
+                   setOldCenter(center);
+                   setCenter(this);
+               }
             System.out.println("^^^^^^^^^");
 
         }
