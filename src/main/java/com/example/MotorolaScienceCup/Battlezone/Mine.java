@@ -12,12 +12,12 @@ public class Mine extends EnemyTank{
     public void takeHit(Object3D object3D){
         Main.objectList.remove(this);
         Main.mineList.remove(this);
+        Main.onGotShot();
         explode();
     }
 
     public void checkCamera(){
         if(!Util.hitBoxIntersect(getCollideHitBox(), Main.camera.getHitBox2D()).isEmpty()){
-            Main.wasHit = true;
             takeHit(Main.camera);
         }
     }

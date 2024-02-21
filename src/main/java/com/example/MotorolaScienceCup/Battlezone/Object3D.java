@@ -194,6 +194,7 @@ public class Object3D {
         return arrlist;}else{return new ArrayList<>();}
     }
 
+
     public Color getColor() {
         return color;
     }
