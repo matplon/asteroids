@@ -3,6 +3,7 @@ package com.example.MotorolaScienceCup.Tempest;
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
+import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
@@ -14,6 +15,7 @@ public class Spiker extends Enemy {
     private BetterPolygon defTanker = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
     private List<Double> defPoints;
     private boolean goingDown = false;
+    public boolean isDead = false;
     private Polyline line = new Polyline();
 
     public Spiker(Panel startPanel) {
@@ -69,7 +71,7 @@ public class Spiker extends Enemy {
 
     @Override
     protected void uniqueDestroyMethod(){
-        currentPanel.getSpikers().remove(this);
+
         Tanker tanker = new Tanker(currentPanel);
         Main.root.getChildren().add(tanker);
     }
@@ -84,12 +86,13 @@ public class Spiker extends Enemy {
         line.getPoints().setAll(xStart, yStart, xEnd, yEnd);
     }
 
-    public void destroyLine() {
+    public void destroyLine(Player.Bullet bullet) {
         for (Panel panel: Main.panels){
-            for (Player.Bullet bullet: panel.getPlayerBullets()){
-                if (panel.getSpikerLine() != null && bullet.intersects(panel.getSpikerLine().getLayoutBounds())){
+            Vector vector = new Vector(50, panel.getAngle());
 
-                }
+                if (panel.getSpikerLine() != null && bullet.intersects(panel.getSpikerLine().getLayoutBounds())){
+                    List<Double> points = panel.getSpikerLine().getPoints();
+                    panel.getSpikerLine().getPoints().setAll(points.get(0), points.get(1), points.get(2) - vector.getX(), points.get(3) - vector.getY());
             }
         }
     }

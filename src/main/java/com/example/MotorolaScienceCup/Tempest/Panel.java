@@ -135,6 +135,7 @@ public class Panel {
                     bulletsToDestroy.add(bullet);
                 }
             }
+            bullet.
             if(bullet.ifOutside() && !bulletsToDestroy.contains(bullet)) bulletsToDestroy.add(bullet);
         }
         for (Player.Bullet bullet : bulletsToDestroy){
