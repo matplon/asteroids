@@ -43,7 +43,7 @@ public class Spiker extends Enemy {
     }
 
     public boolean move() {
-        if (h < maxH && !reachedTheEdge) {
+        if (h < maxH && !reachedTheEdge && !isDead) {
             moveUp();
             drawLine();
         } else if (frameOfMovement >= FRAMES_PER_MOVE && !destroyed && !goingDown) {
@@ -70,9 +70,19 @@ public class Spiker extends Enemy {
     }
 
     @Override
-    protected void uniqueDestroyMethod(){
+    protected void uniqueDestroyMethod() {
+        if (!isDead) {
+            Main.root.getChildren().remove(this);
+            isDead = true;
+        } else {
+            currentPanel.getSpikers().remove(this);
+        }
+    }
+
+    public void switchToTanker() {
         Tanker tanker = new Tanker(currentPanel);
         Main.root.getChildren().add(tanker);
+        destroy();
     }
 
     private void drawLine() {
@@ -85,15 +95,20 @@ public class Spiker extends Enemy {
         line.getPoints().setAll(xStart, yStart, xEnd, yEnd);
     }
 
-    public void destroyLine(Player.Bullet bullet) {
-        for (Panel panel: Main.panels){
-            Vector vector = new Vector(50, panel.getAngle());
-
-                if (panel.getSpikerLine() != null && bullet.intersects(panel.getSpikerLine().getLayoutBounds()) && isDead){
-                    List<Double> points = panel.getSpikerLine().getPoints();
-                    panel.getSpikerLine().getPoints().setAll(points.get(0), points.get(1), points.get(2) - vector.getX(), points.get(3) - vector.getY());
-                    destroy();
+    public boolean destroyLine(Player.Bullet bullet) {
+        if (line != null && bullet.intersects(line.getLayoutBounds())) {
+            Vector vector = new Vector(10, currentPanel.getAngle());
+            System.out.println("adandglldgldg + " + vector.getDirection());
+            System.out.println(vector);
+            System.out.println(line);
+            List<Double> points = line.getPoints();
+            line.getPoints().setAll(points.get(0), points.get(1), points.get(2) - vector.getX(), points.get(3) - vector.getY());
+            if (vector.getMagnitude() > Math.sqrt(Math.pow(points.get(0) - points.get(2), 2) + Math.pow(points.get(1) - points.get(3), 2))) {
+                Main.root.getChildren().remove(line);
+                destroy();
             }
+            return true;
         }
+        return false;
     }
 }

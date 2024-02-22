@@ -1,8 +1,6 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
-import com.example.MotorolaScienceCup.Particle;
-import com.example.MotorolaScienceCup.Util;
 import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
@@ -14,10 +12,12 @@ import java.util.List;
 import static com.example.MotorolaScienceCup.Tempest.Main.*;
 
 public class Player extends BetterPolygon {
+    private final int shotCooldown = 5;
     private double xStepLeft, xStepRight;
     private double yStepLeft, yStepRight;
     private double leftRightDiffX, leftRightDiffY;
     private  static Panel currentPanel;
+    static int shotTimer = 0;
 
 
     public Player(List<Double> points, Panel currentPanel) {
@@ -91,35 +91,14 @@ public class Player extends BetterPolygon {
         }
     }
 
-//    public void shoot() {
-//        double xBig = (currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2))/2;
-//        double yBig = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().getLast())/2;
-//        double xSmall = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2))/2;
-//        double ySmall = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast())/2;
-//
-//        double x = xBig - xSmall;
-//        double y = yBig - ySmall;
-//
-//        double angle = Math.toDegrees(Math.atan(y/x));
-//        if(x >= 0) angle += 180;
-//
-//        List<Double> points = Util.SVGconverter(bullet);    // Rectangle bullet
-//        Particle bullet = new Particle(points, angle, 0, BULLET_SPEED, 0);
-//        bullet.setFill(Color.RED);
-//        bullet.scale(10/bullet.getRadius());
-//        bullet.moveTo(xBig, yBig);
-//        currentPanel.addPlayerBullet(bullet);
-//
-//        root.getChildren().add(bullet);
-//    }
-
     public void shoot(){
-        Bullet bullet = new Bullet();
-        currentPanel.addPlayerBullet(bullet);
-        root.getChildren().add(bullet);
+        if(shotTimer <= 0){
+            Bullet bullet = new Bullet();
+            currentPanel.addPlayerBullet(bullet);
+            root.getChildren().add(bullet);
+            shotTimer = shotCooldown;
+        }
     }
-
-
 
     public Panel getCurrentPanel() {
         return currentPanel;
@@ -138,10 +117,10 @@ public class Player extends BetterPolygon {
             super((currentPanel.getBigSide().getPoints().get(0) + currentPanel.getBigSide().getPoints().get(2)) / 2,
                     (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().get(3)) / 2,
                     Math.sqrt(Math.pow(currentPanel.getBigSide().getPoints().get(0) - currentPanel.getBigSide().getPoints().get(2), 2) +
-                            Math.pow(currentPanel.getBigSide().getPoints().get(1) - currentPanel.getBigSide().getPoints().get(3), 2)) / 8);
+                            Math.pow(currentPanel.getBigSide().getPoints().get(1) - currentPanel.getBigSide().getPoints().get(3), 2)) / 15);
             maxRadius = this.getRadius();
             minRadius = Math.sqrt(Math.pow(currentPanel.getSmallSide().getPoints().get(0) - currentPanel.getSmallSide().getPoints().get(2), 2) +
-                    Math.pow(currentPanel.getSmallSide().getPoints().get(1) - currentPanel.getSmallSide().getPoints().get(3), 2)) / 8;
+                    Math.pow(currentPanel.getSmallSide().getPoints().get(1) - currentPanel.getSmallSide().getPoints().get(3), 2)) / 15;
             panel = currentPanel;
             grad = (minRadius - maxRadius) / currentPanel.getLength();
             this.setCenterX((panel.getBigSide().getPoints().get(0) + panel.getBigSide().getPoints().get(2)) / 2);
