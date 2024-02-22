@@ -17,7 +17,7 @@ public class Enemy extends BetterPolygon {
     protected final double radiusOffset = 5;
     protected double initVelocity = 0.1;
     protected static final List<Double> pointerPoints = Arrays.asList(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0);
-    private static List<Seed> seedQueue = new LinkedList<>();
+    private static Queue<Seed> seedQueue = new LinkedList<>();
     private static List<Seed> seedList = new ArrayList<>();
     private static int seedTimer = 0;
     static boolean seedsDone = false;
@@ -234,16 +234,22 @@ public class Enemy extends BetterPolygon {
     }
 
     public static void updateSeeds() {
+        List<Seed> seedsToRemove = new ArrayList<>();
         for (Seed seed : seedList) {
             if (!seed.done) seed.move();
-            else seedQueue.add(seed);
+            else{
+                seedQueue.add(seed);
+                seedsToRemove.add(seed);
+            }
+        }
+        for (Seed seed : seedsToRemove){
+            seedList.remove(seed);
         }
         if(seedTimer <= 0){
             seedTimer = seedCooldown;
-            Seed topSeed = seedQueue.getFirst();
+            Seed topSeed = seedQueue.poll();
             if (topSeed != null) {
                 seedList.remove(topSeed);
-                seedQueue.remove(topSeed);
                 topSeed.remove();
 
                 if(topSeed.enemyType == 0){
