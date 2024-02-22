@@ -438,7 +438,7 @@ public class Main {
             textList.add(t);
             root.getChildren().add(t);
         }
-        if(!enemyDir.equals("")&&TEXT_TICK > 15){
+        if(!enemyDir.isEmpty() &&TEXT_TICK > 15){
             Text t = new Text("Enemy to "+enemyDir);
             t.setFont(Font.font(50));
             t.setX(100);
@@ -489,6 +489,12 @@ public class Main {
 
     public static void spawnEnemy(){
         double check = new Random().nextDouble(13);
+        if(check >= 4 && score < 10000){
+            check = new Random().nextDouble(4);
+        }else if(check >= 8 && score < 15000){
+            check = new Random().nextDouble(8);
+        }
+
         if(check<4){
             Vertex vertex = camera.getForward();
             double[] arr = vertex.toArray();
@@ -577,13 +583,13 @@ public class Main {
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
             fullTankList.addAll(missileList);
-            if(fullTankList.isEmpty()&&Math.random()*150<1){
+            if(fullTankList.isEmpty()&&Math.random()*200<1){
                 double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
                 for (int i = 0; i < enemyCount; i++) {
                     spawnEnemy();
                 }
             }
-            if(ufoList.isEmpty()&&Math.random()*500<1){
+            if(ufoList.isEmpty()&&Math.random()*600<1){
                 spawnUfo();
             }
             TEXT_TICK++;
@@ -645,14 +651,99 @@ public class Main {
             if(isDying){
                 death_ticks++;
                 if(death_ticks > 0 && death_ticks < 10){
-                    crack = new BetterPolygon(com.example.MotorolaScienceCup.Util.SVGconverter("zgon1.svg"));
+                    ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon1.svg");
+                    double xAvg=0;
+                    double zAvg=0;
+                    double arraySize=0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            if(array.get(j)==85.258978){
+                                xAvg = array.get(j);
+                                zAvg = array.get(j+1);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            Polyline polyline1 = new Polyline((array.get(j)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+1)-zAvg)*15+HEIGHT/2, (array.get(j+2)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+3)-zAvg)*15+HEIGHT/2);
+                            polyline1.setStroke(Color.GREEN);
+                            root.getChildren().add(polyline1);
+                            lineList.add(polyline1);
+                        }
+                    }
                 } else if (death_ticks >= 10 && death_ticks < 20) {
-                    crack = new BetterPolygon(com.example.MotorolaScienceCup.Util.SVGconverter("zgon2.svg"));
+                    ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon2.svg");
+                    double xAvg=0;
+                    double zAvg=0;
+                    double arraySize=0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            if(array.get(j)==85.258978){
+                                xAvg = array.get(j);
+                                zAvg = array.get(j+1);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            Polyline polyline1 = new Polyline((array.get(j)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+1)-zAvg)*15+HEIGHT/2, (array.get(j+2)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+3)-zAvg)*15+HEIGHT/2);
+                            polyline1.setStroke(Color.GREEN);
+                            root.getChildren().add(polyline1);
+                            lineList.add(polyline1);
+                        }
+                    }
                 } else if (death_ticks >=20 && death_ticks<30) {
-                    crack = new BetterPolygon(com.example.MotorolaScienceCup.Util.SVGconverter("zgon3.svg"));
+                    ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon3.svg");
+                    double xAvg=0;
+                    double zAvg=0;
+                    double arraySize=0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            if(array.get(j)==87.397134){
+                                xAvg = array.get(j);
+                                zAvg = array.get(j+1);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            Polyline polyline1 = new Polyline((array.get(j)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+1)-zAvg)*15+HEIGHT/2, (array.get(j+2)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+3)-zAvg)*15+HEIGHT/2);
+                            polyline1.setStroke(Color.GREEN);
+                            root.getChildren().add(polyline1);
+                            lineList.add(polyline1);
+                        }
+                    }
                 } else if (death_ticks >= 30 && death_ticks < 100) {
-                    crack = new BetterPolygon(com.example.MotorolaScienceCup.Util.SVGconverter("zgon4.svg"));
+                    ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon4.svg");
+                    double xAvg=0;
+                    double zAvg=0;
+                    double arraySize=0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            if(array.get(j)==87.397134){
+                                xAvg = array.get(j);
+                                zAvg = array.get(j+1);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            Polyline polyline1 = new Polyline((array.get(j)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+1)-zAvg)*15+HEIGHT/2, (array.get(j+2)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+3)-zAvg)*15+HEIGHT/2);
+                            polyline1.setStroke(Color.GREEN);
+                            root.getChildren().add(polyline1);
+                            lineList.add(polyline1);
+                        }
+                    }
                 } else if (death_ticks == 100) {
+                    wasHit = false;
                     CAMERA_SPEED = 0.1;
                     CAMERA_ROT_SPEED = 0.5;
                     isDying = false;
@@ -673,6 +764,12 @@ public class Main {
                         objectList.remove(ufoList.get(i));
                         ufoList.remove(i);
                     }
+                    enemyDir = "";
+
+                    enemyInRange = false;
+
+                    collisionDir = false;
+                    textList.clear();
                     camera.moveToRandom();
                     if(playerHP<=0){
                         gameOver();
@@ -680,7 +777,7 @@ public class Main {
                 }
                 crack.setStroke(Color.GREEN);
                 crack.scale(15);
-                crack.moveTo(WIDTH/2,HEIGHT/2);
+                crack.moveTo(WIDTH/2-(WIDTH/10),HEIGHT/2);
                 root.getChildren().add(crack);
 
             }
@@ -813,6 +910,7 @@ public class Main {
         if(camera!=null) {
             camera.setMagTimer(-1);
         }
+
         Timeline timeline;
           WIDTH = Menu.WIDTH;
           HEIGHT = Menu.HEIGHT;
@@ -904,7 +1002,7 @@ public class Main {
         Text gameOverText = new Text("Game Over");
         gameOverText.setFont(Font.font(100));
         gameOverText.setStroke(Color.RED);
-        gameOverText.setX(WIDTH/2 - gameOverText.getLayoutBounds().getWidth()/2);
+        gameOverText.setX(WIDTH/2-(WIDTH/10) - gameOverText.getLayoutBounds().getWidth()/2);
         gameOverText.setY(HEIGHT/2);
 
 
