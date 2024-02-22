@@ -438,7 +438,7 @@ public class Main {
             textList.add(t);
             root.getChildren().add(t);
         }
-        if(!enemyDir.equals("")&&TEXT_TICK > 15){
+        if(!enemyDir.isEmpty() &&TEXT_TICK > 15){
             Text t = new Text("Enemy to "+enemyDir);
             t.setFont(Font.font(50));
             t.setX(100);
@@ -743,6 +743,7 @@ public class Main {
                         }
                     }
                 } else if (death_ticks == 100) {
+                    wasHit = false;
                     CAMERA_SPEED = 0.1;
                     CAMERA_ROT_SPEED = 0.5;
                     isDying = false;
@@ -763,6 +764,12 @@ public class Main {
                         objectList.remove(ufoList.get(i));
                         ufoList.remove(i);
                     }
+                    enemyDir = "";
+
+                    enemyInRange = false;
+
+                    collisionDir = false;
+                    textList.clear();
                     camera.moveToRandom();
                     if(playerHP<=0){
                         gameOver();
@@ -903,6 +910,7 @@ public class Main {
         if(camera!=null) {
             camera.setMagTimer(-1);
         }
+
         Timeline timeline;
           WIDTH = Menu.WIDTH;
           HEIGHT = Menu.HEIGHT;
