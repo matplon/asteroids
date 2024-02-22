@@ -1,6 +1,7 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
+import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
@@ -81,5 +82,15 @@ public class Spiker extends Enemy {
         double yEnd = pointer.getCenterY();
 
         line.getPoints().setAll(xStart, yStart, xEnd, yEnd);
+    }
+
+    public void destroyLine() {
+        for (Panel panel: Main.panels){
+            for (Player.Bullet bullet: panel.getPlayerBullets()){
+                if (panel.getSpikerLine() != null && bullet.intersects(panel.getSpikerLine().getLayoutBounds())){
+
+                }
+            }
+        }
     }
 }

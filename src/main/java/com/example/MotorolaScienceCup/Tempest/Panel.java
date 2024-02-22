@@ -31,6 +31,15 @@ public class Panel {
     private double angle;
     private Color color;
 
+    private Polyline spikerLine;
+
+    public Polyline getSpikerLine() {
+        return spikerLine;
+    }
+
+    public void setSpikerLine(Polyline spikerLine) {
+        this.spikerLine = spikerLine;
+    }
 
     public Panel() {
     }
@@ -122,7 +131,7 @@ public class Panel {
             }
             for (Spiker spiker : spikers){
                 if(bullet.intersects(spiker.getLayoutBounds()) && !bulletsToDestroy.contains(bullet)){
-                    spikers.add(spiker);
+                    spikersToDestroy.add(spiker);
                     bulletsToDestroy.add(bullet);
                 }
             }

@@ -119,21 +119,7 @@ public class Player extends BetterPolygon {
         root.getChildren().add(bullet);
     }
 
-    public static void collision() {
-        List<Enemy> enemiesToRemove = new ArrayList<>();
-        for (Panel panel: panels){
-            for (Player.Bullet bullet: panel.getPlayerBullets()){
-                for (Flipper flipper : panel.getFlippers()){
-                    if (bullet.intersects(flipper.getLayoutBounds())){
-                        enemiesToRemove.add(flipper);
-                    }
-                }
-            }
-        }
-        for (Enemy enemy  :enemiesToRemove){
 
-        }
-    }
 
     public Panel getCurrentPanel() {
         return currentPanel;
