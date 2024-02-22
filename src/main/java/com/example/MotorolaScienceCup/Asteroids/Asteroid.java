@@ -1,5 +1,6 @@
 package com.example.MotorolaScienceCup.Asteroids;
 
+import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
 import com.example.MotorolaScienceCup.Vector;
@@ -11,6 +12,8 @@ import java.util.*;
 public class Asteroid extends Particle {
     static final double BIG_ASTEROID_SPEED = 1.5;
     static final double BIG_ASTEROID_RADIUS = Main.WIDTH * 0.025;
+
+    private boolean isHealing;
     static final HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
         put(3, 20);
         put(2, 50);
@@ -19,6 +22,11 @@ public class Asteroid extends Particle {
     private final int size;
 
     public Asteroid(List<Double> points, double angle, double speed, int size) {
+        super(points, angle, 0, speed, 0);
+        this.size = size;
+    }
+
+    public Asteroid(List<Double> points, double angle, double speed, int size, BetterPolygon cross) {
         super(points, angle, 0, speed, 0);
         this.size = size;
     }

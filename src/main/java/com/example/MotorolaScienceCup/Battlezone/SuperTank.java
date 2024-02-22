@@ -7,8 +7,8 @@ public class SuperTank extends EnemyTank{
 
     private int HP;
     
-    public static double SUPER_SPEED = 0.4*0.25;
-    public static double SUPER_ROT_SPEED = 1;
+    public static double SUPER_SPEED = 0.13;
+    public static double SUPER_ROT_SPEED = 1.3;
     public SuperTank(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         super(points3D, faces3D);
     }
@@ -37,7 +37,7 @@ public class SuperTank extends EnemyTank{
     public void enemyBehavior(){
         if(isMoving()){
             System.out.println("KOKOKOKKO");
-            if(Util.getDistance(getTarget(), this.getCenter())<7){
+            if(Util.getDistance(getTarget(), this.getCenter())<5){
                 setWaiting(true);
                 setMoving(false);
                 setWaitTimer(Math.random()*50);
@@ -66,7 +66,16 @@ public class SuperTank extends EnemyTank{
                     setRotating(true);
                     setWillShoot(true);
                     setMoving(false);
-                    setTarget(new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
+                    Vertex vertex = new Vertex(Main.camera.getX(), 0, Main.camera.getZ()).getVertDif(new Vertex(getX(), 0, getZ()));
+                    double[] arr = vertex.toArray();
+                    double offset = Math.random()*25-12.5;
+                    arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+                    double scale = Math.random()*0.25 + 0.5;
+                    for (int i = 0; i < arr.length; i++) {
+                        arr[i]*=scale;
+                    }
+                    vertex = Util.arrToVert(arr);
+                    setTarget(vertex.getVertSum(new Vertex(getX(),0,getZ())));
                     setMoveDir(1);
                     setTargetRotation(getLookAt(getTarget()));
                     setRotateDir(getExactRotationDir());
@@ -75,7 +84,7 @@ public class SuperTank extends EnemyTank{
                     setRotating(true);
                     setWillShoot(false);
                     setMoving(false);
-                    setTarget(new Vertex(Main.camera.getX()+Math.random()*10-5,0,Main.camera.getZ()+Math.random()*10-5));
+                    setTarget(new Vertex(Main.camera.getX()+Math.random()*20-10,0,Main.camera.getZ()+Math.random()*20-10));
                     setMoveDir(1);
                     setTargetRotation(getLookAt(getTarget()));
                     setRotateDir(getExactRotationDir());
@@ -89,7 +98,7 @@ public class SuperTank extends EnemyTank{
                 setRotating(true);
                 setWillShoot(true);
                 if(!(getTarget().getX() == Main.camera.getX() && getTarget().getZ() == Main.camera.getZ())){
-                    offset = Math.random()*2-1;
+                    offset = Math.random()*4-2;
                 }
                 setTarget(new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
                 setMoveDir(1);
@@ -98,7 +107,7 @@ public class SuperTank extends EnemyTank{
             }
             if(getTargetRotation() < getRotation() + 1 && getTargetRotation() > getRotation() - 1){
                 rotateTank(getRotDifference()+offset);
-                setTargetRotation(getRotation());
+                setTargetRotation(getRotation()+offset);
                 setRotating(false);
                 if(isWillShoot()){
                     shootTank();

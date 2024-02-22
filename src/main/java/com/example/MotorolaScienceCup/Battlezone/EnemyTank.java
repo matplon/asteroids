@@ -358,7 +358,7 @@ public class EnemyTank extends Object3D{
         if(!attackMode){
             if(isMoving){
                 System.out.println("KOKOKOKKO");
-                if(Util.getDistance(target, this.getCenter())<7){
+                if(Util.getDistance(target, this.getCenter())<5){
                     setWaiting(true);
                     setMoving(false);
                     setWaitTimer(Math.random()*200);
@@ -372,19 +372,28 @@ public class EnemyTank extends Object3D{
                 if(getWaitTimer()<0){
                     setWaitTimer(-1);
                     double rand = Math.random();
-                    if(rand<0.6){
+                    if(rand<0.8){
                         setWaiting(false);
                         setRotating(true);
                         setAttackMode(true);
                         setWillShoot(false);
-                        setTarget(new Vertex(Main.camera.getX()+Math.random()*20-10,0,Main.camera.getZ()+Math.random()*20-10));
+                        Vertex vertex = new Vertex(Main.camera.getX(), 0, Main.camera.getZ()).getVertDif(new Vertex(getX(), 0, getZ()));
+                        double[] arr = vertex.toArray();
+                        double offset = Math.random()*25-12.5;
+                        arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+                        double scale = Math.random()*0.25 + 0.5;
+                        for (int i = 0; i < arr.length; i++) {
+                            arr[i]*=scale;
+                        }
+                        vertex = Util.arrToVert(arr);
+                        setTarget(vertex.getVertSum(new Vertex(getX(),0,getZ())));
                         setMoveDir(1);
                         setTargetRotation(getLookAt(getTarget()));
                         setRotateDir(getExactRotationDir());
                     }else{
                         setWaiting(false);
                         setRotating(true);
-                        setTarget(new Vertex(getCenter().getX()+Math.random()*50-25,0,getCenter().getZ()+Math.random()*50-25));
+                        setTarget(new Vertex(getCenter().getX()+Math.random()*30-15,0,getCenter().getZ()+Math.random()*30-15));
                         setMoveDir(1);
                         setTargetRotation(getLookAt(getTarget()));
                         setRotateDir(getExactRotationDir());
@@ -393,7 +402,7 @@ public class EnemyTank extends Object3D{
             }
             if(isRotating){
                 if(targetRotation < getRotation() + 1 && targetRotation>getRotation() - 1){
-                    double offset = (Math.random()*2)-1;
+                    double offset = 0;
                     rotateTank(getRotDifference()+offset);
                     setTargetRotation(getTargetRotation()+getRotDifference()+offset);
                     setTargetRotation(getTargetRotation()+getRotDifference());
@@ -407,7 +416,7 @@ public class EnemyTank extends Object3D{
         }else{
             if(isMoving){
                 System.out.println("KOKOKOKKO");
-                if(Util.getDistance(target, this.getCenter())<7){
+                if(Util.getDistance(target, this.getCenter())<5){
                     setWaiting(true);
                     setMoving(false);
                     setWaitTimer(Math.random()*100);
@@ -421,7 +430,7 @@ public class EnemyTank extends Object3D{
                 if(getWaitTimer()<0){
                     setWaitTimer(-1);
                     double rand = Math.random();
-                    if(rand<0.75){
+                    if(rand<0.8){
                         setWaiting(false);
                         setRotating(true);
                         setWillShoot(true);
@@ -446,7 +455,7 @@ public class EnemyTank extends Object3D{
                     setWaiting(false);
                     setRotating(true);
                     setWillShoot(true);
-                    if(!(target.getX() == Main.camera.getX() && target.getZ() == Main.camera.getZ())){
+                    if((target.getX() == Main.camera.getX() && target.getZ() == Main.camera.getZ())){
                         offset = Math.random()*6-3;
                     }
                     setTarget(new Vertex(Main.camera.getX(),0,Main.camera.getZ()));

@@ -8,7 +8,7 @@ import java.util.Random;
 public class Missile extends EnemyTank {
 
 
-    public static double MISSILE_SPEED = 0.5;
+    public static double MISSILE_SPEED = 0.6;
     public static double MISSILE_ROT_SPEED = 10;
 
     private boolean isFlying;

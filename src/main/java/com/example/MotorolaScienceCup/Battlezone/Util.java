@@ -170,7 +170,16 @@ public class Util {
         enemy.setRotation(0);
         enemy.rotateTank(Math.random()*360);
         enemy.moveTank(new Vertex(x,-0.3,z));
-        enemy.setTarget(new Vertex(enemy.getCenter().getX() + Math.random()*50-25,0,enemy.getCenter().getZ() + Math.random()*50-25));
+        Vertex vertex = new Vertex(Main.camera.getX(), 0, Main.camera.getZ()).getVertDif(new Vertex(enemy.getX(), 0, enemy.getZ()));
+        double[] arr = vertex.toArray();
+        double offset = Math.random()*25-12.5;
+        arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+        double scale = Math.random()*0.25 + 0.5;
+        for (int i = 0; i < arr.length; i++) {
+            arr[i]*=scale;
+        }
+        vertex = Util.arrToVert(arr);
+        enemy.setTarget(vertex.getVertSum(new Vertex(enemy.getX(),0,enemy.getZ())));
         enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         enemy.setColor(Color.GREEN);
         enemy.setAttackMode(false);
@@ -249,7 +258,16 @@ public class Util {
         enemy.setRotation(0.25);
         enemy.rotateTank(Math.random()*360);
         enemy.moveTank(new Vertex(x,-0.25,z));
-        enemy.setTarget(new Vertex(Main.camera.getX() + Math.random()*30-15,0,Main.camera.getZ() + Math.random()*30-15));
+        Vertex vertex = new Vertex(Main.camera.getX(), 0, Main.camera.getZ()).getVertDif(new Vertex(enemy.getX(), 0, enemy.getZ()));
+        double[] arr = vertex.toArray();
+        double offset = Math.random()*25-12.5;
+        arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+        double scale = Math.random()*0.25 + 0.5;
+        for (int i = 0; i < arr.length; i++) {
+            arr[i]*=scale;
+        }
+        vertex = Util.arrToVert(arr);
+        enemy.setTarget(vertex.getVertSum(new Vertex(enemy.getX(),0,enemy.getZ())));
         enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
         enemy.setColor(Color.GREEN);
         enemy.setAttackMode(true);

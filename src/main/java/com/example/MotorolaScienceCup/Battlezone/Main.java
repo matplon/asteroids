@@ -504,7 +504,7 @@ public class Main {
             if(!notCollided){
                 enemyTank.moveToRandom(60,15);
             }
-        } else if(check>=4&&check<8){
+        } else if(check>=4&&check<8&&score>=15000){
             Vertex vertex = camera.getForward();
             double[] arr = vertex.toArray();
             double offset = Math.random()*200-100;
@@ -519,7 +519,7 @@ public class Main {
             if(!notCollided){
                 enemyTank.moveToRandom(100,15);
             }
-        } else if(check>=8){
+        } else if(check>=8&&score>=10000&&missileList.isEmpty()){
             Vertex vertex = camera.getForward();
             double[] arr = vertex.toArray();
             double offset = Math.random()*60-30;
@@ -544,7 +544,7 @@ public class Main {
             double[] arr = vertex.toArray();
             double offset = Math.random()*150-75;
             arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
-            double scale = Math.random()*50+25;
+            double scale = Math.random()*100+50;
             for (int i = 0; i < arr.length; i++) {
                 arr[i]*=scale;
             }
@@ -552,7 +552,7 @@ public class Main {
             Ufo enemyTank = Util.generateUfo(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
             boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
             if(!notCollided){
-                enemyTank.moveToRandom(75,25);
+                enemyTank.moveToRandom(75,100);
             }
     }
 
@@ -577,8 +577,11 @@ public class Main {
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
             fullTankList.addAll(missileList);
-            if(fullTankList.isEmpty()&&Math.random()*200<1){
-                spawnEnemy();
+            if(fullTankList.isEmpty()&&Math.random()*150<1){
+                double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
+                for (int i = 0; i < enemyCount; i++) {
+                    spawnEnemy();
+                }
             }
             if(ufoList.isEmpty()&&Math.random()*500<1){
                 spawnUfo();
@@ -807,6 +810,9 @@ public class Main {
     }
     
     static void resetData(){
+        if(camera!=null) {
+            camera.setMagTimer(-1);
+        }
         Timeline timeline;
           WIDTH = Menu.WIDTH;
           HEIGHT = Menu.HEIGHT;
