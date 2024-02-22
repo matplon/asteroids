@@ -31,6 +31,15 @@ public class Panel {
     private double angle;
     private Color color;
 
+    private Polyline spikerLine;
+
+    public Polyline getSpikerLine() {
+        return spikerLine;
+    }
+
+    public void setSpikerLine(Polyline spikerLine) {
+        this.spikerLine = spikerLine;
+    }
 
     public Panel() {
     }
@@ -121,10 +130,13 @@ public class Panel {
                 }
             }
             for (Spiker spiker : spikers){
-                if(bullet.intersects(spiker.getLayoutBounds()) && !bulletsToDestroy.contains(bullet)){
-                    spikers.add(spiker);
+                if(bullet.intersects(spiker.getLayoutBounds()) && !bulletsToDestroy.contains(bullet) && !spikers.get(0).isDead){
+                    spikersToDestroy.add(spiker);
                     bulletsToDestroy.add(bullet);
                 }
+            }
+            if (!bulletsToDestroy.contains(bullet) && spikers.get(0).isDead){
+                if (spikers.get(0).destroyLine(bullet)) bulletsToDestroy.add(bullet);
             }
             if(bullet.ifOutside() && !bulletsToDestroy.contains(bullet)) bulletsToDestroy.add(bullet);
         }
@@ -174,7 +186,7 @@ public class Panel {
             tanker.destroy();
         }
         for (Spiker spiker : spikersToDestroy){
-            spiker.destroy();
+            spiker.switchToTanker();
         }
     }
 

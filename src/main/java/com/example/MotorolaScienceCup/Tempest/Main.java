@@ -2,7 +2,6 @@ package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.Menu;
 import com.example.MotorolaScienceCup.Util;
-import com.example.MotorolaScienceCup.Vector;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -15,8 +14,6 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -128,7 +125,7 @@ public class Main {
 //        root.getChildren().add(tanker);
 //        tanker.setStroke(Color.RED);
 
-        Spiker spiker = new Spiker(panels.get(4));
+        Spiker spiker = new Spiker(panels.get(10));
         root.getChildren().add(spiker);
 
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
@@ -147,6 +144,7 @@ public class Main {
             if (shoot && bulletsNumber < 5) {
                 player.shoot();
             }
+            Player.shotTimer--;
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();

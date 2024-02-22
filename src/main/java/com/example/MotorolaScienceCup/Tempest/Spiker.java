@@ -1,7 +1,9 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
+import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
+import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
@@ -13,6 +15,7 @@ public class Spiker extends Enemy {
     private BetterPolygon defTanker = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
     private List<Double> defPoints;
     private boolean goingDown = false;
+    public boolean isDead = false;
     private Polyline line = new Polyline();
 
     public Spiker(Panel startPanel) {
@@ -40,7 +43,7 @@ public class Spiker extends Enemy {
     }
 
     public boolean move() {
-        if (h < maxH && !reachedTheEdge) {
+        if (h < maxH && !reachedTheEdge && !isDead) {
             moveUp();
             drawLine();
         } else if (frameOfMovement >= FRAMES_PER_MOVE && !destroyed && !goingDown) {
@@ -67,10 +70,19 @@ public class Spiker extends Enemy {
     }
 
     @Override
-    protected void uniqueDestroyMethod(){
-        currentPanel.getSpikers().remove(this);
+    protected void uniqueDestroyMethod() {
+        if (!isDead) {
+            Main.root.getChildren().remove(this);
+            isDead = true;
+        } else {
+            currentPanel.getSpikers().remove(this);
+        }
+    }
+
+    public void switchToTanker() {
         Tanker tanker = new Tanker(currentPanel);
         Main.root.getChildren().add(tanker);
+        destroy();
     }
 
     private void drawLine() {
@@ -81,5 +93,22 @@ public class Spiker extends Enemy {
         double yEnd = pointer.getCenterY();
 
         line.getPoints().setAll(xStart, yStart, xEnd, yEnd);
+    }
+
+    public boolean destroyLine(Player.Bullet bullet) {
+        if (line != null && bullet.intersects(line.getLayoutBounds())) {
+            Vector vector = new Vector(10, currentPanel.getAngle());
+            System.out.println("adandglldgldg + " + vector.getDirection());
+            System.out.println(vector);
+            System.out.println(line);
+            List<Double> points = line.getPoints();
+            line.getPoints().setAll(points.get(0), points.get(1), points.get(2) - vector.getX(), points.get(3) - vector.getY());
+            if (vector.getMagnitude() > Math.sqrt(Math.pow(points.get(0) - points.get(2), 2) + Math.pow(points.get(1) - points.get(3), 2))) {
+                Main.root.getChildren().remove(line);
+                destroy();
+            }
+            return true;
+        }
+        return false;
     }
 }
