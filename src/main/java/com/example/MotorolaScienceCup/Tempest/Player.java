@@ -3,7 +3,10 @@ package com.example.MotorolaScienceCup.Tempest;
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
+import com.example.MotorolaScienceCup.Vector;
+import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,31 +91,38 @@ public class Player extends BetterPolygon {
         }
     }
 
-    public void shoot() {
-        double xBig = (currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2))/2;
-        double yBig = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().getLast())/2;
-        double xSmall = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2))/2;
-        double ySmall = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast())/2;
+//    public void shoot() {
+//        double xBig = (currentPanel.getBigSide().getPoints().getFirst() + currentPanel.getBigSide().getPoints().get(2))/2;
+//        double yBig = (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().getLast())/2;
+//        double xSmall = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2))/2;
+//        double ySmall = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast())/2;
+//
+//        double x = xBig - xSmall;
+//        double y = yBig - ySmall;
+//
+//        double angle = Math.toDegrees(Math.atan(y/x));
+//        if(x >= 0) angle += 180;
+//
+//        List<Double> points = Util.SVGconverter(bullet);    // Rectangle bullet
+//        Particle bullet = new Particle(points, angle, 0, BULLET_SPEED, 0);
+//        bullet.setFill(Color.RED);
+//        bullet.scale(10/bullet.getRadius());
+//        bullet.moveTo(xBig, yBig);
+//        currentPanel.addPlayerBullet(bullet);
+//
+//        root.getChildren().add(bullet);
+//    }
 
-        double x = xBig - xSmall;
-        double y = yBig - ySmall;
-
-        double angle = Math.toDegrees(Math.atan(y/x));
-        if(x >= 0) angle += 180;
-
-        List<Double> points = Util.SVGconverter(bullet);    // Rectangle bullet
-        Particle bullet = new Particle(points, angle, 0, BULLET_SPEED, 0);
-        bullet.setFill(Color.RED);
-        bullet.scale(10/bullet.getRadius());
-        bullet.moveTo(xBig, yBig);
+    public void shoot(){
+        Bullet bullet = new Bullet();
         currentPanel.addPlayerBullet(bullet);
-
         root.getChildren().add(bullet);
     }
+
     public static void collision() {
         List<Enemy> enemiesToRemove = new ArrayList<>();
         for (Panel panel: panels){
-            for (Particle bullet: panel.getPlayerBullets()){
+            for (Player.Bullet bullet: panel.getPlayerBullets()){
                 for (Flipper flipper : panel.getFlippers()){
                     if (bullet.intersects(flipper.getLayoutBounds())){
                         enemiesToRemove.add(flipper);
@@ -127,5 +137,57 @@ public class Player extends BetterPolygon {
 
     public Panel getCurrentPanel() {
         return currentPanel;
+    }
+
+    public class Bullet extends Circle {
+        private final double speed = (double) 10;
+        private double maxRadius;
+        private double minRadius;
+        private double grad;
+        private Vector velocity;
+        private double h = 0;
+        public Panel panel;
+
+        private Bullet() {
+            super((currentPanel.getBigSide().getPoints().get(0) + currentPanel.getBigSide().getPoints().get(2)) / 2,
+                    (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().get(3)) / 2,
+                    Math.sqrt(Math.pow(currentPanel.getBigSide().getPoints().get(0) - currentPanel.getBigSide().getPoints().get(2), 2) +
+                            Math.pow(currentPanel.getBigSide().getPoints().get(1) - currentPanel.getBigSide().getPoints().get(3), 2)) / 8);
+            maxRadius = this.getRadius();
+            minRadius = Math.sqrt(Math.pow(currentPanel.getSmallSide().getPoints().get(0) - currentPanel.getSmallSide().getPoints().get(2), 2) +
+                    Math.pow(currentPanel.getSmallSide().getPoints().get(1) - currentPanel.getSmallSide().getPoints().get(3), 2)) / 8;
+            panel = currentPanel;
+            grad = (minRadius - maxRadius) / currentPanel.getLength();
+            this.setCenterX((panel.getBigSide().getPoints().get(0) + panel.getBigSide().getPoints().get(2)) / 2);
+            this.setCenterY((panel.getBigSide().getPoints().get(1) + panel.getBigSide().getPoints().get(3)) / 2);
+            velocity = new Vector(speed, 180 + currentPanel.getAngle());
+            updatePoints();
+            this.setStroke(Color.MAGENTA);
+            this.setEffect(new Glow(glowV));
+        }
+
+        public void move(){
+            h += speed;
+            updatePoints();
+        }
+
+        private void updatePoints(){
+            this.setCenterX(this.getCenterX() + velocity.getX());
+            this.setCenterY(this.getCenterY() + velocity.getY());
+            this.setRadius(getBulletRadius());
+        }
+
+        private double getBulletRadius(){
+            return maxRadius + grad * h;
+        }
+
+        public boolean ifOutside(){
+            return h >= panel.getLength();
+        }
+
+        public void remove(){
+            root.getChildren().remove(this);
+            panel.getPlayerBullets().remove(this);
+        }
     }
 }

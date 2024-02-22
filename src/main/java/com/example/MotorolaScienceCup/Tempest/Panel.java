@@ -4,6 +4,7 @@ import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class Panel {
     private Panel leftPanel;
     private Panel rightPanel;
 
-    private List<Particle> playerBullets = new ArrayList<>();
+    private List<Player.Bullet> playerBullets = new ArrayList<>();
     private List<Enemy.Bullet> enemyBullets = new ArrayList<>();
     private List<Flipper> flippers = new ArrayList<>();
     private List<Tanker> tankers = new ArrayList<>();
@@ -68,34 +69,76 @@ public class Panel {
         }
     }
 
-    private void updatePlayerBullets() {
-        for (Particle bullet : playerBullets) {
-            bullet.updatePosition();
-        }
-        double xBigSide = (bigSide.getPoints().getFirst() + bigSide.getPoints().get(2)) / 2;
-        double yBigSide = (bigSide.getPoints().get(1) + bigSide.getPoints().getLast()) / 2;
-        double xSmallSide = (smallSide.getPoints().getFirst() + smallSide.getPoints().get(2)) / 2;
-        double ySmallSide = (smallSide.getPoints().get(1) + smallSide.getPoints().getLast()) / 2;
+//    private void updatePlayerBullets() {
+//        for (Particle bullet : playerBullets) {
+//            bullet.updatePosition();
+//        }
+//        double xBigSide = (bigSide.getPoints().getFirst() + bigSide.getPoints().get(2)) / 2;
+//        double yBigSide = (bigSide.getPoints().get(1) + bigSide.getPoints().getLast()) / 2;
+//        double xSmallSide = (smallSide.getPoints().getFirst() + smallSide.getPoints().get(2)) / 2;
+//        double ySmallSide = (smallSide.getPoints().get(1) + smallSide.getPoints().getLast()) / 2;
+//
+//        double xDiff = xBigSide - xSmallSide;
+//        double yDiff = yBigSide - ySmallSide;
+//
+//        List<Particle> bulletsToRemove = new ArrayList<>();
+//
+//        for (Particle bullet : playerBullets) {
+//            if (xDiff > 0 && bullet.getCenterX() < xSmallSide) {
+//                bulletsToRemove.add(bullet);
+//            } else if (xDiff < 0 && bullet.getCenterX() > xSmallSide) {
+//                bulletsToRemove.add(bullet);
+//            } else if (yDiff > 0 && bullet.getCenterY() < ySmallSide) {
+//                bulletsToRemove.add(bullet);
+//            } else if (yDiff < 0 && bullet.getCenterY() > ySmallSide) {
+//                bulletsToRemove.add(bullet);
+//            }
+//        }
+//        for (Particle bullet : bulletsToRemove) {
+//            playerBullets.remove(bullet);
+//            root.getChildren().remove(bullet);
+//        }
+//    }
 
-        double xDiff = xBigSide - xSmallSide;
-        double yDiff = yBigSide - ySmallSide;
+    private void updatePlayerBullets(){
+        List<Player.Bullet> bulletsToDestroy = new ArrayList<>();
+        List<Flipper> flippersToDestroy = new ArrayList<>();
+        List<Tanker> tankersToDestroy = new ArrayList<>();
+        List<Spiker> spikersToDestroy = new ArrayList<>();
 
-        List<Particle> bulletsToRemove = new ArrayList<>();
-
-        for (Particle bullet : playerBullets) {
-            if (xDiff > 0 && bullet.getCenterX() < xSmallSide) {
-                bulletsToRemove.add(bullet);
-            } else if (xDiff < 0 && bullet.getCenterX() > xSmallSide) {
-                bulletsToRemove.add(bullet);
-            } else if (yDiff > 0 && bullet.getCenterY() < ySmallSide) {
-                bulletsToRemove.add(bullet);
-            } else if (yDiff < 0 && bullet.getCenterY() > ySmallSide) {
-                bulletsToRemove.add(bullet);
+        for (Player.Bullet bullet : playerBullets){
+            bullet.move();
+            for (Flipper flipper : flippers){
+                if(bullet.intersects(flipper.getLayoutBounds()) && !bulletsToDestroy.contains(bullet)){
+                    flippersToDestroy.add(flipper);
+                    bulletsToDestroy.add(bullet);
+                }
             }
+            for (Tanker tanker : tankers){
+                if(bullet.intersects(tanker.getLayoutBounds()) && !bulletsToDestroy.contains(bullet)){
+                    tankersToDestroy.add(tanker);
+                    bulletsToDestroy.add(bullet);
+                }
+            }
+            for (Spiker spiker : spikers){
+                if(bullet.intersects(spiker.getLayoutBounds()) && !bulletsToDestroy.contains(bullet)){
+                    spikers.add(spiker);
+                    bulletsToDestroy.add(bullet);
+                }
+            }
+            if(bullet.ifOutside() && !bulletsToDestroy.contains(bullet)) bulletsToDestroy.add(bullet);
         }
-        for (Particle bullet : bulletsToRemove) {
-            playerBullets.remove(bullet);
-            root.getChildren().remove(bullet);
+        for (Player.Bullet bullet : bulletsToDestroy){
+            bullet.remove();
+        }
+        for (Flipper flipper : flippersToDestroy){
+            flipper.destroy();
+        }
+        for(Tanker tanker : tankersToDestroy){
+            tanker.destroy();
+        }
+        for (Spiker spiker : spikersToDestroy){
+            spiker.destroy();
         }
     }
 
@@ -103,8 +146,9 @@ public class Panel {
         List<Enemy.Bullet> bulletsToDestroy = new ArrayList<>();
         for(Enemy.Bullet bullet : enemyBullets){
             bullet.move();
-            if (bullet.checkIfOutisde()) {
+            if (bullet.checkIfOutside()) {
                 bulletsToDestroy.add(bullet);
+                if(Main.player.getCurrentPanel().equals(this)) Main.gameOver();
             }
         }
         for (Enemy.Bullet bullet : bulletsToDestroy){
@@ -149,7 +193,7 @@ public class Panel {
         spikers.add(spiker);
     }
 
-    public void addPlayerBullet(Particle bullet) {
+    public void addPlayerBullet(Player.Bullet bullet) {
         playerBullets.add(bullet);
     }
 
@@ -246,7 +290,7 @@ public class Panel {
         return rightPanel;
     }
 
-    public List<Particle> getPlayerBullets() {
+    public List<Player.Bullet> getPlayerBullets() {
         return playerBullets;
     }
 

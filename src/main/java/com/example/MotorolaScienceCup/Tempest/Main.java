@@ -118,8 +118,8 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = false;
             if (keyEvent.getCode() == KeyCode.X) shoot = false;
         });
-//        start();
-        nextLevel();
+        start();
+//        nextLevel();
     }
 
     public static void start() {
@@ -150,6 +150,14 @@ public class Main {
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+    }
+
+    public static void gameOver(){
+        System.out.println("You died");
+    }
+
+    public static void addPoints(){
+        System.out.println("add points");
     }
 
     public static void nextLevel(){

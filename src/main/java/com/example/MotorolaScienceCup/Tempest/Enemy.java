@@ -106,20 +106,35 @@ public class Enemy extends BetterPolygon {
     }
 
     public class Bullet {
-        private final double outerScale = 10;
-        private final double innerScale = 5;
-        private final double speed = 7;
+        private double maxOuterRadius;
+        private double minOuterRadius;
+        private double outerRadiusGrad;
+        private final double speed = 8;
+        private double h;
+        private Panel panel;
+        private Vector velocity;
+        private final List<Double> defPoints = Arrays.asList(100.0, 0.0, 70.71, 70.71, 0.0, 100.0, -70.71, 70.71, -100.0, 0.0, -70.71, -70.71, 0.0, -100.0, 70.71, -70.71);
         private List<BetterPolygon> outerPoints;
         private List<BetterPolygon> innerPoints;
-        private Particle outerSqr;
-        private Particle innerSqr;
+        public BetterPolygon outerSqr;
+        private BetterPolygon innerSqr;
 
         private Bullet() {
-            outerSqr = new Particle(pointerPoints, currentPanel.getAngle(), 120, speed, 0);
-            innerSqr = new Particle(pointerPoints, currentPanel.getAngle(), 120, speed, 0);
+            outerSqr = new BetterPolygon(defPoints);
+            innerSqr = new BetterPolygon(defPoints);
 
-            outerSqr.scale(outerScale);
-            innerSqr.scale(innerScale);
+            panel = currentPanel;
+
+            maxOuterRadius = Math.sqrt(Math.pow(currentPanel.getBigSide().getPoints().get(0) - currentPanel.getBigSide().getPoints().get(2), 2) +
+                    Math.pow(currentPanel.getBigSide().getPoints().get(1) - currentPanel.getBigSide().getPoints().get(3), 2)) / 10;
+            minOuterRadius = Math.sqrt(Math.pow(currentPanel.getBigSide().getPoints().get(0) - currentPanel.getBigSide().getPoints().get(2), 2) +
+                    Math.pow(currentPanel.getBigSide().getPoints().get(1) - currentPanel.getBigSide().getPoints().get(3), 2)) / 15;
+            outerRadiusGrad = (maxOuterRadius - minOuterRadius) / panel.getLength();
+
+            h = Enemy.this.h;
+
+            outerSqr.scale(getOuterRadius() / outerSqr.getRadius());
+            innerSqr.scale(outerSqr.getRadius() / 2 / innerSqr.getRadius());
             innerSqr.rotate(45);
 
             outerSqr.moveTo(pointer.getCenterX(), pointer.getCenterY());
@@ -127,6 +142,8 @@ public class Enemy extends BetterPolygon {
 
             outerPoints = new ArrayList<>();
             innerPoints = new ArrayList<>();
+
+            velocity = new Vector(speed, panel.getAngle());
 
             spawn();
             updatePoints();
@@ -150,31 +167,12 @@ public class Enemy extends BetterPolygon {
             }
         }
 
-        public boolean checkIfOutisde() {
-            double x1 = currentPanel.getRightSide().getPoints().get(2);
-            double y1 = currentPanel.getRightSide().getPoints().get(3);
+        public boolean checkIfOutside(){
+            return h >= panel.getLength();
+        }
 
-            double x2 = currentPanel.getLeftSide().getPoints().get(2);
-            double y2 = currentPanel.getLeftSide().getPoints().get(3);
-
-            if (x1 < x2) {
-                if (y1 < y2) {
-                    if ((innerSqr.getCenterX() > (x1 + x2) / 2) || innerSqr.getCenterY() < (y1 + y2) / 2) return true;
-                } else if (y1 > y2) {
-                    if ((innerSqr.getCenterX() < (x1 + x2) / 2) || (innerSqr.getCenterY() < (y1 + y2) / 2)) return true;
-                } else if (innerSqr.getCenterY() < (y1 + y2) / 2) return true;
-            } else if (x1 > x2) {
-                if (y1 < y2) {
-                    if ((innerSqr.getCenterY() > (x1 + x2) / 2) || (innerSqr.getCenterY() > (y1 + y2) / 2)) return true;
-                } else if (y1 > y2) {
-                    if ((innerSqr.getCenterX() < (x1 + x2) / 2) || (innerSqr.getCenterY() > (y1 + y2) / 2)) return true;
-                } else if (innerSqr.getCenterY() > (y1 + y2) / 2) return true;
-            } else if (y1 < y2) {
-                if (innerSqr.getCenterX() > (x1 + x2) / 2) return true;
-            } else if (y1 > y2) {
-                if (innerSqr.getCenterX() < (x1 + x2) / 2) return true;
-            }
-            return false;
+        private double getOuterRadius(){
+            return minOuterRadius + outerRadiusGrad * h;
         }
 
         private void updatePoints() {
@@ -187,8 +185,13 @@ public class Enemy extends BetterPolygon {
         }
 
         public void move() {
-            outerSqr.updatePosition();
-            innerSqr.updatePosition();
+            outerSqr.moveTo(outerSqr.getCenterX() + velocity.getX(), outerSqr.getCenterY() + velocity.getY());
+            innerSqr.moveTo(innerSqr.getCenterX() + velocity.getX(), innerSqr.getCenterY() + velocity.getY());
+            outerSqr.rotate(600);
+            innerSqr.rotate(700);
+            outerSqr.scale(getOuterRadius() / outerSqr.getRadius());
+            innerSqr.scale(getOuterRadius() / 2 / innerSqr.getRadius());
+            h += speed;
             updatePoints();
         }
 
