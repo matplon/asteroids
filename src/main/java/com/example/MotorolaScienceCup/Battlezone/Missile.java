@@ -183,7 +183,7 @@ public class Missile extends EnemyTank {
                     setMoving(false);
                     Vertex vertex = getCenter().getVertDif(new Vertex(Main.camera.getX(),Main.camera.getY(),Main.camera.getZ()));
                     double[] arr = vertex.toArray();
-                    double offset = -0.1;
+                    double offset = -1;
                     for (int i = 0; i < arr.length; i++) {
                         arr[i]*=offset;
                     }
@@ -211,7 +211,7 @@ public class Missile extends EnemyTank {
         }
         if(isRotating()){
             System.out.println("?????????????");
-            if(getTargetRotation() < getRotation() + 5 && getTargetRotation() > getRotation() - 5){
+            if(getTargetRotation() < getRotation() + 7 && getTargetRotation() > getRotation() - 7){
                 rotateTank(getRotDifference());
                 setTargetRotation(getRotation());
                 setRotating(false);

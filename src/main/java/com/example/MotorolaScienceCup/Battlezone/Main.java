@@ -4,6 +4,7 @@ package com.example.MotorolaScienceCup.Battlezone;
 import com.example.MotorolaScienceCup.Asteroids.Asteroid;
 import com.example.MotorolaScienceCup.Asteroids.Enemy;
 import com.example.MotorolaScienceCup.Asteroids.HUD;
+import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Menu;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -12,6 +13,7 @@ import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -27,6 +29,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.*;
 
 public class Main {
@@ -47,6 +50,12 @@ public class Main {
     static double TEXT_TICK = 0;
 
     static boolean has_collided = false;
+
+    static boolean isDying = false;
+
+    static double death_ticks = 0;
+
+    static BetterPolygon crack = new BetterPolygon(new ArrayList<>());
 
     static int impact_ticks = 0;
     static double impact_skip = 0.01;
@@ -90,6 +99,8 @@ public class Main {
     static boolean rotRightPressed = false;
     static boolean rotLeftPressed = false;
 
+    static int playerHP = 3;
+
     static double H_FOV = 90;
 
     static double MAX_BULLET_DISTANCE = 100;
@@ -116,6 +127,7 @@ public class Main {
 
     public static void init(){
         score = 0;
+        resetData();
         scene.setFill(Color.BLACK);
         root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
 
@@ -170,26 +182,26 @@ public class Main {
         double [] camR = camRight.toArray();
         scene.setOnKeyPressed(keyEvent -> {
 
-            if (keyEvent.getCode() == KeyCode.S){
+            if (keyEvent.getCode() == KeyCode.S&&!isDying){
                 rearPressed = true;
             };
-            if (keyEvent.getCode() == KeyCode.W){
+            if (keyEvent.getCode() == KeyCode.W&&!isDying){
                 forwardPressed = true;
             }; // Thrust forward
-            if (keyEvent.getCode() == KeyCode.D){
+            if (keyEvent.getCode() == KeyCode.D&&!isDying){
                 rightPressed = true;
             };   // Rotate right
-            if (keyEvent.getCode() == KeyCode.A){
+            if (keyEvent.getCode() == KeyCode.A&&!isDying){
                 leftPressed = true;
             }; // Rotate left
-            if (keyEvent.getCode() == KeyCode.E){
+            if (keyEvent.getCode() == KeyCode.E&&!isDying){
                 rotRightPressed = true;
 
             };
-            if (keyEvent.getCode() == KeyCode.Q){
+            if (keyEvent.getCode() == KeyCode.Q&&!isDying){
                 rotLeftPressed = true;
             };
-            if (keyEvent.getCode() == KeyCode.SPACE){
+            if (keyEvent.getCode() == KeyCode.SPACE && !isDying){
                 System.out.println("EEEEEEEEEEEEEEE");
                 camera.shootBullet();
             };
@@ -465,6 +477,12 @@ public class Main {
         s.setFill(Color.RED);
         textList.add(s);
         root.getChildren().add(s);
+        isDying = true;
+        wasHit = false;
+        has_collided = true;
+        CAMERA_SPEED = 0;
+        CAMERA_ROT_SPEED = 0;
+        playerHP--;
     }
 
 
@@ -552,6 +570,9 @@ public class Main {
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
             wasHit = false;
+            if(root.getChildren().contains(crack)){
+                root.getChildren().remove(crack);
+            }
             fullTankList.clear();
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
@@ -617,6 +638,48 @@ public class Main {
             }else{
                 polyline = new Polyline( 0,(HEIGHT/2), WIDTH,(HEIGHT/2));
                 polyline.setStroke(Color.GREEN);
+            }
+            if(isDying){
+                death_ticks++;
+                if(death_ticks > 0 && death_ticks < 10){
+                    crack = new BetterPolygon(com.example.MotorolaScienceCup.Util.SVGconverter("zgon1.svg"));
+                } else if (death_ticks >= 10 && death_ticks < 20) {
+                    crack = new BetterPolygon(com.example.MotorolaScienceCup.Util.SVGconverter("zgon2.svg"));
+                } else if (death_ticks >=20 && death_ticks<30) {
+                    crack = new BetterPolygon(com.example.MotorolaScienceCup.Util.SVGconverter("zgon3.svg"));
+                } else if (death_ticks >= 30 && death_ticks < 100) {
+                    crack = new BetterPolygon(com.example.MotorolaScienceCup.Util.SVGconverter("zgon4.svg"));
+                } else if (death_ticks == 100) {
+                    CAMERA_SPEED = 0.1;
+                    CAMERA_ROT_SPEED = 0.5;
+                    isDying = false;
+                    death_ticks=0;
+                    for (int i = 0; i < fullTankList.size(); i++) {
+                        objectList.remove(fullTankList.get(i));
+                    }
+                    for (int i = 0; i < enemyTankList.size(); i++) {
+                        enemyTankList.remove(i);
+                    }
+                    for (int i = 0; i < missileList.size(); i++) {
+                        missileList.remove(i);
+                    }
+                    for (int i = 0; i < superTankList.size(); i++) {
+                        superTankList.remove(i);
+                    }
+                    for (int i = 0; i < ufoList.size(); i++) {
+                        objectList.remove(ufoList.get(i));
+                        ufoList.remove(i);
+                    }
+                    camera.moveToRandom();
+                    if(playerHP<=0){
+                        gameOver();
+                    }
+                }
+                crack.setStroke(Color.GREEN);
+                crack.scale(15);
+                crack.moveTo(WIDTH/2,HEIGHT/2);
+                root.getChildren().add(crack);
+
             }
             lineList.add(polyline);
             root.getChildren().add(polyline);
@@ -692,8 +755,10 @@ public class Main {
             } else if (RADAR_ROT<0) {
                 RADAR_ROT=360+(1-RADAR_ROT);
             }
-            drawRadar();
-            drawStatusText();
+            if(!wasHit) {
+                drawRadar();
+                drawStatusText();
+            }
             for (int i = 0; i < reticle.size(); i++) {
                 root.getChildren().remove(reticle.get(i));
             }
@@ -740,6 +805,131 @@ public class Main {
         timeline.play();
 
     }
+    
+    static void resetData(){
+        Timeline timeline;
+          WIDTH = Menu.WIDTH;
+          HEIGHT = Menu.HEIGHT;
+
+           wasHit = false;
+
+           score = 0;
+
+          CAMERA_SPEED = 0.1;
+          CAMERA_ROT_SPEED = 0.5;
+
+          RADAR_ROT = 0;
+
+          TEXT_TICK = 0;
+
+          has_collided = false;
+
+          isDying = false;
+
+          death_ticks = 0;
+
+          crack = new BetterPolygon(new ArrayList<>());
+
+          impact_ticks = 0;
+          impact_skip = 0.01;
+
+         objectList = new ArrayList<>();
+
+        enemyTankList = new ArrayList<>();
+
+         superTankList = new ArrayList<>();
+
+         missileList = new ArrayList<>();
+
+          mineList = new ArrayList<>();
+
+         ufoList = new ArrayList<>();
+
+          fullTankList = new ArrayList<>();
+
+          chunkList = new ArrayList<>();
+
+          lineList = new ArrayList<>();
+
+          decals = new ArrayList<>();
+
+         reticle = new ArrayList<>();
+
+         textList = new ArrayList<>();
+
+         cubePath = "Cube.txt";
+
+         enemyDir = "";
+
+          enemyInRange = false;
+
+          collisionDir = false;
+
+          forwardPressed = false;
+          rearPressed = false;
+          rightPressed = false;
+          leftPressed = false;
+          rotRightPressed = false;
+          rotLeftPressed = false;
+
+          H_FOV = 90;
+
+         MAX_BULLET_DISTANCE = 100;
+
+        root = new AnchorPane();
+        scene = new Scene(root,WIDTH,HEIGHT);
+
+       allBullets = new ArrayList<>();
+
+       particles = new ArrayList<>();
+       MAX_PARTICLE_TICKS = 30;
+
+           PARTICLE_SPEED = 0.05;
+
+           PARTICLE_ROT_SPEED = 1;
 
 
-}
+
+          text = new Text();
+          text1 = new Text();
+    }
+    public static void gameOver() {
+        timeline.stop();
+        Text gameOverText = new Text("Game Over");
+        gameOverText.setFont(Font.font(100));
+        gameOverText.setStroke(Color.RED);
+        gameOverText.setX(WIDTH/2 - gameOverText.getLayoutBounds().getWidth()/2);
+        gameOverText.setY(HEIGHT/2);
+
+
+
+        AnchorPane newRoot = new AnchorPane();
+        newRoot.getChildren().add(gameOverText);
+        Button restart = new Button("Restart");
+        restart.setLayoutX(400);
+        restart.setLayoutY(700);
+        restart.setFont(Font.font(50));
+
+
+        Button menu = new Button("Menu");
+        menu.setLayoutX(1300);
+        menu.setLayoutY(700);
+        menu.setFont(Font.font(50));
+        menu.setOnAction(actionEvent -> {
+            try {
+                Menu.resetMenu();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        restart.setOnAction(actionEvent -> {
+            init();
+        });
+
+        newRoot.getChildren().addAll(restart, menu);
+        Scene newScene = new Scene(newRoot, WIDTH, HEIGHT);
+        newScene.setFill(Color.BLACK);
+        Menu.stage.setScene(newScene);
+
+
+}}

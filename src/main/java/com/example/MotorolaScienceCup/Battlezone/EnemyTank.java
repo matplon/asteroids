@@ -189,7 +189,13 @@ public class EnemyTank extends Object3D{
         }
         vertex = Util.arrToVert(arr);
         this.moveTo(vertex.getX(), this.getY(), vertex.getZ());
-        boolean notCollided = this.runCollisionCheck(5, this.getCollideHitBox(), this).isEmpty();
+        ArrayList<Vertex> hitbox = new ArrayList<>();
+        if(this instanceof EnemyTank){
+            hitbox = this.getCollideHitBox();
+        }else{
+            hitbox = this.getHitBox2D();
+        }
+        boolean notCollided = this.runCollisionCheck(5, hitbox, this).isEmpty();
         if(!notCollided){
             this.moveToRandom(rotOffset,scaleOffset);
         }
@@ -265,7 +271,7 @@ public class EnemyTank extends Object3D{
         }
     }
     public void shootTank(){
-        if(magTimer<0){
+        if(magTimer<0&&!Main.isDying){
             double[] dir = this.getForward().toArray();
             Bullet bullet = Util.generateBullet(dir, this.getRotation(), this.getX()+this.getForward().getX()*0.5, this.getY()+0.25, this.getZ()+this.getForward().getZ()*0.5);
             bullet.setParent(this);

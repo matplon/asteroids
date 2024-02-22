@@ -135,6 +135,20 @@ public class Camera extends Object3D{
         }
     }
 
+    public void moveToRandom(){
+        Vertex vertex = new Vertex(Chunk.getCenter().getX(), 0 ,Chunk.getCenter().getZ());
+        double[] arr = vertex.toArray();
+        double offsetX = Math.random()*(Chunk.sideLength-4) - ((Chunk.sideLength/2)-2);
+        double offsetZ = Math.random()*(Chunk.sideLength-4) - ((Chunk.sideLength/2)-2);
+        arr = Util.multiplyTransform(Util.getTranslationMatrix(offsetX,0,offsetZ),arr);
+        vertex = Util.arrToVert(arr);
+        this.moveTo(vertex.getX(), this.getY(), vertex.getZ());
+        boolean notCollided = this.runCollisionCheck(5, this.getHitBox2D(), this).isEmpty();
+        if(!notCollided){
+            this.moveToRandom();
+        }
+    }
+
     @Override
     public double getX() {
         return x;
