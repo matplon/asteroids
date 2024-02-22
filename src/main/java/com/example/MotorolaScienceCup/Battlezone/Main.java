@@ -489,6 +489,12 @@ public class Main {
 
     public static void spawnEnemy(){
         double check = new Random().nextDouble(13);
+        if(check >= 4 && score < 10000){
+            check = new Random().nextDouble(4);
+        }else if(check >= 8 && score < 15000){
+            check = new Random().nextDouble(8);
+        }
+
         if(check<4){
             Vertex vertex = camera.getForward();
             double[] arr = vertex.toArray();
@@ -577,13 +583,13 @@ public class Main {
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
             fullTankList.addAll(missileList);
-            if(fullTankList.isEmpty()&&Math.random()*150<1){
+            if(fullTankList.isEmpty()&&Math.random()*200<1){
                 double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
                 for (int i = 0; i < enemyCount; i++) {
                     spawnEnemy();
                 }
             }
-            if(ufoList.isEmpty()&&Math.random()*500<1){
+            if(ufoList.isEmpty()&&Math.random()*600<1){
                 spawnUfo();
             }
             TEXT_TICK++;
