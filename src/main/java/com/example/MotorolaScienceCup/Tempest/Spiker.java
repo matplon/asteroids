@@ -71,7 +71,6 @@ public class Spiker extends Enemy {
 
     @Override
     protected void uniqueDestroyMethod(){
-
         Tanker tanker = new Tanker(currentPanel);
         Main.root.getChildren().add(tanker);
     }
@@ -90,9 +89,10 @@ public class Spiker extends Enemy {
         for (Panel panel: Main.panels){
             Vector vector = new Vector(50, panel.getAngle());
 
-                if (panel.getSpikerLine() != null && bullet.intersects(panel.getSpikerLine().getLayoutBounds())){
+                if (panel.getSpikerLine() != null && bullet.intersects(panel.getSpikerLine().getLayoutBounds()) && isDead){
                     List<Double> points = panel.getSpikerLine().getPoints();
                     panel.getSpikerLine().getPoints().setAll(points.get(0), points.get(1), points.get(2) - vector.getX(), points.get(3) - vector.getY());
+                    destroy();
             }
         }
     }
