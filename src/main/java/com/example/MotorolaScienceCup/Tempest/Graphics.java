@@ -3,6 +3,7 @@ package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Util;
+import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 
@@ -21,26 +22,31 @@ public class Graphics {
     static double mapCenterX;
     static double mapCenterY;
 
-    public static void drawMap(String filepath, Color color) {
+    public static void drawMap(String filepath, Color color, double scale) {
+        connectors = new ArrayList<>();
+        panels = new ArrayList<>();
+
         List<Double> smallShapePoints = Util.SVGconverter(filepath);
 
         BetterPolygon tempSmallShape = new BetterPolygon(smallShapePoints);
+        tempSmallShape.scale(scale);
         tempSmallShape.moveTo((double) WIDTH / 2, (double) HEIGHT / 2 + baseOffset);
         smallShapePoints = tempSmallShape.getPoints();
         mapCenterX = tempSmallShape.getCenterX();
         mapCenterY = tempSmallShape.getCenterY();
 
-        BetterPolygon tempPolygon = BetterPolygon.scale(tempSmallShape, 8);
+        BetterPolygon tempPolygon = BetterPolygon.scale(tempSmallShape, 7 + scale);
         tempPolygon.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
         List<Double> bigShapePoints = tempPolygon.getPoints();
-        drawConnectors(smallShapePoints, bigShapePoints, color);
+        drawConnectors(smallShapePoints, bigShapePoints, color, new Glow(Main.glowV));
     }
 
-    private static void drawConnectors(List<Double> smallShapePoints, List<Double> bigShapePoints, Color color) {
+    private static void drawConnectors(List<Double> smallShapePoints, List<Double> bigShapePoints, Color color, Glow glow) {
         for (int i = 0; i < smallShapePoints.size(); i += 2) {
             Polyline polyline = new Polyline(smallShapePoints.get(i), smallShapePoints.get(i + 1), bigShapePoints.get(i), bigShapePoints.get(i + 1));
             polyline.setFill(color);
             polyline.setStroke(Color.BLUE);
+            polyline.setEffect(glow);
             connectors.add(polyline);
         }
         int n = CONNECTORS_NUMBER - smallShapePoints.size() / 2;
@@ -73,10 +79,10 @@ public class Graphics {
                 connectors.add(polyline);
             }
         }
-        createPanels(smallShapePoints.size() / 2, n, color);
+        createPanels(smallShapePoints.size() / 2, n, color, new Glow(Main.glowV));
     }
 
-    private static void createPanels(int vertices, int connectorsBetweenVertices, Color color) {
+    private static void createPanels(int vertices, int connectorsBetweenVertices, Color color, Glow glow) {
         List<Polyline> newConnectors = new ArrayList<>();
         for (int i = 0; i < vertices; i++) {    // Order connectors the correct way
             newConnectors.add(connectors.get(i));
@@ -111,12 +117,14 @@ public class Graphics {
             Polyline smallSide = new Polyline(smallSideX1, smallSideY1, smallSideX2, smallSideY2);
             smallSide.setFill(color);
             smallSide.setStroke(color);
+            smallSide.setEffect(glow);
             panel.setSmallSide(smallSide);
             root.getChildren().add(smallSide);
 
             Polyline bigSide = new Polyline(bigSideX1, bigSideY1, bigSideX2, bigSideY2);
             bigSide.setStroke(color);
             bigSide.setFill(color);
+            bigSide.setEffect(glow);
             panel.setBigSide(bigSide);
             root.getChildren().add(bigSide);
 
@@ -149,5 +157,4 @@ public class Graphics {
             }
         }
     }
-
 }

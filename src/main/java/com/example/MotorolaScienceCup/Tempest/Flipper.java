@@ -22,19 +22,16 @@ public class Flipper extends Enemy{
      * Center (right) = 10, 11
      * */
 
-    private final int bulletCooldown = 60;
     private static final String filepath = "flipper.svg";
     private BetterPolygon defFlipper = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
     private List<Double> defPoints;
     private static Queue<FlipperSeed> seedQueue = new LinkedList<>();
     private static List<FlipperSeed> seedList = new ArrayList<>();
-    private List<FlipperBullet> flipperBullets = new ArrayList<>();
     private double rotationAngle;
     private double pivotX, pivotY;
     static boolean seedsDone = false;
     private int step;
     private boolean left;
-    private int bulletTimer;
 
     public Flipper(Panel startPanel) {
         super(startPanel);
@@ -52,6 +49,9 @@ public class Flipper extends Enemy{
         pointer.moveTo(x, y);
         acceleration = getPointerAcceleration();
         getPoints().setAll(getFlipperPoints());
+
+        currentPanel.addFlipper(this);
+        setStroke(Color.RED);
     }
 
     public void move() {
@@ -59,7 +59,6 @@ public class Flipper extends Enemy{
             moveUp();
         }
         if (!(Main.LEVEL == 0 && !reachedTheEdge)) changePanel();
-        updateBullets();
         if (!reachedTheEdge) {
             bulletTimer--;
             if (bulletTimer <= 0) shoot();
@@ -70,6 +69,9 @@ public class Flipper extends Enemy{
     protected void updatePoints(){
         getPoints().setAll(getFlipperPoints());
     }
+
+    @Override
+    protected void uniqueDestroyMethod(){currentPanel.getFlippers().remove(this);}
 
     private List<Double> getPointsOnSides() {
         double minX1 = currentPanel.getRightSide().getPoints().getFirst();
@@ -252,24 +254,6 @@ public class Flipper extends Enemy{
         }
     }
 
-    private void shoot() {
-        FlipperBullet flipperBullet = new FlipperBullet();
-        flipperBullets.add(flipperBullet);
-        bulletTimer = bulletCooldown;
-    }
-
-    private void updateBullets() {
-        List<FlipperBullet> bulletsToRemove = new ArrayList<>();
-        for (FlipperBullet bulletbullet : flipperBullets) {
-            bulletbullet.move();
-            if (bulletbullet.checkIfOutisde()) bulletsToRemove.add(bulletbullet);
-        }
-        for (FlipperBullet bulletBullet : bulletsToRemove) {
-            bulletBullet.remove();
-            flipperBullets.remove(bulletBullet);
-        }
-    }
-
     public static void spawnSeeds(double seedsNumber) {
         for (int i = 0; i < seedsNumber; i++) {
             FlipperSeed flipperSeed = new FlipperSeed();
@@ -288,7 +272,7 @@ public class Flipper extends Enemy{
             topSeed.remove();
 
             Flipper flipper = new Flipper(topSeed.chosenPanel);
-            Main.flippers.add(flipper);
+            topSeed.chosenPanel.addFlipper(flipper);
             Main.root.getChildren().add(flipper);
             flipper.setStroke(Color.RED);
         }
@@ -372,103 +356,5 @@ public class Flipper extends Enemy{
         public void remove() {
             Main.root.getChildren().remove(seed);
         }
-    }
-
-    private class FlipperBullet {
-        private final double outerScale = 10;
-        private final double innerScale = 5;
-        private final double speed = 7;
-        private List<BetterPolygon> outerPoints;
-        private List<BetterPolygon> innerPoints;
-        private Particle outerSqr;
-        private Particle innerSqr;
-
-        private FlipperBullet() {
-            outerSqr = new Particle(pointerPoints, currentPanel.getAngle(), 120, speed, 0);
-            innerSqr = new Particle(pointerPoints, currentPanel.getAngle(), 120, speed, 0);
-
-            outerSqr.scale(outerScale);
-            innerSqr.scale(innerScale);
-            innerSqr.rotate(45);
-
-            outerSqr.moveTo(pointer.getCenterX(), pointer.getCenterY());
-            innerSqr.moveTo(pointer.getCenterX(), pointer.getCenterY());
-
-            outerPoints = new ArrayList<>();
-            innerPoints = new ArrayList<>();
-
-            spawn();
-            updatePoints();
-        }
-
-        private void spawn() {
-            for (int i = 0; i < outerSqr.getPoints().size(); i += 2) {
-                BetterPolygon point = new BetterPolygon(pointerPoints);
-                BetterPolygon point2 = new BetterPolygon(pointerPoints);
-                point2.scale(2);
-                outerPoints.add(point2);
-                innerPoints.add(point);
-
-                point.setStroke(Color.RED);
-                point2.setStroke(Color.WHITE);
-
-                Main.root.getChildren().add(point);
-                Main.root.getChildren().add(point2);
-            }
-        }
-
-        private boolean checkIfOutisde() {
-            double x1 = currentPanel.getRightSide().getPoints().get(2);
-            double y1 = currentPanel.getRightSide().getPoints().get(3);
-
-            double x2 = currentPanel.getLeftSide().getPoints().get(2);
-            double y2 = currentPanel.getLeftSide().getPoints().get(3);
-
-            if (x1 < x2) {
-                if (y1 < y2) {
-                    if ((innerSqr.getCenterX() > (x1 + x2) / 2) || innerSqr.getCenterY() < (y1 + y2) / 2) return true;
-                } else if (y1 > y2) {
-                    if ((innerSqr.getCenterX() < (x1 + x2) / 2) || (innerSqr.getCenterY() > (y1 + y2) / 2)) return true;
-                } else if (innerSqr.getCenterY() < (y1 + y2) / 2) return true;
-            } else if (x1 > x2) {
-                if (y1 < y2) {
-                    if ((innerSqr.getCenterY() > (x1 + x2) / 2) || (innerSqr.getCenterY() > (y1 + y2) / 2)) return true;
-                } else if (y1 > y2) {
-                    if ((innerSqr.getCenterX() < (x1 + x2) / 2) || (innerSqr.getCenterY() > (y1 + y2) / 2)) return true;
-                } else if (innerSqr.getCenterY() > (y1 + y2) / 2) return true;
-            } else if (y1 < y2) {
-                if (innerSqr.getCenterX() > (x1 + x2) / 2) return true;
-            } else if (y1 > y2) {
-                if (innerSqr.getCenterX() < (x1 + x2) / 2) return true;
-            }
-            return false;
-        }
-
-
-        private void updatePoints() {
-            int index = 0;
-            for (int i = 0; i < outerSqr.getPoints().size(); i += 2) {
-                outerPoints.get(index).moveTo(outerSqr.getPoints().get(i), outerSqr.getPoints().get(i + 1));
-                innerPoints.get(index).moveTo(innerSqr.getPoints().get(i), innerSqr.getPoints().get(i + 1));
-                index++;
-            }
-        }
-
-        public void move() {
-            outerSqr.updatePosition();
-            innerSqr.updatePosition();
-            updatePoints();
-        }
-
-        public void remove() {
-            for (int i = 0; i < outerPoints.size(); i++) {
-                Main.root.getChildren().remove(outerPoints.get(i));
-                Main.root.getChildren().remove(innerPoints.get(i));
-            }
-        }
-    }
-
-    public void removeFlipper() {
-        System.out.println("jprdl");
     }
 }

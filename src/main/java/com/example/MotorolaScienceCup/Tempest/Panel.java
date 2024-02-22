@@ -1,6 +1,8 @@
 package com.example.MotorolaScienceCup.Tempest;
 
+import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Particle;
+import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 
@@ -18,9 +20,11 @@ public class Panel {
     private Panel leftPanel;
     private Panel rightPanel;
 
-    public List<Particle> bullets = new ArrayList<>();
+    private List<Particle> playerBullets = new ArrayList<>();
+    private List<Enemy.Bullet> enemyBullets = new ArrayList<>();
     private List<Flipper> flippers = new ArrayList<>();
-    public List<Enemy> enemies = new ArrayList<>();
+    private List<Tanker> tankers = new ArrayList<>();
+    private List<Spiker> spikers = new ArrayList<>();
 
     private double length;
     private double angle;
@@ -30,8 +34,42 @@ public class Panel {
     public Panel() {
     }
 
-    public void updateBullets() {
-        for (Particle bullet : bullets) {
+    public void scalePanel(double scale){
+        double angle = Math.toDegrees(Math.atan2((smallSide.getPoints().get(1) + smallSide.getPoints().get(3)) / 2 - Graphics.mapCenterY,
+                (smallSide.getPoints().get(0) + smallSide.getPoints().get(2)) /2 - Graphics.mapCenterX));
+        Vector vector = new Vector(scale, angle);
+        for (int i = 0; i < smallSide.getPoints().size(); i+=2) {
+            smallSide.getPoints().set(i, smallSide.getPoints().get(i) + vector.getX());
+            smallSide.getPoints().set(i+1, smallSide.getPoints().get(i+1) + vector.getY());
+        }
+
+        angle = Math.toDegrees(Math.atan2((bigSide.getPoints().get(1) + bigSide.getPoints().get(3)) / 2 - Graphics.mapCenterY,
+                (bigSide.getPoints().get(0) + bigSide.getPoints().get(2)) /2 - Graphics.mapCenterX));
+        vector = new Vector(scale, angle);
+        for (int i = 0; i < bigSide.getPoints().size(); i+=2) {
+            bigSide.getPoints().set(i, bigSide.getPoints().get(i) + vector.getX());
+            bigSide.getPoints().set(i+1, bigSide.getPoints().get(i+1) + vector.getY());
+        }
+
+        angle = Math.toDegrees(Math.atan2((rightSide.getPoints().get(1) + rightSide.getPoints().get(3)) / 2 - Graphics.mapCenterY,
+                (rightSide.getPoints().get(0) + rightSide.getPoints().get(2)) /2 - Graphics.mapCenterX));
+        vector = new Vector(scale, angle);
+        for (int i = 0; i < rightSide.getPoints().size(); i+=2) {
+            rightSide.getPoints().set(i, rightSide.getPoints().get(i) + vector.getX());
+            rightSide.getPoints().set(i+1, rightSide.getPoints().get(i+1) + vector.getY());
+        }
+
+        angle = Math.toDegrees(Math.atan2((leftSide.getPoints().get(1) + leftSide.getPoints().get(3)) / 2 - Graphics.mapCenterY,
+                (leftSide.getPoints().get(0) + leftSide.getPoints().get(2)) /2 - Graphics.mapCenterX));
+        vector = new Vector(scale, angle);
+        for (int i = 0; i < leftSide.getPoints().size(); i+=2) {
+            leftSide.getPoints().set(i, leftSide.getPoints().get(i) + vector.getX());
+            leftSide.getPoints().set(i+1, leftSide.getPoints().get(i+1) + vector.getY());
+        }
+    }
+
+    private void updatePlayerBullets() {
+        for (Particle bullet : playerBullets) {
             bullet.updatePosition();
         }
         double xBigSide = (bigSide.getPoints().getFirst() + bigSide.getPoints().get(2)) / 2;
@@ -44,7 +82,7 @@ public class Panel {
 
         List<Particle> bulletsToRemove = new ArrayList<>();
 
-        for (Particle bullet : bullets) {
+        for (Particle bullet : playerBullets) {
             if (xDiff > 0 && bullet.getCenterX() < xSmallSide) {
                 bulletsToRemove.add(bullet);
             } else if (xDiff < 0 && bullet.getCenterX() > xSmallSide) {
@@ -56,22 +94,68 @@ public class Panel {
             }
         }
         for (Particle bullet : bulletsToRemove) {
-            bullets.remove(bullet);
+            playerBullets.remove(bullet);
             root.getChildren().remove(bullet);
+        }
+    }
+
+    private void updateEnemyBullets(){
+        List<Enemy.Bullet> bulletsToDestroy = new ArrayList<>();
+        for(Enemy.Bullet bullet : enemyBullets){
+            bullet.move();
+            if (bullet.checkIfOutisde()) {
+                bulletsToDestroy.add(bullet);
+            }
+        }
+        for (Enemy.Bullet bullet : bulletsToDestroy){
+            bullet.remove();
+            enemyBullets.remove(bullet);
+        }
+    }
+
+    public void update(){
+        List<Tanker> tankersToDestroy = new ArrayList<>();
+        List<Spiker> spikersToDestroy = new ArrayList<>();
+        for(Flipper flipper : flippers)
+            flipper.move();
+        for(Tanker tanker : tankers){
+            if(!tanker.move()) tankersToDestroy.add(tanker);
+        }
+        for(Spiker spiker : spikers){
+            if(!spiker.move()) spikersToDestroy.add(spiker);
+        }
+        updatePlayerBullets();
+        updateEnemyBullets();
+        for (Tanker tanker : tankersToDestroy){
+            tanker.destroy();
+        }
+        for (Spiker spiker : spikersToDestroy){
+            spiker.destroy();
         }
     }
 
     private void checkForHits() {
     }
 
-    public void addFlipper(Flipper flipper){
+    public void addFlipper(Flipper flipper) {
         flippers.add(flipper);
     }
-     public void  addTanker(Tanker tanker){
 
-     }
+    public void addTanker(Tanker tanker) {
+        tankers.add(tanker);
+    }
 
-    public void addBullet(Particle bullet){bullets.add(bullet);}
+    public void addSPiker(Spiker spiker) {
+        spikers.add(spiker);
+    }
+
+    public void addPlayerBullet(Particle bullet) {
+        playerBullets.add(bullet);
+    }
+
+    public void addEnemyBullet(Enemy.Bullet bullet){
+        enemyBullets.add(bullet);
+    }
 
     public void changeColorSmallSide(Color color) {
         smallSide.setStroke(color);
@@ -107,7 +191,7 @@ public class Panel {
         changeColorRightSide(color);
     }
 
-    public boolean isBottomPanel(){
+    public boolean isBottomPanel() {
         double midYRight = (rightSide.getPoints().get(1) + rightSide.getPoints().get(3)) / 2;
         double midYLeft = (leftSide.getPoints().get(1) + leftSide.getPoints().get(3)) / 2;
 
@@ -162,12 +246,20 @@ public class Panel {
         return rightPanel;
     }
 
-    public List<Particle> getBullets() {
-        return bullets;
+    public List<Particle> getPlayerBullets() {
+        return playerBullets;
     }
 
     public List<Flipper> getFlippers() {
         return flippers;
+    }
+
+    public List<Tanker> getTankers() {
+        return tankers;
+    }
+
+    public List<Spiker> getSpikers() {
+        return spikers;
     }
 
     public double getLength() {

@@ -2,6 +2,7 @@ package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.Menu;
 import com.example.MotorolaScienceCup.Util;
+import com.example.MotorolaScienceCup.Vector;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -14,6 +15,8 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -32,14 +35,13 @@ public class Main {
     static Timeline timeline;
     static Color defaultPanelColor = Color.BLUE;
     static Color activePanelColor = Color.RED;
+    static final double glowV = 0.9;
     static Player player;
 
     static List<Polyline> smallShape;
     static List<Polyline> bigShape;
     static List<Polyline> connectors;
     static List<Panel> panels;
-    static List<Flipper> flippers;
-    static List<Tanker> tankers;
 
     static boolean shoot;
     static boolean goRight;
@@ -54,14 +56,14 @@ public class Main {
     static String testMap3 = "mapa 3.svg";
     static String testMap4 = "map4.svg";
     static String testShip = "ship1.svg";
+    static double scale = 1;
+    static double a = 1.02;
 
     public static void init() {
         connectors = new ArrayList<>();
         bigShape = new ArrayList<>();
         smallShape = new ArrayList<>();
         panels = new ArrayList<>();
-        flippers = new ArrayList<>();
-        tankers = new ArrayList<>();
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
@@ -72,7 +74,7 @@ public class Main {
         goLeft = false;
         goRight = false;
 
-        Graphics.drawMap(testMap3, defaultPanelColor);
+        Graphics.drawMap(testMap3, defaultPanelColor, 1);
 
         double bigSideLengthX = panels.get(0).getBigSide().getPoints().getFirst() - panels.get(0).getBigSide().getPoints().get(2);
         double bigSideLengthY = panels.get(0).getBigSide().getPoints().get(1) - panels.get(0).getBigSide().getPoints().getLast();
@@ -116,22 +118,25 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = false;
             if (keyEvent.getCode() == KeyCode.X) shoot = false;
         });
-        start();
+//        start();
+        nextLevel();
     }
 
     public static void start() {
         //Flipper.spawnSeeds(flippersNumber);
-        Tanker tanker = new Tanker(panels.get(4));
-        root.getChildren().add(tanker);
-        tanker.setStroke(Color.RED);
-        panels.get(4).addTanker(tanker);
+//        Tanker tanker = new Tanker(panels.get(1));
+//        root.getChildren().add(tanker);
+//        tanker.setStroke(Color.RED);
+
+        Spiker spiker = new Spiker(panels.get(4));
+        root.getChildren().add(spiker);
+
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
             highlightPanel(player);
-            tanker.move();
             double bulletsNumber = 0;
             for (Panel panel : panels) {
-                panel.updateBullets();
-                bulletsNumber += panel.getBullets().size();
+                panel.update();
+                bulletsNumber += panel.getPlayerBullets().size();
             }
             if (goRight) {
                 player.move(false);
@@ -142,18 +147,20 @@ public class Main {
             if (shoot && bulletsNumber < 5) {
                 player.shoot();
             }
-
-           /* if(!Flipper.seedsDone){
-                Flipper.updateSeeds();
-            }
-            for (Flipper flipper : flippers){
-                flipper.move();
-            }*/
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+    }
 
-
+    public static void nextLevel(){
+        if(timeline != null) timeline.stop();
+        timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
+            root.getChildren().clear();
+            Graphics.drawMap(testMap3, defaultPanelColor, scale);
+            scale *= a;
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
     }
 
     public static void highlightPanel(Player player) {

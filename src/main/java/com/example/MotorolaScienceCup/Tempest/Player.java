@@ -100,37 +100,29 @@ public class Player extends BetterPolygon {
         double angle = Math.toDegrees(Math.atan(y/x));
         if(x >= 0) angle += 180;
 
-        System.out.println(Math.toDegrees(Math.atan2(y, x)));
-
         List<Double> points = Util.SVGconverter(bullet);    // Rectangle bullet
         Particle bullet = new Particle(points, angle, 0, BULLET_SPEED, 0);
         bullet.setFill(Color.RED);
         bullet.scale(10/bullet.getRadius());
         bullet.moveTo(xBig, yBig);
-        currentPanel.addBullet(bullet);
+        currentPanel.addPlayerBullet(bullet);
 
         root.getChildren().add(bullet);
     }
     public static void collision() {
         List<Enemy> enemiesToRemove = new ArrayList<>();
         for (Panel panel: panels){
-            for (Particle bullet: panel.getBullets()){
-                for (Enemy enemy: panel.enemies){
-                    if (bullet.intersects(enemy.getLayoutBounds())){
-                        enemiesToRemove.add(enemy);
+            for (Particle bullet: panel.getPlayerBullets()){
+                for (Flipper flipper : panel.getFlippers()){
+                    if (bullet.intersects(flipper.getLayoutBounds())){
+                        enemiesToRemove.add(flipper);
                     }
                 }
             }
         }
-        for (Enemy enemy:enemiesToRemove){
-            if (Flipper.class.isInstance(enemy)){
-                Flipper flipper = (Flipper) (enemy);
+        for (Enemy enemy  :enemiesToRemove){
 
-            }else if (Tanker.class.isInstance(enemy)){
-
-            }
         }
-
     }
 
     public Panel getCurrentPanel() {
