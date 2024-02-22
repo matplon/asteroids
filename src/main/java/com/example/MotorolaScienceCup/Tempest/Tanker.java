@@ -47,6 +47,7 @@ public class Tanker extends Enemy {
 
     @Override
     protected void uniqueDestroyMethod() {
+        Main.root.getChildren().remove(this);
         currentPanel.getTankers().remove(this);
 
         Flipper flipper1 = new Flipper(currentPanel.getLeftPanel());

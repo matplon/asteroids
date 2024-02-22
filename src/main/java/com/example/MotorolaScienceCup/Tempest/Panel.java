@@ -78,37 +78,6 @@ public class Panel {
         }
     }
 
-//    private void updatePlayerBullets() {
-//        for (Particle bullet : playerBullets) {
-//            bullet.updatePosition();
-//        }
-//        double xBigSide = (bigSide.getPoints().getFirst() + bigSide.getPoints().get(2)) / 2;
-//        double yBigSide = (bigSide.getPoints().get(1) + bigSide.getPoints().getLast()) / 2;
-//        double xSmallSide = (smallSide.getPoints().getFirst() + smallSide.getPoints().get(2)) / 2;
-//        double ySmallSide = (smallSide.getPoints().get(1) + smallSide.getPoints().getLast()) / 2;
-//
-//        double xDiff = xBigSide - xSmallSide;
-//        double yDiff = yBigSide - ySmallSide;
-//
-//        List<Particle> bulletsToRemove = new ArrayList<>();
-//
-//        for (Particle bullet : playerBullets) {
-//            if (xDiff > 0 && bullet.getCenterX() < xSmallSide) {
-//                bulletsToRemove.add(bullet);
-//            } else if (xDiff < 0 && bullet.getCenterX() > xSmallSide) {
-//                bulletsToRemove.add(bullet);
-//            } else if (yDiff > 0 && bullet.getCenterY() < ySmallSide) {
-//                bulletsToRemove.add(bullet);
-//            } else if (yDiff < 0 && bullet.getCenterY() > ySmallSide) {
-//                bulletsToRemove.add(bullet);
-//            }
-//        }
-//        for (Particle bullet : bulletsToRemove) {
-//            playerBullets.remove(bullet);
-//            root.getChildren().remove(bullet);
-//        }
-//    }
-
     private void updatePlayerBullets(){
         List<Player.Bullet> bulletsToDestroy = new ArrayList<>();
         List<Flipper> flippersToDestroy = new ArrayList<>();
@@ -117,6 +86,10 @@ public class Panel {
 
         for (Player.Bullet bullet : playerBullets){
             bullet.move();
+            if(checkEdgeFlipper(bullet)){
+                bulletsToDestroy.add(bullet);
+                continue;
+            }
             for (Flipper flipper : flippers){
                 if(bullet.intersects(flipper.getLayoutBounds()) && !bulletsToDestroy.contains(bullet)){
                     flippersToDestroy.add(flipper);
@@ -135,23 +108,39 @@ public class Panel {
                     bulletsToDestroy.add(bullet);
                 }
             }
-            if (!bulletsToDestroy.contains(bullet) && spikers.get(0).isDead){
-                if (spikers.get(0).destroyLine(bullet)) bulletsToDestroy.add(bullet);
+            if (!spikers.isEmpty() && !bulletsToDestroy.contains(bullet) && spikers.get(0).isDead){
+                if (spikers.get(0).destroyLine(bullet, bullet.getRadius() * 2)) bulletsToDestroy.add(bullet);
             }
             if(bullet.ifOutside() && !bulletsToDestroy.contains(bullet)) bulletsToDestroy.add(bullet);
+            for (Flipper flipper : flippersToDestroy){
+                flipper.destroy();
+            }
+            for(Tanker tanker : tankersToDestroy){
+                tanker.destroy();
+            }
+            for (Spiker spiker : spikersToDestroy){
+                spiker.destroy();
+            }
         }
         for (Player.Bullet bullet : bulletsToDestroy){
             bullet.remove();
         }
-        for (Flipper flipper : flippersToDestroy){
-            flipper.destroy();
+
+    }
+
+    private boolean checkEdgeFlipper(Player.Bullet bullet){
+        Flipper toDestroy = null;
+        for(Flipper flipper : flippers){
+            if(flipper.reachedTheEdge){
+                toDestroy = flipper;
+                break;
+            }
         }
-        for(Tanker tanker : tankersToDestroy){
-            tanker.destroy();
+        if(toDestroy != null){
+            toDestroy.destroy();
+            return true;
         }
-        for (Spiker spiker : spikersToDestroy){
-            spiker.destroy();
-        }
+        return false;
     }
 
     private void updateEnemyBullets(){

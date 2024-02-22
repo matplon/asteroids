@@ -72,16 +72,17 @@ public class Spiker extends Enemy {
     @Override
     protected void uniqueDestroyMethod() {
         if (!isDead) {
-            Main.root.getChildren().remove(this);
             isDead = true;
         } else {
             currentPanel.getSpikers().remove(this);
         }
+        if(Main.root.getChildren().contains(this)) Main.root.getChildren().remove(this);
     }
 
     public void switchToTanker() {
         Tanker tanker = new Tanker(currentPanel);
         Main.root.getChildren().add(tanker);
+        isDead = true;
         destroy();
     }
 
@@ -95,12 +96,9 @@ public class Spiker extends Enemy {
         line.getPoints().setAll(xStart, yStart, xEnd, yEnd);
     }
 
-    public boolean destroyLine(Player.Bullet bullet) {
+    public boolean destroyLine(Player.Bullet bullet, double magnitude) {
         if (line != null && bullet.intersects(line.getLayoutBounds())) {
-            Vector vector = new Vector(10, currentPanel.getAngle());
-            System.out.println("adandglldgldg + " + vector.getDirection());
-            System.out.println(vector);
-            System.out.println(line);
+            Vector vector = new Vector(magnitude, currentPanel.getAngle());
             List<Double> points = line.getPoints();
             line.getPoints().setAll(points.get(0), points.get(1), points.get(2) - vector.getX(), points.get(3) - vector.getY());
             if (vector.getMagnitude() > Math.sqrt(Math.pow(points.get(0) - points.get(2), 2) + Math.pow(points.get(1) - points.get(3), 2))) {

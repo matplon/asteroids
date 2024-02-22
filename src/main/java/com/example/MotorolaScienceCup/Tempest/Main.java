@@ -45,6 +45,8 @@ public class Main {
     static boolean goLeft;
     static int LEVEL = 0;
     static int flippersNumber = 5;
+    static int tankersNumber = 5;
+    static int spikersNumber = 5;
 
     static double bigSideLength;
 
@@ -77,11 +79,7 @@ public class Main {
         double bigSideLengthY = panels.get(0).getBigSide().getPoints().get(1) - panels.get(0).getBigSide().getPoints().getLast();
         bigSideLength = Math.sqrt(Math.pow(bigSideLengthX, 2) + Math.pow(bigSideLengthY, 2));
 
-        player = new Player(Util.SVGconverter(testShip), panels.getFirst());
-        player.scale(20 / player.getRadius());
-        player.setStroke(Color.RED);
-        player.setFill(Color.RED);
-        player.moveTo(panels.getFirst().getRightSide().getPoints().get(2), panels.getFirst().getRightSide().getPoints().get(3));
+        player = new Player(panels.getFirst());
         root.getChildren().add(player);
 
         double x1 = panels.get(0).getBigSide().getPoints().get(0);
@@ -95,12 +93,6 @@ public class Main {
         points.add(10.0);
         points.add(x1);
         points.add(10.0);
-
-//        Flipper flipper = new Flipper(panels.get(14));
-//        root.getChildren().add(flipper);
-//        flipper.setStroke(Color.RED);
-//        panels.get(14).addFlipper(flipper);
-//        flippers.add(flipper);
 
 
         scene.setOnKeyPressed(keyEvent -> {
@@ -120,13 +112,8 @@ public class Main {
     }
 
     public static void start() {
-        //Flipper.spawnSeeds(flippersNumber);
-//        Tanker tanker = new Tanker(panels.get(1));
-//        root.getChildren().add(tanker);
-//        tanker.setStroke(Color.RED);
 
-        Spiker spiker = new Spiker(panels.get(10));
-        root.getChildren().add(spiker);
+        Enemy.spawnSeeds(flippersNumber, tankersNumber, spikersNumber);
 
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
             highlightPanel(player);
@@ -143,6 +130,9 @@ public class Main {
             }
             if (shoot && bulletsNumber < 5) {
                 player.shoot();
+            }
+            if(!Enemy.seedsDone){
+                Enemy.updateSeeds();
             }
             Player.shotTimer--;
         }));

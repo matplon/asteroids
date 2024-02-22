@@ -10,7 +10,7 @@ import javafx.scene.shape.Circle;
 
 import java.util.*;
 
-public class Flipper extends Enemy{
+public class Flipper extends Enemy {
     /*  Points:
      * Left top = 8, 9
      * Right top - 12, 13
@@ -25,11 +25,8 @@ public class Flipper extends Enemy{
     private static final String filepath = "flipper.svg";
     private BetterPolygon defFlipper = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
     private List<Double> defPoints;
-    private static Queue<FlipperSeed> seedQueue = new LinkedList<>();
-    private static List<FlipperSeed> seedList = new ArrayList<>();
     private double rotationAngle;
     private double pivotX, pivotY;
-    static boolean seedsDone = false;
     private int step;
     private boolean left;
 
@@ -39,7 +36,7 @@ public class Flipper extends Enemy{
         double panelToHorizontalAngle = Math.toDegrees(Math.atan((startPanel.getSmallSide().getPoints().getLast() - startPanel.getSmallSide().getPoints().get(1))
                 / (startPanel.getSmallSide().getPoints().get(2) - startPanel.getSmallSide().getPoints().getFirst())));
         if (Double.toString(panelToHorizontalAngle).equals("-0.0")) panelToHorizontalAngle = 180;
-        else if(startPanel.isBottomPanel()){
+        else if (startPanel.isBottomPanel()) {
             panelToHorizontalAngle += 180;
         }
         defPoints = BetterPolygon.rotate(new BetterPolygon(defFlipper.getPoints()), panelToHorizontalAngle).getPoints();
@@ -66,12 +63,15 @@ public class Flipper extends Enemy{
     }
 
     @Override
-    protected void updatePoints(){
+    protected void updatePoints() {
         getPoints().setAll(getFlipperPoints());
     }
 
     @Override
-    protected void uniqueDestroyMethod(){currentPanel.getFlippers().remove(this);}
+    protected void uniqueDestroyMethod() {
+        Main.root.getChildren().remove(this);
+        currentPanel.getFlippers().remove(this);
+    }
 
     private List<Double> getPointsOnSides() {
         double minX1 = currentPanel.getRightSide().getPoints().getFirst();
@@ -243,7 +243,7 @@ public class Flipper extends Enemy{
             double panelToHorizontalAngle = Math.toDegrees(Math.atan((currentPanel.getSmallSide().getPoints().getLast() - currentPanel.getSmallSide().getPoints().get(1))
                     / (currentPanel.getSmallSide().getPoints().get(2) - currentPanel.getSmallSide().getPoints().getFirst())));
             if (Double.toString(panelToHorizontalAngle).equals("-0.0")) panelToHorizontalAngle = 180;
-            else if(currentPanel.isBottomPanel()){
+            else if (currentPanel.isBottomPanel()) {
                 panelToHorizontalAngle += 180;
             }
             defPoints = BetterPolygon.rotate(new BetterPolygon(defFlipper.getPoints()), panelToHorizontalAngle).getPoints();
@@ -251,110 +251,6 @@ public class Flipper extends Enemy{
 
             rotationAngle = 0;
             step = 0;
-        }
-    }
-
-    public static void spawnSeeds(double seedsNumber) {
-        for (int i = 0; i < seedsNumber; i++) {
-            FlipperSeed flipperSeed = new FlipperSeed();
-            seedList.add(flipperSeed);
-        }
-    }
-
-    public static void updateSeeds() {
-        for (FlipperSeed seed : seedList) {
-            if (!seed.done) seed.move();
-            else seedQueue.add(seed);
-        }
-        FlipperSeed topSeed = seedQueue.poll();
-        if (topSeed != null) {
-            seedList.remove(topSeed);
-            topSeed.remove();
-
-            Flipper flipper = new Flipper(topSeed.chosenPanel);
-            topSeed.chosenPanel.addFlipper(flipper);
-            Main.root.getChildren().add(flipper);
-            flipper.setStroke(Color.RED);
-        }
-        if (seedList.isEmpty() && seedQueue.isEmpty()) seedsDone = true;
-    }
-
-    private static class FlipperSeed {
-        private final double CENTER_X = Graphics.mapCenterX;
-        private final double CENTER_Y = Graphics.mapCenterY;
-        private double RADIUS = 0;
-        private final double linearSpeed = 1.0;
-        private double DEST_X;
-        private double DEST_Y;
-        private double ANGLE = 0;
-        private double ANGLE_INC = 0.1;
-        private double RADIUS_INC = 0.05;
-        private Particle seed;
-        private boolean spiral = true;
-        public boolean done = false;
-        public Panel chosenPanel;
-        private double T;
-
-        public FlipperSeed() {
-            Circle bounds = new Circle(Graphics.mapCenterX, Graphics.mapCenterY, 15);
-            Random random = new Random();
-            double x = random.nextDouble(Main.WIDTH);
-            double y = random.nextDouble(Main.HEIGHT);
-            Point2D point2D = new Point2D(x, y);
-            while (!bounds.contains(point2D)) {
-                x = random.nextDouble(Main.WIDTH);
-                y = random.nextDouble(Main.HEIGHT);
-                point2D = new Point2D(x, y);
-            }
-            seed = new Particle(Flipper.pointerPoints, 0, 0, 0, 0);
-            seed.moveTo(x, y);
-            seed.setStroke(Color.RED);
-            Main.root.getChildren().add(seed);
-
-            choosePanel();
-        }
-
-        private void choosePanel() {
-            Random random = new Random();
-            int panelIndex = random.nextInt(Main.panels.size());
-            chosenPanel = Main.panels.get(panelIndex);
-        }
-
-        public void move() {
-            if (spiral) {
-                Random random = new Random();
-                double randomInt = random.nextInt(10);
-                spiral = (randomInt <= 8);
-                if (!spiral) {
-                    List<Double> points = chosenPanel.getSmallSide().getPoints();
-                    double randomT = Math.random();
-                    DEST_X = points.getFirst() + randomT * (points.get(2) - points.getFirst());
-                    DEST_Y = points.get(1) + randomT * (points.getLast() - points.get(1));
-                    double angle = Math.toDegrees(Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX()));
-                    seed.setVelocity(new Vector(linearSpeed, angle));
-                    seed.setAngle(angle);
-
-                    double s = Math.sqrt(Math.pow(DEST_Y - seed.getCenterY(), 2) + Math.pow(DEST_X - seed.getCenterX(), 2));
-                    T = s / linearSpeed;
-                }
-            }
-            if (spiral) {
-                double x = CENTER_X + RADIUS * Math.cos(ANGLE);
-                double y = CENTER_Y + RADIUS * Math.sin(ANGLE);
-
-                seed.moveTo(x, y);
-
-                ANGLE += ANGLE_INC;
-                RADIUS += RADIUS_INC;
-            } else {
-                seed.updatePosition();
-                T--;
-                if (T <= 0) done = true;
-            }
-        }
-
-        public void remove() {
-            Main.root.getChildren().remove(seed);
         }
     }
 }
