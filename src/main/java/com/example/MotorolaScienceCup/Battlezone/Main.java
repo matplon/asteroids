@@ -645,13 +645,97 @@ public class Main {
             if(isDying){
                 death_ticks++;
                 if(death_ticks > 0 && death_ticks < 10){
-                    crack = new BetterPolygon(com.example.MotorolaScienceCup.Util.SVGconverter("zgon1.svg"));
+                    ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon1.svg");
+                    double xAvg=0;
+                    double zAvg=0;
+                    double arraySize=0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            if(array.get(j)==85.258978){
+                                xAvg = array.get(j);
+                                zAvg = array.get(j+1);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            Polyline polyline1 = new Polyline((array.get(j)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+1)-zAvg)*15+HEIGHT/2, (array.get(j+2)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+3)-zAvg)*15+HEIGHT/2);
+                            polyline1.setStroke(Color.GREEN);
+                            root.getChildren().add(polyline1);
+                            lineList.add(polyline1);
+                        }
+                    }
                 } else if (death_ticks >= 10 && death_ticks < 20) {
-                    crack = new BetterPolygon(com.example.MotorolaScienceCup.Util.SVGconverter("zgon2.svg"));
+                    ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon2.svg");
+                    double xAvg=0;
+                    double zAvg=0;
+                    double arraySize=0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            if(array.get(j)==85.258978){
+                                xAvg = array.get(j);
+                                zAvg = array.get(j+1);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            Polyline polyline1 = new Polyline((array.get(j)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+1)-zAvg)*15+HEIGHT/2, (array.get(j+2)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+3)-zAvg)*15+HEIGHT/2);
+                            polyline1.setStroke(Color.GREEN);
+                            root.getChildren().add(polyline1);
+                            lineList.add(polyline1);
+                        }
+                    }
                 } else if (death_ticks >=20 && death_ticks<30) {
-                    crack = new BetterPolygon(com.example.MotorolaScienceCup.Util.SVGconverter("zgon3.svg"));
+                    ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon3.svg");
+                    double xAvg=0;
+                    double zAvg=0;
+                    double arraySize=0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            if(array.get(j)==87.397134){
+                                xAvg = array.get(j);
+                                zAvg = array.get(j+1);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            Polyline polyline1 = new Polyline((array.get(j)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+1)-zAvg)*15+HEIGHT/2, (array.get(j+2)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+3)-zAvg)*15+HEIGHT/2);
+                            polyline1.setStroke(Color.GREEN);
+                            root.getChildren().add(polyline1);
+                            lineList.add(polyline1);
+                        }
+                    }
                 } else if (death_ticks >= 30 && death_ticks < 100) {
-                    crack = new BetterPolygon(com.example.MotorolaScienceCup.Util.SVGconverter("zgon4.svg"));
+                    ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon4.svg");
+                    double xAvg=0;
+                    double zAvg=0;
+                    double arraySize=0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            if(array.get(j)==87.397134){
+                                xAvg = array.get(j);
+                                zAvg = array.get(j+1);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            Polyline polyline1 = new Polyline((array.get(j)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+1)-zAvg)*15+HEIGHT/2, (array.get(j+2)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+3)-zAvg)*15+HEIGHT/2);
+                            polyline1.setStroke(Color.GREEN);
+                            root.getChildren().add(polyline1);
+                            lineList.add(polyline1);
+                        }
+                    }
                 } else if (death_ticks == 100) {
                     CAMERA_SPEED = 0.1;
                     CAMERA_ROT_SPEED = 0.5;
@@ -680,7 +764,7 @@ public class Main {
                 }
                 crack.setStroke(Color.GREEN);
                 crack.scale(15);
-                crack.moveTo(WIDTH/2,HEIGHT/2);
+                crack.moveTo(WIDTH/2-(WIDTH/10),HEIGHT/2);
                 root.getChildren().add(crack);
 
             }
@@ -904,7 +988,7 @@ public class Main {
         Text gameOverText = new Text("Game Over");
         gameOverText.setFont(Font.font(100));
         gameOverText.setStroke(Color.RED);
-        gameOverText.setX(WIDTH/2 - gameOverText.getLayoutBounds().getWidth()/2);
+        gameOverText.setX(WIDTH/2-(WIDTH/10) - gameOverText.getLayoutBounds().getWidth()/2);
         gameOverText.setY(HEIGHT/2);
 
 

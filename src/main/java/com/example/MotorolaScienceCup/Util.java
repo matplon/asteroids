@@ -57,6 +57,38 @@ public class Util {
         return list;
     }
 
+    public static ArrayList<ArrayList<Double>> SVGconverterForLines (String filepath) { // Convert .svg file to a list of coordinates
+        ArrayList<ArrayList<Double>> list = new ArrayList<>();
+        try {
+            Scanner scanner = new Scanner(new File(filepath));
+            while (scanner.hasNextLine()) {
+                String nextLine = scanner.nextLine();
+                String leftRemoved = nextLine.replaceAll("^\\s+", "");  // Remove whitespaces from the sides
+                nextLine = leftRemoved.replaceAll("\\s+$", "");
+                if (nextLine.startsWith("d=")) {    // Find the path line in the .svg file
+                    nextLine = nextLine.substring(5,nextLine.length()-5);
+                    String[] paths = nextLine.split(" M ");
+                    for (int i = 0; i < paths.length; i++) {
+                        String line = paths[i];
+                        ArrayList<Double> cords = new ArrayList<>();
+                        String[] points = line.split(" ");
+                        for (int j = 0; j < points.length; j++) {
+                            String[] finalPoints = points[j].split(",");
+                            System.out.println(i + " " + nextLine + " XD");
+                            cords.add(Double.parseDouble(finalPoints[0]));
+                            cords.add(Double.parseDouble(finalPoints[1]));
+                        }
+                        list.add(cords);
+                    }
+
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+
     private static String[] getStrings(String nextLine, int indexesToRemoveLeft, int indexesToRemoveRight) {
         String subString = nextLine.substring(indexesToRemoveLeft, nextLine.length() - indexesToRemoveRight);    // Remove unnecessary characters from the sides
         if (subString.contains("Z")) {
