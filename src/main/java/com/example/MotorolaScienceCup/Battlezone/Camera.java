@@ -35,7 +35,7 @@ public class Camera extends Object3D{
         this.up = new Vertex(0,1,0);
         this.right = new Vertex(1,0,0);
         this.near = 0.5;
-        this.far = 150;
+        this.far = 120;
     }
 
     public double[][] getTranslateCamMatrix(){
@@ -132,6 +132,20 @@ public class Camera extends Object3D{
             return false;
         }else{
             return true;
+        }
+    }
+
+    public void moveToRandom(){
+        Vertex vertex = new Vertex(Chunk.getCenter().getX(), 0 ,Chunk.getCenter().getZ());
+        double[] arr = vertex.toArray();
+        double offsetX = Math.random()*(Chunk.sideLength-4) - ((Chunk.sideLength/2)-2);
+        double offsetZ = Math.random()*(Chunk.sideLength-4) - ((Chunk.sideLength/2)-2);
+        arr = Util.multiplyTransform(Util.getTranslationMatrix(offsetX,0,offsetZ),arr);
+        vertex = Util.arrToVert(arr);
+        this.moveTo(vertex.getX(), this.getY(), vertex.getZ());
+        boolean notCollided = this.runCollisionCheck(5, this.getHitBox2D(), this).isEmpty();
+        if(!notCollided){
+            this.moveToRandom();
         }
     }
 

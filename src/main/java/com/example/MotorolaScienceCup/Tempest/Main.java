@@ -5,9 +5,13 @@ import com.example.MotorolaScienceCup.Util;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 import javafx.stage.Stage;
@@ -28,53 +32,54 @@ public class Main {
     static Timeline timeline;
     static Color defaultPanelColor = Color.BLUE;
     static Color activePanelColor = Color.RED;
+    static final double glowV = 0.9;
     static Player player;
 
     static List<Polyline> smallShape;
     static List<Polyline> bigShape;
     static List<Polyline> connectors;
     static List<Panel> panels;
-    static List<Flipper> flippers;
 
     static boolean shoot;
     static boolean goRight;
     static boolean goLeft;
-    static int LEVEL = 1;
-    static int flippersNumber = 10;
+    static int LEVEL = 0;
+    static int flippersNumber = 5;
+    static int tankersNumber = 5;
+    static int spikersNumber = 5;
 
     static double bigSideLength;
 
     static String bullet = "testoctagon.svg";
     static String testMap2 = "testsquareKTORYDZIALA.svg";
     static String testMap3 = "mapa 3.svg";
+    static String testMap4 = "map4.svg";
     static String testShip = "ship1.svg";
+    static double scale = 1;
+    static double a = 1.02;
 
     public static void init() {
         connectors = new ArrayList<>();
         bigShape = new ArrayList<>();
         smallShape = new ArrayList<>();
         panels = new ArrayList<>();
-        flippers = new ArrayList<>();
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
         scene.setFill(Color.BLACK);
+        root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
 
         shoot = false;
         goLeft = false;
         goRight = false;
 
-        Graphics.drawMap(testMap2, defaultPanelColor);
+        Graphics.drawMap(testMap3, defaultPanelColor, 1);
 
         double bigSideLengthX = panels.get(0).getBigSide().getPoints().getFirst() - panels.get(0).getBigSide().getPoints().get(2);
         double bigSideLengthY = panels.get(0).getBigSide().getPoints().get(1) - panels.get(0).getBigSide().getPoints().getLast();
         bigSideLength = Math.sqrt(Math.pow(bigSideLengthX, 2) + Math.pow(bigSideLengthY, 2));
 
-        player = new Player(Util.SVGconverter(testShip), panels.getFirst());
-        player.scale(20 / player.getRadius());
-        player.setStroke(Color.RED);
-        player.setFill(Color.RED);
-        player.moveTo(panels.getFirst().getRightSide().getPoints().get(2), panels.getFirst().getRightSide().getPoints().get(3));
+        player = new Player(panels.getFirst());
         root.getChildren().add(player);
 
         double x1 = panels.get(0).getBigSide().getPoints().get(0);
@@ -89,11 +94,6 @@ public class Main {
         points.add(x1);
         points.add(10.0);
 
-//        Flipper flipper = new Flipper(panels.get(14));
-//        root.getChildren().add(flipper);
-//        flipper.setStroke(Color.RED);
-//        panels.get(14).addFlipper(flipper);
-//        flippers.add(flipper);
 
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = true;
@@ -107,17 +107,20 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = false;
             if (keyEvent.getCode() == KeyCode.X) shoot = false;
         });
-        start();
+//        start();
+        nextLevel();
     }
 
     public static void start() {
-        Flipper.spawnSeeds(flippersNumber);
+
+        Enemy.spawnSeeds(flippersNumber, tankersNumber, spikersNumber);
 
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
+            highlightPanel(player);
             double bulletsNumber = 0;
             for (Panel panel : panels) {
-                panel.updateBullets();
-                bulletsNumber += panel.getBullets().size();
+                panel.update();
+                bulletsNumber += panel.getPlayerBullets().size();
             }
             if (goRight) {
                 player.move(false);
@@ -128,17 +131,57 @@ public class Main {
             if (shoot && bulletsNumber < 5) {
                 player.shoot();
             }
-            if(!Flipper.seedsDone){
-                Flipper.updateSeeds();
+            if(!Enemy.seedsDone){
+                Enemy.updateSeeds();
             }
-            for (Flipper flipper : flippers){
-                flipper.move();
-            }
-//            System.out.println(flippers.size());
+            Player.shotTimer--;
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+    }
 
+    public static void gameOver(){
+        System.out.println("You died");
+    }
 
+    public static void addPoints(){
+        System.out.println("add points");
+    }
+
+    public static void nextLevel(){
+        player = new Player(panels.getFirst());
+        root.getChildren().add(player);
+        if(timeline != null) timeline.stop();
+        timeline = new Timeline(new KeyFrame(Duration.millis((double) 4000 / Menu.FPS), actionEvent -> {
+            root.getChildren().clear();
+            Graphics.drawMap(testMap3, defaultPanelColor, scale);
+            scale *= a;
+            player.moveDown();
+
+            highlightPanel(player);
+            double bulletsNumber = 0;
+            if (goRight) {
+                player.move(false);
+            }
+            if (goLeft) {
+                player.move(true);
+            }
+            if (shoot && bulletsNumber < 5) {
+                player.shoot();
+            }
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+    }
+
+    public static void highlightPanel(Player player) {
+        if (player.getCurrentPanel().getLeftPanel().getColor() == Color.YELLOW){
+            player.getCurrentPanel().getLeftPanel().changeColor(Color.BLUE);
+        }
+        if (player.getCurrentPanel().getRightPanel().getColor() == Color.YELLOW){
+            player.getCurrentPanel().getRightPanel().changeColor(Color.BLUE);
+        }
+
+        player.getCurrentPanel().changeColor(Color.YELLOW);
     }
 }

@@ -138,6 +138,7 @@ public class Object3D {
 
 
 
+
     //DOES NOT WORK. DO NOT USE UNDER ANY CIRCUMSTANCES. ONLY USE Object.moveTo(0,0,0)
     public void convertVertecesToCentralOrigin(){
         for (int i = 0; i < this.points3D.size(); i++) {
@@ -192,6 +193,7 @@ public class Object3D {
         if(zeroedArrCount == 0 || zeroedArrCount == arrlist.size()){
         return arrlist;}else{return new ArrayList<>();}
     }
+
 
     public Color getColor() {
         return color;

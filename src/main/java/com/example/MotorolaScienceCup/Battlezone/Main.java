@@ -4,6 +4,7 @@ package com.example.MotorolaScienceCup.Battlezone;
 import com.example.MotorolaScienceCup.Asteroids.Asteroid;
 import com.example.MotorolaScienceCup.Asteroids.Enemy;
 import com.example.MotorolaScienceCup.Asteroids.HUD;
+import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Menu;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -12,6 +13,7 @@ import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -27,10 +29,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
+import java.util.*;
 
 public class Main {
 
@@ -42,14 +42,20 @@ public class Main {
 
     public static int score = 0;
 
-    static double CAMERA_SPEED = 0.3;
-    static double CAMERA_ROT_SPEED = 2.5;
+    static double CAMERA_SPEED = 0.1;
+    static double CAMERA_ROT_SPEED = 0.5;
     
     static double RADAR_ROT = 0;
 
     static double TEXT_TICK = 0;
 
     static boolean has_collided = false;
+
+    static boolean isDying = false;
+
+    static double death_ticks = 0;
+
+    static BetterPolygon crack = new BetterPolygon(new ArrayList<>());
 
     static int impact_ticks = 0;
     static double impact_skip = 0.01;
@@ -68,7 +74,7 @@ public class Main {
 
     static ArrayList<EnemyTank> fullTankList = new ArrayList<>();
 
-    static Chunk[][] chunkList = new Chunk[Chunk.chunkHiveSideLength][Chunk.chunkHiveSideLength];
+    static ArrayList<Chunk> chunkList = new ArrayList<>();
 
     static ArrayList<Polyline> lineList = new ArrayList<>();
 
@@ -85,6 +91,15 @@ public class Main {
     static boolean enemyInRange = false;
 
     static boolean collisionDir = false;
+
+    static boolean forwardPressed = false;
+    static boolean rearPressed = false;
+    static boolean rightPressed = false;
+    static boolean leftPressed = false;
+    static boolean rotRightPressed = false;
+    static boolean rotLeftPressed = false;
+
+    static int playerHP = 3;
 
     static double H_FOV = 90;
 
@@ -112,6 +127,7 @@ public class Main {
 
     public static void init(){
         score = 0;
+        resetData();
         scene.setFill(Color.BLACK);
         root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
 
@@ -139,11 +155,12 @@ public class Main {
         camera.setHitBox2D(camHitbox);
         camera.translate(0,0,-10);
         objectList.add(camera);
-       /* EnemyTank obj1 = Util.generateEnemyTank(0,10);
-        SuperTank super1 = Util.generateSuperTank(10,20);
+       /* *//*EnemyTank obj1 = Util.generateEnemyTank(0,10);
+        SuperTank super1 = Util.generateSuperTank(10,20);*//*
         Missile missile = Util.generateMissile(0,100);
         Ufo ufo = Util.generateUfo(0,0);*/
         generateInitChunks();
+        spawnEnemy();
 
         start();
 
@@ -154,172 +171,62 @@ public class Main {
 
 
     public static void control(){
-
+        double rotation = camera.getRotation();
+        Vertex camVert = new Vertex(camera.getX(),camera.getY(),camera.getZ());
+        double [] camArr = camVert.toArray();
+        Vertex camForward = camera.getForward();
+        double [] camF = camForward.toArray();
+        Vertex camUp = camera.getUp();
+        double [] camU = camUp.toArray();
+        Vertex camRight = camera.getRight();
+        double [] camR = camRight.toArray();
         scene.setOnKeyPressed(keyEvent -> {
-            double rotation = camera.getRotation();
-            Vertex camVert = new Vertex(camera.getX(),camera.getY(),camera.getZ());
-            double [] camArr = camVert.toArray();
-            Vertex camForward = camera.getForward();
-            double [] camF = camForward.toArray();
-            Vertex camUp = camera.getUp();
-            double [] camU = camUp.toArray();
-            Vertex camRight = camera.getRight();
-            double [] camR = camRight.toArray();
 
-            if (keyEvent.getCode() == KeyCode.S){
-                System.out.println("lol");
-                ArrayList<Vertex> hitbox = camera.getHitBox2D();
-                ArrayList<Vertex> lol = new ArrayList<>();
-                for (int i = 0; i < hitbox.size(); i++) {
-                    Vertex vert = hitbox.get(i);
-                    double[] arr = vert.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix(-camF[0]*CAMERA_SPEED, -camF[1]*CAMERA_SPEED, -camF[2]*CAMERA_SPEED),arr);
-                    lol.add(Util.arrToVert(arr));
-                }
-                System.out.println("hihihi");
-                ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
-                if(array.size()==0) {
-                    System.out.println("LALALALA");
-                    camera.translate(-camF[0] * CAMERA_SPEED, -camF[1] * CAMERA_SPEED, -camF[2] * CAMERA_SPEED);
-                    collisionDir = false;
-                }else{
-                    if(!collisionDir){
-                        impactAnim();
-                    }
-                    collisionDir = true;
-                }
-
+            if (keyEvent.getCode() == KeyCode.S&&!isDying){
+                rearPressed = true;
             };
-            if (keyEvent.getCode() == KeyCode.W){
-                ArrayList<Vertex> hitbox = camera.getHitBox2D();
-                ArrayList<Vertex> lol = new ArrayList<>();
-                for (int i = 0; i < hitbox.size(); i++) {
-                    Vertex vert = hitbox.get(i);
-                    double[] arr = vert.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
-                    lol.add(Util.arrToVert(arr));
-                }
-                ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
-                if(array.size()==0){
-                    camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
-                    collisionDir = false;
-                }else{
-                    if(!collisionDir){
-                        impactAnim();
-                    }
-                    collisionDir = true;
-                }
+            if (keyEvent.getCode() == KeyCode.W&&!isDying){
+                forwardPressed = true;
             }; // Thrust forward
-            if (keyEvent.getCode() == KeyCode.D){
-                ArrayList<Vertex> hitbox = camera.getHitBox2D();
-                ArrayList<Vertex> lol = new ArrayList<>();
-                for (int i = 0; i < hitbox.size(); i++) {
-                    Vertex vert = hitbox.get(i);
-                    double[] arr = vert.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix(camR[0]*CAMERA_SPEED, camR[1]*CAMERA_SPEED, camR[2]*CAMERA_SPEED),arr);
-                    lol.add(Util.arrToVert(arr));
-                }
-                ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
-                if(array.size()==0){
-                   // for (int i = 0; i < 4; i++) {
-                    camera.translate( camR[0] * CAMERA_SPEED,  camR[1] * CAMERA_SPEED,  camR[2] * CAMERA_SPEED);
-                    collisionDir = false;
-                }else{
-                    if(!collisionDir){
-                        impactAnim();
-                    }
-                    collisionDir = true;
-                }
+            if (keyEvent.getCode() == KeyCode.D&&!isDying){
+                rightPressed = true;
             };   // Rotate right
-            if (keyEvent.getCode() == KeyCode.A){
-                ArrayList<Vertex> hitbox = camera.getHitBox2D();
-                ArrayList<Vertex> lol = new ArrayList<>();
-                for (int i = 0; i < hitbox.size(); i++) {
-                    Vertex vert = hitbox.get(i);
-                    double[] arr = vert.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix(-camR[0]*CAMERA_SPEED, -camR[1]*CAMERA_SPEED, -camR[2]*CAMERA_SPEED),arr);
-                    lol.add(Util.arrToVert(arr));
-                }
-                ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
-                if(array.size()==0){
-                    //for (int i = 0; i < 4; i++) {
-                        camera.translate(  -camR[0] * CAMERA_SPEED,   -camR[1] * CAMERA_SPEED,   -camR[2] * CAMERA_SPEED);
-                        collisionDir = false;
-                }
-                else{
-                    if(!collisionDir){
-                        impactAnim();
-                    }
-                    collisionDir = true;
-                }
+            if (keyEvent.getCode() == KeyCode.A&&!isDying){
+                leftPressed = true;
             }; // Rotate left
-            if (keyEvent.getCode() == KeyCode.UP){
-                ArrayList<Vertex> hitbox = camera.getHitBox2D();
-                for (int i = 0; i < hitbox.size(); i++) {
-                    Vertex vert = hitbox.get(i);
-                    double[] arr = vert.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix( camU[0]*CAMERA_SPEED,  camU[1]*CAMERA_SPEED,  camU[2]*CAMERA_SPEED),arr);
-                    hitbox.set(i, Util.arrToVert(arr));
-                }
-                if(camera.runCollisionCheck(7,hitbox,camera).size()==0){
-                    //for (int i = 0; i < 4; i++) {
-                    camera.translate( camU[0] * CAMERA_SPEED,  camU[1] * CAMERA_SPEED,  camU[2] * CAMERA_SPEED);
-                }
-            };   // Rotate right
-            if (keyEvent.getCode() == KeyCode.DOWN){
-                ArrayList<Vertex> hitbox = camera.getHitBox2D();
-                for (int i = 0; i < hitbox.size(); i++) {
-                    Vertex vert = hitbox.get(i);
-                    double[] arr = vert.toArray();
-                    arr = Util.multiplyTransform(Util.getTranslationMatrix( -camU[0]*CAMERA_SPEED,  -camU[1]*CAMERA_SPEED,  -camU[2]*CAMERA_SPEED),arr);
-                    hitbox.set(i, Util.arrToVert(arr));
-                }
-                if(camera.runCollisionCheck(7,hitbox,camera).size()==0){
-                    //for (int i = 0; i < 4; i++) {
-                    camera.translate( -camU[0] * CAMERA_SPEED,  -camU[1] * CAMERA_SPEED,  -camU[2] * CAMERA_SPEED);
-                }
-            }; // Rotate left
-            if (keyEvent.getCode() == KeyCode.E){
-                camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
-                System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
-                camera.setForward(Util.arrToVert(camF));
-                camR = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camR);
-                camera.setRight(Util.arrToVert(camR));
-                camera.rotY(CAMERA_ROT_SPEED);
-                collisionDir = false;
-                //camera.updateRotation(CAMERA_ROT_SPEED);
+            if (keyEvent.getCode() == KeyCode.E&&!isDying){
+                rotRightPressed = true;
 
             };
-            if (keyEvent.getCode() == KeyCode.Q){
-                camF = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camF);
-                System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
-                camera.setForward(Util.arrToVert(camF));
-                camR = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camR);
-                camera.setRight(Util.arrToVert(camR));
-                camera.rotY(-CAMERA_ROT_SPEED);
-                collisionDir = false;
-                //camera.updateRotation(-CAMERA_ROT_SPEED);
+            if (keyEvent.getCode() == KeyCode.Q&&!isDying){
+                rotLeftPressed = true;
             };
-            /*if (keyEvent.getCode() == KeyCode.R){
-                camF = Util.multiplyTransform(Util.getRotationXMatrix(-1), camF);
-                System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
-                camera.setForward(Util.arrToVert(camF));
-                camU = Util.multiplyTransform(Util.getRotationXMatrix(-1), camU);
-                camera.setUp(Util.arrToVert(camU));
-            };
-            if (keyEvent.getCode() == KeyCode.F){
-                camF = Util.multiplyTransform(Util.getRotationXMatrix(1), camF);
-                System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
-                camera.setForward(Util.arrToVert(camF));
-                camU = Util.multiplyTransform(Util.getRotationXMatrix(1), camU);
-                camera.setUp(Util.arrToVert(camU));
-
-            };*/
-            if (keyEvent.getCode() == KeyCode.SPACE){
+            if (keyEvent.getCode() == KeyCode.SPACE && !isDying){
                 System.out.println("EEEEEEEEEEEEEEE");
                 camera.shootBullet();
             };
 
+        });
+        scene.setOnKeyReleased(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.S){
+                rearPressed = false;
+            };
+            if (keyEvent.getCode() == KeyCode.W){
+                forwardPressed = false;
+            }; // Thrust forward
+            if (keyEvent.getCode() == KeyCode.D){
+                rightPressed = false;
+            };   // Rotate right
+            if (keyEvent.getCode() == KeyCode.A){
+                leftPressed = false;
+            }; // Rotate left
+            if (keyEvent.getCode() == KeyCode.E){
+                rotRightPressed = false;
+
+            };
+            if (keyEvent.getCode() == KeyCode.Q){
+                rotLeftPressed = false;
+            };
         });
         System.out.println("LLLLLLLLLLLL");
         //System.out.println(camera.getPosition().toString());
@@ -327,6 +234,127 @@ public class Main {
         System.out.println(camera.getUp().toString());
         System.out.println(camera.getRight().toString());
         System.out.println("WWWWWWWWWWWWW");
+        if (rearPressed&&!rightPressed&&!leftPressed){
+            System.out.println("lol");
+            ArrayList<Vertex> hitbox = camera.getHitBox2D();
+            ArrayList<Vertex> lol = new ArrayList<>();
+            for (int i = 0; i < hitbox.size(); i++) {
+                Vertex vert = hitbox.get(i);
+                double[] arr = vert.toArray();
+                arr = Util.multiplyTransform(Util.getTranslationMatrix(-camF[0]*CAMERA_SPEED, -camF[1]*CAMERA_SPEED, -camF[2]*CAMERA_SPEED),arr);
+                lol.add(Util.arrToVert(arr));
+            }
+            System.out.println("hihihi");
+            ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
+            if(array.size()==0) {
+                System.out.println("LALALALA");
+                camera.translate(-camF[0] * CAMERA_SPEED, -camF[1] * CAMERA_SPEED, -camF[2] * CAMERA_SPEED);
+                collisionDir = false;
+            }else{
+                if(!collisionDir){
+                    impactAnim();
+                }
+                collisionDir = true;
+            }
+
+        };
+        if (forwardPressed&&!rightPressed&&!leftPressed){
+            ArrayList<Vertex> hitbox = camera.getHitBox2D();
+            ArrayList<Vertex> lol = new ArrayList<>();
+            for (int i = 0; i < hitbox.size(); i++) {
+                Vertex vert = hitbox.get(i);
+                double[] arr = vert.toArray();
+                arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
+                lol.add(Util.arrToVert(arr));
+            }
+            ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
+            if(array.size()==0){
+                camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
+                collisionDir = false;
+            }else{
+                if(!collisionDir){
+                    impactAnim();
+                }
+                collisionDir = true;
+            }
+        }; // Thrust forward
+        if (rightPressed){
+            camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
+            System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
+            camera.setForward(Util.arrToVert(camF));
+            camR = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camR);
+            camera.setRight(Util.arrToVert(camR));
+            camera.rotY(CAMERA_ROT_SPEED);
+            collisionDir = false;
+            ArrayList<Vertex> hitbox = camera.getHitBox2D();
+            ArrayList<Vertex> lol = new ArrayList<>();
+            for (int i = 0; i < hitbox.size(); i++) {
+                Vertex vert = hitbox.get(i);
+                double[] arr = vert.toArray();
+                arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
+                lol.add(Util.arrToVert(arr));
+            }
+            ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
+            if(array.size()==0){
+                camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
+                collisionDir = false;
+            }else{
+                if(!collisionDir){
+                    impactAnim();
+                }
+                collisionDir = true;
+            }
+            //camera.updateRotation(CAMERA_ROT_SPEED);
+        };   // Rotate right
+        if (leftPressed){
+            camF = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camF);
+            System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
+            camera.setForward(Util.arrToVert(camF));
+            camR = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camR);
+            camera.setRight(Util.arrToVert(camR));
+            camera.rotY(-CAMERA_ROT_SPEED);
+            collisionDir = false;
+            //camera.updateRotation(-CAMERA_ROT_SPEED);
+            ArrayList<Vertex> hitbox = camera.getHitBox2D();
+            ArrayList<Vertex> lol = new ArrayList<>();
+            for (int i = 0; i < hitbox.size(); i++) {
+                Vertex vert = hitbox.get(i);
+                double[] arr = vert.toArray();
+                arr = Util.multiplyTransform(Util.getTranslationMatrix(camF[0]*CAMERA_SPEED, camF[1]*CAMERA_SPEED, camF[2]*CAMERA_SPEED),arr);
+                lol.add(Util.arrToVert(arr));
+            }
+            ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
+            if(array.size()==0){
+                camera.translate(camF[0] * CAMERA_SPEED, camF[1] * CAMERA_SPEED, camF[2] * CAMERA_SPEED);
+                collisionDir = false;
+            }else{
+                if(!collisionDir){
+                    impactAnim();
+                }
+                collisionDir = true;
+            }
+        }; // Rotate left
+        if (rotRightPressed&&!rightPressed&&!leftPressed){
+            camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
+            System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
+            camera.setForward(Util.arrToVert(camF));
+            camR = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camR);
+            camera.setRight(Util.arrToVert(camR));
+            camera.rotY(CAMERA_ROT_SPEED);
+            collisionDir = false;
+            //camera.updateRotation(CAMERA_ROT_SPEED);
+
+        };
+        if (rotLeftPressed&&!rightPressed&&!leftPressed){
+            camF = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camF);
+            System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
+            camera.setForward(Util.arrToVert(camF));
+            camR = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camR);
+            camera.setRight(Util.arrToVert(camR));
+            camera.rotY(-CAMERA_ROT_SPEED);
+            collisionDir = false;
+            //camera.updateRotation(-CAMERA_ROT_SPEED);
+        };
 
     }
 
@@ -410,7 +438,7 @@ public class Main {
             textList.add(t);
             root.getChildren().add(t);
         }
-        if(!enemyDir.equals("")&&TEXT_TICK > 15){
+        if(!enemyDir.isEmpty() &&TEXT_TICK > 15){
             Text t = new Text("Enemy to "+enemyDir);
             t.setFont(Font.font(50));
             t.setX(100);
@@ -449,21 +477,95 @@ public class Main {
         s.setFill(Color.RED);
         textList.add(s);
         root.getChildren().add(s);
+        isDying = true;
+        wasHit = false;
+        has_collided = true;
+        CAMERA_SPEED = 0;
+        CAMERA_ROT_SPEED = 0;
+        playerHP--;
     }
 
+
+
     public static void spawnEnemy(){
+        double check = new Random().nextDouble(13);
+        if(check >= 4 && score < 10000){
+            check = new Random().nextDouble(4);
+        }else if(check >= 8 && score < 15000){
+            check = new Random().nextDouble(8);
+        }
+
+        if(check<4){
+            Vertex vertex = camera.getForward();
+            double[] arr = vertex.toArray();
+            double offset = Math.random()*120-60;
+            arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+            double scale = Math.random()*50+25;
+            for (int i = 0; i < arr.length; i++) {
+                arr[i]*=scale;
+            }
+            vertex = Util.arrToVert(arr);
+            EnemyTank enemyTank = Util.generateEnemyTank(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
+            boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
+            if(!notCollided){
+                enemyTank.moveToRandom(60,15);
+            }
+        } else if(check>=4&&check<8&&score>=15000){
+            Vertex vertex = camera.getForward();
+            double[] arr = vertex.toArray();
+            double offset = Math.random()*200-100;
+            arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+            double scale = Math.random()*50+25;
+            for (int i = 0; i < arr.length; i++) {
+                arr[i]*=scale;
+            }
+            vertex = Util.arrToVert(arr);
+            SuperTank enemyTank = Util.generateSuperTank(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
+            boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
+            if(!notCollided){
+                enemyTank.moveToRandom(100,15);
+            }
+        } else if(check>=8&&score>=10000&&missileList.isEmpty()){
+            Vertex vertex = camera.getForward();
+            double[] arr = vertex.toArray();
+            double offset = Math.random()*60-30;
+            arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+            double scale = 115;
+            for (int i = 0; i < arr.length; i++) {
+                arr[i]*=scale;
+            }
+            vertex = Util.arrToVert(arr);
+            Missile enemyTank = Util.generateMissile(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
+            boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
+            if(!notCollided){
+                enemyTank.moveToRandom(30,115);
+            }
+        }
+
 
     }
 
     public static void spawnUfo(){
-
+            Vertex vertex = camera.getForward();
+            double[] arr = vertex.toArray();
+            double offset = Math.random()*150-75;
+            arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
+            double scale = Math.random()*100+50;
+            for (int i = 0; i < arr.length; i++) {
+                arr[i]*=scale;
+            }
+            vertex = Util.arrToVert(arr);
+            Ufo enemyTank = Util.generateUfo(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
+            boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
+            if(!notCollided){
+                enemyTank.moveToRandom(75,100);
+            }
     }
 
     public static void generateInitChunks(){
         for (int i = -3; i < 4; i++) {
             for (int j = -3; j < 4; j++) {
-                Chunk chunk = new Chunk((int)Math.round(i*Chunk.getSideLength()), (int)Math.round(j*Chunk.getSideLength()),i,j);
-                chunkList[i+3][j+3]=chunk;
+                Chunk chunk = new Chunk((int)Math.round(i*Chunk.getSideLength()), (int)Math.round(j*Chunk.getSideLength()),chunkList);
                 if(i==0&&j==0){
                     Chunk.setCenter(chunk);
                 }
@@ -474,14 +576,20 @@ public class Main {
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
             wasHit = false;
+            if(root.getChildren().contains(crack)){
+                root.getChildren().remove(crack);
+            }
             fullTankList.clear();
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
             fullTankList.addAll(missileList);
-            if(fullTankList.isEmpty()&&Math.random()*300<1){
-                spawnEnemy();
+            if(fullTankList.isEmpty()&&Math.random()*200<1){
+                double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
+                for (int i = 0; i < enemyCount; i++) {
+                    spawnEnemy();
+                }
             }
-            if(ufoList.isEmpty()&&Math.random()*1000<1){
+            if(ufoList.isEmpty()&&Math.random()*600<1){
                 spawnUfo();
             }
             TEXT_TICK++;
@@ -539,6 +647,139 @@ public class Main {
             }else{
                 polyline = new Polyline( 0,(HEIGHT/2), WIDTH,(HEIGHT/2));
                 polyline.setStroke(Color.GREEN);
+            }
+            if(isDying){
+                death_ticks++;
+                if(death_ticks > 0 && death_ticks < 10){
+                    ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon1.svg");
+                    double xAvg=0;
+                    double zAvg=0;
+                    double arraySize=0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            if(array.get(j)==85.258978){
+                                xAvg = array.get(j);
+                                zAvg = array.get(j+1);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            Polyline polyline1 = new Polyline((array.get(j)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+1)-zAvg)*15+HEIGHT/2, (array.get(j+2)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+3)-zAvg)*15+HEIGHT/2);
+                            polyline1.setStroke(Color.GREEN);
+                            root.getChildren().add(polyline1);
+                            lineList.add(polyline1);
+                        }
+                    }
+                } else if (death_ticks >= 10 && death_ticks < 20) {
+                    ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon2.svg");
+                    double xAvg=0;
+                    double zAvg=0;
+                    double arraySize=0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            if(array.get(j)==85.258978){
+                                xAvg = array.get(j);
+                                zAvg = array.get(j+1);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            Polyline polyline1 = new Polyline((array.get(j)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+1)-zAvg)*15+HEIGHT/2, (array.get(j+2)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+3)-zAvg)*15+HEIGHT/2);
+                            polyline1.setStroke(Color.GREEN);
+                            root.getChildren().add(polyline1);
+                            lineList.add(polyline1);
+                        }
+                    }
+                } else if (death_ticks >=20 && death_ticks<30) {
+                    ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon3.svg");
+                    double xAvg=0;
+                    double zAvg=0;
+                    double arraySize=0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            if(array.get(j)==87.397134){
+                                xAvg = array.get(j);
+                                zAvg = array.get(j+1);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            Polyline polyline1 = new Polyline((array.get(j)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+1)-zAvg)*15+HEIGHT/2, (array.get(j+2)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+3)-zAvg)*15+HEIGHT/2);
+                            polyline1.setStroke(Color.GREEN);
+                            root.getChildren().add(polyline1);
+                            lineList.add(polyline1);
+                        }
+                    }
+                } else if (death_ticks >= 30 && death_ticks < 100) {
+                    ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon4.svg");
+                    double xAvg=0;
+                    double zAvg=0;
+                    double arraySize=0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            if(array.get(j)==87.397134){
+                                xAvg = array.get(j);
+                                zAvg = array.get(j+1);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < arr.size(); i++) {
+                        ArrayList<Double> array = arr.get(i);
+                        for (int j = 0; j < array.size()-2; j+=2) {
+                            Polyline polyline1 = new Polyline((array.get(j)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+1)-zAvg)*15+HEIGHT/2, (array.get(j+2)-xAvg)*15+WIDTH/2-(WIDTH/10), (array.get(j+3)-zAvg)*15+HEIGHT/2);
+                            polyline1.setStroke(Color.GREEN);
+                            root.getChildren().add(polyline1);
+                            lineList.add(polyline1);
+                        }
+                    }
+                } else if (death_ticks == 100) {
+                    wasHit = false;
+                    CAMERA_SPEED = 0.1;
+                    CAMERA_ROT_SPEED = 0.5;
+                    isDying = false;
+                    death_ticks=0;
+                    for (int i = 0; i < fullTankList.size(); i++) {
+                        objectList.remove(fullTankList.get(i));
+                    }
+                    for (int i = 0; i < enemyTankList.size(); i++) {
+                        enemyTankList.remove(i);
+                    }
+                    for (int i = 0; i < missileList.size(); i++) {
+                        missileList.remove(i);
+                    }
+                    for (int i = 0; i < superTankList.size(); i++) {
+                        superTankList.remove(i);
+                    }
+                    for (int i = 0; i < ufoList.size(); i++) {
+                        objectList.remove(ufoList.get(i));
+                        ufoList.remove(i);
+                    }
+                    enemyDir = "";
+
+                    enemyInRange = false;
+
+                    collisionDir = false;
+                    textList.clear();
+                    camera.moveToRandom();
+                    if(playerHP<=0){
+                        gameOver();
+                    }
+                }
+                crack.setStroke(Color.GREEN);
+                crack.scale(15);
+                crack.moveTo(WIDTH/2-(WIDTH/10),HEIGHT/2);
+                root.getChildren().add(crack);
+
             }
             lineList.add(polyline);
             root.getChildren().add(polyline);
@@ -614,8 +855,10 @@ public class Main {
             } else if (RADAR_ROT<0) {
                 RADAR_ROT=360+(1-RADAR_ROT);
             }
-            drawRadar();
-            drawStatusText();
+            if(!wasHit) {
+                drawRadar();
+                drawStatusText();
+            }
             for (int i = 0; i < reticle.size(); i++) {
                 root.getChildren().remove(reticle.get(i));
             }
@@ -634,6 +877,25 @@ public class Main {
             for (Mine mine : mineList){
                 mine.checkCamera();
             }
+            for (Chunk chunk:chunkList){
+                chunk.checkHasPlayer();
+            }
+            ArrayList<Chunk> tempChunk = new ArrayList<>();
+            for (int i = 0; i < chunkList.size(); i++) {
+                Chunk chunk = chunkList.get(i);
+                if(Math.abs(chunk.checkDistanceX(Chunk.center))>Chunk.sideLength*3){
+                    int x = -chunk.checkDistanceX(Chunk.getOldCenter());
+                    Chunk chunk1 = new Chunk((int)Math.round(Chunk.getCenter().getX()+x), (int)Math.round(chunk.getZ()), tempChunk);
+                    chunk.unloadChunk();
+                }else if(Math.abs(chunk.checkDistanceZ(Chunk.center))>Chunk.sideLength*3){
+                    int z = -chunk.checkDistanceZ(Chunk.getOldCenter());
+                    Chunk chunk1 = new Chunk((int)Math.round(chunk.getX()), (int)Math.round(Chunk.getCenter().getZ()+z), tempChunk);
+                    chunk.unloadChunk();
+                }
+            }
+            for(Chunk chunk:tempChunk){
+                chunkList.add(chunk);
+            }
             if(wasHit){
                 onGotShot();
             }
@@ -643,6 +905,135 @@ public class Main {
         timeline.play();
 
     }
+    
+    static void resetData(){
+        if(camera!=null) {
+            camera.setMagTimer(-1);
+        }
+
+        Timeline timeline;
+          WIDTH = Menu.WIDTH;
+          HEIGHT = Menu.HEIGHT;
+
+           wasHit = false;
+
+           score = 0;
+
+          CAMERA_SPEED = 0.1;
+          CAMERA_ROT_SPEED = 0.5;
+
+          RADAR_ROT = 0;
+
+          TEXT_TICK = 0;
+
+          has_collided = false;
+
+          isDying = false;
+
+          death_ticks = 0;
+
+          crack = new BetterPolygon(new ArrayList<>());
+
+          impact_ticks = 0;
+          impact_skip = 0.01;
+
+         objectList = new ArrayList<>();
+
+        enemyTankList = new ArrayList<>();
+
+         superTankList = new ArrayList<>();
+
+         missileList = new ArrayList<>();
+
+          mineList = new ArrayList<>();
+
+         ufoList = new ArrayList<>();
+
+          fullTankList = new ArrayList<>();
+
+          chunkList = new ArrayList<>();
+
+          lineList = new ArrayList<>();
+
+          decals = new ArrayList<>();
+
+         reticle = new ArrayList<>();
+
+         textList = new ArrayList<>();
+
+         cubePath = "Cube.txt";
+
+         enemyDir = "";
+
+          enemyInRange = false;
+
+          collisionDir = false;
+
+          forwardPressed = false;
+          rearPressed = false;
+          rightPressed = false;
+          leftPressed = false;
+          rotRightPressed = false;
+          rotLeftPressed = false;
+
+          H_FOV = 90;
+
+         MAX_BULLET_DISTANCE = 100;
+
+        root = new AnchorPane();
+        scene = new Scene(root,WIDTH,HEIGHT);
+
+       allBullets = new ArrayList<>();
+
+       particles = new ArrayList<>();
+       MAX_PARTICLE_TICKS = 30;
+
+           PARTICLE_SPEED = 0.05;
+
+           PARTICLE_ROT_SPEED = 1;
 
 
-}
+
+          text = new Text();
+          text1 = new Text();
+    }
+    public static void gameOver() {
+        timeline.stop();
+        Text gameOverText = new Text("Game Over");
+        gameOverText.setFont(Font.font(100));
+        gameOverText.setStroke(Color.RED);
+        gameOverText.setX(WIDTH/2-(WIDTH/10) - gameOverText.getLayoutBounds().getWidth()/2);
+        gameOverText.setY(HEIGHT/2);
+
+
+
+        AnchorPane newRoot = new AnchorPane();
+        newRoot.getChildren().add(gameOverText);
+        Button restart = new Button("Restart");
+        restart.setLayoutX(400);
+        restart.setLayoutY(700);
+        restart.setFont(Font.font(50));
+
+
+        Button menu = new Button("Menu");
+        menu.setLayoutX(1300);
+        menu.setLayoutY(700);
+        menu.setFont(Font.font(50));
+        menu.setOnAction(actionEvent -> {
+            try {
+                Menu.resetMenu();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        restart.setOnAction(actionEvent -> {
+            init();
+        });
+
+        newRoot.getChildren().addAll(restart, menu);
+        Scene newScene = new Scene(newRoot, WIDTH, HEIGHT);
+        newScene.setFill(Color.BLACK);
+        Menu.stage.setScene(newScene);
+
+
+}}
