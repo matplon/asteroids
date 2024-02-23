@@ -34,7 +34,7 @@ public class Enemy extends Particle {
 
     private static double probability(){
         double baseProb = 0.001;
-        double changeRate = 0.006;
+        double changeRate = 0.002;
 
         double adjustedProb = baseProb + ((double) HUD.getPoints() / 1000) * changeRate;
         adjustedProb =Math.max(0, Math.min(1, adjustedProb));
