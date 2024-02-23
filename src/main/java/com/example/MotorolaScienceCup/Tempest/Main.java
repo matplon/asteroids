@@ -107,8 +107,8 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = false;
             if (keyEvent.getCode() == KeyCode.X) shoot = false;
         });
-        start();
-//        nextLevel();
+//        start();
+        nextLevel();
     }
 
     public static void start() {
@@ -149,11 +149,26 @@ public class Main {
     }
 
     public static void nextLevel(){
+        player = new Player(panels.getFirst());
+        root.getChildren().add(player);
         if(timeline != null) timeline.stop();
-        timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
+        timeline = new Timeline(new KeyFrame(Duration.millis((double) 4000 / Menu.FPS), actionEvent -> {
             root.getChildren().clear();
             Graphics.drawMap(testMap3, defaultPanelColor, scale);
             scale *= a;
+            player.moveDown();
+
+            highlightPanel(player);
+            double bulletsNumber = 0;
+            if (goRight) {
+                player.move(false);
+            }
+            if (goLeft) {
+                player.move(true);
+            }
+            if (shoot && bulletsNumber < 5) {
+                player.shoot();
+            }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();

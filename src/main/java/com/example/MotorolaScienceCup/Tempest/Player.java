@@ -14,10 +14,13 @@ import static com.example.MotorolaScienceCup.Tempest.Main.*;
 
 public class Player extends BetterPolygon {
     private final int shotCooldown = 5;
-    private final double outerTriangleOffset = 30;
+    private double outerTriangleOffset = 30;
+    private final double maxTriangleOffset = 30;
+    private final double minTriangleOffset = 0.1;
     private double xStepLeft, xStepRight;
     private double yStepLeft, yStepRight;
     private double leftRightDiffX, leftRightDiffY;
+    private double hStep = 5;
     private double h;
     private Circle pointer = new Circle(1);
     private static Panel currentPanel;
@@ -36,13 +39,38 @@ public class Player extends BetterPolygon {
         updatePoints();
     }
 
+    public void moveDown(){
+        h -= hStep;
+        calculateSteps();
+        updatePoints();
+        outerTriangleOffset = getTriangleOffset();
+        root.getChildren().add(this);
+        if(!checkForSpiker()){
+            if(h <= 0) Main.nextLevel();
+        }
+    }
+
+    private boolean checkForSpiker(){
+        for(Spiker spiker : currentPanel.getSpikers()){
+            if(spiker.intersects(this.getLayoutBounds())){
+                Main.gameOver();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private double getTriangleOffset(){
+        double triangleOffsetGrad = (maxTriangleOffset - minTriangleOffset) / currentPanel.getLength();
+        return minTriangleOffset + h * triangleOffsetGrad;
+    }
+
     private void updatePoints() {
         Vector vector = new Vector(outerTriangleOffset, currentPanel.getAngle());
         double xTriangle1 = pointer.getCenterX() + vector.getX();
         double yTriangle1 = pointer.getCenterY() + vector.getY();
         double xTriangle2 = xTriangle1 + vector.getX();
         double yTriangle2 = yTriangle1 + vector.getY();
-
         List<Double> points = new ArrayList<>();
         points.add(xTriangle2);
         points.add(yTriangle2);
@@ -79,8 +107,8 @@ public class Player extends BetterPolygon {
     }
 
     private void calculateSteps() {
-        leftRightDiffX = currentPanel.getRightSide().getPoints().get(2) - currentPanel.getLeftSide().getPoints().get(2);
-        leftRightDiffY = currentPanel.getRightSide().getPoints().get(3) - currentPanel.getLeftSide().getPoints().get(3);
+        leftRightDiffX = getPointsOnSides().get(0) - getPointsOnSides().get(2);
+        leftRightDiffY = getPointsOnSides().get(1) - getPointsOnSides().get(3);
 
         double POSITIONS_PER_SIDE = 6;
         xStepRight = leftRightDiffX / POSITIONS_PER_SIDE;
@@ -92,6 +120,7 @@ public class Player extends BetterPolygon {
     public void move(boolean left) {
         double hPercentage = h / currentPanel.getLength();
         calculateSteps();
+        List<Double> pointsOnSides = getPointsOnSides();
         if (left) {
             pointer.setCenterX(pointer.getCenterX() + xStepLeft);
             pointer.setCenterY(pointer.getCenterY() + yStepLeft);

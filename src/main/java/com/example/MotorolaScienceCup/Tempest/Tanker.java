@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Tanker extends Enemy {
     private final double maxHPercentageTillDestruction = 0.75;
+    static Color tankerColor = Color.VIOLET;
     private static final String filepath = "asteroidVar1.svg";
     private BetterPolygon defTanker = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
     private List<Double> defPoints;
@@ -31,7 +32,7 @@ public class Tanker extends Enemy {
         getPoints().setAll(defPoints);
 
         currentPanel.addTanker(this);
-        setStroke(Color.VIOLET);
+        setStroke(tankerColor);
     }
 
     public boolean move() {

@@ -23,6 +23,7 @@ public class Flipper extends Enemy {
      * */
 
     private static final String filepath = "flipper.svg";
+    static Color flipperColor = Color.RED;
     private BetterPolygon defFlipper = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
     private List<Double> defPoints;
     private double rotationAngle;
@@ -48,7 +49,7 @@ public class Flipper extends Enemy {
         getPoints().setAll(getFlipperPoints());
 
         currentPanel.addFlipper(this);
-        setStroke(Color.RED);
+        setStroke(flipperColor);
     }
 
     public void move() {

@@ -125,7 +125,6 @@ public class Panel {
         for (Player.Bullet bullet : bulletsToDestroy){
             bullet.remove();
         }
-
     }
 
     private boolean checkEdgeFlipper(Player.Bullet bullet){

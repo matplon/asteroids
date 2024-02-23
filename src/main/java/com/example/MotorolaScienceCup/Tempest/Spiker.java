@@ -12,6 +12,7 @@ import java.util.List;
 
 public class Spiker extends Enemy {
     private static final String filepath = "asteroidVar1.svg";
+    static Color spikerColor = Color.GREEN;
     private BetterPolygon defTanker = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
     private List<Double> defPoints;
     private boolean goingDown = false;
@@ -35,10 +36,10 @@ public class Spiker extends Enemy {
         getPoints().setAll(defPoints);
 
         currentPanel.addSPiker(this);
-        setStroke(Color.GREEN);
+        setStroke(spikerColor);
 
         Main.root.getChildren().add(line);
-        line.setStroke(Color.GREEN);
+        line.setStroke(spikerColor);
         line.setEffect(new Glow(Main.glowV));
     }
 
