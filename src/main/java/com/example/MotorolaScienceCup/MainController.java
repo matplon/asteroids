@@ -42,7 +42,14 @@ public class MainController {
 
     @FXML
     void initialize() {
+        Asteroids.setLayoutX(((double) Menu.WIDTH / 3) + 60);
+        Asteroids.setLayoutY(((double) Menu.HEIGHT / 3));
 
+        Tempest.setLayoutX(((double) Menu.WIDTH / 3) + 60);
+        Tempest.setLayoutY(((double) Menu.HEIGHT / 3) + 40);
+
+        Battlezone.setLayoutX(((double) Menu.WIDTH / 3) + 60);
+        Battlezone.setLayoutY(((double) Menu.HEIGHT / 3) + 80);
 
     }
 }
