@@ -42,6 +42,8 @@ public class Main {
 
     public static int score = 0;
 
+    public static int hiScore = Util.getHiScore();
+
     static double CAMERA_SPEED = 0.1;
     static double CAMERA_ROT_SPEED = 0.5;
     
@@ -81,6 +83,8 @@ public class Main {
     static ArrayList<Circle> decals = new ArrayList<>();
 
     static ArrayList<Polyline> reticle = new ArrayList<>();
+
+    static ArrayList<BetterPolygon> hearts = new ArrayList<>();
 
     static ArrayList<Text> textList = new ArrayList<>();
 
@@ -456,13 +460,20 @@ public class Main {
             textList.add(t);
             root.getChildren().add(t);
         }
-        Text s = new Text(String.valueOf(score));
-        s.setFont(Font.font(50));
-        s.setX(WIDTH-200);
+        Text s = new Text("Score     " + score);
+        s.setFont(Font.font(30));
+        s.setX(WIDTH-400);
         s.setY(100);
         s.setFill(Color.RED);
         textList.add(s);
         root.getChildren().add(s);
+        Text h = new Text("HiScore   "+hiScore);
+        h.setFont(Font.font(30));
+        h.setX(WIDTH-400);
+        h.setY(200);
+        h.setFill(Color.RED);
+        textList.add(h);
+        root.getChildren().add(h);
     }
 
     public static void impactAnim(){
@@ -470,13 +481,6 @@ public class Main {
     }
 
     public static void onGotShot(){
-        Text s = new Text("HIT !");
-        s.setFont(Font.font(50));
-        s.setX(WIDTH-200);
-        s.setY(200);
-        s.setFill(Color.RED);
-        textList.add(s);
-        root.getChildren().add(s);
         isDying = true;
         wasHit = false;
         has_collided = true;
@@ -563,8 +567,8 @@ public class Main {
     }
 
     public static void generateInitChunks(){
-        for (int i = -2; i < 3; i++) {
-            for (int j = -2; j < 3; j++) {
+        for (int i = -(int)Math.ceil((double) Chunk.chunkHiveSideLength /2)+1; i < (int)Math.ceil((double) Chunk.chunkHiveSideLength /2); i++) {
+            for (int j = -(int)Math.ceil((double) Chunk.chunkHiveSideLength /2)+1; j < (int)Math.ceil((double) Chunk.chunkHiveSideLength /2); j++) {
                 Chunk chunk = new Chunk((int)Math.round(i*Chunk.getSideLength()), (int)Math.round(j*Chunk.getSideLength()),chunkList);
                 if(i==0&&j==0){
                     Chunk.setCenter(chunk);
@@ -575,6 +579,10 @@ public class Main {
 
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
+            if(isDying){
+                has_collided = false;
+                camera.moveTo(camera.getX(), 0,camera.getZ());
+            }
             wasHit = false;
             root.getChildren().remove(crack);
             fullTankList.clear();
@@ -603,17 +611,11 @@ public class Main {
                 TEXT_TICK=0;
             }
             control();
-            for (Polyline polyline:lineList) {
-                root.getChildren().remove(polyline);
-            }
+            root.getChildren().removeAll(lineList);
             lineList.clear();
-            for (Circle circle:decals) {
-                root.getChildren().remove(circle);
-            }
+            root.getChildren().removeAll(decals);
             decals.clear();
-            for (Text text:textList) {
-                root.getChildren().remove(text);
-            }
+            root.getChildren().removeAll(textList);
             textList.clear();
             text.setText(Double.toString(camera.getRotation()));
             text1.setText(Math.round(camera.getX()) + " " + Math.round(camera.getY()) + " " + Math.round(camera.getZ()));
@@ -706,22 +708,12 @@ public class Main {
                     CAMERA_ROT_SPEED = 0.5;
                     isDying = false;
                     death_ticks=0;
-                    for (int i = 0; i < fullTankList.size(); i++) {
-                        objectList.remove(fullTankList.get(i));
-                    }
-                    for (int i = 0; i < enemyTankList.size(); i++) {
-                        enemyTankList.remove(i);
-                    }
-                    for (int i = 0; i < missileList.size(); i++) {
-                        missileList.remove(i);
-                    }
-                    for (int i = 0; i < superTankList.size(); i++) {
-                        superTankList.remove(i);
-                    }
-                    for (int i = 0; i < ufoList.size(); i++) {
-                        objectList.remove(ufoList.get(i));
-                        ufoList.remove(i);
-                    }
+                    objectList.removeAll(fullTankList);
+                    enemyTankList.clear();
+                    missileList.clear();
+                    superTankList.clear();
+                    objectList.removeAll(ufoList);
+                    ufoList.clear();
                     enemyDir = "";
 
                     enemyInRange = false;
@@ -758,7 +750,7 @@ public class Main {
             for (int i=0;i<objectList.size();i++) {
                 Object3D object = objectList.get(i);
                 double distance = Util.getDistance(new Vertex(camera.getX(),camera.getY(),camera.getZ()),new Vertex(object.getX(), object.getY(), object.getZ()));
-                if(object.getClass()!= Camera.class && distance < camera.getFar()) {
+                if(object.getClass()!= Camera.class && distance < Camera.getFar()) {
                     object.displayObject();
                 }
                 boolean flying = false;
@@ -807,6 +799,12 @@ public class Main {
                     }
                 }
             }
+            root.getChildren().removeAll(hearts);
+            hearts.clear();
+            for (int i = 0; i < playerHP; i++) {
+                double x = 5*WIDTH/6 + i*50;
+                addHeart(x);
+            }
             RADAR_ROT+=1;
             if(RADAR_ROT>=360){
                 RADAR_ROT=1-(360-RADAR_ROT);
@@ -817,9 +815,7 @@ public class Main {
                 drawRadar();
                 drawStatusText();
             }
-            for (int i = 0; i < reticle.size(); i++) {
-                root.getChildren().remove(reticle.get(i));
-            }
+            root.getChildren().removeAll(reticle);
             reticle.clear();
             boolean check = false;
             for (int i = 0; i < objectList.size(); i++) {
@@ -841,17 +837,18 @@ public class Main {
             ArrayList<Chunk> tempChunk = new ArrayList<>();
             for (int i = 0; i < chunkList.size(); i++) {
                 Chunk chunk = chunkList.get(i);
-                if(Math.abs(chunk.checkDistanceX(Chunk.center))>Chunk.sideLength*2){
+                if(Math.abs(chunk.checkDistanceX(Chunk.center))>Chunk.sideLength*(int)Math.floor((double) Chunk.chunkHiveSideLength /2)){
                     int x = -chunk.checkDistanceX(Chunk.getOldCenter());
                     Chunk chunk1 = new Chunk((int)Math.round(Chunk.getCenter().getX()+x), (int)Math.round(chunk.getZ()), tempChunk);
                     chunk.unloadChunk();
-                }else if(Math.abs(chunk.checkDistanceZ(Chunk.center))>Chunk.sideLength*2){
+                }else if(Math.abs(chunk.checkDistanceZ(Chunk.center))>Chunk.sideLength*(int)Math.floor((double) Chunk.chunkHiveSideLength /2)){
                     int z = -chunk.checkDistanceZ(Chunk.getOldCenter());
                     Chunk chunk1 = new Chunk((int)Math.round(chunk.getX()), (int)Math.round(Chunk.getCenter().getZ()+z), tempChunk);
                     chunk.unloadChunk();
                 }
             }
             chunkList.addAll(tempChunk);
+            tempChunk.clear();
             if(wasHit){
                 onGotShot();
             }
@@ -870,6 +867,7 @@ public class Main {
         Timeline timeline;
           WIDTH = Menu.WIDTH;
           HEIGHT = Menu.HEIGHT;
+          hiScore = Util.getHiScore();
 
            wasHit = false;
 
@@ -1032,6 +1030,13 @@ public class Main {
                 throw new RuntimeException(e);
             }
         }
-
-
-}}
+    }
+    public static void addHeart(double x) {
+        BetterPolygon heart = new com.example.MotorolaScienceCup.Particle(com.example.MotorolaScienceCup.Util.SVGconverter("heart.svg"), 0, 0, 0, 0);
+        heart.setStroke(Color.RED);
+        heart.setLayoutX(x);
+        heart.setLayoutY(100);
+        hearts.add(heart);
+        root.getChildren().add(heart);
+    }
+}

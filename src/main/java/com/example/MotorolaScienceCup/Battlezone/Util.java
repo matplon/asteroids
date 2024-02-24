@@ -5,8 +5,7 @@ import com.example.MotorolaScienceCup.Particle;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -608,6 +607,24 @@ public class Util {
             object3D.setHalfCube(false);
         }
         return object3D;
+    }
+
+    public static int getHiScore(){
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(new File("battlescore.txt"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(scanner.hasNextLine());
+        if (scanner.hasNextLine()) {
+
+            int highscore = Integer.parseInt(scanner.nextLine());
+            System.out.println(highscore);
+            return highscore;
+        }else{
+            return 0;
+        }
     }
 
 }
