@@ -43,9 +43,9 @@ public class EnemyTank extends Object3D{
 
     private double magTimer;
 
-    public static double TANK_SPEED = 0.25*0.25;
+    public static double TANK_SPEED = 0.25*0.25*1.3;
 
-    public static double TANK_ROT_SPEED = 0.75;
+    public static double TANK_ROT_SPEED = 0.75*1.3;
 
 
     public EnemyTank(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){

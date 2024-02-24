@@ -173,7 +173,7 @@ public class Util {
         double[] arr = vertex.toArray();
         double offset = Math.random()*25-12.5;
         arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
-        double scale = Math.random()*0.25 + 0.5;
+        double scale = Math.random()*0.25;
         for (int i = 0; i < arr.length; i++) {
             arr[i]*=scale;
         }
@@ -261,7 +261,7 @@ public class Util {
         double[] arr = vertex.toArray();
         double offset = Math.random()*25-12.5;
         arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
-        double scale = Math.random()*0.25 + 0.5;
+        double scale = Math.random()*0.25;
         for (int i = 0; i < arr.length; i++) {
             arr[i]*=scale;
         }

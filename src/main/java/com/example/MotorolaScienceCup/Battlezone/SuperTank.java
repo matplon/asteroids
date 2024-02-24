@@ -7,7 +7,7 @@ public class SuperTank extends EnemyTank{
 
     private int HP;
     
-    public static double SUPER_SPEED = 0.13;
+    public static double SUPER_SPEED = 0.13*1.3;
     public static double SUPER_ROT_SPEED = 1.3;
     public SuperTank(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         super(points3D, faces3D);
