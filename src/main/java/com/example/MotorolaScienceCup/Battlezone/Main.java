@@ -103,7 +103,7 @@ public class Main {
 
     static double H_FOV = 90;
 
-    static double MAX_BULLET_DISTANCE = 125;
+    static double MAX_BULLET_DISTANCE = 115;
 
     public static AnchorPane root = new AnchorPane();
     public static Scene scene = new Scene(root,WIDTH,HEIGHT);
@@ -767,7 +767,7 @@ public class Main {
                     flying = ((Missile) object).isFlying();
                     grounded = ((Missile) object).isGrounded();
                 }
-                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&!(object instanceof Mine)&&(!flying||grounded)&&distance<125){
+                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&!(object instanceof Mine)&&(!flying||grounded)&&distance<130){
                     for (int j = 0; j < allBullets.size(); j++) {
                         if(!allBullets.get(j).getParent().equals(object)){
                         double dist = Math.sqrt(Math.pow((allBullets.get(j).getX()-object.getX()),2)+Math.pow((allBullets.get(j).getZ()-object.getZ()),2));
