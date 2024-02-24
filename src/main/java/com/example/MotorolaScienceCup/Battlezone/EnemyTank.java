@@ -317,8 +317,7 @@ public class EnemyTank extends Object3D{
     public void explode(){
         ArrayList<Face> faces = this.getFaces3D();
         System.out.println(faces.size()+"///////////////");
-        int index = this instanceof Mine ? 4 : 6;
-        for (int i = 0; i < index; i++) {
+        for (int i = 0; i < 5; i++) {
             int pick = new Random().nextInt(faces.size());
             System.out.println(faces.size());
             Face face = faces.get(pick);
@@ -482,7 +481,7 @@ public class EnemyTank extends Object3D{
             }
         }
         double distance = Util.getDistance(getCenter(), new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
-        if(distance>120){
+        if(distance>130){
             Main.objectList.remove(this);
             Main.enemyTankList.remove(this);
             Main.fullTankList.remove(this);

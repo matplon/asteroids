@@ -60,7 +60,7 @@ public class Ufo extends EnemyTank{
                 }
             }
         double distance = Util.getDistance(getCenter(), new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
-        if(distance>120){
+        if(distance>130){
             Main.ufoList.remove(this);
             Main.objectList.remove(this);
         }

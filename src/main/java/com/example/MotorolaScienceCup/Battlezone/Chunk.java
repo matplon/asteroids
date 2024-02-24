@@ -7,7 +7,7 @@ public class Chunk {
 
     public static int sideLength = 60;
 
-    public static int chunkHiveSideLength = 7;
+    public static int chunkHiveSideLength = 5;
 
     public static int chunkObjCount = 2;
     public static int chunkMineCount = 1;
@@ -42,13 +42,11 @@ public class Chunk {
 
     }
     public void unloadChunk(){
-        for(Object3D object3D: chunkObjects){
-            Main.objectList.remove(object3D);
-        }
-        for(Mine mine: chunkMines){
-            Main.objectList.remove(mine);
-            Main.mineList.remove(mine);
-        }
+        Main.objectList.removeAll(chunkObjects);
+        Main.objectList.removeAll(chunkMines);
+        Main.mineList.removeAll(chunkMines);
+        chunkMines.clear();
+        chunkObjects.clear();
         Main.chunkList.remove(this);
 
     }

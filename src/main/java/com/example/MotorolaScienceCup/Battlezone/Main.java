@@ -29,7 +29,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class Main {
@@ -103,7 +103,7 @@ public class Main {
 
     static double H_FOV = 90;
 
-    static double MAX_BULLET_DISTANCE = 100;
+    static double MAX_BULLET_DISTANCE = 125;
 
     public static AnchorPane root = new AnchorPane();
     public static Scene scene = new Scene(root,WIDTH,HEIGHT);
@@ -489,7 +489,7 @@ public class Main {
 
     public static void spawnEnemy(){
         double check = new Random().nextDouble(13);
-        if(check >= 4 && score < 10000){
+        if(check >= 4 && score < 10000 && check<8){
             check = new Random().nextDouble(4);
         }else if(check >= 8 && score < 15000){
             check = new Random().nextDouble(8);
@@ -563,8 +563,8 @@ public class Main {
     }
 
     public static void generateInitChunks(){
-        for (int i = -3; i < 4; i++) {
-            for (int j = -3; j < 4; j++) {
+        for (int i = -2; i < 3; i++) {
+            for (int j = -2; j < 3; j++) {
                 Chunk chunk = new Chunk((int)Math.round(i*Chunk.getSideLength()), (int)Math.round(j*Chunk.getSideLength()),chunkList);
                 if(i==0&&j==0){
                     Chunk.setCenter(chunk);
@@ -576,14 +576,12 @@ public class Main {
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
             wasHit = false;
-            if(root.getChildren().contains(crack)){
-                root.getChildren().remove(crack);
-            }
+            root.getChildren().remove(crack);
             fullTankList.clear();
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
             fullTankList.addAll(missileList);
-            if(fullTankList.isEmpty()&&Math.random()*200<1){
+            if(fullTankList.isEmpty()&&Math.random()*120<1){
                 double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
                 for (int i = 0; i < enemyCount; i++) {
                     spawnEnemy();
@@ -652,18 +650,8 @@ public class Main {
                 death_ticks++;
                 if(death_ticks > 0 && death_ticks < 10){
                     ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon1.svg");
-                    double xAvg=0;
-                    double zAvg=0;
-                    double arraySize=0;
-                    for (int i = 0; i < arr.size(); i++) {
-                        ArrayList<Double> array = arr.get(i);
-                        for (int j = 0; j < array.size()-2; j+=2) {
-                            if(array.get(j)==85.258978){
-                                xAvg = array.get(j);
-                                zAvg = array.get(j+1);
-                            }
-                        }
-                    }
+                    double xAvg=85.258978;
+                    double zAvg=154.94624;
                     for (int i = 0; i < arr.size(); i++) {
                         ArrayList<Double> array = arr.get(i);
                         for (int j = 0; j < array.size()-2; j+=2) {
@@ -675,18 +663,8 @@ public class Main {
                     }
                 } else if (death_ticks >= 10 && death_ticks < 20) {
                     ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon2.svg");
-                    double xAvg=0;
-                    double zAvg=0;
-                    double arraySize=0;
-                    for (int i = 0; i < arr.size(); i++) {
-                        ArrayList<Double> array = arr.get(i);
-                        for (int j = 0; j < array.size()-2; j+=2) {
-                            if(array.get(j)==85.258978){
-                                xAvg = array.get(j);
-                                zAvg = array.get(j+1);
-                            }
-                        }
-                    }
+                    double xAvg=85.258978;
+                    double zAvg=154.94624;
                     for (int i = 0; i < arr.size(); i++) {
                         ArrayList<Double> array = arr.get(i);
                         for (int j = 0; j < array.size()-2; j+=2) {
@@ -698,18 +676,8 @@ public class Main {
                     }
                 } else if (death_ticks >=20 && death_ticks<30) {
                     ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon3.svg");
-                    double xAvg=0;
-                    double zAvg=0;
-                    double arraySize=0;
-                    for (int i = 0; i < arr.size(); i++) {
-                        ArrayList<Double> array = arr.get(i);
-                        for (int j = 0; j < array.size()-2; j+=2) {
-                            if(array.get(j)==87.397134){
-                                xAvg = array.get(j);
-                                zAvg = array.get(j+1);
-                            }
-                        }
-                    }
+                    double xAvg=87.397134;
+                    double zAvg=153.07535;
                     for (int i = 0; i < arr.size(); i++) {
                         ArrayList<Double> array = arr.get(i);
                         for (int j = 0; j < array.size()-2; j+=2) {
@@ -721,18 +689,8 @@ public class Main {
                     }
                 } else if (death_ticks >= 30 && death_ticks < 100) {
                     ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon4.svg");
-                    double xAvg=0;
-                    double zAvg=0;
-                    double arraySize=0;
-                    for (int i = 0; i < arr.size(); i++) {
-                        ArrayList<Double> array = arr.get(i);
-                        for (int j = 0; j < array.size()-2; j+=2) {
-                            if(array.get(j)==87.397134){
-                                xAvg = array.get(j);
-                                zAvg = array.get(j+1);
-                            }
-                        }
-                    }
+                    double xAvg=87.397134;
+                    double zAvg=153.07535;
                     for (int i = 0; i < arr.size(); i++) {
                         ArrayList<Double> array = arr.get(i);
                         for (int j = 0; j < array.size()-2; j+=2) {
@@ -809,7 +767,7 @@ public class Main {
                     flying = ((Missile) object).isFlying();
                     grounded = ((Missile) object).isGrounded();
                 }
-                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&!(object instanceof Mine)&&(!flying||grounded)&&distance<120){
+                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&!(object instanceof Mine)&&(!flying||grounded)&&distance<125){
                     for (int j = 0; j < allBullets.size(); j++) {
                         if(!allBullets.get(j).getParent().equals(object)){
                         double dist = Math.sqrt(Math.pow((allBullets.get(j).getX()-object.getX()),2)+Math.pow((allBullets.get(j).getZ()-object.getZ()),2));
@@ -845,7 +803,7 @@ public class Main {
                     }
                     particle.setTickrate(particle.getTickrate()+1);
                     if(particle.getTickrate() > MAX_PARTICLE_TICKS){
-                        particles.remove(i);
+                        particles.remove(particle);
                     }
                 }
             }
@@ -883,19 +841,17 @@ public class Main {
             ArrayList<Chunk> tempChunk = new ArrayList<>();
             for (int i = 0; i < chunkList.size(); i++) {
                 Chunk chunk = chunkList.get(i);
-                if(Math.abs(chunk.checkDistanceX(Chunk.center))>Chunk.sideLength*3){
+                if(Math.abs(chunk.checkDistanceX(Chunk.center))>Chunk.sideLength*2){
                     int x = -chunk.checkDistanceX(Chunk.getOldCenter());
                     Chunk chunk1 = new Chunk((int)Math.round(Chunk.getCenter().getX()+x), (int)Math.round(chunk.getZ()), tempChunk);
                     chunk.unloadChunk();
-                }else if(Math.abs(chunk.checkDistanceZ(Chunk.center))>Chunk.sideLength*3){
+                }else if(Math.abs(chunk.checkDistanceZ(Chunk.center))>Chunk.sideLength*2){
                     int z = -chunk.checkDistanceZ(Chunk.getOldCenter());
                     Chunk chunk1 = new Chunk((int)Math.round(chunk.getX()), (int)Math.round(Chunk.getCenter().getZ()+z), tempChunk);
                     chunk.unloadChunk();
                 }
             }
-            for(Chunk chunk:tempChunk){
-                chunkList.add(chunk);
-            }
+            chunkList.addAll(tempChunk);
             if(wasHit){
                 onGotShot();
             }
@@ -910,7 +866,7 @@ public class Main {
         if(camera!=null) {
             camera.setMagTimer(-1);
         }
-
+        playerHP = 3;
         Timeline timeline;
           WIDTH = Menu.WIDTH;
           HEIGHT = Menu.HEIGHT;
@@ -1034,6 +990,48 @@ public class Main {
         Scene newScene = new Scene(newRoot, WIDTH, HEIGHT);
         newScene.setFill(Color.BLACK);
         Menu.stage.setScene(newScene);
+
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(new File("battlescore.txt"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(scanner.hasNextLine());
+        if (scanner.hasNextLine()) {
+
+            int highscore = Integer.parseInt(scanner.nextLine());
+            System.out.println(highscore);
+            if (score > highscore) {
+                Writer writer = null;
+                try {
+                    writer = new FileWriter(new File("battlescore.txt"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    writer.write(score + "");
+                    writer.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        else {
+            System.out.println(score);
+            Writer writer = null;
+            try {
+                writer = new FileWriter(new File("battlescore.txt"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                writer.write(score + "");
+                writer.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
 
 }}
