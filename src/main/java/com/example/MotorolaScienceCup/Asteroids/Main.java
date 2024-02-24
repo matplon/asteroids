@@ -79,7 +79,7 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.UP) player.accelerate();   // Thrust forward
             if (keyEvent.getCode() == KeyCode.RIGHT) player.setRotationRight();   // Rotate right
             if (keyEvent.getCode() == KeyCode.LEFT) player.setRotationLeft(); // Rotate left
-            if (keyEvent.getCode() == KeyCode.E)
+            if (keyEvent.getCode() == KeyCode.E && isAlive.get())
                 player.hyperSpace();   // Teleport (chance of exploding or colliding with an asteroid)
             if (keyEvent.getCode() == KeyCode.X && canShoot && bullets.size() <= 3 && isAlive.get()) {
                 canShoot = false;

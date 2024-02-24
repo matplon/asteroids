@@ -529,7 +529,7 @@ public class Main {
             if(!notCollided){
                 enemyTank.moveToRandom(100,15);
             }
-        } else if(check>=8&&score>=10000&&missileList.isEmpty()){
+        } else if(check>=8&&score>=10000&&missileList.isEmpty()&&fullTankList.isEmpty()){
             Vertex vertex = camera.getForward();
             double[] arr = vertex.toArray();
             double offset = Math.random()*60-30;
@@ -768,7 +768,6 @@ public class Main {
                             Vertex vertex = allBullets.get(j).checkForHits(object);
                             if(vertex!=null){
                                 System.out.println("YYYYYYYYY");
-                                object.setColor(Color.BLUE);
                                 if(object instanceof EnemyTank){
                                     ((EnemyTank) object).takeHit(allBullets.get(j).getParent());
                                 }

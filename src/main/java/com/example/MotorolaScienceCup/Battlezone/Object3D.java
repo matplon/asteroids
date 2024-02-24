@@ -236,21 +236,13 @@ public class Object3D {
                     //  }else{
                     Polyline polyline1 = new Polyline(ax, ay, bx, by);
                     polyline1.setStroke(this.getColor());
-                    if (i == 0 && j == 0) {
-                        Text text = new Text();
-                        text.setText(Math.round(this.getCenterX()) + " " + Math.round(this.getCenterY()) + " " + Math.round(this.getCenterZ()));
-                        text.setX(ax);
-                        text.setY(ay);
-                        Main.textList.add(text);
-                        Main.root.getChildren().add(text);
-                    }
                     Main.lineList.add(polyline1);
                     Main.root.getChildren().add(polyline1);
                 }
             }}else{
                 double ax = arrlist.get(face.getIndexes().get(0)).getX();
                 double ay = arrlist.get(face.getIndexes().get(0)).getY();
-                Circle circle = new Circle(ax, ay, 1, Color.RED);
+                Circle circle = new Circle(ax, ay, 1, Color.GREEN);
                 Main.decals.add(circle);
                 Main.root.getChildren().add(circle);
             }
