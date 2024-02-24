@@ -9,7 +9,7 @@ public class Chunk {
 
     public static int chunkHiveSideLength = 7;
 
-    public static int chunkObjCount = 2;
+    public static int chunkObjCount = 3;
     public static int chunkMineCount = 1;
 
     public static Chunk center;
@@ -67,7 +67,7 @@ public class Chunk {
 
     public void fillChunk(){
         int random = new Random().nextInt(chunkObjCount);
-        for (int i = 0; i < random+1; i++) {
+        for (int i = 0; i < chunkObjCount-1; i++) {
             double check = new Random().nextDouble(10);
             if(check<4){
                 double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;

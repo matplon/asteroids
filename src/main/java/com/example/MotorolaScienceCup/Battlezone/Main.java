@@ -20,10 +20,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Polyline;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -61,6 +58,8 @@ public class Main {
 
     static int impact_ticks = 0;
     static double impact_skip = 0.01;
+
+    static int loadTimer = 0;
 
     static ArrayList<Object3D> objectList = new ArrayList<>();
 
@@ -134,7 +133,17 @@ public class Main {
         resetData();
         scene.setFill(Color.BLACK);
         root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
-
+        AnchorPane rootLoad = new AnchorPane();
+        Scene sceneLoad = new Scene(rootLoad,WIDTH,HEIGHT);
+        Rectangle rectangle = new Rectangle(0,0,WIDTH,HEIGHT);
+        rectangle.setFill(Color.BLACK);
+        Text text10 = new Text("Loading...");
+        text10.setFont(Font.font(50));
+        text10.setLayoutX(WIDTH/2-(text10.getLayoutBounds().getWidth()/2));
+        text10.setLayoutY(HEIGHT/2-(text10.getLayoutBounds().getHeight()/2));
+        text10.setFill(Color.GREEN);
+        rootLoad.getChildren().addAll(rectangle, text10);
+        Menu.stage.setScene(sceneLoad);
         text.setX(100);
         text.setY(100);
         text.setFont(Font.font(50));
@@ -165,12 +174,10 @@ public class Main {
         Ufo ufo = Util.generateUfo(0,0);*/
         generateInitChunks();
         spawnEnemy();
-
         start();
 
 
 
-        Menu.stage.setScene(scene);
     }
 
 
@@ -579,6 +586,12 @@ public class Main {
 
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
+            if(loadTimer<30){
+                loadTimer++;
+            }else{
+                loadTimer++;
+                Menu.stage.setScene(scene);
+            }
             if(isDying){
                 has_collided = false;
                 camera.moveTo(camera.getX(), 0,camera.getZ());
