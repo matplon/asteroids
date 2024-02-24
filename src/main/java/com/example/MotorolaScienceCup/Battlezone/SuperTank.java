@@ -122,7 +122,7 @@ public class SuperTank extends EnemyTank{
             }
         }
         double distance = Util.getDistance(getCenter(), new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
-        if(distance>130){
+        if(distance>Camera.getFar()+10){
             Main.objectList.remove(this);
             Main.superTankList.remove(this);
             Main.fullTankList.remove(this);

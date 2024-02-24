@@ -276,7 +276,7 @@ public class Util {
         enemy.setMoveDir(1);
         enemy.setRotateDir(enemy.getExactRotationDir());
         enemy.setTargetRotation(enemy.getLookAt(enemy.getTarget()));
-        enemy.setHP(2);
+        enemy.setHP(1);
         Main.objectList.add(enemy);
         Main.superTankList.add(enemy);
         return enemy;

@@ -8,9 +8,9 @@ public class Camera extends Object3D{
 
     private static double V_FOV;
 
-    private static double near;
+    private static double near = 0.5;
 
-    private static double far;
+    private static double far = 125;
 
     private double x;
     private double y;
@@ -34,8 +34,6 @@ public class Camera extends Object3D{
         this.forward = new Vertex(0,0,1);
         this.up = new Vertex(0,1,0);
         this.right = new Vertex(1,0,0);
-        this.near = 0.5;
-        this.far = 125;
     }
 
     public double[][] getTranslateCamMatrix(){

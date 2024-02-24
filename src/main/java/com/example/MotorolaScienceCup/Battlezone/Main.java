@@ -107,7 +107,7 @@ public class Main {
 
     static double H_FOV = 90;
 
-    static double MAX_BULLET_DISTANCE = 115;
+    static double MAX_BULLET_DISTANCE = Camera.getFar()+10;
 
     public static AnchorPane root = new AnchorPane();
     public static Scene scene = new Scene(root,WIDTH,HEIGHT);
@@ -534,7 +534,7 @@ public class Main {
             double[] arr = vertex.toArray();
             double offset = Math.random()*60-30;
             arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
-            double scale = 115;
+            double scale = Camera.getFar()-10;
             for (int i = 0; i < arr.length; i++) {
                 arr[i]*=scale;
             }
@@ -759,7 +759,7 @@ public class Main {
                     flying = ((Missile) object).isFlying();
                     grounded = ((Missile) object).isGrounded();
                 }
-                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&!(object instanceof Mine)&&(!flying||grounded)&&distance<130){
+                if(!allBullets.isEmpty()&&!(object instanceof Bullet)&&!(object instanceof Mine)&&(!flying||grounded)&&distance<Camera.getFar()+20){
                     for (int j = 0; j < allBullets.size(); j++) {
                         if(!allBullets.get(j).getParent().equals(object)){
                         double dist = Math.sqrt(Math.pow((allBullets.get(j).getX()-object.getX()),2)+Math.pow((allBullets.get(j).getZ()-object.getZ()),2));
@@ -932,7 +932,7 @@ public class Main {
 
           H_FOV = 90;
 
-         MAX_BULLET_DISTANCE = 100;
+         MAX_BULLET_DISTANCE = Camera.getFar()+10;
 
         root = new AnchorPane();
         scene = new Scene(root,WIDTH,HEIGHT);

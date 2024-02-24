@@ -481,7 +481,7 @@ public class EnemyTank extends Object3D{
             }
         }
         double distance = Util.getDistance(getCenter(), new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
-        if(distance>130){
+        if(distance>Camera.getFar()+10){
             Main.objectList.remove(this);
             Main.enemyTankList.remove(this);
             Main.fullTankList.remove(this);
