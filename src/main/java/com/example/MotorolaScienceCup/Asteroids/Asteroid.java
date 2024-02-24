@@ -14,6 +14,8 @@ public class Asteroid extends Particle {
     static final double BIG_ASTEROID_RADIUS = Main.WIDTH * 0.025;
 
     private boolean isHealing;
+
+    private BetterPolygon cross;
     static final HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
         put(3, 20);
         put(2, 50);
@@ -40,9 +42,11 @@ public class Asteroid extends Particle {
             List<Double> points1 = Util.SVGconverter("asteroidVar" + type1 + ".svg");
             List<Double> points2 = Util.SVGconverter("asteroidVar" + type2 + ".svg");
             Asteroid asteroid1 = new Asteroid(points1, 0, 0, getSize() - 1);
+            asteroid1.setHealing(false);
             asteroid1.scale((getRadius()) * 0.8 / 45);
             asteroid1.moveTo(centerX, getCenterY());
             Asteroid asteroid2 = new Asteroid(points2, 0, 0, getSize() - 1);
+            asteroid2.setHealing(false);
             asteroid2.moveTo(centerX, getCenterY());
             asteroid2.scale((getRadius()) * 0.8 / 45);
             asteroid1.setAngle(Math.random() * 360 - 180);
@@ -65,11 +69,18 @@ public class Asteroid extends Particle {
             Main.root.getChildren().addAll(asteroid1, asteroid2);
         }
         // Add points for asteroid
-        if (destroyedByPlayer)
+        if (destroyedByPlayer) {
+            if (this.isHealing) {
+                HUD.addHeart();
+                Main.HP++;
+            }
             HUD.addPoints(pointsMapping.get(getSize()));
-
+        }
         // Remove the big asteroid
         Main.root.getChildren().remove(this);
+        if(this.isHealing){
+            Main.root.getChildren().remove(this.getCross());
+        }
         animationParticles(Main.PARTICLE_COUNT, Main.particlesAll, Main.particlesDistanceCovered, Main.root);
         Main.asteroids.remove(this);
     }
@@ -79,6 +90,9 @@ public class Asteroid extends Particle {
 
         for (int i = 0; i < Main.asteroids.size(); i++) {   // Update asteroids and check for collision
             Main.asteroids.get(i).updatePosition();
+            if(Main.asteroids.get(i).isHealing){
+                Main.asteroids.get(i).getCross().moveTo(Main.asteroids.get(i).getCenterX(), Main.asteroids.get(i).getCenterY());
+            }
             if (Main.isAlive.get() && Main.player.getLayoutBounds().intersects(Main.asteroids.get(i).getLayoutBounds())){
                 if (intersect(Main.player, Main.asteroids.get(i)).getLayoutBounds().getWidth() > 0 && Main.root.getChildren().contains(Main.player)) {
                     Main.player.explode();
@@ -103,19 +117,34 @@ public class Asteroid extends Particle {
     }
 
     static void spawnAsteroids(int count) {
+        int healingIndex = -1;
+        if(Math.random()<0.5){
+            healingIndex = new Random().nextInt(count);
+        }
         for (int i = 0; i < count; i++) {
             int type = (int) (Math.random() * 4 + 1);
             Asteroid asteroid = new Asteroid(Util.SVGconverter("asteroidVar" + type + ".svg"), Math.random() * 360 - 180, BIG_ASTEROID_SPEED, 3);
             asteroid.setStroke(Color.WHITE);
             asteroid.setFill(Color.TRANSPARENT);
             asteroid.scale(BIG_ASTEROID_RADIUS / asteroid.getRadius());
+            if(i==healingIndex){
+                asteroid.setHealing(true);
+                asteroid.setCross(new BetterPolygon(Util.SVGconverter("heart.svg")));
+                asteroid.getCross().setStroke(Color.RED);
+                asteroid.getCross().setFill(Color.RED);
+                asteroid.getCross().scale(0.7);
+                asteroid.setStroke(Color.RED);
+            }
 
             // Spawn asteroids outside the spawn zone
             do {
                 asteroid.moveTo(Math.random() * Main.WIDTH, Math.random() * Main.HEIGHT);
 
             } while (Shape.intersect(asteroid, Main.spawnZone).getLayoutBounds().getWidth() > 0);
-
+            if(asteroid.isHealing){
+                asteroid.getCross().moveTo(asteroid.getCenterX(), asteroid.getCenterY());
+                Main.root.getChildren().add(asteroid.getCross());
+            }
             Main.asteroids.add(asteroid);
             Main.root.getChildren().add(asteroid);
         }
@@ -123,5 +152,21 @@ public class Asteroid extends Particle {
 
     public int getSize() {
         return size;
+    }
+
+    public boolean isHealing() {
+        return isHealing;
+    }
+
+    public void setHealing(boolean healing) {
+        isHealing = healing;
+    }
+
+    public BetterPolygon getCross() {
+        return cross;
+    }
+
+    public void setCross(BetterPolygon cross) {
+        this.cross = cross;
     }
 }
