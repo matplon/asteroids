@@ -9,7 +9,7 @@ public class Chunk {
 
     public static int chunkHiveSideLength = 7;
 
-    public static int chunkObjCount = 2;
+    public static int chunkObjCount = 1;
     public static int chunkMineCount = 1;
 
     public static Chunk center;
@@ -99,7 +99,7 @@ public class Chunk {
             }
         }
         int random2 = new Random().nextInt(chunkMineCount+1);
-        for (int i = 0; i < chunkMineCount; i++) {
+        for (int i = 0; i < random2; i++) {
             double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
             double z = getZ()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
             Mine object3D = Util.generateMine(x,z);
