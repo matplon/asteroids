@@ -33,5 +33,7 @@ public class Menu extends Application {
         stage1.setScene(scene);
         stage1.show();
         stage = stage1;
+        Sound.play("de.wav");
+
     }
 }

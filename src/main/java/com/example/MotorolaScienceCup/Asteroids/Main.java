@@ -2,6 +2,7 @@ package com.example.MotorolaScienceCup.Asteroids;
 
 import com.example.MotorolaScienceCup.Menu;
 import com.example.MotorolaScienceCup.Particle;
+import com.example.MotorolaScienceCup.Sound;
 import com.example.MotorolaScienceCup.Util;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -19,6 +20,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -108,8 +111,17 @@ public class Main {
 
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
-            if (HP <= 0)
-                gameOver();
+            if (HP <= 0) {
+                try {
+                    gameOver();
+                } catch (UnsupportedAudioFileException e) {
+                    throw new RuntimeException(e);
+                } catch (LineUnavailableException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
             if (!isAlive.get())
                 respawnTimer++;
@@ -245,9 +257,10 @@ public class Main {
         bullets.clear();
     }
 
-    public static void gameOver() {
+    public static void gameOver() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         timeline.stop();
         HUD.gameOver();
+
     }
 
     public static int highscore() {
