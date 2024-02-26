@@ -86,7 +86,15 @@ public class Main {
                 player.hyperSpace();   // Teleport (chance of exploding or colliding with an asteroid)
             if (keyEvent.getCode() == KeyCode.X && canShoot && bullets.size() <= 3 && isAlive.get()) {
                 canShoot = false;
-                player.shootBullet();
+                try {
+                    player.shootBullet();
+                } catch (UnsupportedAudioFileException e) {
+                    throw new RuntimeException(e);
+                } catch (LineUnavailableException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
