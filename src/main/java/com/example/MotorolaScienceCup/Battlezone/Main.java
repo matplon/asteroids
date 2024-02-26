@@ -62,6 +62,8 @@ public class Main {
 
     static int loadTimer = 0;
 
+    static ArrayList<Object3D> horizon;
+
     static ArrayList<Object3D> objectList = new ArrayList<>();
 
     static ArrayList<EnemyTank> enemyTankList = new ArrayList<>();
@@ -124,6 +126,8 @@ public class Main {
 
     public static Camera camera;
 
+    public static Vertex previousCamPos;
+
     public static Text text = new Text();
     public static Text text1 = new Text();
 
@@ -168,6 +172,7 @@ public class Main {
         camera = new Camera(camPos,new ArrayList<Face>(),0,0,0);
         camera.setHitBox2D(camHitbox);
         camera.translate(0,0,-10);
+        previousCamPos = new Vertex(camera.getX(), camera.getY(), camera.getZ());
         objectList.add(camera);
        /* *//*EnemyTank obj1 = Util.generateEnemyTank(0,10);
         SuperTank super1 = Util.generateSuperTank(10,20);*//*
@@ -175,6 +180,7 @@ public class Main {
         Ufo ufo = Util.generateUfo(0,0);*/
         generateInitChunks();
         spawnEnemy();
+        drawHorizon2();
         start();
 
 
@@ -606,7 +612,7 @@ public class Main {
             if(fullTankList.isEmpty()&&Math.random()*120<1){
                 double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
                 for (int i = 0; i < enemyCount; i++) {
-                    spawnEnemy();
+                    //spawnEnemy();
                 }
             }
             if(ufoList.isEmpty()&&Math.random()*600<1){
@@ -624,6 +630,7 @@ public class Main {
             if(TEXT_TICK>30){
                 TEXT_TICK=0;
             }
+            previousCamPos = new Vertex(camera.getX(), camera.getY(), camera.getZ());
             control();
             root.getChildren().removeAll(lineList);
             lineList.clear();
@@ -824,7 +831,17 @@ public class Main {
             } else if (RADAR_ROT<0) {
                 RADAR_ROT=360+(1-RADAR_ROT);
             }
-            drawHorizon();
+            for(Object3D object3D:horizon){
+                for (int i = 0; i < object3D.getPoints3D().size(); i++) {
+                    double [][] translationMatrix = Util.getTranslationMatrix(camera.getX()-previousCamPos.getX(),camera.getY()-previousCamPos.getY(),camera.getZ()-previousCamPos.getZ());
+                    double [] arr = object3D.getPoints3D().get(i).toArray();
+                    arr = Util.multiplyTransform(translationMatrix, arr);
+                    System.out.println(Arrays.toString(arr)+"nice");
+                    object3D.getPoints3D().set(i,Util.arrToVert(arr));
+
+                }
+            }
+            //drawHorizon();
             if(!wasHit) {
                 drawRadar();
                 drawStatusText();
@@ -1110,5 +1127,9 @@ public class Main {
             lineList.add(polyline1);
         }
         tempLines.clear();
+    }
+
+    public static void drawHorizon2(){
+        horizon = Util.generateHorizon(0,0,0,new Vertex(50,20,50));
     }
 }
