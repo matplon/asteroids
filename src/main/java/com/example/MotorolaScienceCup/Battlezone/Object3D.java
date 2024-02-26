@@ -180,7 +180,7 @@ public class Object3D {
             for (int j = 0; j < arr.length; j++) {
                 arr[j] = arr[j] / arr[arr.length-1];
             }
-            if(arr[2]>1.0001||arr[2]<-1.0001){
+            if(arr[2]>1||arr[2]<-1){
                 zeroedArrCount++;
                 Arrays.fill(arr, 0);
             }

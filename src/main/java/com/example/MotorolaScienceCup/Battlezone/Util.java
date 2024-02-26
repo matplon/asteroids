@@ -71,11 +71,11 @@ public class Util {
     }
 
     public static ArrayList<Object3D> generateHorizon(double x, double y, double z, Vertex scale) {
-        Object3D object = convertOBJ("horizon.txt");
+        Object3D object = convertOBJ("horizon2.txt");
         ArrayList<Object3D> finalArr = new ArrayList<>();
         ArrayList<Vertex> points = object.getPoints3D();
         for (int i = 0; i < points.size(); i+=2) {
-            if(i!=14){
+            if(i!=22){
                 System.out.println(i);
                 ArrayList<Vertex> arr = new ArrayList<>();
                 for (int j = 0; j < 3; j++) {
@@ -89,7 +89,7 @@ public class Util {
                 part.setColor(Color.GREEN);
                 finalArr.add(part);
             }
-            if(i==14){
+            if(i==22){
                 ArrayList<Vertex> arr = new ArrayList<>();
                 for (int j = 0; j < 2; j++) {
                     arr.add(points.get(i+j));

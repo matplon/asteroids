@@ -1130,6 +1130,6 @@ public class Main {
     }
 
     public static void drawHorizon2(){
-        horizon = Util.generateHorizon(0,0,0,new Vertex(50,20,50));
+        horizon = Util.generateHorizon(0,0,0,new Vertex(40,15,40));
     }
 }
