@@ -1,8 +1,12 @@
 package com.example.MotorolaScienceCup.Asteroids;
 
 import com.example.MotorolaScienceCup.Particle;
+import com.example.MotorolaScienceCup.Sound;
 import javafx.scene.paint.Color;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +36,7 @@ public class Player extends Particle {
         }
     }
 
-    public void shootBullet() {
+    public void shootBullet() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle bullet
         Particle bullet = new Particle(points, -getAngle(), 0, Main.BULLET_SPEED, 0);
         bullet.setFill(Color.WHITE);
@@ -42,6 +46,7 @@ public class Player extends Particle {
         Main.bulletsDistanceCovered.put(bullet, 0.0);
 
         Main.root.getChildren().add(bullet);
+        Sound.play("de.wav");
     }
 
     public void checkForHits() {
