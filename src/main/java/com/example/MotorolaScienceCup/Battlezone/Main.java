@@ -612,7 +612,7 @@ public class Main {
             if(fullTankList.isEmpty()&&Math.random()*120<1){
                 double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
                 for (int i = 0; i < enemyCount; i++) {
-                    //spawnEnemy();
+                    spawnEnemy();
                 }
             }
             if(ufoList.isEmpty()&&Math.random()*600<1){
@@ -1071,63 +1071,6 @@ public class Main {
         root.getChildren().add(heart);
     }
 
-    public static void drawHorizon(){
-        double angle = camera.getRotation();
-        if(angle>180){
-            angle-=360;
-        }
-        double min=1000000;
-        double max=-1000000;
-        ArrayList<Polyline> tempLines = new ArrayList<>();
-        ArrayList<ArrayList<Double>> fullArr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("horyzont.svg");
-        for (int i = 0; i < fullArr.size(); i++) {
-            ArrayList<Double> lineArr = fullArr.get(i);
-            for (int j = 0; j < lineArr.size()-3; j+=2) {
-                double x1 = lineArr.get(j)*12-angle*20;
-                //x1 = x1 + (x1-WIDTH/2)*0.5;
-                double y1 = lineArr.get(j+1)*12+HEIGHT/1.572;
-                if(Math.round((y1-HEIGHT/2)/10)==0){
-                    y1=HEIGHT/2;
-                }
-                //y1 = y1-(Math.round((y1-HEIGHT/2)/10))*Math.abs(x1-WIDTH/2)/700;
-                double x2 = lineArr.get(j+2)*12-angle*20;
-                //x2 = x2 + (x2-WIDTH/2)*0.5;
-                double y2 = lineArr.get(j+3)*12+HEIGHT/1.572;
-                if(Math.round((y2-HEIGHT/2)/10)==0){
-                    y2=HEIGHT/2;
-                }
-                //y2 = y2-(Math.round((y2-HEIGHT/2)/10))*Math.abs(x2-WIDTH/2)/700;
-                if(x1<min){
-                    min=x1;
-                }
-                else if(x2<min){
-                    min=x2;
-                }
-                if(x1>max){
-                    max=x1;
-                }
-                else if(x2>max){
-                    max=x2;
-                }
-                Polyline polyline = new Polyline(x1,y1,x2,y2);
-                polyline.setStroke(Color.GREEN);
-                root.getChildren().addAll(polyline);
-                lineList.add(polyline);
-                tempLines.add(polyline);
-            }
-        }
-        for (int i = 0; i < tempLines.size(); i++) {
-            ObservableList<Double> arr = tempLines.get(i).getPoints();
-            Polyline polyline = new Polyline(arr.get(0)-(max-min),arr.get(1),arr.get(2)-(max-min),arr.get(3));
-            Polyline polyline1 = new Polyline(arr.get(0)+(max-min),arr.get(1),arr.get(2)+(max-min),arr.get(3));
-            polyline1.setStroke(Color.GREEN);
-            polyline.setStroke(Color.GREEN);
-            root.getChildren().addAll(polyline,polyline1);
-            lineList.add(polyline);
-            lineList.add(polyline1);
-        }
-        tempLines.clear();
-    }
 
     public static void drawHorizon2(){
         horizon = Util.generateHorizon(0,0,0,new Vertex(40,15,40));
