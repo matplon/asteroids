@@ -171,7 +171,6 @@ public class Main {
         camPos.add(new Vertex(0,0,0));
         camera = new Camera(camPos,new ArrayList<Face>(),0,0,0);
         camera.setHitBox2D(camHitbox);
-        camera.translate(0,0,-10);
         previousCamPos = new Vertex(camera.getX(), camera.getY(), camera.getZ());
         objectList.add(camera);
        /* *//*EnemyTank obj1 = Util.generateEnemyTank(0,10);
@@ -612,7 +611,7 @@ public class Main {
             if(fullTankList.isEmpty()&&Math.random()*120<1){
                 double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
                 for (int i = 0; i < enemyCount; i++) {
-                    //spawnEnemy();
+                    spawnEnemy();
                 }
             }
             if(ufoList.isEmpty()&&Math.random()*600<1){
@@ -781,7 +780,13 @@ public class Main {
             //objectList.get(10).rotY(1);
             for (int i=0;i<objectList.size();i++) {
                 Object3D object = objectList.get(i);
-                double distance = Util.getDistance(new Vertex(camera.getX(),camera.getY(),camera.getZ()),new Vertex(object.getX(), object.getY(), object.getZ()));
+                Vertex away;
+                if(horizon.contains(object)){
+                    away = new Vertex(object.getCenterX(), object.getCenterY(), object.getCenterZ());
+                }else{
+                    away = new Vertex(object.getX(), object.getY(), object.getZ());
+                }
+                double distance = Util.getDistance(new Vertex(camera.getX(),camera.getY(),camera.getZ()),away);
                 if(object.getClass()!= Camera.class && distance < Camera.getFar()) {
                     object.displayObject();
                 }
@@ -1084,6 +1089,6 @@ public class Main {
 
 
     public static void drawHorizon2(){
-        horizon = Util.generateHorizon(0,0,0,new Vertex(40,15,40));
+        horizon = Util.generateHorizon(0,0,0,new Vertex(80,30,80));
     }
 }

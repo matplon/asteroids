@@ -195,7 +195,7 @@ public class EnemyTank extends Object3D{
         }else{
             hitbox = this.getHitBox2D();
         }
-        boolean notCollided = this.runCollisionCheck(5, hitbox, this).isEmpty();
+        boolean notCollided = this.runCollisionCheck(8, hitbox, this).isEmpty();
         if(!notCollided){
             this.moveToRandom(rotOffset,scaleOffset);
         }
