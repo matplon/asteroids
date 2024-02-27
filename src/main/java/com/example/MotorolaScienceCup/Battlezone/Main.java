@@ -612,7 +612,7 @@ public class Main {
             if(fullTankList.isEmpty()&&Math.random()*120<1){
                 double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
                 for (int i = 0; i < enemyCount; i++) {
-                    spawnEnemy();
+                    //spawnEnemy();
                 }
             }
             if(ufoList.isEmpty()&&Math.random()*600<1){
@@ -741,7 +741,18 @@ public class Main {
 
                     collisionDir = false;
                     textList.clear();
+                    Vertex preDeathCamPos = new Vertex(camera.getX(), camera.getY(), camera.getZ());
                     camera.moveToRandom();
+                    for(Object3D object3D:horizon){
+                        for (int i = 0; i < object3D.getPoints3D().size(); i++) {
+                            double [][] translationMatrix = Util.getTranslationMatrix(camera.getX()-preDeathCamPos.getX(),camera.getY()-preDeathCamPos.getY(),camera.getZ()-preDeathCamPos.getZ());
+                            double [] arr = object3D.getPoints3D().get(i).toArray();
+                            arr = Util.multiplyTransform(translationMatrix, arr);
+                            System.out.println(Arrays.toString(arr)+"nice");
+                            object3D.getPoints3D().set(i,Util.arrToVert(arr));
+
+                        }
+                    }
                     if(playerHP<=0){
                         gameOver();
                     }

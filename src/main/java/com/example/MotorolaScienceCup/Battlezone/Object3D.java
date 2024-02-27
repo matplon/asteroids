@@ -6,6 +6,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -180,9 +181,9 @@ public class Object3D {
             for (int j = 0; j < arr.length; j++) {
                 arr[j] = arr[j] / arr[arr.length-1];
             }
-            if(arr[2]>1||arr[2]<-1){
+            if(arr[2]>1.01||arr[2]<-1.01){
                 zeroedArrCount++;
-                Arrays.fill(arr, 0);
+                Arrays.fill(arr,0);
             }
             System.out.println(Arrays.toString(arr)+"5");
             double [][] displayMatrix = Util.getDisplayMatrix();
@@ -191,7 +192,10 @@ public class Object3D {
             arrlist.add(Util.arrToVert(arr));
         }
         if(zeroedArrCount == 0 || zeroedArrCount == arrlist.size()){
-        return arrlist;}else{return new ArrayList<>();}
+            return arrlist;
+        }else{
+            return new ArrayList<>();
+        }
     }
 
 
@@ -212,8 +216,8 @@ public class Object3D {
             Face face = this.faces3D.get(i);
             if(this.faces3D.size() >= 1 && this.getFaces3D().get(0).getIndexes().size() > 1){
             for (int j = 0; j < face.getIndexes().size(); j++) {
-                double ax;
-                double ay;
+                double ax = 0;
+                double ay = 0;
                 double bx;
                 double by;
                 if(arrlist.size()>0) {
@@ -238,6 +242,15 @@ public class Object3D {
                     polyline1.setStroke(this.getColor());
                     Main.lineList.add(polyline1);
                     Main.root.getChildren().add(polyline1);
+                }
+                if(i==0&j==0){
+                    Text text = new Text(Math.round(this.getCenterX())+" "+Math.round(this.getCenterY()) +" "+Math.round(this.getCenterZ()));
+                    text.setLayoutX(ax);
+                    text.setLayoutY(ay);
+                    text.setFill(Color.WHITE);
+                    text.setFont(Font.font(20));
+                    Main.root.getChildren().add(text);
+                    Main.textList.add(text);
                 }
             }}else{
                 double ax = arrlist.get(face.getIndexes().get(0)).getX();

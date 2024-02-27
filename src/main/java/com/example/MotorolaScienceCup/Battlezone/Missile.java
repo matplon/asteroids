@@ -211,7 +211,7 @@ public class Missile extends EnemyTank {
         }
         if(isRotating()){
             System.out.println("?????????????");
-            if(getTargetRotation() < getRotation() + 10 && getTargetRotation() > getRotation() - 10){
+            if(getTargetRotation() < getRotation() + 11 && getTargetRotation() > getRotation() - 11){
                 rotateTank(getRotDifference());
                 setTargetRotation(getRotation());
                 setRotating(false);
