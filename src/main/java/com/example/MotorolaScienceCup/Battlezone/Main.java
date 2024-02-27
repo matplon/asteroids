@@ -28,9 +28,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 import java.io.*;
 import java.util.*;
 
@@ -110,6 +108,10 @@ public class Main {
     static boolean leftPressed = false;
     static boolean rotRightPressed = false;
     static boolean rotLeftPressed = false;
+
+    static Clip isIdling = null;
+
+    static Clip isMoving = null;
 
     static int playerHP = 3;
 
@@ -379,6 +381,39 @@ public class Main {
             collisionDir = false;
             //camera.updateRotation(-CAMERA_ROT_SPEED);
         };
+        if((forwardPressed||rearPressed||rightPressed||leftPressed||rotRightPressed||rotLeftPressed)&&isMoving==null) {
+            try {
+                File music = new File("playerMove.wav");
+                AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+                Clip clip = AudioSystem.getClip();
+                clip.open(inputStream);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+                clip.start();
+                isMoving=clip;
+            }
+            catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else if(!forwardPressed&&!rearPressed&&!rightPressed&&!leftPressed&&!rotRightPressed&&!rotLeftPressed){
+            if(isMoving!=null){
+                isMoving.stop();
+                isMoving=null;
+            }
+            if(isIdling==null){
+            try {
+                File music = new File("playerIdle.wav");
+                AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+                Clip clip = AudioSystem.getClip();
+                clip.open(inputStream);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+                clip.start();
+                isIdling=clip;
+            }
+            catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                throw new RuntimeException(e);
+            }}
+        }
 
     }
 
