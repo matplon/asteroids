@@ -16,15 +16,16 @@ public class Player extends BetterPolygon {
     private final int shotCooldown = 5;
     private double outerTriangleOffset = 30;
     private final double maxTriangleOffset = 30;
-    private final double minTriangleOffset = 0.1;
+    private final double minTriangleOffset = 25;
     private double xStepLeft, xStepRight;
     private double yStepLeft, yStepRight;
     private double leftRightDiffX, leftRightDiffY;
-    private double hStep = 5;
-    private double h;
+    private double hStep = 2;
+    public double h;
+    private int panelIndex;
     private Circle pointer = new Circle(1);
     private static Panel currentPanel;
-    static int shotTimer = 0;
+    public int shotTimer = 0;
 
 
     public Player(Panel startPanel) {
@@ -32,6 +33,7 @@ public class Player extends BetterPolygon {
         currentPanel = startPanel;
         calculateSteps();
         h = currentPanel.getLength();
+        panelIndex = currentPanel.getIndex();
         pointer.setCenterX((currentPanel.getBigSide().getPoints().get(0) + currentPanel.getBigSide().getPoints().get(2)) / 2);
         pointer.setCenterY((currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().get(3)) / 2);
         setStroke(Color.RED);
@@ -39,20 +41,21 @@ public class Player extends BetterPolygon {
         updatePoints();
     }
 
-    public void moveDown(){
+    public void moveDown() {
+        currentPanel = panels.get(panelIndex);
         h -= hStep;
-        calculateSteps();
+        updatePointer();
         updatePoints();
-        outerTriangleOffset = getTriangleOffset();
+//        outerTriangleOffset = getTriangleOffset();
         root.getChildren().add(this);
-        if(!checkForSpiker()){
-            if(h <= 0) Main.nextLevel();
+        if (!checkForSpiker() && h <= 0) {
+            Main.temp();
         }
     }
 
-    private boolean checkForSpiker(){
-        for(Spiker spiker : currentPanel.getSpikers()){
-            if(spiker.intersects(this.getLayoutBounds())){
+    private boolean checkForSpiker() {
+        for (Spiker spiker : currentPanel.getSpikers()) {
+            if (spiker.intersects(this.getLayoutBounds())) {
                 Main.gameOver();
                 return true;
             }
@@ -60,9 +63,17 @@ public class Player extends BetterPolygon {
         return false;
     }
 
-    private double getTriangleOffset(){
+    private double getTriangleOffset() {
         double triangleOffsetGrad = (maxTriangleOffset - minTriangleOffset) / currentPanel.getLength();
         return minTriangleOffset + h * triangleOffsetGrad;
+    }
+
+    protected void updatePointer() {
+        double x = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
+        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast()) / 2;
+        Vector tempVector = new Vector(h, currentPanel.getAngle());
+        pointer.setCenterX(x + tempVector.getX());
+        pointer.setCenterY(y + tempVector.getY());
     }
 
     private void updatePoints() {
@@ -120,48 +131,50 @@ public class Player extends BetterPolygon {
     public void move(boolean left) {
         double hPercentage = h / currentPanel.getLength();
         calculateSteps();
-        List<Double> pointsOnSides = getPointsOnSides();
+        List<Double> points = getPointsOnSides();
         if (left) {
             pointer.setCenterX(pointer.getCenterX() + xStepLeft);
             pointer.setCenterY(pointer.getCenterY() + yStepLeft);
-            if (leftRightDiffX > 0 && pointer.getCenterX() < currentPanel.getLeftSide().getPoints().get(2)) {
-                pointer.setCenterX(currentPanel.getLeftPanel().getRightSide().getPoints().get(2));
-                pointer.setCenterY(currentPanel.getLeftPanel().getRightSide().getPoints().get(3));
+            if (leftRightDiffX > 0 && pointer.getCenterX() < points.get(2)) {
+                pointer.setCenterX(points.get(2));
+                pointer.setCenterY(points.get(3));
                 currentPanel = currentPanel.getLeftPanel();
-            } else if (leftRightDiffX < 0 && pointer.getCenterX() > currentPanel.getLeftSide().getPoints().get(2)) {
-                pointer.setCenterX(currentPanel.getLeftPanel().getRightSide().getPoints().get(2));
-                pointer.setCenterY(currentPanel.getLeftPanel().getRightSide().getPoints().get(3));
+            } else if (leftRightDiffX < 0 && pointer.getCenterX() > points.get(2)) {
+                pointer.setCenterX(points.get(2));
+                pointer.setCenterY(points.get(3));
                 currentPanel = currentPanel.getLeftPanel();
-            } else if (leftRightDiffY > 0 && pointer.getCenterY() < currentPanel.getLeftSide().getPoints().get(3)) {
-                pointer.setCenterX(currentPanel.getLeftPanel().getRightSide().getPoints().get(2));
-                pointer.setCenterY(currentPanel.getLeftPanel().getRightSide().getPoints().get(3));
+            } else if (leftRightDiffY > 0 && pointer.getCenterY() < points.get(3)) {
+                pointer.setCenterX(points.get(2));
+                pointer.setCenterY(points.get(3));
                 currentPanel = currentPanel.getLeftPanel();
-            } else if (leftRightDiffY < 0 && pointer.getCenterY() > currentPanel.getLeftSide().getPoints().get(3)) {
-                pointer.setCenterX(currentPanel.getLeftPanel().getRightSide().getPoints().get(2));
-                pointer.setCenterY(currentPanel.getLeftPanel().getRightSide().getPoints().get(3));
+            } else if (leftRightDiffY < 0 && pointer.getCenterY() > points.get(3)) {
+                pointer.setCenterX(points.get(2));
+                pointer.setCenterY(points.get(3));
                 currentPanel = currentPanel.getLeftPanel();
             }
         } else {
             pointer.setCenterX(pointer.getCenterX() + xStepRight);
             pointer.setCenterY(pointer.getCenterY() + yStepRight);
-            if (leftRightDiffX > 0 && getCenterX() > currentPanel.getRightSide().getPoints().get(2)) {
-                pointer.setCenterX(currentPanel.getRightPanel().getLeftSide().getPoints().get(2));
-                pointer.setCenterY(currentPanel.getRightPanel().getLeftSide().getPoints().get(3));
+            if (leftRightDiffX > 0 && getCenterX() > points.get(0)) {
+                pointer.setCenterX(points.get(0));
+                pointer.setCenterY(points.get(1));
                 currentPanel = currentPanel.getRightPanel();
-            } else if (leftRightDiffX < 0 && getCenterX() < currentPanel.getRightSide().getPoints().get(2)) {
-                pointer.setCenterX(currentPanel.getRightPanel().getLeftSide().getPoints().get(2));
-                pointer.setCenterY(currentPanel.getRightPanel().getLeftSide().getPoints().get(3));
+            } else if (leftRightDiffX < 0 && getCenterX() < points.get(0)) {
+                pointer.setCenterX(points.get(0));
+                pointer.setCenterY(points.get(1));
                 currentPanel = currentPanel.getRightPanel();
-            } else if (leftRightDiffY > 0 && getCenterY() > currentPanel.getRightSide().getPoints().get(3)) {
-                pointer.setCenterX(currentPanel.getRightPanel().getLeftSide().getPoints().get(2));
-                pointer.setCenterY(currentPanel.getRightPanel().getLeftSide().getPoints().get(3));
+            } else if (leftRightDiffY > 0 && getCenterY() > points.get(1)) {
+                pointer.setCenterX(points.get(0));
+                pointer.setCenterY(points.get(1));
                 currentPanel = currentPanel.getRightPanel();
-            } else if (leftRightDiffY < 0 && getCenterY() < currentPanel.getRightSide().getPoints().get(3)) {
-                pointer.setCenterX(currentPanel.getRightPanel().getLeftSide().getPoints().get(2));
-                pointer.setCenterY(currentPanel.getRightPanel().getLeftSide().getPoints().get(3));
+            } else if (leftRightDiffY < 0 && getCenterY() < points.get(1)) {
+                pointer.setCenterX(points.get(0));
+                pointer.setCenterY(points.get(1));
                 currentPanel = currentPanel.getRightPanel();
             }
         }
+        panelIndex = currentPanel.getIndex();
+        currentPanel = panels.get(panelIndex);
         checkIfSideClose(left);
         h = currentPanel.getLength() * hPercentage;
         updatePoints();
@@ -189,6 +202,7 @@ public class Player extends BetterPolygon {
 
     public void shoot() {
         if (shotTimer <= 0) {
+            System.out.println("ui");
             Bullet bullet = new Bullet();
             currentPanel.addPlayerBullet(bullet);
             root.getChildren().add(bullet);
@@ -201,39 +215,44 @@ public class Player extends BetterPolygon {
     }
 
     public class Bullet extends Circle {
-        private final double speed = 10;
+        private final double normalSpeed = 10;
+        private final double nextLevelSpeed = 20;
         private double maxRadius;
         private double minRadius;
         private double grad;
         private Vector velocity;
-        private double h = 0;
+        public double h = 0;
         public Panel panel;
 
         private Bullet() {
-            super((currentPanel.getBigSide().getPoints().get(0) + currentPanel.getBigSide().getPoints().get(2)) / 2,
-                    (currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().get(3)) / 2,
-                    Math.sqrt(Math.pow(currentPanel.getBigSide().getPoints().get(0) - currentPanel.getBigSide().getPoints().get(2), 2) +
-                            Math.pow(currentPanel.getBigSide().getPoints().get(1) - currentPanel.getBigSide().getPoints().get(3), 2)) / 15);
-            maxRadius = this.getRadius();
+            super(0);
+            h = player.h;
+            maxRadius = Math.sqrt(Math.pow(currentPanel.getBigSide().getPoints().get(0) - currentPanel.getBigSide().getPoints().get(2), 2) +
+                    Math.pow(currentPanel.getBigSide().getPoints().get(1) - currentPanel.getBigSide().getPoints().get(3), 2)) / 20;
             minRadius = Math.sqrt(Math.pow(currentPanel.getSmallSide().getPoints().get(0) - currentPanel.getSmallSide().getPoints().get(2), 2) +
-                    Math.pow(currentPanel.getSmallSide().getPoints().get(1) - currentPanel.getSmallSide().getPoints().get(3), 2)) / 15;
+                    Math.pow(currentPanel.getSmallSide().getPoints().get(1) - currentPanel.getSmallSide().getPoints().get(3), 2)) / 20;
+            this.setRadius(getBulletRadius());
+            this.setCenterX(pointer.getCenterX());
+            this.setCenterY(pointer.getCenterY());
             panel = currentPanel;
-            grad = (minRadius - maxRadius) / currentPanel.getLength();
+            grad = (maxRadius - minRadius) / currentPanel.getLength();
             this.setCenterX((panel.getBigSide().getPoints().get(0) + panel.getBigSide().getPoints().get(2)) / 2);
             this.setCenterY((panel.getBigSide().getPoints().get(1) + panel.getBigSide().getPoints().get(3)) / 2);
-            velocity = new Vector(speed, 180 + currentPanel.getAngle());
+            velocity = new Vector(normalSpeed, 180 + currentPanel.getAngle());
             updatePoints();
             this.setStroke(Color.MAGENTA);
             this.setEffect(new Glow(glowV));
         }
 
-        public void move() {
-            h += speed;
+        public boolean move(boolean nextLevel) {
+            if (!nextLevel) h -= normalSpeed;
+            else h -= 5;
             updatePoints();
+            return (h > 0);
         }
 
         private void updatePoints() {
-            if (ifOutside()) {
+            if (h <= 0) {
                 this.setCenterX((panel.getSmallSide().getPoints().get(0) + panel.getSmallSide().getPoints().get(2)) / 2);
                 this.setCenterY((panel.getSmallSide().getPoints().get(1) + panel.getSmallSide().getPoints().get(3)) / 2);
             } else {
@@ -244,11 +263,7 @@ public class Player extends BetterPolygon {
         }
 
         private double getBulletRadius() {
-            return maxRadius + grad * h;
-        }
-
-        public boolean ifOutside() {
-            return h >= panel.getLength();
+            return minRadius + grad * h;
         }
 
         public void remove() {
