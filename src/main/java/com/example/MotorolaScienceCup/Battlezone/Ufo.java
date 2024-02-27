@@ -19,12 +19,8 @@ public class Ufo extends EnemyTank{
 
     {
         try {
-            death = Sound.getClip("ufoDeath.wav");
-        } catch (UnsupportedAudioFileException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (LineUnavailableException e) {
+            death = Sound.getClip("ufoDeath.wav",5.0f);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             throw new RuntimeException(e);
         }
     }

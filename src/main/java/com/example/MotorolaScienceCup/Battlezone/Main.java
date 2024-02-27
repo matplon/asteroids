@@ -387,6 +387,9 @@ public class Main {
                 AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
                 Clip clip = AudioSystem.getClip();
                 clip.open(inputStream);
+                FloatControl gainControl =
+                        (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                gainControl.setValue(-5.0f);
                 clip.loop(Clip.LOOP_CONTINUOUSLY);
                 clip.start();
                 isMoving=clip;
@@ -406,6 +409,9 @@ public class Main {
                 AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
                 Clip clip = AudioSystem.getClip();
                 clip.open(inputStream);
+                FloatControl gainControl =
+                        (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                gainControl.setValue(-10.0f);
                 clip.loop(Clip.LOOP_CONTINUOUSLY);
                 clip.start();
                 isIdling=clip;
@@ -613,6 +619,19 @@ public class Main {
                 enemyTank.moveToRandom(30,115);
             }
             spawned = true;
+            Clip clip;
+            try {
+                File music = new File("missileHum.wav");
+                AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+                clip = AudioSystem.getClip();
+                clip.open(inputStream);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+                clip.start();
+            }
+            catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                throw new RuntimeException(e);
+            }
+            enemyTank.setMissileHum(clip);
         }
         return spawned;
 
@@ -727,7 +746,7 @@ public class Main {
             if(has_collided){
                 if(impact_ticks==1){
                     try {
-                        Sound.play("collision1.wav");
+                        Sound.play("collision1.wav", 3.0f);
                     } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
                         throw new RuntimeException(e);
                     }

@@ -24,13 +24,15 @@ public class Sound {
         return stream;
     }
 
-    public static Clip getClip(String filepath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    public static Clip getClip(String filepath,float volume) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 
 
         File file = new File(filepath);
         AudioInputStream stream = getAudioInputStream(file);
         Clip clip = AudioSystem.getClip();
         clip.open(stream);
+        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        gainControl.setValue(volume);
         return clip;
     }
     public static void play(String filepath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
@@ -41,6 +43,18 @@ public class Sound {
         clip.open(stream);
         clip.start();
     }
+
+    public static void play(String filepath, float volume) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+
+        File file = new File(filepath);
+        AudioInputStream stream = getAudioInputStream(file);
+        Clip clip = AudioSystem.getClip();
+        clip.open(stream);
+        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        gainControl.setValue(volume);
+        clip.start();
+    }
+
 
     public static void loopPlay(String filepath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 

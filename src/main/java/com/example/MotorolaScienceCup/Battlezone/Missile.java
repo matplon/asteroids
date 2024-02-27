@@ -1,5 +1,6 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
+import javax.sound.sampled.Clip;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -16,6 +17,8 @@ public class Missile extends EnemyTank {
     private boolean isGrounded;
     private boolean hasSpawned;
 
+    private Clip missileHum;
+
     public Missile(ArrayList<Vertex> points3D, ArrayList<Face> faces3D) {
         super(points3D, faces3D);
     }
@@ -27,6 +30,7 @@ public class Missile extends EnemyTank {
         if(object3D instanceof Camera) {
             Main.score += 2000;
         }
+        this.getMissileHum().stop();
         explode();
     }
 
@@ -99,6 +103,7 @@ public class Missile extends EnemyTank {
         if(array.contains(Main.camera)&&(isGrounded&&!isFlying)){
             Main.wasHit = true;
             this.setForward(new Vertex(0,0,0));
+            this.getMissileHum().stop();
         }else{
         if(!array.isEmpty()&&!isFlying&&!hasSpawned&&!(array.size()==1&&hasMine)){
             double maxY = Util.getMaxY(array.get(0).getPoints3D());
@@ -225,9 +230,18 @@ public class Missile extends EnemyTank {
 
         double distance = Util.getDistance(getCenter(), new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
         if(distance>Camera.getFar()+10){
+            this.getMissileHum().stop();
             Main.objectList.remove(this);
             Main.missileList.remove(this);
             Main.fullTankList.remove(this);
         }
         }
+
+    public Clip getMissileHum() {
+        return missileHum;
+    }
+
+    public void setMissileHum(Clip missileHum) {
+        this.missileHum = missileHum;
+    }
 }
