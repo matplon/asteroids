@@ -7,6 +7,7 @@ import com.example.MotorolaScienceCup.Vector;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.SVGPath;
 
 import java.util.*;
 
@@ -232,6 +233,7 @@ public class Flipper extends Enemy {
                 currentPanel = currentPanel.getLeftPanel();
             } else {
                 currentPanel = currentPanel.getRightPanel();
+                SVGPath svgPath = new SVGPath();
             }
 
             if (left) pointer.rotate(-rotationAngle, getPointsOnSides().get(0), getPointsOnSides().get(1));

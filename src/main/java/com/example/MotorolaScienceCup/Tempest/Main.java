@@ -14,6 +14,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -44,9 +45,9 @@ public class Main {
     static boolean goRight;
     static boolean goLeft;
     static int LEVEL = 0;
-    static int flippersNumber = 5;
-    static int tankersNumber = 5;
-    static int spikersNumber = 5;
+    static int flippersNumber = 0;
+    static int tankersNumber = 0;
+    static int spikersNumber = 1;
 
     static double bigSideLength;
 
@@ -56,7 +57,7 @@ public class Main {
     static String testMap4 = "map4.svg";
     static String testShip = "ship1.svg";
     static double scale = 1;
-    static double a = 1.02;
+    static double a = 1.017;
 
     public static void init() {
         connectors = new ArrayList<>();
@@ -99,16 +100,15 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = true;
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = true;
             if (keyEvent.getCode() == KeyCode.X) shoot = true;
-            if(keyEvent.getCode() == KeyCode.S) timeline.stop();
-            if(keyEvent.getCode() == KeyCode.R) timeline.play();
+            if (keyEvent.getCode() == KeyCode.S) timeline.stop();
+            if (keyEvent.getCode() == KeyCode.R) timeline.play();
         });
         scene.setOnKeyReleased(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = false;
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = false;
             if (keyEvent.getCode() == KeyCode.X) shoot = false;
         });
-//        start();
-        nextLevel();
+        start();
     }
 
     public static void start() {
@@ -119,7 +119,7 @@ public class Main {
             highlightPanel(player);
             double bulletsNumber = 0;
             for (Panel panel : panels) {
-                panel.update();
+                panel.update(false);
                 bulletsNumber += panel.getPlayerBullets().size();
             }
             if (goRight) {
@@ -131,35 +131,69 @@ public class Main {
             if (shoot && bulletsNumber < 5) {
                 player.shoot();
             }
-            if(!Enemy.seedsDone){
+            if (!Enemy.seedsDone) {
                 Enemy.updateSeeds();
             }
-            Player.shotTimer--;
+            player.shotTimer--;
+            if (isLevelFinished()) nextLevel();
+//            for (int i = 0; i < player.getCurrentPanel().getFlippers().size(); i++) {
+//                System.out.println(player.getCurrentPanel().getFlippers().get(i).reachedTheEdge);
+//            }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
 
-    public static void gameOver(){
-        System.out.println("You died");
+    public static void gameOver() {
+        System.out.println("you died");
     }
 
-    public static void addPoints(){
+    public static void temp(){
+        timeline.stop();
+        root.getChildren().clear();
+    }
+
+    public static void addPoints() {
         System.out.println("add points");
     }
 
-    public static void nextLevel(){
-        player = new Player(panels.getFirst());
-        root.getChildren().add(player);
-        if(timeline != null) timeline.stop();
-        timeline = new Timeline(new KeyFrame(Duration.millis((double) 4000 / Menu.FPS), actionEvent -> {
+    public static boolean isLevelFinished() {
+        if(!Enemy.seedsDone) return false;
+        for (Panel panel : panels) {
+            if (!panel.getTankers().isEmpty()) return false;
+            for (Spiker spiker : panel.getSpikers()) {
+                if (!spiker.isDead) return false;
+            }
+            for (Flipper flipper : panel.getFlippers()) {
+                if (!flipper.reachedTheEdge) return false;
+            }
+        }
+        return true;
+    }
+
+    public static void nextLevel() {
+        timeline.stop();
+        timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
             root.getChildren().clear();
             Graphics.drawMap(testMap3, defaultPanelColor, scale);
+            for (Panel panel : panels){
+                if(panel.spikerLine != null){
+                    root.getChildren().add(panel.spikerLine);
+                }
+                for(Player.Bullet bullet1 : panel.getPlayerBullets()){
+                    root.getChildren().add(bullet1);
+                    System.out.println(bullet1.h);
+                }
+            }
             scale *= a;
             player.moveDown();
-
             highlightPanel(player);
+
             double bulletsNumber = 0;
+            for (Panel panel : panels) {
+                panel.update(true);
+                bulletsNumber += panel.getPlayerBullets().size();
+            }
             if (goRight) {
                 player.move(false);
             }
@@ -169,19 +203,19 @@ public class Main {
             if (shoot && bulletsNumber < 5) {
                 player.shoot();
             }
+            player.shotTimer--;
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
 
     public static void highlightPanel(Player player) {
-        if (player.getCurrentPanel().getLeftPanel().getColor() == Color.YELLOW){
+        if (player.getCurrentPanel().getLeftPanel().getColor() == Color.YELLOW) {
             player.getCurrentPanel().getLeftPanel().changeColor(Color.BLUE);
         }
-        if (player.getCurrentPanel().getRightPanel().getColor() == Color.YELLOW){
+        if (player.getCurrentPanel().getRightPanel().getColor() == Color.YELLOW) {
             player.getCurrentPanel().getRightPanel().changeColor(Color.BLUE);
         }
-
         player.getCurrentPanel().changeColor(Color.YELLOW);
     }
 }

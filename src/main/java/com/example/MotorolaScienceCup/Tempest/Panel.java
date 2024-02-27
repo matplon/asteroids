@@ -10,6 +10,7 @@ import javafx.scene.shape.Polyline;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.MotorolaScienceCup.Tempest.Main.player;
 import static com.example.MotorolaScienceCup.Tempest.Main.root;
 
 
@@ -21,74 +22,33 @@ public class Panel {
     private Panel leftPanel;
     private Panel rightPanel;
 
-    private List<Player.Bullet> playerBullets = new ArrayList<>();
+    public List<Player.Bullet> playerBullets = new ArrayList<>();
     private List<Enemy.Bullet> enemyBullets = new ArrayList<>();
     private List<Flipper> flippers = new ArrayList<>();
     private List<Tanker> tankers = new ArrayList<>();
     private List<Spiker> spikers = new ArrayList<>();
+    public Polyline spikerLine;
 
     private double length;
     private double angle;
     private Color color;
-
-    private Polyline spikerLine;
-
-    public Polyline getSpikerLine() {
-        return spikerLine;
-    }
-
-    public void setSpikerLine(Polyline spikerLine) {
-        this.spikerLine = spikerLine;
-    }
+    private int index;
 
     public Panel() {
     }
 
-    public void scalePanel(double scale){
-        double angle = Math.toDegrees(Math.atan2((smallSide.getPoints().get(1) + smallSide.getPoints().get(3)) / 2 - Graphics.mapCenterY,
-                (smallSide.getPoints().get(0) + smallSide.getPoints().get(2)) /2 - Graphics.mapCenterX));
-        Vector vector = new Vector(scale, angle);
-        for (int i = 0; i < smallSide.getPoints().size(); i+=2) {
-            smallSide.getPoints().set(i, smallSide.getPoints().get(i) + vector.getX());
-            smallSide.getPoints().set(i+1, smallSide.getPoints().get(i+1) + vector.getY());
-        }
-
-        angle = Math.toDegrees(Math.atan2((bigSide.getPoints().get(1) + bigSide.getPoints().get(3)) / 2 - Graphics.mapCenterY,
-                (bigSide.getPoints().get(0) + bigSide.getPoints().get(2)) /2 - Graphics.mapCenterX));
-        vector = new Vector(scale, angle);
-        for (int i = 0; i < bigSide.getPoints().size(); i+=2) {
-            bigSide.getPoints().set(i, bigSide.getPoints().get(i) + vector.getX());
-            bigSide.getPoints().set(i+1, bigSide.getPoints().get(i+1) + vector.getY());
-        }
-
-        angle = Math.toDegrees(Math.atan2((rightSide.getPoints().get(1) + rightSide.getPoints().get(3)) / 2 - Graphics.mapCenterY,
-                (rightSide.getPoints().get(0) + rightSide.getPoints().get(2)) /2 - Graphics.mapCenterX));
-        vector = new Vector(scale, angle);
-        for (int i = 0; i < rightSide.getPoints().size(); i+=2) {
-            rightSide.getPoints().set(i, rightSide.getPoints().get(i) + vector.getX());
-            rightSide.getPoints().set(i+1, rightSide.getPoints().get(i+1) + vector.getY());
-        }
-
-        angle = Math.toDegrees(Math.atan2((leftSide.getPoints().get(1) + leftSide.getPoints().get(3)) / 2 - Graphics.mapCenterY,
-                (leftSide.getPoints().get(0) + leftSide.getPoints().get(2)) /2 - Graphics.mapCenterX));
-        vector = new Vector(scale, angle);
-        for (int i = 0; i < leftSide.getPoints().size(); i+=2) {
-            leftSide.getPoints().set(i, leftSide.getPoints().get(i) + vector.getX());
-            leftSide.getPoints().set(i+1, leftSide.getPoints().get(i+1) + vector.getY());
-        }
-    }
-
-    private void updatePlayerBullets(){
+    private void updatePlayerBullets(boolean nextLevel){
         List<Player.Bullet> bulletsToDestroy = new ArrayList<>();
         List<Flipper> flippersToDestroy = new ArrayList<>();
         List<Tanker> tankersToDestroy = new ArrayList<>();
         List<Spiker> spikersToDestroy = new ArrayList<>();
 
         for (Player.Bullet bullet : playerBullets){
-            bullet.move();
-            if(checkEdgeFlipper(bullet)){
+            if(!bullet.move(nextLevel)){
                 bulletsToDestroy.add(bullet);
-                continue;
+            }
+            if(checkEdgeFlipper() && bullet.h == length){
+                bulletsToDestroy.add(bullet);
             }
             for (Flipper flipper : flippers){
                 if(bullet.intersects(flipper.getLayoutBounds()) && !bulletsToDestroy.contains(bullet)){
@@ -111,7 +71,6 @@ public class Panel {
             if (!spikers.isEmpty() && !bulletsToDestroy.contains(bullet) && spikers.get(0).isDead){
                 if (spikers.get(0).destroyLine(bullet, bullet.getRadius() * 2)) bulletsToDestroy.add(bullet);
             }
-            if(bullet.ifOutside() && !bulletsToDestroy.contains(bullet)) bulletsToDestroy.add(bullet);
             for (Flipper flipper : flippersToDestroy){
                 flipper.destroy();
             }
@@ -124,20 +83,28 @@ public class Panel {
         }
         for (Player.Bullet bullet : bulletsToDestroy){
             bullet.remove();
+            System.out.println("kurwa");
         }
     }
 
-    private boolean checkEdgeFlipper(Player.Bullet bullet){
-        Flipper toDestroy = null;
-        for(Flipper flipper : flippers){
-            if(flipper.reachedTheEdge){
-                toDestroy = flipper;
-                break;
+    private boolean checkEdgeFlipper(){
+        for (int i = 0; i < flippers.size(); i++) {
+            if(flippers.get(i).reachedTheEdge){
+                flippers.get(i).destroy();
+                return true;
             }
         }
-        if(toDestroy != null){
-            toDestroy.destroy();
-            return true;
+        for (int i = 0; i < leftPanel.getFlippers().size(); i++) {
+            if(leftPanel.getFlippers().get(i).reachedTheEdge){
+                leftPanel.getFlippers().get(i).destroy();
+                return true;
+            }
+        }
+        for (int i = 0; i < rightPanel.getFlippers().size(); i++) {
+            if(rightPanel.getFlippers().get(i).reachedTheEdge){
+                rightPanel.getFlippers().get(i).destroy();
+                return true;
+            }
         }
         return false;
     }
@@ -157,7 +124,7 @@ public class Panel {
         }
     }
 
-    public void update(){
+    public void update(boolean nextLevel){
         List<Tanker> tankersToDestroy = new ArrayList<>();
         List<Spiker> spikersToDestroy = new ArrayList<>();
         for(Flipper flipper : flippers)
@@ -166,19 +133,18 @@ public class Panel {
             if(!tanker.move()) tankersToDestroy.add(tanker);
         }
         for(Spiker spiker : spikers){
-            if(!spiker.move()) spikersToDestroy.add(spiker);
+            if(!spiker.move() && !spiker.isDead){
+                spiker.switchToTanker();
+            }
         }
-        updatePlayerBullets();
+        updatePlayerBullets(nextLevel);
         updateEnemyBullets();
         for (Tanker tanker : tankersToDestroy){
             tanker.destroy();
         }
         for (Spiker spiker : spikersToDestroy){
-            spiker.switchToTanker();
+            spiker.destroy();
         }
-    }
-
-    private void checkForHits() {
     }
 
     public void addFlipper(Flipper flipper) {
@@ -264,6 +230,14 @@ public class Panel {
 
     public void setRightPanel(Panel rightPanel) {
         this.rightPanel = rightPanel;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public Polyline getSmallSide() {

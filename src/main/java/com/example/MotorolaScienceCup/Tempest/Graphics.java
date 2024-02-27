@@ -3,6 +3,7 @@ package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Util;
+import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
@@ -10,10 +11,7 @@ import javafx.scene.shape.Polyline;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.MotorolaScienceCup.Tempest.Main.WIDTH;
-import static com.example.MotorolaScienceCup.Tempest.Main.HEIGHT;
-import static com.example.MotorolaScienceCup.Tempest.Main.root;
-import static com.example.MotorolaScienceCup.Tempest.Main.panels;
+import static com.example.MotorolaScienceCup.Tempest.Main.*;
 
 public class Graphics {
     private static final int CONNECTORS_NUMBER = 16;
@@ -24,6 +22,7 @@ public class Graphics {
 
     public static void drawMap(String filepath, Color color, double scale) {
         connectors = new ArrayList<>();
+        List<Panel> oldPanels = new ArrayList<>(panels);
         panels = new ArrayList<>();
 
         List<Double> smallShapePoints = Util.SVGconverter(filepath);
@@ -38,10 +37,10 @@ public class Graphics {
         BetterPolygon tempPolygon = BetterPolygon.scale(tempSmallShape, 7 + scale);
         tempPolygon.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
         List<Double> bigShapePoints = tempPolygon.getPoints();
-        drawConnectors(smallShapePoints, bigShapePoints, color, new Glow(Main.glowV));
+        drawConnectors(oldPanels, smallShapePoints, bigShapePoints, color, new Glow(Main.glowV));
     }
 
-    private static void drawConnectors(List<Double> smallShapePoints, List<Double> bigShapePoints, Color color, Glow glow) {
+    private static void drawConnectors(List<Panel> oldPanels, List<Double> smallShapePoints, List<Double> bigShapePoints, Color color, Glow glow) {
         for (int i = 0; i < smallShapePoints.size(); i += 2) {
             Polyline polyline = new Polyline(smallShapePoints.get(i), smallShapePoints.get(i + 1), bigShapePoints.get(i), bigShapePoints.get(i + 1));
             polyline.setFill(color);
@@ -79,10 +78,10 @@ public class Graphics {
                 connectors.add(polyline);
             }
         }
-        createPanels(smallShapePoints.size() / 2, n, color, new Glow(Main.glowV));
+        createPanels(oldPanels, smallShapePoints.size() / 2, n, color, new Glow(Main.glowV));
     }
 
-    private static void createPanels(int vertices, int connectorsBetweenVertices, Color color, Glow glow) {
+    private static void createPanels(List<Panel> oldPanels, int vertices, int connectorsBetweenVertices, Color color, Glow glow) {
         List<Polyline> newConnectors = new ArrayList<>();
         for (int i = 0; i < vertices; i++) {    // Order connectors the correct way
             newConnectors.add(connectors.get(i));
@@ -96,6 +95,7 @@ public class Graphics {
         connectors = newConnectors;
         for (int i = 0; i < CONNECTORS_NUMBER; i++) {   // Generate panels
             Panel panel = new Panel();
+            panel.setIndex(i);
             double smallSideX1 = connectors.get(i).getPoints().get(0);
             double smallSideY1 = connectors.get(i).getPoints().get(1);
             double bigSideX1 = connectors.get(i).getPoints().get(2);
@@ -142,6 +142,12 @@ public class Graphics {
             panel.setLength(length);
 
             panel.setAngle(Math.toDegrees(Math.atan2(y2 - y1, x2 - x1)));
+
+            if(!oldPanels.isEmpty()){
+                if(oldPanels.get(i).spikerLine != null) drawSpikerLine(oldPanels.get(i), panel);
+                if(!oldPanels.get(i).getPlayerBullets().isEmpty()) retrieveBullets(oldPanels.get(i), panel);
+            }
+
         }
 
         for (int i = 0; i < panels.size(); i++) {
@@ -155,6 +161,30 @@ public class Graphics {
             } else {
                 panels.get(i).setRightPanel(panels.get(panels.size() - 1));
             }
+        }
+    }
+
+    private static void drawSpikerLine(Panel oldPanel, Panel newPanel) {
+        double lengthPercentage = newPanel.getLength() / oldPanel.getLength();
+        double oldLineLength = Math.sqrt(Math.pow(oldPanel.spikerLine.getPoints().get(0) - oldPanel.spikerLine.getPoints().get(2), 2) +
+                Math.pow(oldPanel.spikerLine.getPoints().get(1) - oldPanel.spikerLine.getPoints().get(3), 2));
+        double newLineLength = oldLineLength * lengthPercentage;
+
+        Polyline newLine = new Polyline();
+        newLine.getPoints().add((newPanel.getSmallSide().getPoints().get(0) + newPanel.getSmallSide().getPoints().get(2)) / 2);
+        newLine.getPoints().add((newPanel.getSmallSide().getPoints().get(1) + newPanel.getSmallSide().getPoints().get(3)) / 2);
+        Vector vector = new Vector(newLineLength, newPanel.getAngle());
+        newLine.getPoints().add(newLine.getPoints().get(0) + vector.getX());
+        newLine.getPoints().add(newLine.getPoints().get(1) + vector.getY());
+        newLine.setEffect(new Glow(Main.glowV));
+        newLine.setStroke(Spiker.spikerColor);
+        newPanel.spikerLine = newLine;
+    }
+
+    private static void retrieveBullets(Panel oldPanel, Panel newPanel){
+        newPanel.playerBullets = new ArrayList<>();
+        for(Player.Bullet bullet1 : oldPanel.playerBullets){
+            if(bullet1.h > 0) newPanel.playerBullets.add(bullet1);
         }
     }
 }
