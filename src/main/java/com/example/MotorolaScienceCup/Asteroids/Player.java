@@ -46,7 +46,7 @@ public class Player extends Particle {
         Main.bulletsDistanceCovered.put(bullet, 0.0);
 
         Main.root.getChildren().add(bullet);
-        Sound.play("de.wav");
+        Sound.play("151015__bubaproducer__laser-shot-big-2.wav");
     }
 
     public void checkForHits() {
