@@ -643,7 +643,7 @@ public class Main {
             double[] arr = vertex.toArray();
             double offset = Math.random()*150-75;
             arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
-            double scale = Math.random()*30+15;
+            double scale = Math.random()*100+50;
             for (int i = 0; i < arr.length; i++) {
                 arr[i]*=scale;
             }
@@ -651,7 +651,7 @@ public class Main {
             Ufo enemyTank = Util.generateUfo(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
             boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
             if(!notCollided){
-                enemyTank.moveToRandom(75,30);
+                enemyTank.moveToRandom(75,50);
             }
     }
 

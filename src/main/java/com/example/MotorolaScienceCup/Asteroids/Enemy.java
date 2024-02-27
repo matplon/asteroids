@@ -1,10 +1,15 @@
 package com.example.MotorolaScienceCup.Asteroids;
 
 import com.example.MotorolaScienceCup.Particle;
+import com.example.MotorolaScienceCup.Sound;
 import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +21,8 @@ import static com.example.MotorolaScienceCup.Util.SVGconverter;
 public class Enemy extends Particle {
     static List<Enemy> enemyList = new ArrayList<>();
     static final double ENEMY_SPEED = 4;
+
+    static Clip clip;
     private final HashMap<Integer, Integer> pointsMapping = new HashMap<>() {{
         put(2, 1000);
         put(1, 200);
@@ -44,7 +51,14 @@ public class Enemy extends Particle {
 
     public static void spawnEnemy() {
 
-        if (enemyList.isEmpty()) {
+        if (enemyList.isEmpty()&&Math.random()*10<1) {
+            if(clip==null){
+            try {
+                clip = Sound.getClip("enemyAmbient.wav",1.0f);
+            } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                throw new RuntimeException(e);
+            }
+            clip.loop(Clip.LOOP_CONTINUOUSLY);}
             double pick = Math.random();
             int type = 1;
             if (pick < probability()){
@@ -87,6 +101,8 @@ public class Enemy extends Particle {
             checkDirections(leftDirections, enemy);
             enemy.updatePosition();
             if ((goingRight && originalX > enemy.getCenterX()) || (!goingRight && originalX < enemy.getCenterX())) {
+                clip.stop();
+                clip = null;
                 root.getChildren().remove(enemy);
                 enemyList.remove(enemy);
                 enemyShootTimer=0;
@@ -121,6 +137,11 @@ public class Enemy extends Particle {
 
     public static void shootBullet() {
         if (!enemyList.isEmpty()) {
+            try {
+                Sound.play("enemyShoot.wav");
+            } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                throw new RuntimeException(e);
+            }
             Enemy enemy = enemyList.get(0);
             List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle bullet
             double angle = Math.random() * 360 - 180;
@@ -202,8 +223,15 @@ public class Enemy extends Particle {
             player.explode();
     }
 
-    static void explode() {
+    public void explode() {
         if (!enemyList.isEmpty()) {
+            clip.stop();
+            clip = null;
+            try {
+                Sound.play("asteroidsBoom.wav");
+            } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                throw new RuntimeException(e);
+            }
             HUD.addPoints(enemyList.get(0).pointsMapping.get(enemyList.get(0).type));
             enemyList.get(0).animationParticles(Main.PARTICLE_COUNT, Main.particlesAll, Main.particlesDistanceCovered, Main.root);
             root.getChildren().remove(enemyList.get(0));
@@ -217,7 +245,7 @@ public class Enemy extends Particle {
             if (enemy.getLayoutBounds().intersects(player.getLayoutBounds())) {
                 if (intersect(enemy, player).getLayoutBounds().getWidth() > 0) {
                     player.explode();
-                    explode();
+                    enemy.explode();
                 }
             }
         }
