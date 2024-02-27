@@ -6,6 +6,7 @@ import com.example.MotorolaScienceCup.Asteroids.Enemy;
 import com.example.MotorolaScienceCup.Asteroids.HUD;
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Menu;
+import com.example.MotorolaScienceCup.Sound;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -27,6 +28,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
 import java.util.*;
 
@@ -44,6 +48,8 @@ public class Main {
 
     static double CAMERA_SPEED = 0.1;
     static double CAMERA_ROT_SPEED = 0.5;
+
+    static long frameCount=0;
     
     static double RADAR_ROT = 0;
 
@@ -179,6 +185,7 @@ public class Main {
         Ufo ufo = Util.generateUfo(0,0);*/
         generateInitChunks();
         spawnEnemy();
+        spawnUfo();
         drawHorizon2();
         start();
 
@@ -511,11 +518,11 @@ public class Main {
         }else if(check >= 8 && score < 15000){
             check = new Random().nextDouble(8);
         }
-
+        boolean spawned = false;
         if(check<4){
             Vertex vertex = camera.getForward();
             double[] arr = vertex.toArray();
-            double offset = Math.random()*120-60;
+            double offset = Math.random()*90-45;
             arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
             double scale = Math.random()*50+25;
             for (int i = 0; i < arr.length; i++) {
@@ -525,12 +532,13 @@ public class Main {
             EnemyTank enemyTank = Util.generateEnemyTank(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
             boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
             if(!notCollided){
-                enemyTank.moveToRandom(60,15);
+                enemyTank.moveToRandom(45,15);
             }
+            spawned = true;
         } else if(check>=4&&check<8&&score>=15000){
             Vertex vertex = camera.getForward();
             double[] arr = vertex.toArray();
-            double offset = Math.random()*200-100;
+            double offset = Math.random()*150-75;
             arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
             double scale = Math.random()*50+25;
             for (int i = 0; i < arr.length; i++) {
@@ -540,8 +548,9 @@ public class Main {
             SuperTank enemyTank = Util.generateSuperTank(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
             boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
             if(!notCollided){
-                enemyTank.moveToRandom(100,15);
+                enemyTank.moveToRandom(75,15);
             }
+            spawned = true;
         } else if(check>=8&&score>=10000&&missileList.isEmpty()&&fullTankList.isEmpty()){
             Vertex vertex = camera.getForward();
             double[] arr = vertex.toArray();
@@ -557,6 +566,10 @@ public class Main {
             if(!notCollided){
                 enemyTank.moveToRandom(30,115);
             }
+            spawned = true;
+        }
+        if(spawned){
+
         }
 
 
@@ -567,7 +580,7 @@ public class Main {
             double[] arr = vertex.toArray();
             double offset = Math.random()*150-75;
             arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
-            double scale = Math.random()*100+50;
+            double scale = Math.random()*30+15;
             for (int i = 0; i < arr.length; i++) {
                 arr[i]*=scale;
             }
@@ -575,7 +588,7 @@ public class Main {
             Ufo enemyTank = Util.generateUfo(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
             boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
             if(!notCollided){
-                enemyTank.moveToRandom(75,100);
+                enemyTank.moveToRandom(75,30);
             }
     }
 
@@ -592,6 +605,14 @@ public class Main {
 
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
+            frameCount++;
+            if((frameCount%120)==0){
+                try {
+                    Sound.play("radarPing.wav");
+                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             if(loadTimer<30){
                 loadTimer++;
             }else{
@@ -613,8 +634,13 @@ public class Main {
                 for (int i = 0; i < enemyCount; i++) {
                     spawnEnemy();
                 }
+                try {
+                    Sound.play("spawnAlert.wav");
+                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
-            if(ufoList.isEmpty()&&Math.random()*600<1){
+            if(ufoList.isEmpty()&&Math.random()*1<1){
                 spawnUfo();
             }
             TEXT_TICK++;
@@ -742,6 +768,7 @@ public class Main {
                     textList.clear();
                     Vertex preDeathCamPos = new Vertex(camera.getX(), camera.getY(), camera.getZ());
                     camera.moveToRandom();
+                    //camera.rotY(Math.random()*360);
                     for(Object3D object3D:horizon){
                         for (int i = 0; i < object3D.getPoints3D().size(); i++) {
                             double [][] translationMatrix = Util.getTranslationMatrix(camera.getX()-preDeathCamPos.getX(),camera.getY()-preDeathCamPos.getY(),camera.getZ()-preDeathCamPos.getZ());
@@ -911,6 +938,9 @@ public class Main {
             camera.setMagTimer(-1);
         }
         playerHP = 3;
+        for(Clip clip: Menu.clips){
+            clip.stop();
+        }
         Timeline timeline;
           WIDTH = Menu.WIDTH;
           HEIGHT = Menu.HEIGHT;
@@ -934,6 +964,8 @@ public class Main {
           death_ticks = 0;
 
           crack = new BetterPolygon(new ArrayList<>());
+
+          frameCount = 0;
 
           impact_ticks = 0;
           impact_skip = 0.01;

@@ -1,5 +1,12 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
+import com.example.MotorolaScienceCup.Sound;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Camera extends Object3D{
@@ -17,6 +24,17 @@ public class Camera extends Object3D{
     private double z;
 
     double magTimer;
+
+    private final AudioInputStream stream;
+
+    {
+        try {
+            stream = Sound.getStream("tankShot.wav");
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private Vertex forward;
     private Vertex up;
@@ -101,6 +119,11 @@ public class Camera extends Object3D{
             Bullet bullet = Util.generateBullet(dir, this.getRotation(), this.getX(), this.getY()-0.1, this.getZ());
             bullet.setParent(this);
             Main.allBullets.add(bullet);
+            try {
+                Sound.play("tankShot.wav");
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                throw new RuntimeException(e);
+            }
             this.magTimer = 120;
         }
     }

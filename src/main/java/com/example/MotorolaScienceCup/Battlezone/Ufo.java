@@ -1,16 +1,44 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
+import com.example.MotorolaScienceCup.Sound;
+
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Ufo extends EnemyTank{
 
     public static double UFO_SPEED = 0.075;
     public static double UFO_ROT_SPEED = 1;
+
+    public static ArrayList<Clip> ufoNoise = new ArrayList<>();
+
+    private Clip death;
+
+    {
+        try {
+            death = Sound.getClip("ufoDeath.wav");
+        } catch (UnsupportedAudioFileException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    ;
+
+
+
     public Ufo(ArrayList<Vertex> points3D, ArrayList<Face> faces3D) {
         super(points3D, faces3D);
     }
 
     public void takeHit(Object3D object3D){
+        death.start();
         Main.ufoList.remove(this);
         Main.objectList.remove(this);
         if(object3D instanceof Camera) {
@@ -63,6 +91,12 @@ public class Ufo extends EnemyTank{
         if(distance>130){
             Main.ufoList.remove(this);
             Main.objectList.remove(this);
+        }
+        if(distance<=60&&ufoNoise.isEmpty()){
+
+        }
+        if(distance>60&&!ufoNoise.isEmpty()){
+
         }
         }
     }

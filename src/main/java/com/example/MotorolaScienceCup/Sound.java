@@ -16,7 +16,23 @@ import static javax.sound.sampled.AudioSystem.getAudioInputStream;
 
 public class Sound {
 
+    public static AudioInputStream getStream(String filepath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 
+
+        File file = new File(filepath);
+        AudioInputStream stream = getAudioInputStream(file);
+        return stream;
+    }
+
+    public static Clip getClip(String filepath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+
+
+        File file = new File(filepath);
+        AudioInputStream stream = getAudioInputStream(file);
+        Clip clip = AudioSystem.getClip();
+        clip.open(stream);
+        return clip;
+    }
     public static void play(String filepath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 
         File file = new File(filepath);
@@ -40,10 +56,25 @@ public class Sound {
         Menu.clips.add(clip);
 
 
+    }
 
+    public static void loopPlay(String filepath, int count) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+
+        File music = new File(filepath);
+        AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+        Clip clip = AudioSystem.getClip();
+        clip.open(inputStream);
+        FloatControl gainControl =
+                (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        gainControl.setValue(-30.0f);
+        clip.loop(count);
+        clip.start();
+        Menu.clips.add(clip);
 
 
     }
+
+
 
 
 
