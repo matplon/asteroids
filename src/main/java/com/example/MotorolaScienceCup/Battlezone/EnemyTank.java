@@ -282,7 +282,7 @@ public class EnemyTank extends Object3D{
             bullet.setParent(this);
             Main.allBullets.add(bullet);
             try {
-                Sound.play("tankShot.wav");
+                Sound.play("tankShot.wav", 6.0f);
             } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
                 throw new RuntimeException(e);
             }

@@ -101,7 +101,7 @@ public class Ufo extends EnemyTank{
             Main.ufoList.remove(this);
             Main.objectList.remove(this);
         }
-        if(distance<=60&&ambient==null){
+        if(distance<=40&&ambient==null){
                 try {
                     ambient = Sound.getClip("ufoAmbient.wav",6.0f);
                 } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
@@ -110,7 +110,7 @@ public class Ufo extends EnemyTank{
                 ambient.loop(Clip.LOOP_CONTINUOUSLY);
                 ambient.start();
         }
-        if(distance>60&&ambient!=null){
+        if(distance>40&&ambient!=null){
             ambient.stop();
             ambient=null;
         }

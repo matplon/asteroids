@@ -1123,6 +1123,9 @@ public class Main {
     }
     public static void gameOver() {
         timeline.stop();
+        for (Missile missile:missileList){
+            missile.getMissileHum().stop();
+        }
         Text gameOverText = new Text("Game Over");
         gameOverText.setFont(Font.font(100));
         gameOverText.setStroke(Color.RED);
