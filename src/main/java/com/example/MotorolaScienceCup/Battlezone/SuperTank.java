@@ -105,7 +105,7 @@ public class SuperTank extends EnemyTank{
                 setTargetRotation(getLookAt(getTarget()));
                 setRotateDir(getExactRotationDir());
             }
-            if(getTargetRotation() < getRotation() + 1 && getTargetRotation() > getRotation() - 1){
+            if(getTargetRotation() < getRotation() + 2 && getTargetRotation() > getRotation() - 2){
                 rotateTank(getRotDifference()+offset);
                 setTargetRotation(getRotation()+offset);
                 setRotating(false);

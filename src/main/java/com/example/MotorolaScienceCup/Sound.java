@@ -24,14 +24,31 @@ public class Sound {
         clip.start();
     }
 
-    public static void loopPlay(String filepath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    public static void loopPlay(String filepath, int counter) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         File music = new File(filepath);
         AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
         Clip clip = AudioSystem.getClip();
         clip.open(inputStream);
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        FloatControl gainControl =
+                (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        gainControl.setValue(-30.0f);
+        clip.loop(counter);
         clip.start();
 
+
+
     }
+
+//    public static void loopPlay(String filepath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+//        File music = new File(filepath);
+//        AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+//        Clip clip = AudioSystem.getClip();
+//        clip.open(inputStream);
+//        clip.loop(Clip.LOOP_CONTINUOUSLY);
+//        clip.start();
+//
+//        clip.close();
+//
+//    }
 
 }
