@@ -754,6 +754,10 @@ public class Main {
             }
             if(isDying){
                 death_ticks++;
+                if(isIdling!=null){
+                    isIdling.stop();
+                    isIdling=null;
+                }
                 if(death_ticks > 0 && death_ticks < 10){
                     ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon1.svg");
                     double xAvg=85.258978;
