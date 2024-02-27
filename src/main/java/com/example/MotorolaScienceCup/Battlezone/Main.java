@@ -507,11 +507,17 @@ public class Main {
         CAMERA_SPEED = 0;
         CAMERA_ROT_SPEED = 0;
         playerHP--;
+        try {
+            Sound.play("playerDeath1.wav");
+            Sound.play("explosion.wav");
+        } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
 
-    public static void spawnEnemy(){
+    public static boolean spawnEnemy(){
         double check = new Random().nextDouble(13);
         if(check >= 4 && score < 10000 && check<8){
             check = new Random().nextDouble(4);
@@ -568,9 +574,7 @@ public class Main {
             }
             spawned = true;
         }
-        if(spawned){
-
-        }
+        return spawned;
 
 
     }
@@ -631,13 +635,19 @@ public class Main {
             fullTankList.addAll(missileList);
             if(fullTankList.isEmpty()&&Math.random()*120<1){
                 double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
+                int count = 0;
                 for (int i = 0; i < enemyCount; i++) {
-                    spawnEnemy();
+                    boolean spawned = spawnEnemy();
+                    if(spawned){
+                        count++;
+                    }
                 }
-                try {
-                    Sound.play("spawnAlert.wav");
-                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
-                    throw new RuntimeException(e);
+                if(count>0){
+                    try {
+                        Sound.play("spawnAlert.wav");
+                    } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
             if(ufoList.isEmpty()&&Math.random()*1<1){
@@ -831,6 +841,13 @@ public class Main {
                         if(dist<3){
                             Vertex vertex = allBullets.get(j).checkForHits(object);
                             if(vertex!=null){
+                                if(!(object instanceof Ufo)){
+                                    try {
+                                        Sound.play("explosion.wav");
+                                    } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
                                 System.out.println("YYYYYYYYY");
                                 if(object instanceof EnemyTank){
                                     ((EnemyTank) object).takeHit(allBullets.get(j).getParent());
