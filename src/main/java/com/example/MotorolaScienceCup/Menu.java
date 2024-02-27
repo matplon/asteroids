@@ -33,7 +33,7 @@ public class Menu extends Application {
         stage1.setScene(scene);
         stage1.show();
         stage = stage1;
-        Sound.loopPlay("8-bit-background-music-for-arcade-game-come-on-mario-164702.wav");
+        Sound.loopPlay("8-bit-background-music-for-arcade-game-come-on-mario-164702.wav",10);
 
     }
 }

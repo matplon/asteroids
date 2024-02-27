@@ -34,4 +34,14 @@ public class Sound {
 
     }
 
+    public static void loopPlay(String filepath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        File music = new File(filepath);
+        AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+        Clip clip = AudioSystem.getClip();
+        clip.open(inputStream);
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        clip.start();
+
+    }
+
 }
