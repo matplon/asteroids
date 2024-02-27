@@ -777,6 +777,14 @@ public class Main {
                     isIdling.stop();
                     isIdling=null;
                 }
+                if(isMoving!=null){
+                    isMoving.stop();
+                    isMoving=null;
+                }
+                if(Ufo.ambient!=null){
+                    Ufo.ambient.stop();
+                    Ufo.ambient=null;
+                }
                 if(death_ticks > 0 && death_ticks < 10){
                     ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon1.svg");
                     double xAvg=85.258978;

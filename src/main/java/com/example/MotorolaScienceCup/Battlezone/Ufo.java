@@ -13,7 +13,8 @@ public class Ufo extends EnemyTank{
     public static double UFO_SPEED = 0.075;
     public static double UFO_ROT_SPEED = 1;
 
-    public static ArrayList<Clip> ufoNoise = new ArrayList<>();
+    public static Clip ambient;
+
 
     private Clip death;
 
@@ -45,6 +46,8 @@ public class Ufo extends EnemyTank{
     public void takeHit(Object3D object3D){
         death.start();
         ufoPoints.start();
+        ambient.stop();
+        ambient = null;
         Main.ufoList.remove(this);
         Main.objectList.remove(this);
         if(object3D instanceof Camera) {
@@ -94,15 +97,22 @@ public class Ufo extends EnemyTank{
                 }
             }
         double distance = Util.getDistance(getCenter(), new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
-        if(distance>130){
+        if(distance>Camera.getFar()+10){
             Main.ufoList.remove(this);
             Main.objectList.remove(this);
         }
-        if(distance<=60&&ufoNoise.isEmpty()){
-
+        if(distance<=60&&ambient==null){
+                try {
+                    ambient = Sound.getClip("ufoAmbient.wav",6.0f);
+                } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                    throw new RuntimeException(e);
+                }
+                ambient.loop(Clip.LOOP_CONTINUOUSLY);
+                ambient.start();
         }
-        if(distance>60&&!ufoNoise.isEmpty()){
-
+        if(distance>60&&ambient!=null){
+            ambient.stop();
+            ambient=null;
         }
         }
     }
