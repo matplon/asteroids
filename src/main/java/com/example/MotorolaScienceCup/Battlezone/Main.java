@@ -472,6 +472,11 @@ public class Main {
             root.getChildren().add(t);
         }
         if(collisionDir&&TEXT_TICK>10){
+            try {
+                Sound.play("jump.wav");
+            } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                throw new RuntimeException(e);
+            }
             Text t = new Text("Movement blocked by object");
             t.setFont(Font.font(50));
             t.setX(100);
@@ -610,6 +615,7 @@ public class Main {
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
             frameCount++;
+            boolean justDied = false;
             if((frameCount%120)==0){
                 try {
                     Sound.play("radarPing.wav");
@@ -684,6 +690,13 @@ public class Main {
                 ufoList.get(i).enemyBehavior();
             }
             if(has_collided){
+                if(impact_ticks==1){
+                    try {
+                        Sound.play("collision1.wav");
+                    } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 if(impact_ticks < 5){
                     camera.translate(0,impact_skip*3,0);
                     polyline = new Polyline( 0,(HEIGHT/2)+(2), WIDTH,(HEIGHT/2)+(2));
@@ -780,15 +793,9 @@ public class Main {
                     camera.moveToRandom();
                     //camera.rotY(Math.random()*360);
                     for(Object3D object3D:horizon){
-                        for (int i = 0; i < object3D.getPoints3D().size(); i++) {
-                            double [][] translationMatrix = Util.getTranslationMatrix(camera.getX()-preDeathCamPos.getX(),camera.getY()-preDeathCamPos.getY(),camera.getZ()-preDeathCamPos.getZ());
-                            double [] arr = object3D.getPoints3D().get(i).toArray();
-                            arr = Util.multiplyTransform(translationMatrix, arr);
-                            System.out.println(Arrays.toString(arr)+"nice");
-                            object3D.getPoints3D().set(i,Util.arrToVert(arr));
-
-                        }
+                        object3D.translate(camera.getX()-preDeathCamPos.getX(),0, camera.getZ()-preDeathCamPos.getZ());
                     }
+                    justDied = true;
                     if(playerHP<=0){
                         gameOver();
                     }
@@ -818,7 +825,7 @@ public class Main {
             for (int i=0;i<objectList.size();i++) {
                 Object3D object = objectList.get(i);
                 Vertex away;
-                if(horizon.contains(object)){
+                if(true){
                     away = new Vertex(object.getCenterX(), object.getCenterY(), object.getCenterZ());
                 }else{
                     away = new Vertex(object.getX(), object.getY(), object.getZ());
@@ -891,16 +898,17 @@ public class Main {
             } else if (RADAR_ROT<0) {
                 RADAR_ROT=360+(1-RADAR_ROT);
             }
+            if(!justDied){
             for(Object3D object3D:horizon){
                 for (int i = 0; i < object3D.getPoints3D().size(); i++) {
-                    double [][] translationMatrix = Util.getTranslationMatrix(camera.getX()-previousCamPos.getX(),camera.getY()-previousCamPos.getY(),camera.getZ()-previousCamPos.getZ());
+                    double [][] translationMatrix = Util.getTranslationMatrix(camera.getX()-previousCamPos.getX(),0,camera.getZ()-previousCamPos.getZ());
                     double [] arr = object3D.getPoints3D().get(i).toArray();
                     arr = Util.multiplyTransform(translationMatrix, arr);
                     System.out.println(Arrays.toString(arr)+"nice");
                     object3D.getPoints3D().set(i,Util.arrToVert(arr));
 
                 }
-            }
+            }}
             //drawHorizon();
             if(!wasHit) {
                 drawRadar();
