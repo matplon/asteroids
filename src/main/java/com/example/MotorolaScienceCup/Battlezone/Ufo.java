@@ -24,8 +24,17 @@ public class Ufo extends EnemyTank{
             throw new RuntimeException(e);
         }
     }
+    private Clip ufoPoints;
 
-    ;
+    {
+        try {
+            ufoPoints = Sound.getClip("ufoPoints.wav",4.0f);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
 
 
@@ -35,6 +44,7 @@ public class Ufo extends EnemyTank{
 
     public void takeHit(Object3D object3D){
         death.start();
+        ufoPoints.start();
         Main.ufoList.remove(this);
         Main.objectList.remove(this);
         if(object3D instanceof Camera) {
