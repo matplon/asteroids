@@ -1,5 +1,7 @@
 package com.example.MotorolaScienceCup;
 
+import com.example.MotorolaScienceCup.Asteroids.Main;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,24 +26,25 @@ public class Sound {
         clip.start();
     }
 
-    public static void loopPlay(String filepath, int counter) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-        File music = new File(filepath);
-        AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
-        Clip clip = AudioSystem.getClip();
-        clip.open(inputStream);
-        clip.loop(counter);
-        clip.start();
-
-    }
-
     public static void loopPlay(String filepath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+
         File music = new File(filepath);
         AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
         Clip clip = AudioSystem.getClip();
         clip.open(inputStream);
+        FloatControl gainControl =
+                (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        gainControl.setValue(-30.0f);
         clip.loop(Clip.LOOP_CONTINUOUSLY);
         clip.start();
+        Menu.clips.add(clip);
+
+
+
+
 
     }
+
+
 
 }

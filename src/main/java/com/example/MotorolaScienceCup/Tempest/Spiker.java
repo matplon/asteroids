@@ -1,7 +1,6 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
-import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
 import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.effect.Glow;
@@ -11,9 +10,9 @@ import javafx.scene.shape.Polyline;
 import java.util.List;
 
 public class Spiker extends Enemy {
-    private static final String filepath = "asteroidVar1.svg";
+    private static final String filepath = "spiker.txt";
     static Color spikerColor = Color.GREEN;
-    private BetterPolygon defTanker = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
+    private BetterPolygon defSpiker = new BetterPolygon(Util.transformPointsToList(filepath));
     private List<Double> defPoints;
     private boolean goingDown = false;
     public boolean isDead = false;
@@ -27,7 +26,7 @@ public class Spiker extends Enemy {
         else if (startPanel.isBottomPanel()) {
             panelToHorizontalAngle += 180;
         }
-        defPoints = BetterPolygon.rotate(new BetterPolygon(defTanker.getPoints()), panelToHorizontalAngle).getPoints();
+        defPoints = BetterPolygon.rotate(new BetterPolygon(defSpiker.getPoints()), panelToHorizontalAngle).getPoints();
 
         double x = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
         double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast()) / 2;
@@ -77,13 +76,15 @@ public class Spiker extends Enemy {
         } else {
             currentPanel.getSpikers().remove(this);
         }
-        if(Main.root.getChildren().contains(this)) Main.root.getChildren().remove(this);
+        Main.root.getChildren().remove(this);
     }
 
     public void switchToTanker() {
         Tanker tanker = new Tanker(currentPanel);
+        while(Math.round(tanker.h) < Math.round(h)){
+            tanker.moveUp();
+        }
         Main.root.getChildren().add(tanker);
-        isDead = true;
         destroy();
     }
 
@@ -95,6 +96,7 @@ public class Spiker extends Enemy {
         double yEnd = pointer.getCenterY();
 
         line.getPoints().setAll(xStart, yStart, xEnd, yEnd);
+        currentPanel.spikerLine = line;
     }
 
     public boolean destroyLine(Player.Bullet bullet, double magnitude) {
@@ -109,5 +111,10 @@ public class Spiker extends Enemy {
             return true;
         }
         return false;
+    }
+
+    public double getLineLength() {
+        return Math.sqrt(Math.pow(line.getPoints().get(0) - line.getPoints().get(2), 2) +
+                Math.pow(line.getPoints().get(1) - line.getPoints().get(3), 2));
     }
 }

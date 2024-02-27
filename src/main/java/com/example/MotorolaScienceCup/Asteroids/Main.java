@@ -20,6 +20,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
@@ -62,7 +63,7 @@ public class Main {
     static AnchorPane root = new AnchorPane();
     public static Scene scene = new Scene(root, WIDTH, HEIGHT);
 
-    public static void init() {
+    public static void init() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
 
         resetData();
         scene.setFill(Color.BLACK);
@@ -113,6 +114,9 @@ public class Main {
         start();
         Menu.stage.setScene(scene);
         Menu.stage.show();
+
+        Clip clip = Menu.clips.get(0);
+        clip.close();
 
     }
 

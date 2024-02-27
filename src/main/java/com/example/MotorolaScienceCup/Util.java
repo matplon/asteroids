@@ -1,7 +1,6 @@
 package com.example.MotorolaScienceCup;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -101,5 +100,32 @@ public class Util {
         subString = substringNew.replaceAll(" {2}", " ");
         String[] li = subString.split(" "); // Remove spaces
         return li;
+    }
+
+    public static List<Double> transformPointsToList(String filePath) {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n"); // Append each line with a newline character
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return getPointsFromString(content.toString());
+    }
+
+    public static List<Double> getPointsFromString(String points) {
+        List<Double> coordinates = new ArrayList<>();
+        // Remove square brackets and split by comma
+        String[] pointStrings = points.replaceAll("\\[|\\]", "").split(",\\s+");
+        for (String pointString : pointStrings) {
+            // Split each point by comma, convert to double, and add to the list
+            String[] coordinatesString = pointString.split(",");
+            for (String coordinate : coordinatesString) {
+                coordinates.add(Double.parseDouble(coordinate.trim()));
+            }
+        }
+        return coordinates;
     }
 }
