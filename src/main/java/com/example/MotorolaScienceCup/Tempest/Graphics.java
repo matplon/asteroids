@@ -41,7 +41,6 @@ public class Graphics {
         drawConnectors(oldPanels, smallShapePoints, bigShapePoints, color, new Glow(Main.glowV));
         tempSmallShape.moveTo(WIDTH-400,HEIGHT-400);
         tempSmallShape.scale(8);
-        root.getChildren().add(tempSmallShape);
     }
 
     private static void drawConnectors(List<Panel> oldPanels, List<Double> smallShapePoints, List<Double> bigShapePoints, Color color, Glow glow) {
