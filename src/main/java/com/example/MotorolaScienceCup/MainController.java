@@ -1,9 +1,5 @@
 package com.example.MotorolaScienceCup;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import com.example.MotorolaScienceCup.Asteroids.Main;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -12,10 +8,15 @@ import javafx.scene.control.Button;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class MainController {
 
-    public Button Exit;
+    @FXML
+    private Button Exit;
+
     @FXML
     private ResourceBundle resources;
 
@@ -45,23 +46,31 @@ public class MainController {
     void tempest(ActionEvent event) {
         com.example.MotorolaScienceCup.Tempest.Main.init();
     }
+    @FXML
+    void exit(ActionEvent actionEvent) {
+        Platform.exit();
+    }
+
 
     @FXML
     void initialize() {
-        Asteroids.setLayoutX(((double) Menu.WIDTH / 3) + 60);
+        Asteroids.setLayoutX((double) (3 * Menu.WIDTH) / 8);
         Asteroids.setLayoutY(((double) Menu.HEIGHT / 3));
+        Asteroids.setFont(Menu.font);
 
-        Tempest.setLayoutX(((double) Menu.WIDTH / 3) + 60);
+        Tempest.setLayoutX((double) (3 * Menu.WIDTH) / 8);
         Tempest.setLayoutY(((double) Menu.HEIGHT / 3) + 40);
+        Tempest.setFont(Menu.font);
 
-        Battlezone.setLayoutX(((double) Menu.WIDTH / 3) + 60);
+        Battlezone.setLayoutX((double) (3 * Menu.WIDTH) / 8);
         Battlezone.setLayoutY(((double) Menu.HEIGHT / 3) + 80);
-        Exit.setLayoutX(((double) Menu.WIDTH /2));
+        Battlezone.setFont(Menu.font);
+
+        Exit.setLayoutX((double) (3 * Menu.WIDTH) / 8);
         Exit.setLayoutY(((double) Menu.HEIGHT /2));
+        Exit.setFont(Menu.font);
 
     }
 
-    public void exit(ActionEvent actionEvent) {
-        Platform.exit();
-    }
+
 }
