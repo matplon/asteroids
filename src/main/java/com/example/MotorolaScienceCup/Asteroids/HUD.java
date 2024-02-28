@@ -47,8 +47,8 @@ public class HUD {
         if(hearts.size() > 0)
             heart.setLayoutX(hearts.get(hearts.size()-1).getLayoutX() + hearts.get(hearts.size() - 1).getRadius() + 20);
         else
-            heart.setLayoutX(pointsTextX);
-        heart.setLayoutY(pointsTextY + fontSize + 10);
+            heart.setLayoutX(1000);
+        heart.setLayoutY(pointsTextY - fontSize - 40 );
         hearts.add(heart);
         Main.root.getChildren().add(heart);
     }
