@@ -64,13 +64,16 @@ public class Panel {
                 }
             }
             for (Spiker spiker : spikers){
-                if(bullet.intersects(spiker.getLayoutBounds()) && !bulletsToDestroy.contains(bullet) && !spikers.get(0).isDead){
+                if(!spikers.isEmpty() && bullet.intersects(spiker.getLayoutBounds()) && !bulletsToDestroy.contains(bullet)){
                     spikersToDestroy.add(spiker);
                     bulletsToDestroy.add(bullet);
                 }
             }
-            if (!spikers.isEmpty() && !bulletsToDestroy.contains(bullet) && spikers.get(0).isDead){
-                if (spikers.get(0).destroyLine(bullet, bullet.getRadius() * 2)) bulletsToDestroy.add(bullet);
+            if (spikers.isEmpty() && !bulletsToDestroy.contains(bullet)){
+                if(destroyLine(bullet, bullet.getRadius() * 2)){
+                    bulletsToDestroy.add(bullet);
+                    System.out.println("yes");
+                }
             }
             for (Flipper flipper : flippersToDestroy){
                 flipper.destroy();
@@ -84,8 +87,24 @@ public class Panel {
         }
         for (Player.Bullet bullet : bulletsToDestroy){
             bullet.remove();
-            System.out.println("kurwa");
         }
+    }
+
+    private boolean destroyLine(Player.Bullet bullet, double magnitude) {
+        if (spikerLine != null) {
+            double spikerLineLength = Math.sqrt(Math.pow(spikerLine.getPoints().get(0) - spikerLine.getPoints().get(2), 2) +
+                    Math.pow(spikerLine.getPoints().get(1) - spikerLine.getPoints().get(3), 2));
+            if(bullet.h <= spikerLineLength){
+                Vector vector = new Vector(magnitude, getAngle());
+                List<Double> points = spikerLine.getPoints();
+                spikerLine.getPoints().setAll(points.get(0), points.get(1), points.get(2) - vector.getX(), points.get(3) - vector.getY());
+                if (vector.getMagnitude() > Math.sqrt(Math.pow(points.get(0) - points.get(2), 2) + Math.pow(points.get(1) - points.get(3), 2))) {
+                    Main.root.getChildren().remove(spikerLine);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean checkEdgeFlipper(){
@@ -134,7 +153,7 @@ public class Panel {
             if(!tanker.move()) tankersToDestroy.add(tanker);
         }
         for(Spiker spiker : spikers){
-            if(!spiker.move() && !spiker.isDead){
+            if(!spiker.move()){
                 spiker.switchToTanker();
             }
         }

@@ -202,7 +202,6 @@ public class Player extends BetterPolygon {
 
     public void shoot() {
         if (shotTimer <= 0) {
-            System.out.println("ui");
             Bullet bullet = new Bullet();
             currentPanel.addPlayerBullet(bullet);
             root.getChildren().add(bullet);
