@@ -33,8 +33,8 @@ public class HUD {
     private static Text highScore;
     private static List<BetterPolygon> hearts;
 
-    private static final int pointsTextX = 15;
-    private static final int pointsTextY = 100;
+    public static final int pointsTextX = 15;
+    public static final int pointsTextY = 100;
     private static final int fontSize = 50;
     private static final String fontStyle = "Public Pixel";
     private static List<Double> pointsHeart;
@@ -58,18 +58,42 @@ public class HUD {
         points = 0;
         pointsHeart = pointsHeartCoordinates;
 
-        pointsText = new Text(points + "");
+        pointsText = new Text(points+"");
         pointsText.setFont(font);
-        pointsText.setLayoutX(pointsTextX);
+        pointsText.setLayoutX(WIDTH/2 - pointsText.getLayoutBounds().getWidth()/2);
         pointsText.setLayoutY(pointsTextY);
-        pointsText.setStroke(Color.RED);
+        pointsText.setFill(Color.RED);
 
-        highScore = new Text(previousHighScore + "");
+        highScore = new Text("HiScore  "+previousHighScore);
         highScore.setFont(font);
         highScore.setTextAlignment(TextAlignment.CENTER);
-        highScore.setLayoutX(WIDTH / 2);
-        highScore.setLayoutY(pointsTextY);
-        highScore.setStroke(Color.RED);
+        highScore.setLayoutX(pointsTextX+highScore.getLayoutBounds().getWidth()/4);
+        highScore.setLayoutY(pointsTextY+HEIGHT/8);
+        highScore.setFill(Color.RED);
+
+        Text back = new Text("←");
+        back.setFill(Color.RED);
+        back.setFont(Font.font("Public Pixel", 40));
+        back.setLayoutX(pointsTextX+highScore.getLayoutBounds().getWidth()/4);
+        back.setLayoutY(100);
+        back.setOnMouseClicked(mouseEvent -> {
+            try {
+                Main.timeline.stop();
+                if(Enemy.clip!=null){
+                    Enemy.clip.close();
+                    Enemy.clip = null;
+                }
+                if(Main.playerEngine!=null){
+                    Main.playerEngine.close();
+                    Main.playerEngine = null;
+                }
+                Main.resetData();
+                Menu.resetMenu();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        Main.root.getChildren().add(back);
 
         hearts = new ArrayList<>();
 

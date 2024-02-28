@@ -300,19 +300,6 @@ public class Main {
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
-        Text back = new Text("←");
-        back.setFill(Color.RED);
-        back.setFont(Font.font("Public Pixel", 40));
-        back.setLayoutX(300);
-        back.setLayoutY(100);
-        back.setOnMouseClicked(mouseEvent -> {
-            try {
-                Menu.resetMenu();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        root.getChildren().add(back);
 
 
     }
