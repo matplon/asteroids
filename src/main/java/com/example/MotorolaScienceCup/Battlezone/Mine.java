@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class Mine extends EnemyTank{
 
-    public static double MINE_SPEED = 1;
     public Mine(ArrayList<Vertex> points3D, ArrayList<Face> faces3D) {
         super(points3D, faces3D);
     }

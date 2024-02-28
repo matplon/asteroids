@@ -5,9 +5,9 @@ import java.util.Random;
 
 public class Chunk {
 
-    public static int sideLength = 60;
+    public static int sideLength = 65;
 
-    public static int chunkHiveSideLength = 7;
+    public static int chunkHiveSideLength = 5;
 
     public static int chunkObjCount = 1;
     public static int chunkMineCount = 1;
@@ -73,7 +73,7 @@ public class Chunk {
                 double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
                 double z = getZ()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
                 Object3D object3D = Util.generateCube(x,z);
-                boolean notCollided = object3D.runCollisionCheck(5, object3D.getHitBox2D(), object3D).isEmpty();
+                boolean notCollided = object3D.runCollisionCheck(7, object3D.getHitBox2D(), object3D).isEmpty();
                 if(!notCollided){
                     moveToRandom(object3D);
                 }
@@ -82,7 +82,7 @@ public class Chunk {
                 double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
                 double z = getZ()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
                 Object3D object3D = Util.generateCone(x,z);
-                boolean notCollided = object3D.runCollisionCheck(5, object3D.getHitBox2D(), object3D).isEmpty();
+                boolean notCollided = object3D.runCollisionCheck(7, object3D.getHitBox2D(), object3D).isEmpty();
                 if(!notCollided){
                     moveToRandom(object3D);
                 }
@@ -91,7 +91,7 @@ public class Chunk {
                 double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
                 double z = getZ()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
                 Object3D object3D = Util.generateHalfCube(x,z);
-                boolean notCollided = object3D.runCollisionCheck(5, object3D.getHitBox2D(), object3D).isEmpty();
+                boolean notCollided = object3D.runCollisionCheck(7, object3D.getHitBox2D(), object3D).isEmpty();
                 if(!notCollided){
                     moveToRandom(object3D);
                 }
@@ -103,7 +103,7 @@ public class Chunk {
             double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
             double z = getZ()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
             Mine object3D = Util.generateMine(x,z);
-            boolean notCollided = object3D.runCollisionCheck(5, object3D.getHitBox2D(), object3D).isEmpty();
+            boolean notCollided = object3D.runCollisionCheck(7, object3D.getHitBox2D(), object3D).isEmpty();
             if(!notCollided){
                 moveToRandom(object3D);
             }

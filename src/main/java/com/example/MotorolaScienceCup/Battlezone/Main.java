@@ -136,8 +136,6 @@ public class Main {
 
     public static Vertex previousCamPos;
 
-    public static Text text = new Text();
-    public static Text text1 = new Text();
 
 
 
@@ -156,15 +154,6 @@ public class Main {
         text10.setFill(Color.GREEN);
         rootLoad.getChildren().addAll(rectangle, text10);
         Menu.stage.setScene(sceneLoad);
-        text.setX(100);
-        text.setY(100);
-        text.setFont(Font.font(50));
-        text1.setX(100);
-        text1.setY(200);
-        text1.setFont(Font.font(50));
-        text.setFill(Color.GREEN);
-        text1.setFill(Color.GREEN);
-        root.getChildren().addAll(text,text1);
         ArrayList<Vertex> camHitbox = new ArrayList<>();
         camHitbox.add(new Vertex(2,0,0));
         camHitbox.add(new Vertex(Math.sqrt(2),0,Math.sqrt(2)));
@@ -618,7 +607,7 @@ public class Main {
             Missile enemyTank = Util.generateMissile(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
             boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
             if(!notCollided){
-                enemyTank.moveToRandom(30,115);
+                enemyTank.moveToRandom(30,Camera.getFar()-10);
             }
             spawned = true;
             Clip clip;
@@ -735,8 +724,6 @@ public class Main {
             decals.clear();
             root.getChildren().removeAll(textList);
             textList.clear();
-            text.setText(Double.toString(camera.getRotation()));
-            text1.setText(Math.round(camera.getX()) + " " + Math.round(camera.getY()) + " " + Math.round(camera.getZ()));
             Polyline polyline = new Polyline();
             polyline.setStroke(Color.GREEN);
             for (int i = 0; i < fullTankList.size(); i++) {
@@ -1053,11 +1040,7 @@ public class Main {
                     missile.getMissileHum().close();
                 }
                 Menu.resetMenu();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (UnsupportedAudioFileException e) {
-                throw new RuntimeException(e);
-            } catch (LineUnavailableException e) {
+            } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
                 throw new RuntimeException(e);
             }
         });
@@ -1161,9 +1144,6 @@ public class Main {
            PARTICLE_ROT_SPEED = 1;
 
 
-
-          text = new Text();
-          text1 = new Text();
     }
     public static void gameOver() {
         timeline.stop();
