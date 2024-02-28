@@ -869,7 +869,7 @@ public class Main {
                     for(Object3D object3D:horizon){
                         object3D.translate(camera.getX()-preDeathCamPos.getX(),0, camera.getZ()-preDeathCamPos.getZ());
                     }
-                    camera.rotY(Math.random()*360);
+                    //camera.rotY(Math.random()*360);
                     justDied = true;
                     if(playerHP<=0){
                         gameOver();

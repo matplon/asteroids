@@ -103,11 +103,7 @@ public class Main {
                 canShoot = false;
                 try {
                     player.shootBullet();
-                } catch (UnsupportedAudioFileException e) {
-                    throw new RuntimeException(e);
-                } catch (LineUnavailableException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
+                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -126,12 +122,12 @@ public class Main {
 
         HUD.init(highscore(), Util.SVGconverter("heart.svg"));
 
+        for(Clip clip:Menu.clips){
+            clip.close();
+        }
         start();
         Menu.stage.setScene(scene);
         Menu.stage.show();
-
-        Clip clip = Menu.clips.get(0);
-        clip.close();
 
     }
 
