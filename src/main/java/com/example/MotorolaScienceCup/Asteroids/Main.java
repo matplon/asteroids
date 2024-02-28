@@ -120,17 +120,6 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.X) canShoot = true;
         });
 
-        Text back = new Text("f");
-        back.setLayoutX(300);
-        back.setLayoutY(100);
-        back.setOnMouseClicked(mouseEvent -> {
-            try {
-                Menu.resetMenu();
-            } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        root.getChildren().add(back);
 
         // Spawn the big asteroids
         Asteroid.spawnAsteroids(ASTEROID_COUNT);
