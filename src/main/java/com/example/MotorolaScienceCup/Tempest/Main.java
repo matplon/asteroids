@@ -52,7 +52,7 @@ public class Main {
     static int LEVEL = 0;
     static int flippersNumber = 1;
     static int tankersNumber = 0;
-    static int spikersNumber = 0;
+    static int spikersNumber = 2;
 
     static double bigSideLength;
 
@@ -60,7 +60,7 @@ public class Main {
     static String testMap2 = "testsquareKTORYDZIALA.svg";
     static String testMap3 = "mapa 3.svg";
     static String testMap4 = "testoctagon.svg";
-    static String testMap5 = "mapheart.svg";
+    static String testMap5 = "mapcrosstest.svg";
     static String testShip = "ship1.svg";
     static double scale = 1;
     static double a = 1.017;
@@ -80,7 +80,7 @@ public class Main {
         goLeft = false;
         goRight = false;
 
-        Graphics.drawMap(testMap5, defaultPanelColor, 1);
+        Graphics.drawMap(testMap2, defaultPanelColor, 1);
 
         double bigSideLengthX = panels.get(0).getBigSide().getPoints().get(0) - panels.get(0).getBigSide().getPoints().get(2);
         double bigSideLengthY = panels.get(0).getBigSide().getPoints().get(1) - panels.get(0).getBigSide().getPoints().get(3);
@@ -120,13 +120,13 @@ public class Main {
     public static void start() {
 
         Enemy.spawnSeeds(flippersNumber, tankersNumber, spikersNumber);
-        FuseBall fuseBall = new FuseBall(panels.get(4));
-        root.getChildren().add(fuseBall);
+//        FuseBall fuseBall = new FuseBall(panels.get(4));
+//        root.getChildren().add(fuseBall);
 
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
             highlightPanel(player);
-                fuseBall.moveUP();
-                fuseBall.moveOnTop();
+//                fuseBall.moveUP();
+//                fuseBall.moveOnTop();
             double bulletsNumber = 0;
             for (Panel panel : panels) {
                 panel.update(false);

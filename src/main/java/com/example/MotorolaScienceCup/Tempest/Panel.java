@@ -45,10 +45,10 @@ public class Panel {
         List<Spiker> spikersToDestroy = new ArrayList<>();
 
         for (Player.Bullet bullet : playerBullets){
-            if(!bullet.move(nextLevel)){
+            if(checkEdgeFlipper() && bullet.h == length){
                 bulletsToDestroy.add(bullet);
             }
-            if(checkEdgeFlipper() && bullet.h == length){
+            if(!bullet.move(nextLevel)){
                 bulletsToDestroy.add(bullet);
             }
             for (Flipper flipper : flippers){
@@ -70,9 +70,9 @@ public class Panel {
                 }
             }
             if (spikers.isEmpty() && !bulletsToDestroy.contains(bullet)){
-                if(destroyLine(bullet, bullet.getRadius() * 2)){
+                if(destroyLine(bullet, bullet.getRadius() * 3.5)){
                     bulletsToDestroy.add(bullet);
-                    System.out.println("yes");
+                    spikerLine = null;
                 }
             }
             for (Flipper flipper : flippersToDestroy){
@@ -145,10 +145,11 @@ public class Panel {
     }
 
     public void update(boolean nextLevel){
+        List<Flipper> flippersToRemove = new ArrayList<>();
         List<Tanker> tankersToDestroy = new ArrayList<>();
         List<Spiker> spikersToDestroy = new ArrayList<>();
         for(Flipper flipper : flippers)
-            flipper.move();
+            if(!flipper.move()) flippersToRemove.add(flipper);
         for(Tanker tanker : tankers){
             if(!tanker.move()) tankersToDestroy.add(tanker);
         }
@@ -159,6 +160,9 @@ public class Panel {
         }
         updatePlayerBullets(nextLevel);
         updateEnemyBullets();
+        for(Flipper flipper : flippersToRemove){
+            flippers.remove(flipper);
+        }
         for (Tanker tanker : tankersToDestroy){
             tanker.destroy();
         }

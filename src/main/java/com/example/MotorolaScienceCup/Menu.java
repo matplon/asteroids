@@ -26,7 +26,8 @@ public class Menu extends Application {
     public static Stage stage;
     public static Scene scene;
     public static List<Clip> clips = new ArrayList();
-    public static Font font = Font.loadFont("C:\\Users\\shlon\\IdeaProjects\\MotorolaScienceCup\\PublicPixel-z84yD.ttf", 45);
+
+    public static Font font = Font.loadFont(Menu.class.getResource("PublicPixel-z84yD.ttf").toExternalForm(), 36);
 
     public static void resetMenu() throws IOException, UnsupportedAudioFileException, LineUnavailableException {
         root = FXMLLoader.load(Menu.class.getResource("Main.fxml"));

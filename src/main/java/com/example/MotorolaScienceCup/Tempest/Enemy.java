@@ -348,7 +348,6 @@ public class Enemy extends BetterPolygon {
                 if (!spiral) {
                     List<Double> points = chosenPanel.getSmallSide().getPoints();
                     double randomT = Math.random();
-                    System.out.println(points);
                     DEST_X = points.get(0) + randomT * (points.get(2) - points.get(0));
                     DEST_Y = points.get(1) + randomT * (points.get(3) - points.get(1));
                     double angle = Math.toDegrees(Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX()));

@@ -1,13 +1,10 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
-import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Util;
-import com.example.MotorolaScienceCup.Vector;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.Line;
 
 import java.util.*;
 
@@ -27,28 +24,22 @@ public class Flipper extends Enemy {
     static Color flipperColor = Color.RED;
     private BetterPolygon defFlipper = BetterPolygon.rotate(new BetterPolygon(Util.SVGconverter(filepath)), 180);
     private List<Double> defPoints;
-    private double rotationAngle;
+    private double fullRotationAngle;
+    private double tempRotationAngle;
     private double pivotX, pivotY;
     private int step;
     private boolean left;
-    Circle circle1, circle2;
-    BetterPolygon polygon = new BetterPolygon(null);
 
     public Flipper(Panel startPanel) {
-        super(Main.panels.get(0));
+        super(startPanel);
 
         double panelToHorizontalAngle = Math.toDegrees(Math.atan((currentPanel.getSmallSide().getPoints().get(3) - currentPanel.getSmallSide().getPoints().get(1))
                 / (currentPanel.getSmallSide().getPoints().get(2) - currentPanel.getSmallSide().getPoints().get(0))));
         if (Double.toString(panelToHorizontalAngle).equals("-0.0")) panelToHorizontalAngle = 180;
-        else if (currentPanel.isBottomPanel()) {
-            panelToHorizontalAngle += 180;
-        }
+
         defFlipper.rotate(panelToHorizontalAngle);
-//        defPoints = BetterPolygon.rotate(new BetterPolygon(defFlipper.getPoints()), panelToHorizontalAngle).getPoints();
+
         defPoints = defFlipper.getPoints();
-        Main.root.getChildren().add(defFlipper);
-        defFlipper.moveTo(300, 200);
-        defFlipper.setStroke(Color.AQUA);
 
         double x = (currentPanel.getSmallSide().getPoints().get(0) + currentPanel.getSmallSide().getPoints().get(2)) / 2;
         double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().get(3)) / 2;
@@ -58,28 +49,20 @@ public class Flipper extends Enemy {
 
         currentPanel.addFlipper(this);
         setStroke(flipperColor);
-
-        circle1 = new Circle(getPointsOnSides().get(0), getPointsOnSides().get(1), 5, Color.GOLD);
-        Main.root.getChildren().add(circle1);
-        circle2 = new Circle(getPointsOnSides().get(2), getPointsOnSides().get(3), 5, Color.GREEN);
-        Main.root.getChildren().add(circle2);
-        polygon.setStroke(Color.BLUEVIOLET);
     }
 
-    public void move() {
+    public boolean move() {
         if (h < maxH) {
             moveUp();
         }
-        if (!(Main.LEVEL == 0 && !reachedTheEdge)) changePanel();
         if (!reachedTheEdge) {
             bulletTimer--;
             if (bulletTimer <= 0) shoot();
         }
-        circle1.setCenterX(getPointsOnSides().get(0));
-        circle1.setCenterY(getPointsOnSides().get(1));
-        circle2.setCenterX(getPointsOnSides().get(2));
-        circle2.setCenterY(getPointsOnSides().get(3));
-        currentPanel.changeColorSmallSide(Color.WHITE);
+        if (!(Main.LEVEL == 0 && !reachedTheEdge)){
+            if(changePanel()) return false;
+        }
+        return true;
     }
 
     @Override
@@ -91,6 +74,7 @@ public class Flipper extends Enemy {
     protected void uniqueDestroyMethod() {
         Main.root.getChildren().remove(this);
         currentPanel.getFlippers().remove(this);
+        Main.root.getChildren().remove(defFlipper);
     }
 
     private List<Double> getPointsOnSides() {
@@ -171,27 +155,35 @@ public class Flipper extends Enemy {
         return Arrays.asList(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
     }
 
-    private double changePanelAngle(double triangleBaseXLeft, double triangleBaseYLeft, double triangleBaseXRight, double triangleBaseYRight, Point2D centerPoint) {
-        double triangleBaseLengthX = triangleBaseXRight - triangleBaseXLeft;
-        double triangleBaseLengthY = triangleBaseYRight - triangleBaseYLeft;
-        double triangleBaseLength = Math.sqrt(Math.pow(triangleBaseLengthX, 2) + Math.pow(triangleBaseLengthY, 2));
+    private double findChangeAngle(boolean left, double pivotX, double pivotY, List<Double> initialPoints, List<Double> endPoints) {
+        double initVectorX = pivotX - initialPoints.get(0);
+        double initVectorY = pivotY - initialPoints.get(1);
+        double endVectorX = pivotX - endPoints.get(0);
+        double endVectorY = pivotY - endPoints.get(1);
 
-        double triangleSideLength = Math.sqrt(Math.pow(centerPoint.getX() - triangleBaseXRight, 2) + Math.pow(centerPoint.getY() - triangleBaseYRight, 2));
+        double dotProduct = initVectorX * endVectorX + initVectorY * endVectorY;
 
-        double angle = Math.toDegrees(Math.acos((Math.pow(triangleBaseLength, 2) - Math.pow(triangleSideLength, 2) - Math.pow(triangleSideLength, 2)) /
-                (-2 * triangleSideLength * triangleSideLength)));
-        if (triangleBaseXLeft == triangleBaseXRight || triangleBaseYLeft == triangleBaseYRight) {
-            angle = 180;
+        double initMagnitude = Math.sqrt(Math.pow(initVectorX, 2) + Math.pow(initVectorY, 2));
+        double endMagnitude = Math.sqrt(Math.pow(endVectorX, 2) + Math.pow(endVectorY, 2));
+
+        double angle = Math.acos(dotProduct / (initMagnitude * endMagnitude));
+
+        Point2D leftPoint, rightPoint, middlePoint;
+        if(left){
+            leftPoint = new Point2D(initialPoints.get(0), initialPoints.get(1));
+            rightPoint = new Point2D(endPoints.get(0), endPoints.get(1));
         }
-        if(isConcave(new Point2D(triangleBaseXLeft, triangleBaseYLeft), centerPoint, new Point2D(triangleBaseXRight, triangleBaseYRight))){
-            System.out.println("yesyes");
-            if(angle > 0){
-                angle = 360 - angle;
-            }
-            else angle = -360 + angle;
+        else{
+            rightPoint = new Point2D(initialPoints.get(0), initialPoints.get(1));
+            leftPoint = new Point2D(endPoints.get(0), endPoints.get(1));
         }
-        if(Double.isNaN(angle)) angle = 180;
-        return angle;
+        middlePoint = new Point2D(pivotX, pivotY);
+        if(isReflex(rightPoint, middlePoint, leftPoint)){
+            angle = 2 * Math.PI - angle;
+        }
+        if (Double.isNaN(angle)) angle = Math.PI;
+
+        return Math.toDegrees(angle);
     }
 
     private boolean chooseDirection() {
@@ -216,43 +208,45 @@ public class Flipper extends Enemy {
         }
     }
 
-    private void changePanel() {
+    private boolean changePanel() {
         if (step == 0) {
+            tempRotationAngle = 0;
             rotate(180, pointer.getCenterX(), pointer.getCenterY());
             left = chooseDirection();
+            List<Double> initPoints = getPoints();
+            double percentage = h / maxH;
+            Panel tempFlipperPanel;
+            if (left) {
+                tempFlipperPanel = currentPanel.getLeftPanel();
+                pivotX = initPoints.get(8);
+                pivotY = initPoints.get(9);
+            } else {
+                tempFlipperPanel = currentPanel.getRightPanel();
+                pivotX = initPoints.get(12);
+                pivotY = initPoints.get(13);
+            }
+            Flipper tempFlipper = new Flipper(tempFlipperPanel);
+            tempFlipper.h = tempFlipperPanel.getLength() * percentage;
+            tempFlipper.updatePoints();
+            List<Double> endPoints = tempFlipper.getPoints();
+            tempFlipper.destroy();
+            fullRotationAngle = findChangeAngle(left, pivotX, pivotY, initPoints, endPoints);
+            if (left){
+                fullRotationAngle *= -1;
+            }
         } else {
             BetterPolygon temp = new BetterPolygon(getFlipperPoints());
             temp.rotate(180, pointer.getCenterX(), pointer.getCenterY());
             if (left) {
-                double triangleBaseXLeft = currentPanel.getLeftPanel().getLeftSide().getPoints().get(2);
-                double triangleBaseYLeft = currentPanel.getLeftPanel().getLeftSide().getPoints().get(3);
-                double triangleBaseXRight = currentPanel.getRightSide().getPoints().get(2);
-                double triangleBaseYRight = currentPanel.getRightSide().getPoints().get(3);
-
-                double angle = changePanelAngle(triangleBaseXLeft, triangleBaseYLeft, triangleBaseXRight, triangleBaseYRight,
-                        new Point2D(currentPanel.getLeftSide().getPoints().get(2), currentPanel.getLeftSide().getPoints().get(3)));
-                angle /= 30;
-
                 pivotX = temp.getPoints().get(8);
                 pivotY = temp.getPoints().get(9);
-                rotationAngle += angle;
             } else {
-                double triangleBaseXLeft = currentPanel.getRightPanel().getRightSide().getPoints().get(2);
-                double triangleBaseYLeft = currentPanel.getRightPanel().getRightSide().getPoints().get(3);
-                double triangleBaseXRight = currentPanel.getLeftSide().getPoints().get(2);
-                double triangleBaseYRight = currentPanel.getLeftSide().getPoints().get(3);
-
-                double angle = changePanelAngle(triangleBaseXLeft, triangleBaseYLeft, triangleBaseXRight, triangleBaseYRight,
-                        new Point2D(currentPanel.getRightSide().getPoints().get(2), currentPanel.getRightSide().getPoints().get(3)));
-                angle /= 30;
-
                 pivotX = temp.getPoints().get(12);
                 pivotY = temp.getPoints().get(13);
-                rotationAngle += angle;
             }
+            tempRotationAngle += fullRotationAngle / 30;
             getPoints().setAll(temp.getPoints());
-            if (left) rotate(-rotationAngle, pivotX, pivotY);
-            else rotate(rotationAngle, pivotX, pivotY);
+            rotate(tempRotationAngle, pivotX, pivotY);
         }
         step++;
 
@@ -262,50 +256,37 @@ public class Flipper extends Enemy {
             } else {
                 currentPanel = currentPanel.getRightPanel();
             }
-
-            if (left) pointer.rotate(-rotationAngle, getPointsOnSides().get(0), getPointsOnSides().get(1));
-            else pointer.rotate(rotationAngle, getPointsOnSides().get(2), getPointsOnSides().get(3));
+            currentPanel.getFlippers().add(this);
 
             double percentage = h / maxH;
             maxH = currentPanel.getLength();
             h = percentage * maxH;
 
-            double panelToHorizontalAngle = Math.toDegrees(Math.atan((currentPanel.getSmallSide().getPoints().get(3) - currentPanel.getSmallSide().getPoints().get(1))
-                    / (currentPanel.getSmallSide().getPoints().get(2) - currentPanel.getSmallSide().getPoints().get(0))));
-            if (Double.toString(panelToHorizontalAngle).equals("-0.0")) panelToHorizontalAngle = 180;
-            else if (currentPanel.isBottomPanel()) {
-                panelToHorizontalAngle += 180;
-            }
-//            System.out.println(currentPanel.getAngle());
-//            defPoints = BetterPolygon.rotate(new BetterPolygon(defFlipper.getPoints()), panelToHorizontalAngle).getPoints();
-//            BetterPolygon betterPolygon = new BetterPolygon(defPoints);
-//            Main.root.getChildren().add(betterPolygon);
-//            betterPolygon.scale(3);
-//            betterPolygon.setStroke(Color.AQUA);
-            if(left) defFlipper.rotate(rotationAngle, defPoints.get(8), defPoints.get(9));
-            else defFlipper.rotate(-rotationAngle, defPoints.get(12), defPoints.get(13));
-            defPoints = defFlipper.getPoints();
-            System.out.println(rotationAngle+" chuj");
+            double defFlipperPointerX = (defFlipper.getPoints().get(8) + defFlipper.getPoints().get(12)) / 2;
+            double defFlipperPointerY = (defFlipper.getPoints().get(9) + defFlipper.getPoints().get(13)) / 2;
+            defFlipper.rotate(180, defFlipperPointerX, defFlipperPointerY);
+            double defFlipperPivotX = (left) ? defFlipper.getPoints().get(8) : defFlipper.getPoints().get(12);
+            double defFlipperPivotY = (left) ? defFlipper.getPoints().get(9) : defFlipper.getPoints().get(13);
+            defFlipper.rotate(fullRotationAngle, defFlipperPivotX, defFlipperPivotY);
 
-            getPoints().setAll(getFlipperPoints());
+            defPoints = new ArrayList<>(defFlipper.getPoints());
 
-            rotationAngle = 0;
+            pointer.moveTo((getPointsOnSides().get(0) + getPointsOnSides().get(2))/2, (getPointsOnSides().get(1) + getPointsOnSides().get(3))/2);
+            fullRotationAngle = 0;
             step = 0;
+            return true;
         }
+        return false;
     }
 
-    private boolean isConcave(Point2D right, Point2D center, Point2D left) {
-        double xDiff = right.getX()-left.getX();
-        double yDiff = right.getY()-left.getY();
-        if(xDiff < 1.5 || yDiff < 1.5) return false;
+    private boolean isReflex(Point2D right, Point2D center, Point2D left) {
         Point2D middle = new Point2D((left.getX() + right.getX()) / 2, (left.getY() + right.getY()) / 2);
-        if(left.getX() < right.getX()){
-            if(center.getX() > middle.getX() && center.getY() > middle.getY()) return true;
-            else if(center.getX() < middle.getX() && center.getY() > middle.getY()) return true;
-        }
-        else if(left.getX() > right.getX()){
-            if(center.getX() > middle.getX() && center.getY() < middle.getY()) return true;
-            else if(center.getX() < middle.getX() && center.getY() < middle.getY()) return true;
+        if (left.getX() < right.getX()) {
+            if (center.getX() > middle.getX() && center.getY() > middle.getY()) return true;
+            else if (center.getX() < middle.getX() && center.getY() > middle.getY()) return true;
+        } else if (left.getX() > right.getX()) {
+            if (center.getX() > middle.getX() && center.getY() < middle.getY()) return true;
+            else if (center.getX() < middle.getX() && center.getY() < middle.getY()) return true;
         }
         return false;
     }
