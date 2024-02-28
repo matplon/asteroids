@@ -320,6 +320,14 @@ public class Main {
 
     public static void gameOver() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         timeline.stop();
+        if(playerEngine!=null){
+            playerEngine.stop();
+            playerEngine=null;
+        }
+        if(Enemy.clip!=null){
+            Enemy.clip.stop();
+            Enemy.clip = null;
+        }
         HUD.gameOver();
 
     }

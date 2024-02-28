@@ -86,9 +86,10 @@ public class Enemy extends Particle {
             enemy.moveTo(x, y);
             enemy.scale(LARGE_SAUCER_RADIUS / enemy.radius);
             enemy.setFill(Color.TRANSPARENT);
+            enemyShootTimer = 0;
             enemy.setStroke(Color.WHITE);
             root.getChildren().add(enemy);
-                enemyList.add(enemy); //all
+            enemyList.add(enemy); //all
             }
     }
 
@@ -137,11 +138,6 @@ public class Enemy extends Particle {
 
     public static void shootBullet() {
         if (!enemyList.isEmpty()) {
-            try {
-                Sound.play("enemyShoot.wav");
-            } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
-                throw new RuntimeException(e);
-            }
             Enemy enemy = enemyList.get(0);
             List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle bullet
             double angle = Math.random() * 360 - 180;
@@ -165,6 +161,11 @@ public class Enemy extends Particle {
 
 
             Main.root.getChildren().add(bullet);
+            try {
+                Sound.play("enemyShoot.wav");
+            } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

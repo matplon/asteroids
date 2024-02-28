@@ -4,6 +4,7 @@ import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Sound;
 import javafx.scene.paint.Color;
 
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
@@ -46,7 +47,8 @@ public class Player extends Particle {
         Main.bulletsDistanceCovered.put(bullet, 0.0);
 
         Main.root.getChildren().add(bullet);
-        Sound.play("laserShoot.wav");
+        Clip clip = Sound.getClip("laserShoot.wav",1.0f);
+        clip.start();
     }
 
     public void checkForHits() {

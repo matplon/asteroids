@@ -112,7 +112,6 @@ public class Asteroid extends Particle {
                         Main.enemyShootTimer = 0;
                         Main.root.getChildren().remove(Enemy.enemyList.get(0));
                         Enemy.enemyList.get(0).explode();
-                        Enemy.enemyList.remove(Enemy.enemyList.get(0));
                         asteroidsToDestroy.put(Main.asteroids.get(i), false);
                     }
                 }
