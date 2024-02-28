@@ -101,7 +101,9 @@ public class Missile extends EnemyTank {
             this.setY(this.getCenter().getY());
             this.setZ(this.getCenter().getZ());
         if(array.contains(Main.camera)&&(isGrounded&&!isFlying)){
-            Main.wasHit = true;
+            if(!Main.isDying){
+                Main.wasHit=true;
+            }
             this.setForward(new Vertex(0,0,0));
             this.getMissileHum().stop();
         }else{

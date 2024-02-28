@@ -46,8 +46,10 @@ public class Ufo extends EnemyTank{
     public void takeHit(Object3D object3D){
         death.start();
         ufoPoints.start();
-        ambient.stop();
-        ambient = null;
+        if(ambient!=null) {
+            ambient.stop();
+            ambient = null;
+        }
         Main.ufoList.remove(this);
         Main.objectList.remove(this);
         if(object3D instanceof Camera) {

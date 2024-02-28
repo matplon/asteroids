@@ -51,7 +51,7 @@ public class Enemy extends Particle {
 
     public static void spawnEnemy() {
 
-        if (enemyList.isEmpty()&&Math.random()*10<1) {
+        if (enemyList.isEmpty()&&Math.random()*5<1) {
             if(clip==null){
             try {
                 clip = Sound.getClip("enemyAmbient.wav",1.0f);
