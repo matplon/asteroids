@@ -25,15 +25,6 @@ public class Camera extends Object3D{
 
     double magTimer;
 
-    private final AudioInputStream stream;
-
-    {
-        try {
-            stream = Sound.getStream("tankShot.wav");
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 
     private Vertex forward;

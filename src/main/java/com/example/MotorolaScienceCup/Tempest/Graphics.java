@@ -36,7 +36,7 @@ public class Graphics {
         mapCenterX = tempSmallShape.getCenterX();
         mapCenterY = tempSmallShape.getCenterY();
 
-        BetterPolygon tempPolygon = BetterPolygon.scale(tempSmallShape, 7 + scale);
+        BetterPolygon tempPolygon = BetterPolygon.scale(tempSmallShape, 10 + scale);
         tempPolygon.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
         List<Double> bigShapePoints = tempPolygon.getPoints();
         drawConnectors(oldPanels, smallShapePoints, bigShapePoints, color, new Glow(Main.glowV));

@@ -8,7 +8,7 @@
    version="1.1"
    id="svg1"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
-   sodipodi:docname="mapCross.svg"
+   sodipodi:docname="mapCrossTest.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="1.0242632"
-     inkscape:cx="572.60672"
-     inkscape:cy="467.16507"
+     inkscape:zoom="5.6568543"
+     inkscape:cx="308.03339"
+     inkscape:cy="801.94748"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
@@ -39,8 +39,8 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       id="path1-32-4"
+       id="path30-878"
        style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 70.003572,145.43801 H 92.477032 M 70.135862,122.83225 V 145.30572 M 47.530112,122.96454 H 70.003572 M 47.662402,100.35879 V 122.83225 M 47.662402,77.885323 V 100.35879 M 70.003582,77.753032 H 47.530112 M 70.135872,55.411862 V 77.885323 M 92.477042,55.279572 H 70.003582 M 114.95052,145.43801 H 92.477051 M 114.81823,122.83225 V 145.30572 M 137.42398,122.96454 H 114.95052 M 137.29169,100.35879 V 122.83225 M 137.29169,77.885323 V 100.35879 M 114.95051,77.753032 H 137.42398 M 114.81822,55.411863 V 77.885323 M 92.477042,55.279572 H 114.95051" />
+       d="M 74.072049,198.06361 H 66.839209 M 66.706918,205.16416 V 197.93132 M 66.839209,205.29645 H 59.606369 M 59.474078,212.397 V 205.16416 M 59.474078,219.62984 V 212.397 M 66.839209,219.49755 H 59.606369 M 66.706918,226.86268 V 219.62984 M 74.072049,226.73039 H 66.839209 M 81.304889,226.73039 H 74.072049 M 81.43718,219.62984 V 226.86268 M 88.537729,219.49755 H 81.304889 M 88.67002,212.397 V 219.62984 M 88.67002,205.16416 V 212.397 M 81.304886,205.29645 H 88.537729 M 81.437177,197.93132 V 205.16416 M 74.072043,198.06361 H 81.304886" />
   </g>
 </svg>

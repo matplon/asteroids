@@ -47,7 +47,7 @@ public class Ufo extends EnemyTank{
         death.start();
         ufoPoints.start();
         if(ambient!=null) {
-            ambient.stop();
+            ambient.close();
             ambient = null;
         }
         Main.ufoList.remove(this);
@@ -113,7 +113,7 @@ public class Ufo extends EnemyTank{
                 ambient.start();
         }
         if(distance>40&&ambient!=null){
-            ambient.stop();
+            ambient.close();
             ambient=null;
         }
         }

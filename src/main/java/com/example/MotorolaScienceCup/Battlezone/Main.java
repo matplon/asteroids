@@ -399,7 +399,7 @@ public class Main {
         }
         else if(!forwardPressed&&!rearPressed&&!rightPressed&&!leftPressed&&!rotRightPressed&&!rotLeftPressed){
             if(isMoving!=null){
-                isMoving.stop();
+                isMoving.close();
                 isMoving=null;
             }
             if(isIdling==null){
@@ -527,15 +527,15 @@ public class Main {
         }
         Text s = new Text("Score      " + score);
         s.setFont(Font.font(30));
-        s.setX(WIDTH-400);
-        s.setY(100);
+        s.setX(WIDTH-WIDTH/8);
+        s.setY(HEIGHT/10);
         s.setFill(Color.RED);
         textList.add(s);
         root.getChildren().add(s);
         Text h = new Text("HiScore   "+hiScore);
         h.setFont(Font.font(30));
-        h.setX(WIDTH-400);
-        h.setY(200);
+        h.setX(WIDTH-WIDTH/8);
+        h.setY(HEIGHT/7);
         h.setFill(Color.RED);
         textList.add(h);
         root.getChildren().add(h);
@@ -552,6 +552,9 @@ public class Main {
         CAMERA_SPEED = 0;
         CAMERA_ROT_SPEED = 0;
         playerHP--;
+        for (Missile missile:missileList){
+            missile.getMissileHum().close();
+        }
         try {
             Sound.play("playerDeath1.wav");
             Sound.play("explosion.wav");
@@ -773,15 +776,15 @@ public class Main {
             if(isDying){
                 death_ticks++;
                 if(isIdling!=null){
-                    isIdling.stop();
+                    isIdling.close();
                     isIdling=null;
                 }
                 if(isMoving!=null){
-                    isMoving.stop();
+                    isMoving.close();
                     isMoving=null;
                 }
                 if(Ufo.ambient!=null){
-                    Ufo.ambient.stop();
+                    Ufo.ambient.close();
                     Ufo.ambient=null;
                 }
                 if(death_ticks > 0 && death_ticks < 10){
@@ -863,10 +866,10 @@ public class Main {
                     isIdling.start();
                     Vertex preDeathCamPos = new Vertex(camera.getX(), camera.getY(), camera.getZ());
                     camera.moveToRandom();
-                    //camera.rotY(Math.random()*360);
                     for(Object3D object3D:horizon){
                         object3D.translate(camera.getX()-preDeathCamPos.getX(),0, camera.getZ()-preDeathCamPos.getZ());
                     }
+                    //camera.rotY(Math.random()*360);
                     justDied = true;
                     if(playerHP<=0){
                         gameOver();
@@ -961,7 +964,7 @@ public class Main {
             root.getChildren().removeAll(hearts);
             hearts.clear();
             for (int i = 0; i < playerHP; i++) {
-                double x = 5*WIDTH/6 + i*50;
+                double x = WIDTH-WIDTH/6.25 + i*40;
                 addHeart(x);
             }
             RADAR_ROT+=1;
@@ -1032,6 +1035,23 @@ public class Main {
         back.setLayoutY(100);
         back.setOnMouseClicked(mouseEvent -> {
             try {
+                timeline.stop();
+                resetData();
+                if(Ufo.ambient!=null){
+                    Ufo.ambient.close();
+                    Ufo.ambient = null;
+                }
+                if(isMoving!=null){
+                    isMoving.close();
+                    isMoving = null;
+                }
+                if(isIdling!=null){
+                    isIdling.close();
+                    isIdling = null;
+                }
+                for(Missile missile:missileList){
+                    missile.getMissileHum().close();
+                }
                 Menu.resetMenu();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -1054,7 +1074,7 @@ public class Main {
         }
         playerHP = 3;
         for(Clip clip: Menu.clips){
-            clip.stop();
+            clip.close();
         }
         Timeline timeline;
           WIDTH = Menu.WIDTH;
@@ -1148,7 +1168,19 @@ public class Main {
     public static void gameOver() {
         timeline.stop();
         for (Missile missile:missileList){
-            missile.getMissileHum().stop();
+            missile.getMissileHum().close();
+        }
+        if(Ufo.ambient!=null){
+            Ufo.ambient.close();
+            Ufo.ambient = null;
+        }
+        if(isMoving!=null){
+            isMoving.close();
+            isMoving = null;
+        }
+        if(isIdling!=null){
+            isIdling.close();
+            isIdling = null;
         }
         Text gameOverText = new Text("Game Over");
         gameOverText.setFont(Font.font(100));
@@ -1240,7 +1272,7 @@ public class Main {
         BetterPolygon heart = new com.example.MotorolaScienceCup.Particle(com.example.MotorolaScienceCup.Util.SVGconverter("heart.svg"), 0, 0, 0, 0);
         heart.setStroke(Color.RED);
         heart.setLayoutX(x);
-        heart.setLayoutY(100);
+        heart.setLayoutY((double) HEIGHT /20);
         hearts.add(heart);
         root.getChildren().add(heart);
     }

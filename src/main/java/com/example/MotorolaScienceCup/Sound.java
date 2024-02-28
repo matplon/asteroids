@@ -42,6 +42,7 @@ public class Sound {
         Clip clip = AudioSystem.getClip();
         clip.open(stream);
         clip.start();
+        Menu.clips.add(clip);
     }
 
     public static void play(String filepath, float volume) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
@@ -53,6 +54,7 @@ public class Sound {
         FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         gainControl.setValue(volume);
         clip.start();
+        Menu.clips.add(clip);
     }
 
 

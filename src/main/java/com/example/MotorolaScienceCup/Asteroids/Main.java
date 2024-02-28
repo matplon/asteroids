@@ -103,11 +103,7 @@ public class Main {
                 canShoot = false;
                 try {
                     player.shootBullet();
-                } catch (UnsupportedAudioFileException e) {
-                    throw new RuntimeException(e);
-                } catch (LineUnavailableException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
+                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -120,33 +116,18 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.X) canShoot = true;
         });
 
-        Text back = new Text("f");
-        back.setLayoutX(300);
-        back.setLayoutY(100);
-        back.setOnMouseClicked(mouseEvent -> {
-            try {
-                Menu.resetMenu();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (UnsupportedAudioFileException e) {
-                throw new RuntimeException(e);
-            } catch (LineUnavailableException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        root.getChildren().add(back);
 
         // Spawn the big asteroids
         Asteroid.spawnAsteroids(ASTEROID_COUNT);
 
         HUD.init(highscore(), Util.SVGconverter("heart.svg"));
 
+        for(Clip clip:Menu.clips){
+            clip.close();
+        }
         start();
         Menu.stage.setScene(scene);
         Menu.stage.show();
-
-        Clip clip = Menu.clips.get(0);
-        clip.close();
 
     }
 
@@ -304,27 +285,6 @@ public class Main {
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
-        Text back = new Text("←");
-        back.setFill(Color.RED);
-        back.setFont(Font.font("Public Pixel", 40));
-        back.setLayoutX(300);
-        back.setLayoutY(100);
-        back.setOnMouseClicked(mouseEvent -> {
-
-            try {
-                Menu.resetMenu();
-                timeline.stop();
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (UnsupportedAudioFileException e) {
-                throw new RuntimeException(e);
-            } catch (LineUnavailableException e) {
-                throw new RuntimeException(e);
-            }
-
-        });
-        root.getChildren().add(back);
 
 
     }
