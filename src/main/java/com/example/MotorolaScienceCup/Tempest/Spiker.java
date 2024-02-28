@@ -15,7 +15,6 @@ public class Spiker extends Enemy {
     private BetterPolygon defSpiker = new BetterPolygon(Util.transformPointsToList(filepath));
     private List<Double> defPoints;
     private boolean goingDown = false;
-    public boolean isDead = false;
     private Polyline line = new Polyline();
 
     public Spiker(Panel startPanel) {
@@ -43,7 +42,7 @@ public class Spiker extends Enemy {
     }
 
     public boolean move() {
-        if (h < maxH && !reachedTheEdge && !isDead) {
+        if (h < maxH && !reachedTheEdge) {
             moveUp();
             drawLine();
         } else if (frameOfMovement >= FRAMES_PER_MOVE && !destroyed && !goingDown) {
@@ -71,11 +70,7 @@ public class Spiker extends Enemy {
 
     @Override
     protected void uniqueDestroyMethod() {
-        if (!isDead) {
-            isDead = true;
-        } else {
-            currentPanel.getSpikers().remove(this);
-        }
+        currentPanel.getSpikers().remove(this);
         Main.root.getChildren().remove(this);
     }
 
@@ -97,20 +92,6 @@ public class Spiker extends Enemy {
 
         line.getPoints().setAll(xStart, yStart, xEnd, yEnd);
         currentPanel.spikerLine = line;
-    }
-
-    public boolean destroyLine(Player.Bullet bullet, double magnitude) {
-        if (line != null && bullet.intersects(line.getLayoutBounds())) {
-            Vector vector = new Vector(magnitude, currentPanel.getAngle());
-            List<Double> points = line.getPoints();
-            line.getPoints().setAll(points.get(0), points.get(1), points.get(2) - vector.getX(), points.get(3) - vector.getY());
-            if (vector.getMagnitude() > Math.sqrt(Math.pow(points.get(0) - points.get(2), 2) + Math.pow(points.get(1) - points.get(3), 2))) {
-                Main.root.getChildren().remove(line);
-                destroy();
-            }
-            return true;
-        }
-        return false;
     }
 
     public double getLineLength() {

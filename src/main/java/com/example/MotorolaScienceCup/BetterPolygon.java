@@ -1,5 +1,7 @@
 package com.example.MotorolaScienceCup;
 
+import javafx.scene.shape.Polyline;
+
 import java.util.List;
 
 public class BetterPolygon extends javafx.scene.shape.Polygon {
@@ -108,4 +110,11 @@ public class BetterPolygon extends javafx.scene.shape.Polygon {
         return polygon;
     }
 
+    public static Polyline scalePolyline(Polyline polyline, double scale){
+        BetterPolygon polygon = new BetterPolygon(polyline.getPoints());
+        polygon.scale(scale);
+        Polyline polyline1 = new Polyline();
+        polyline1.getPoints().addAll(polygon.getPoints());
+        return polyline1;
+    }
 }

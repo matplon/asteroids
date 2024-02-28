@@ -48,7 +48,7 @@ public class Main {
     static boolean goRight;
     static boolean goLeft;
     static int LEVEL = 0;
-    static int flippersNumber = 0;
+    static int flippersNumber = 6;
     static int tankersNumber = 0;
     static int spikersNumber = 1;
 
@@ -57,7 +57,8 @@ public class Main {
     static String bullet = "testoctagon.svg";
     static String testMap2 = "testsquareKTORYDZIALA.svg";
     static String testMap3 = "mapa 3.svg";
-    static String testMap4 = "map4.svg";
+    static String testMap4 = "testoctagon.svg";
+    static String testMap5 = "mapa8.svg";
     static String testShip = "ship1.svg";
     static double scale = 1;
     static double a = 1.017;
@@ -77,7 +78,7 @@ public class Main {
         goLeft = false;
         goRight = false;
 
-        Graphics.drawMap("mapa 3.svg", defaultPanelColor, 1);
+        Graphics.drawMap(testMap5, defaultPanelColor, 1);
 
         double bigSideLengthX = panels.get(0).getBigSide().getPoints().get(0) - panels.get(0).getBigSide().getPoints().get(2);
         double bigSideLengthY = panels.get(0).getBigSide().getPoints().get(1) - panels.get(0).getBigSide().getPoints().get(3);
@@ -168,9 +169,7 @@ public class Main {
         if(!Enemy.seedsDone) return false;
         for (Panel panel : panels) {
             if (!panel.getTankers().isEmpty()) return false;
-            for (Spiker spiker : panel.getSpikers()) {
-                if (!spiker.isDead) return false;
-            }
+            if(!panel.getSpikers().isEmpty()) return false;
             for (Flipper flipper : panel.getFlippers()) {
                 if (!flipper.reachedTheEdge) return false;
             }
@@ -182,14 +181,14 @@ public class Main {
         timeline.stop();
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
             root.getChildren().clear();
-            Graphics.drawMap(testMap3, defaultPanelColor, scale);
+            Graphics.drawMap(testMap2, defaultPanelColor, scale);
             for (Panel panel : panels){
                 if(panel.spikerLine != null){
                     root.getChildren().add(panel.spikerLine);
                 }
                 for(Player.Bullet bullet1 : panel.getPlayerBullets()){
                     root.getChildren().add(bullet1);
-                    System.out.println(bullet1.h);
+//                    System.out.println(bullet1.h);
                 }
             }
             scale *= a;

@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.example.MotorolaScienceCup.Tempest.Main.*;
@@ -25,7 +26,7 @@ public class Graphics {
         List<Panel> oldPanels = new ArrayList<>(panels);
         panels = new ArrayList<>();
 
-        List<Double> smallShapePoints = Util.SVGconverter(filepath);
+        List<Double> smallShapePoints = Util.getMapPoints(filepath);
 
         BetterPolygon tempSmallShape = new BetterPolygon(smallShapePoints);
         tempSmallShape.setStroke(Color.GREEN);
@@ -39,8 +40,6 @@ public class Graphics {
         tempPolygon.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
         List<Double> bigShapePoints = tempPolygon.getPoints();
         drawConnectors(oldPanels, smallShapePoints, bigShapePoints, color, new Glow(Main.glowV));
-        tempSmallShape.moveTo(WIDTH-400,HEIGHT-400);
-        tempSmallShape.scale(8);
     }
 
     private static void drawConnectors(List<Panel> oldPanels, List<Double> smallShapePoints, List<Double> bigShapePoints, Color color, Glow glow) {
