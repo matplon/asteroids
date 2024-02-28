@@ -4,6 +4,7 @@ import com.example.MotorolaScienceCup.Menu;
 import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Sound;
 import com.example.MotorolaScienceCup.Util;
+import com.example.MotorolaScienceCup.Vector;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -20,6 +21,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
@@ -34,6 +36,12 @@ public class Main {
     final static double BULLET_SPEED = 15;
     final static double MAX_BULLET_DISTANCE = WIDTH * 0.6;
     static final double MAX_PARTICLE_DISTANCE = WIDTH * 0.05;
+
+    static final double MAX_EXHAUST_DISTANCE = WIDTH * 0.002;
+
+    static Clip playerEngine = null;
+
+    static final double EXHAUST_SPEED = 1.5;
     static final double PARTICLE_COUNT = 15;
     static final double SPAWNZONE_RADIUS = 100;
     final static double LARGE_SAUCER_RADIUS = Player.PLAYER_RADIUS;
@@ -42,8 +50,12 @@ public class Main {
     static AtomicBoolean isAlive = new AtomicBoolean(true);
     static List<Particle> bullets = new ArrayList<>();
     static List<Particle> particlesAll = new ArrayList<>();
+
+    static List<Particle> exhaustAll = new ArrayList<>();
     static HashMap<Particle, Double> bulletsDistanceCovered = new HashMap<>();
     static HashMap<Particle, Double> particlesDistanceCovered = new HashMap<>();
+
+    static HashMap<Particle, Double> exhaustDistanceCovered = new HashMap<>();
     static Timeline timeline;
     static Circle spawnZone;
     static String shipFilePath = "ship1.svg";
@@ -53,7 +65,7 @@ public class Main {
     static boolean canShoot = true;
     static int nextPointThreshold = 10000;
     static int respawnTimer = 0;
-    static int saucerTimer = 0;
+    static int saucerTimer = 3;
     static double enemyShootTimer = 0;
     static Player player;
     static List<Asteroid> asteroids = new ArrayList<>();
@@ -62,7 +74,7 @@ public class Main {
     static AnchorPane root = new AnchorPane();
     public static Scene scene = new Scene(root, WIDTH, HEIGHT);
 
-    public static void init() {
+    public static void init() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
 
         resetData();
         scene.setFill(Color.BLACK);
@@ -114,22 +126,14 @@ public class Main {
         Menu.stage.setScene(scene);
         Menu.stage.show();
 
+        Clip clip = Menu.clips.get(0);
+        clip.close();
+
     }
 
 
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
-            if (HP <= 0) {
-                try {
-                    gameOver();
-                } catch (UnsupportedAudioFileException e) {
-                    throw new RuntimeException(e);
-                } catch (LineUnavailableException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
 
             if (!isAlive.get())
                 respawnTimer++;
@@ -184,7 +188,32 @@ public class Main {
             Enemy.updateBullet();
 
 
-            player.updatePosition(); // Update player's position
+            player.updatePosition();
+
+            if(player.isAccelerating()&&isAlive.get()){
+                double angle=-player.getAngle();
+                if(player.getAngle()>0){
+                    angle-=180;
+                }else{
+                    angle+=180;
+                }
+                player.exhaustParticles(3,exhaustAll,exhaustDistanceCovered,root,angle+Math.random()*10-5, player.getVelocity().getMagnitude()+6);
+                if(playerEngine==null){
+                    try {
+                        playerEngine = Sound.getClip("asteroidsEngine.wav",1.0f);
+                    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                        throw new RuntimeException(e);
+                    }
+                    playerEngine.loop(Clip.LOOP_CONTINUOUSLY);
+                    playerEngine.start();
+                }
+
+            }else{
+                if(playerEngine!=null){
+                    playerEngine.stop();
+                    playerEngine=null;
+                }
+            }
 
             for (Particle playerBullet : bullets) {   // Update bullet distances
                 double currentDistance = bulletsDistanceCovered.get(playerBullet);
@@ -211,6 +240,18 @@ public class Main {
                     particlesAll.remove(particle);
                 }
             }
+            for (int i = 0; i < exhaustAll.size(); i++) {   // Update animation particles distances
+                Particle particle = exhaustAll.get(i);
+                double currentDistance = exhaustDistanceCovered.get(particle);
+                exhaustDistanceCovered.remove(particle);
+                particle.updatePosition();
+                exhaustDistanceCovered.put(particle, currentDistance + EXHAUST_SPEED);
+                if (exhaustDistanceCovered.get(particle) > MAX_EXHAUST_DISTANCE) {
+                    root.getChildren().remove(particle);
+                    exhaustDistanceCovered.remove(particle);
+                    exhaustAll.remove(particle);
+                }
+            }
             player.checkForHits();
             if (!Enemy.enemyList.isEmpty())
                 Enemy.enemyList.get(0).checkForHits();
@@ -226,12 +267,20 @@ public class Main {
                 if (newSafe) {  // If no asteroids in the spawn zone
                     isAlive.set(true);
                     player.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
+                    player.setVelocity(new Vector(0,0,0));
                     player.setFill(Color.TRANSPARENT);
                     player.setStroke(Color.WHITE);
                     root.getChildren().add(player);
                 }
             }
             Asteroid.updateAndCheck();
+            if (HP <= 0) {
+                try {
+                    gameOver();
+                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -243,6 +292,10 @@ public class Main {
     public static void resetData() {
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
+        if(playerEngine!=null){
+            playerEngine.stop();
+            playerEngine=null;
+        }
         scene.setFill(Color.BLACK);
         root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
         timeline = new Timeline();
@@ -266,6 +319,14 @@ public class Main {
     }
 
     public static void gameOver() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+        if(playerEngine!=null){
+            playerEngine.stop();
+            playerEngine=null;
+        }
+        if(Enemy.clip!=null){
+            Enemy.clip.stop();
+            Enemy.clip = null;
+        }
         timeline.stop();
         HUD.gameOver();
 

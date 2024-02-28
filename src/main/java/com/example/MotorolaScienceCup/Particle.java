@@ -1,5 +1,6 @@
 package com.example.MotorolaScienceCup;
 
+import com.example.MotorolaScienceCup.Asteroids.Main;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 
@@ -96,6 +97,19 @@ public class Particle extends BetterPolygon {
         }
     }
 
+    public void exhaustParticles(double particleCount, List<Particle> particleList, HashMap<Particle, Double> particlesDistance, AnchorPane root, double angle,double speed){
+        for (int i = 0; i < particleCount; i++) {
+            List<Double> points = Arrays.asList(1.0, 1.0, 1.0, 5.0, 3.0, 5.0, 3.0, 1.0);    // Rectangle particle
+            Particle particle1 = new Particle(points, angle, 0, speed, 0);
+            particle1.setFill(Color.WHITE);
+            particle1.moveTo(getCenterX() + getRadius() * Math.cos(Math.toRadians(angle))*0.7, getCenterY() + getRadius() * Math.sin(Math.toRadians(angle))*0.7);
+            particleList.add(particle1);
+            particlesDistance.put(particle1, 0.0);
+
+            root.getChildren().add(particle1);
+        }
+    }
+
     public void setAngle(double angle) {
         this.angle = angle;
     }
@@ -131,4 +145,10 @@ public class Particle extends BetterPolygon {
     public void setTerminalVelocity(double terminalVelocity) {
         this.terminalVelocity = terminalVelocity;
     }
+
+    public boolean isAccelerating() {
+        return isAccelerating;
+    }
+
+
 }

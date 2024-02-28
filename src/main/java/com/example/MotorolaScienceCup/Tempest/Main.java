@@ -74,7 +74,7 @@ public class Main {
         goLeft = false;
         goRight = false;
 
-        Graphics.drawMap(testMap3, defaultPanelColor, 1);
+        Graphics.drawMap("mapa 3.svg", defaultPanelColor, 1);
 
         double bigSideLengthX = panels.get(0).getBigSide().getPoints().get(0) - panels.get(0).getBigSide().getPoints().get(2);
         double bigSideLengthY = panels.get(0).getBigSide().getPoints().get(1) - panels.get(0).getBigSide().getPoints().get(3);

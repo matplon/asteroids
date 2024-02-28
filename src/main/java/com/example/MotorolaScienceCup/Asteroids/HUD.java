@@ -3,18 +3,27 @@ package com.example.MotorolaScienceCup.Asteroids;
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Menu;
 import com.example.MotorolaScienceCup.Particle;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import static com.example.MotorolaScienceCup.Asteroids.Main.HEIGHT;
+import static com.example.MotorolaScienceCup.Asteroids.Main.WIDTH;
 
 public class HUD {
 
@@ -58,7 +67,7 @@ public class HUD {
         highScore = new Text(previousHighScore + "");
         highScore.setFont(font);
         highScore.setTextAlignment(TextAlignment.CENTER);
-        highScore.setLayoutX(Main.WIDTH / 2);
+        highScore.setLayoutX(WIDTH / 2);
         highScore.setLayoutY(pointsTextY);
         highScore.setStroke(Color.RED);
 
@@ -90,25 +99,28 @@ public class HUD {
     public static void gameOver() {
         Main.resetData();
         Text gameOverText = new Text("Game Over");
-        gameOverText.setFont(font);
-        gameOverText.setStroke(Color.RED);
-        gameOverText.setX(Main.WIDTH/2 - gameOverText.getLayoutBounds().getWidth()/2);
-        gameOverText.setY(Main.HEIGHT/2);
+        gameOverText.setFont(Font.font(100));
+        gameOverText.setFill(Color.GREEN);
+
+        gameOverText.setX(WIDTH/2 - gameOverText.getLayoutBounds().getWidth()/2);
+        gameOverText.setY(HEIGHT/2);
 
 
 
         AnchorPane newRoot = new AnchorPane();
         newRoot.getChildren().add(gameOverText);
         Button restart = new Button("Restart");
-        restart.setLayoutX(400);
-        restart.setLayoutY(700);
-        restart.setFont(font);
+        restart.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
+        restart.setFont(Font.font(50));
+        restart.setLayoutX(WIDTH/2 - 275 - restart.getWidth()/2);
+        restart.setLayoutY(HEIGHT/2 + 100);
 
 
         Button menu = new Button("Menu");
-        menu.setLayoutX(1300);
-        menu.setLayoutY(700);
-        menu.setFont(font);
+        menu.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
+        menu.setFont(Font.font(50));
+        menu.setLayoutX(WIDTH/2 + 75 + menu.getWidth()/2);
+        menu.setLayoutY(HEIGHT/2 + 100);
         menu.setOnAction(actionEvent -> {
             try {
                 Menu.resetMenu();
@@ -117,12 +129,17 @@ public class HUD {
             }
         });
         restart.setOnAction(actionEvent -> {
-            Main.init();
+            try {
+                Main.init();
+            } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         newRoot.getChildren().addAll(restart, menu);
-        Scene newScene = new Scene(newRoot, Main.WIDTH, Main.HEIGHT);
+        Scene newScene = new Scene(newRoot, WIDTH, HEIGHT);
         newScene.setFill(Color.BLACK);
+        newRoot.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         Menu.stage.setScene(newScene);
 
         Scanner scanner = null;

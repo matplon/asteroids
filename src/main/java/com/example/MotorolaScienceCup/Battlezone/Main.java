@@ -6,6 +6,7 @@ import com.example.MotorolaScienceCup.Asteroids.Enemy;
 import com.example.MotorolaScienceCup.Asteroids.HUD;
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Menu;
+import com.example.MotorolaScienceCup.Sound;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
@@ -27,6 +28,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.sound.sampled.*;
 import java.io.*;
 import java.util.*;
 
@@ -44,6 +46,8 @@ public class Main {
 
     static double CAMERA_SPEED = 0.1;
     static double CAMERA_ROT_SPEED = 0.5;
+
+    static long frameCount=0;
     
     static double RADAR_ROT = 0;
 
@@ -105,6 +109,10 @@ public class Main {
     static boolean rotRightPressed = false;
     static boolean rotLeftPressed = false;
 
+    static Clip isIdling = null;
+
+    static Clip isMoving = null;
+
     static int playerHP = 3;
 
     static double H_FOV = 90;
@@ -136,8 +144,7 @@ public class Main {
     public static void init(){
         score = 0;
         resetData();
-        scene.setFill(Color.BLACK);
-        root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
+        root.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         AnchorPane rootLoad = new AnchorPane();
         Scene sceneLoad = new Scene(rootLoad,WIDTH,HEIGHT);
         Rectangle rectangle = new Rectangle(0,0,WIDTH,HEIGHT);
@@ -171,7 +178,6 @@ public class Main {
         camPos.add(new Vertex(0,0,0));
         camera = new Camera(camPos,new ArrayList<Face>(),0,0,0);
         camera.setHitBox2D(camHitbox);
-        camera.translate(0,0,-10);
         previousCamPos = new Vertex(camera.getX(), camera.getY(), camera.getZ());
         objectList.add(camera);
        /* *//*EnemyTank obj1 = Util.generateEnemyTank(0,10);
@@ -180,6 +186,7 @@ public class Main {
         Ufo ufo = Util.generateUfo(0,0);*/
         generateInitChunks();
         spawnEnemy();
+        spawnUfo();
         drawHorizon2();
         start();
 
@@ -373,6 +380,45 @@ public class Main {
             collisionDir = false;
             //camera.updateRotation(-CAMERA_ROT_SPEED);
         };
+        if((forwardPressed||rearPressed||rightPressed||leftPressed||rotRightPressed||rotLeftPressed)&&isMoving==null) {
+            try {
+                File music = new File("playerMove.wav");
+                AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+                Clip clip = AudioSystem.getClip();
+                clip.open(inputStream);
+                FloatControl gainControl =
+                        (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                gainControl.setValue(-5.0f);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+                clip.start();
+                isMoving=clip;
+            }
+            catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else if(!forwardPressed&&!rearPressed&&!rightPressed&&!leftPressed&&!rotRightPressed&&!rotLeftPressed){
+            if(isMoving!=null){
+                isMoving.stop();
+                isMoving=null;
+            }
+            if(isIdling==null){
+            try {
+                File music = new File("playerIdle.wav");
+                AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+                Clip clip = AudioSystem.getClip();
+                clip.open(inputStream);
+                FloatControl gainControl =
+                        (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                gainControl.setValue(-10.0f);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+                clip.start();
+                isIdling=clip;
+            }
+            catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                throw new RuntimeException(e);
+            }}
+        }
 
     }
 
@@ -466,6 +512,11 @@ public class Main {
             root.getChildren().add(t);
         }
         if(collisionDir&&TEXT_TICK>10){
+            try {
+                Sound.play("jump.wav");
+            } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                throw new RuntimeException(e);
+            }
             Text t = new Text("Movement blocked by object");
             t.setFont(Font.font(50));
             t.setX(100);
@@ -501,22 +552,28 @@ public class Main {
         CAMERA_SPEED = 0;
         CAMERA_ROT_SPEED = 0;
         playerHP--;
+        try {
+            Sound.play("playerDeath1.wav");
+            Sound.play("explosion.wav");
+        } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
 
-    public static void spawnEnemy(){
+    public static boolean spawnEnemy(){
         double check = new Random().nextDouble(13);
         if(check >= 4 && score < 10000 && check<8){
             check = new Random().nextDouble(4);
         }else if(check >= 8 && score < 15000){
             check = new Random().nextDouble(8);
         }
-
+        boolean spawned = false;
         if(check<4){
             Vertex vertex = camera.getForward();
             double[] arr = vertex.toArray();
-            double offset = Math.random()*120-60;
+            double offset = Math.random()*90-45;
             arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
             double scale = Math.random()*50+25;
             for (int i = 0; i < arr.length; i++) {
@@ -526,12 +583,13 @@ public class Main {
             EnemyTank enemyTank = Util.generateEnemyTank(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
             boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
             if(!notCollided){
-                enemyTank.moveToRandom(60,15);
+                enemyTank.moveToRandom(45,15);
             }
+            spawned = true;
         } else if(check>=4&&check<8&&score>=15000){
             Vertex vertex = camera.getForward();
             double[] arr = vertex.toArray();
-            double offset = Math.random()*200-100;
+            double offset = Math.random()*150-75;
             arr = Util.multiplyTransform(Util.getRotationYMatrix(offset),arr);
             double scale = Math.random()*50+25;
             for (int i = 0; i < arr.length; i++) {
@@ -541,8 +599,9 @@ public class Main {
             SuperTank enemyTank = Util.generateSuperTank(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
             boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
             if(!notCollided){
-                enemyTank.moveToRandom(100,15);
+                enemyTank.moveToRandom(75,15);
             }
+            spawned = true;
         } else if(check>=8&&score>=10000&&missileList.isEmpty()&&fullTankList.isEmpty()){
             Vertex vertex = camera.getForward();
             double[] arr = vertex.toArray();
@@ -558,7 +617,22 @@ public class Main {
             if(!notCollided){
                 enemyTank.moveToRandom(30,115);
             }
+            spawned = true;
+            Clip clip;
+            try {
+                File music = new File("missileHum.wav");
+                AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+                clip = AudioSystem.getClip();
+                clip.open(inputStream);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+                clip.start();
+            }
+            catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                throw new RuntimeException(e);
+            }
+            enemyTank.setMissileHum(clip);
         }
+        return spawned;
 
 
     }
@@ -576,7 +650,7 @@ public class Main {
             Ufo enemyTank = Util.generateUfo(vertex.getX()+camera.getX(),vertex.getZ()+camera.getZ());
             boolean notCollided = enemyTank.runCollisionCheck(8, enemyTank.getCollideHitBox(), enemyTank).isEmpty();
             if(!notCollided){
-                enemyTank.moveToRandom(75,100);
+                enemyTank.moveToRandom(75,50);
             }
     }
 
@@ -593,6 +667,15 @@ public class Main {
 
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
+            frameCount++;
+            boolean justDied = false;
+            if((frameCount%120)==0){
+                try {
+                    Sound.play("radarPing.wav");
+                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             if(loadTimer<30){
                 loadTimer++;
             }else{
@@ -609,13 +692,24 @@ public class Main {
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
             fullTankList.addAll(missileList);
-            if(fullTankList.isEmpty()&&Math.random()*120<1){
+            if(fullTankList.isEmpty()&&Math.random()*200<1){
                 double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
+                int count = 0;
                 for (int i = 0; i < enemyCount; i++) {
-                    //spawnEnemy();
+                    boolean spawned = spawnEnemy();
+                    if(spawned){
+                        count++;
+                    }
+                }
+                if(count>0){
+                    try {
+                        Sound.play("spawnAlert.wav");
+                    } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
-            if(ufoList.isEmpty()&&Math.random()*600<1){
+            if(ufoList.isEmpty()&&Math.random()*480<1){
                 spawnUfo();
             }
             TEXT_TICK++;
@@ -649,6 +743,13 @@ public class Main {
                 ufoList.get(i).enemyBehavior();
             }
             if(has_collided){
+                if(impact_ticks==1){
+                    try {
+                        Sound.play("collision1.wav", 3.0f);
+                    } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 if(impact_ticks < 5){
                     camera.translate(0,impact_skip*3,0);
                     polyline = new Polyline( 0,(HEIGHT/2)+(2), WIDTH,(HEIGHT/2)+(2));
@@ -671,6 +772,18 @@ public class Main {
             }
             if(isDying){
                 death_ticks++;
+                if(isIdling!=null){
+                    isIdling.stop();
+                    isIdling=null;
+                }
+                if(isMoving!=null){
+                    isMoving.stop();
+                    isMoving=null;
+                }
+                if(Ufo.ambient!=null){
+                    Ufo.ambient.stop();
+                    Ufo.ambient=null;
+                }
                 if(death_ticks > 0 && death_ticks < 10){
                     ArrayList<ArrayList<Double>> arr = com.example.MotorolaScienceCup.Util.SVGconverterForLines("zgon1.svg");
                     double xAvg=85.258978;
@@ -741,18 +854,20 @@ public class Main {
 
                     collisionDir = false;
                     textList.clear();
+                    try {
+                        isIdling = Sound.getClip("playerIdle.wav",-10.0f);
+                    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                        throw new RuntimeException(e);
+                    }
+                    isIdling.loop(Clip.LOOP_CONTINUOUSLY);
+                    isIdling.start();
                     Vertex preDeathCamPos = new Vertex(camera.getX(), camera.getY(), camera.getZ());
                     camera.moveToRandom();
+                    //camera.rotY(Math.random()*360);
                     for(Object3D object3D:horizon){
-                        for (int i = 0; i < object3D.getPoints3D().size(); i++) {
-                            double [][] translationMatrix = Util.getTranslationMatrix(camera.getX()-preDeathCamPos.getX(),camera.getY()-preDeathCamPos.getY(),camera.getZ()-preDeathCamPos.getZ());
-                            double [] arr = object3D.getPoints3D().get(i).toArray();
-                            arr = Util.multiplyTransform(translationMatrix, arr);
-                            System.out.println(Arrays.toString(arr)+"nice");
-                            object3D.getPoints3D().set(i,Util.arrToVert(arr));
-
-                        }
+                        object3D.translate(camera.getX()-preDeathCamPos.getX(),0, camera.getZ()-preDeathCamPos.getZ());
                     }
+                    justDied = true;
                     if(playerHP<=0){
                         gameOver();
                     }
@@ -781,7 +896,13 @@ public class Main {
             //objectList.get(10).rotY(1);
             for (int i=0;i<objectList.size();i++) {
                 Object3D object = objectList.get(i);
-                double distance = Util.getDistance(new Vertex(camera.getX(),camera.getY(),camera.getZ()),new Vertex(object.getX(), object.getY(), object.getZ()));
+                Vertex away;
+                if(true){
+                    away = new Vertex(object.getCenterX(), object.getCenterY(), object.getCenterZ());
+                }else{
+                    away = new Vertex(object.getX(), object.getY(), object.getZ());
+                }
+                double distance = Util.getDistance(new Vertex(camera.getX(),camera.getY(),camera.getZ()),away);
                 if(object.getClass()!= Camera.class && distance < Camera.getFar()) {
                     object.displayObject();
                 }
@@ -799,6 +920,13 @@ public class Main {
                         if(dist<3){
                             Vertex vertex = allBullets.get(j).checkForHits(object);
                             if(vertex!=null){
+                                if(!(object instanceof Ufo)){
+                                    try {
+                                        Sound.play("explosion.wav");
+                                    } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
                                 System.out.println("YYYYYYYYY");
                                 if(object instanceof EnemyTank){
                                     ((EnemyTank) object).takeHit(allBullets.get(j).getParent());
@@ -842,16 +970,17 @@ public class Main {
             } else if (RADAR_ROT<0) {
                 RADAR_ROT=360+(1-RADAR_ROT);
             }
+            if(!justDied){
             for(Object3D object3D:horizon){
                 for (int i = 0; i < object3D.getPoints3D().size(); i++) {
-                    double [][] translationMatrix = Util.getTranslationMatrix(camera.getX()-previousCamPos.getX(),camera.getY()-previousCamPos.getY(),camera.getZ()-previousCamPos.getZ());
+                    double [][] translationMatrix = Util.getTranslationMatrix(camera.getX()-previousCamPos.getX(),0,camera.getZ()-previousCamPos.getZ());
                     double [] arr = object3D.getPoints3D().get(i).toArray();
                     arr = Util.multiplyTransform(translationMatrix, arr);
                     System.out.println(Arrays.toString(arr)+"nice");
                     object3D.getPoints3D().set(i,Util.arrToVert(arr));
 
                 }
-            }
+            }}
             //drawHorizon();
             if(!wasHit) {
                 drawRadar();
@@ -906,6 +1035,9 @@ public class Main {
             camera.setMagTimer(-1);
         }
         playerHP = 3;
+        for(Clip clip: Menu.clips){
+            clip.stop();
+        }
         Timeline timeline;
           WIDTH = Menu.WIDTH;
           HEIGHT = Menu.HEIGHT;
@@ -929,6 +1061,8 @@ public class Main {
           death_ticks = 0;
 
           crack = new BetterPolygon(new ArrayList<>());
+
+          frameCount = 0;
 
           impact_ticks = 0;
           impact_skip = 0.01;
@@ -995,10 +1129,14 @@ public class Main {
     }
     public static void gameOver() {
         timeline.stop();
+        for (Missile missile:missileList){
+            missile.getMissileHum().stop();
+        }
         Text gameOverText = new Text("Game Over");
         gameOverText.setFont(Font.font(100));
-        gameOverText.setStroke(Color.RED);
-        gameOverText.setX(WIDTH/2-(WIDTH/10) - gameOverText.getLayoutBounds().getWidth()/2);
+        gameOverText.setFill(Color.GREEN);
+
+        gameOverText.setX(WIDTH/2 - gameOverText.getLayoutBounds().getWidth()/2);
         gameOverText.setY(HEIGHT/2);
 
 
@@ -1006,15 +1144,17 @@ public class Main {
         AnchorPane newRoot = new AnchorPane();
         newRoot.getChildren().add(gameOverText);
         Button restart = new Button("Restart");
-        restart.setLayoutX(400);
-        restart.setLayoutY(700);
+        restart.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         restart.setFont(Font.font(50));
+        restart.setLayoutX(WIDTH/2 - 275 - restart.getWidth()/2);
+        restart.setLayoutY(HEIGHT/2 + 100);
 
 
         Button menu = new Button("Menu");
-        menu.setLayoutX(1300);
-        menu.setLayoutY(700);
+        menu.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         menu.setFont(Font.font(50));
+        menu.setLayoutX(WIDTH/2 + 75 + menu.getWidth()/2);
+        menu.setLayoutY(HEIGHT/2 + 100);
         menu.setOnAction(actionEvent -> {
             try {
                 Menu.resetMenu();
@@ -1029,6 +1169,7 @@ public class Main {
         newRoot.getChildren().addAll(restart, menu);
         Scene newScene = new Scene(newRoot, WIDTH, HEIGHT);
         newScene.setFill(Color.BLACK);
+        newRoot.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         Menu.stage.setScene(newScene);
 
         Scanner scanner = null;
@@ -1084,6 +1225,6 @@ public class Main {
 
 
     public static void drawHorizon2(){
-        horizon = Util.generateHorizon(0,0,0,new Vertex(40,15,40));
+        horizon = Util.generateHorizon(0,0,0,new Vertex(80,30,80));
     }
 }

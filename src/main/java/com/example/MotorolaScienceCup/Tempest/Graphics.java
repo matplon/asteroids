@@ -28,6 +28,7 @@ public class Graphics {
         List<Double> smallShapePoints = Util.SVGconverter(filepath);
 
         BetterPolygon tempSmallShape = new BetterPolygon(smallShapePoints);
+        tempSmallShape.setStroke(Color.GREEN);
         tempSmallShape.scale(scale);
         tempSmallShape.moveTo((double) WIDTH / 2, (double) HEIGHT / 2 + baseOffset);
         smallShapePoints = tempSmallShape.getPoints();
@@ -38,6 +39,8 @@ public class Graphics {
         tempPolygon.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
         List<Double> bigShapePoints = tempPolygon.getPoints();
         drawConnectors(oldPanels, smallShapePoints, bigShapePoints, color, new Glow(Main.glowV));
+        tempSmallShape.moveTo(WIDTH-400,HEIGHT-400);
+        tempSmallShape.scale(8);
     }
 
     private static void drawConnectors(List<Panel> oldPanels, List<Double> smallShapePoints, List<Double> bigShapePoints, Color color, Glow glow) {

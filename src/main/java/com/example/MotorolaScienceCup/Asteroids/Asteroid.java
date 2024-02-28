@@ -1,12 +1,13 @@
 package com.example.MotorolaScienceCup.Asteroids;
 
-import com.example.MotorolaScienceCup.BetterPolygon;
-import com.example.MotorolaScienceCup.Particle;
-import com.example.MotorolaScienceCup.Util;
+import com.example.MotorolaScienceCup.*;
 import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 import java.util.*;
 
 public class Asteroid extends Particle {
@@ -34,6 +35,11 @@ public class Asteroid extends Particle {
     }
 
     public void destroy(boolean destroyedByPlayer) {
+        try {
+            Sound.play("asteroidsBoom.wav");
+        } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+            throw new RuntimeException(e);
+        }
         if (getSize() > 1) {   // Multiply only the big and medium asteroids
             // 2 smaller and faster asteroids from 1 asteroid
 
@@ -105,7 +111,7 @@ public class Asteroid extends Particle {
                         Enemy.enemyList.get(0).animationParticles(Main.PARTICLE_COUNT, Main.particlesAll, Main.particlesDistanceCovered, Main.root);
                         Main.enemyShootTimer = 0;
                         Main.root.getChildren().remove(Enemy.enemyList.get(0));
-                        Enemy.enemyList.remove(Enemy.enemyList.get(0));
+                        Enemy.enemyList.get(0).explode();
                         asteroidsToDestroy.put(Main.asteroids.get(i), false);
                     }
                 }

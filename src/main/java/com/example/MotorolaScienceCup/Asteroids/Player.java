@@ -4,6 +4,7 @@ import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Sound;
 import javafx.scene.paint.Color;
 
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
@@ -46,7 +47,8 @@ public class Player extends Particle {
         Main.bulletsDistanceCovered.put(bullet, 0.0);
 
         Main.root.getChildren().add(bullet);
-        Sound.play("151015__bubaproducer__laser-shot-big-2.wav");
+        Clip clip = Sound.getClip("laserShoot.wav",1.0f);
+        clip.start();
     }
 
     public void checkForHits() {
@@ -63,7 +65,7 @@ public class Player extends Particle {
             if (!bulletsToRemove.contains(Main.bullets.get(i)) && !Enemy.enemyList.isEmpty() && Main.bullets.get(i).getLayoutBounds().intersects(Enemy.enemyList.get(0).getLayoutBounds())) {
                 if (intersect(Main.bullets.get(i), Enemy.enemyList.get(0)).getLayoutBounds().getWidth() > 0) {
                     bulletsToRemove.add(Main.bullets.get(i));
-                    Enemy.explode();
+                    Enemy.enemyList.get(0).explode();
                     continue;
                 }
             }
@@ -86,6 +88,20 @@ public class Player extends Particle {
 
 
     public void explode() {
+        try {
+            Sound.play("asteroidsBoom.wav");
+        } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        for(Particle particle:Main.exhaustAll){
+            Main.root.getChildren().remove(particle);
+        }
+        Main.exhaustAll.clear();
+        if(Main.playerEngine!=null){
+            Main.playerEngine.stop();
+            Main.playerEngine = null;
+        }
+        Main.exhaustDistanceCovered.clear();
         Main.isAlive.set(false);
         Main.HP--;
         HUD.removeHeart();

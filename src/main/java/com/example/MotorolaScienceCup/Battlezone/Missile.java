@@ -1,5 +1,6 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
+import javax.sound.sampled.Clip;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -16,6 +17,8 @@ public class Missile extends EnemyTank {
     private boolean isGrounded;
     private boolean hasSpawned;
 
+    private Clip missileHum;
+
     public Missile(ArrayList<Vertex> points3D, ArrayList<Face> faces3D) {
         super(points3D, faces3D);
     }
@@ -27,6 +30,7 @@ public class Missile extends EnemyTank {
         if(object3D instanceof Camera) {
             Main.score += 2000;
         }
+        this.getMissileHum().stop();
         explode();
     }
 
@@ -97,8 +101,11 @@ public class Missile extends EnemyTank {
             this.setY(this.getCenter().getY());
             this.setZ(this.getCenter().getZ());
         if(array.contains(Main.camera)&&(isGrounded&&!isFlying)){
-            Main.wasHit = true;
+            if(!Main.isDying){
+                Main.wasHit=true;
+            }
             this.setForward(new Vertex(0,0,0));
+            this.getMissileHum().stop();
         }else{
         if(!array.isEmpty()&&!isFlying&&!hasSpawned&&!(array.size()==1&&hasMine)){
             double maxY = Util.getMaxY(array.get(0).getPoints3D());
@@ -163,7 +170,7 @@ public class Missile extends EnemyTank {
                 setWaitTimer(-1);
                 double rand = Math.random();
                 double dist = Util.getDistance(this.getCenter(), new Vertex(Main.camera.getX(), Main.camera.getY(), Main.camera.getZ()));
-                if(dist<10){
+                if(dist<5){
                     setWaiting(false);
                     setRotating(true);
                     setMoving(false);
@@ -177,7 +184,7 @@ public class Missile extends EnemyTank {
                     setMoveDir(1);
                     setTargetRotation(getLookAt(getTarget()));
                     setRotateDir(getExactRotationDir());
-                } else if (dist>=10&&dist<40) {
+                } else if (dist>=5&&dist<40) {
                     setWaiting(false);
                     setRotating(true);
                     setMoving(false);
@@ -197,7 +204,7 @@ public class Missile extends EnemyTank {
                     setMoving(false);
                     Vertex vertex = getCenter().getVertDif(new Vertex(Main.camera.getX(),Main.camera.getY(),Main.camera.getZ()));
                     double[] arr = vertex.toArray();
-                    arr = Util.multiplyTransform(Util.getRotationYMatrix(new Random().nextDouble(-60,60)),arr);
+                    arr = Util.multiplyTransform(Util.getRotationYMatrix(new Random().nextDouble(-45,45)),arr);
                     double offset = -Math.random()/4 - 0.25;
                     for (int i = 0; i < arr.length; i++) {
                         arr[i]*=offset;
@@ -211,7 +218,7 @@ public class Missile extends EnemyTank {
         }
         if(isRotating()){
             System.out.println("?????????????");
-            if(getTargetRotation() < getRotation() + 11 && getTargetRotation() > getRotation() - 11){
+            if(getTargetRotation() < getRotation() + 12 && getTargetRotation() > getRotation() - 12){
                 rotateTank(getRotDifference());
                 setTargetRotation(getRotation());
                 setRotating(false);
@@ -225,9 +232,18 @@ public class Missile extends EnemyTank {
 
         double distance = Util.getDistance(getCenter(), new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
         if(distance>Camera.getFar()+10){
+            this.getMissileHum().stop();
             Main.objectList.remove(this);
             Main.missileList.remove(this);
             Main.fullTankList.remove(this);
         }
         }
+
+    public Clip getMissileHum() {
+        return missileHum;
+    }
+
+    public void setMissileHum(Clip missileHum) {
+        this.missileHum = missileHum;
+    }
 }

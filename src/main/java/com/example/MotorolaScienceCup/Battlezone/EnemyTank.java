@@ -1,7 +1,10 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
+import com.example.MotorolaScienceCup.Sound;
 import javafx.scene.paint.Color;
 
+import javax.sound.sampled.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -43,9 +46,11 @@ public class EnemyTank extends Object3D{
 
     private double magTimer;
 
+
+
     public static double TANK_SPEED = 0.25*0.25*1.3;
 
-    public static double TANK_ROT_SPEED = 0.75*1.3;
+    public static double TANK_ROT_SPEED = 0.75*1.1;
 
 
     public EnemyTank(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
@@ -195,7 +200,7 @@ public class EnemyTank extends Object3D{
         }else{
             hitbox = this.getHitBox2D();
         }
-        boolean notCollided = this.runCollisionCheck(5, hitbox, this).isEmpty();
+        boolean notCollided = this.runCollisionCheck(8, hitbox, this).isEmpty();
         if(!notCollided){
             this.moveToRandom(rotOffset,scaleOffset);
         }
@@ -276,6 +281,11 @@ public class EnemyTank extends Object3D{
             Bullet bullet = Util.generateBullet(dir, this.getRotation(), this.getX()+this.getForward().getX()*0.5, this.getY()+0.25, this.getZ()+this.getForward().getZ()*0.5);
             bullet.setParent(this);
             Main.allBullets.add(bullet);
+            try {
+                Sound.play("tankShot.wav", 6.0f);
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                throw new RuntimeException(e);
+            }
             setMagTimer(120);
         }
     }

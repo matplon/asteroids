@@ -1,16 +1,55 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
+import com.example.MotorolaScienceCup.Sound;
+
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Ufo extends EnemyTank{
 
     public static double UFO_SPEED = 0.075;
     public static double UFO_ROT_SPEED = 1;
+
+    public static Clip ambient;
+
+
+    private Clip death;
+
+    {
+        try {
+            death = Sound.getClip("ufoDeath.wav",5.0f);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private Clip ufoPoints;
+
+    {
+        try {
+            ufoPoints = Sound.getClip("ufoPoints.wav",4.0f);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+
+
     public Ufo(ArrayList<Vertex> points3D, ArrayList<Face> faces3D) {
         super(points3D, faces3D);
     }
 
     public void takeHit(Object3D object3D){
+        death.start();
+        ufoPoints.start();
+        if(ambient!=null) {
+            ambient.stop();
+            ambient = null;
+        }
         Main.ufoList.remove(this);
         Main.objectList.remove(this);
         if(object3D instanceof Camera) {
@@ -60,9 +99,22 @@ public class Ufo extends EnemyTank{
                 }
             }
         double distance = Util.getDistance(getCenter(), new Vertex(Main.camera.getX(),0,Main.camera.getZ()));
-        if(distance>130){
+        if(distance>Camera.getFar()+10){
             Main.ufoList.remove(this);
             Main.objectList.remove(this);
+        }
+        if(distance<=40&&ambient==null){
+                try {
+                    ambient = Sound.getClip("ufoAmbient.wav",6.0f);
+                } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                    throw new RuntimeException(e);
+                }
+                ambient.loop(Clip.LOOP_CONTINUOUSLY);
+                ambient.start();
+        }
+        if(distance>40&&ambient!=null){
+            ambient.stop();
+            ambient=null;
         }
         }
     }

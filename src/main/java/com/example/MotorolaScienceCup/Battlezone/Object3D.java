@@ -181,7 +181,7 @@ public class Object3D {
             for (int j = 0; j < arr.length; j++) {
                 arr[j] = arr[j] / arr[arr.length-1];
             }
-            if(arr[2]>1.01||arr[2]<-1.01){
+            if(arr[2]>1||arr[2]<-1){
                 zeroedArrCount++;
                 Arrays.fill(arr,0);
             }
@@ -242,15 +242,6 @@ public class Object3D {
                     polyline1.setStroke(this.getColor());
                     Main.lineList.add(polyline1);
                     Main.root.getChildren().add(polyline1);
-                }
-                if(i==0&j==0){
-                    Text text = new Text(Math.round(this.getCenterX())+" "+Math.round(this.getCenterY()) +" "+Math.round(this.getCenterZ()));
-                    text.setLayoutX(ax);
-                    text.setLayoutY(ay);
-                    text.setFill(Color.WHITE);
-                    text.setFont(Font.font(20));
-                    Main.root.getChildren().add(text);
-                    Main.textList.add(text);
                 }
             }}else{
                 double ax = arrlist.get(face.getIndexes().get(0)).getX();

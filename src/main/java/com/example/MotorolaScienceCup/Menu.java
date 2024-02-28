@@ -8,7 +8,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import javax.sound.sampled.Clip;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Menu extends Application {
 
@@ -19,6 +22,8 @@ public class Menu extends Application {
     public static AnchorPane root;
     public static Stage stage;
     public static Scene scene;
+    public static List<Clip> clips = new ArrayList();
+
     public static void resetMenu() throws IOException {
         root = FXMLLoader.load(Menu.class.getResource("Main.fxml"));
         scene = new Scene(root, WIDTH,HEIGHT);
@@ -34,7 +39,7 @@ public class Menu extends Application {
         stage1.setScene(scene);
         stage1.show();
         stage = stage1;
-        Sound.loopPlay("8-bit-background-music-for-arcade-game-come-on-mario-164702.wav",10);
+        Sound.loopPlay("8-bit-background-music-for-arcade-game-come-on-mario-164702.wav");
 
     }
 }
