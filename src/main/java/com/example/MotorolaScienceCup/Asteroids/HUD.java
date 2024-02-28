@@ -89,7 +89,7 @@ public class HUD {
                 }
                 Main.resetData();
                 Menu.resetMenu();
-            } catch (IOException e) {
+            } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
                 throw new RuntimeException(e);
             }
         });
