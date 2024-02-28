@@ -48,9 +48,9 @@ public class Main {
     static boolean goRight;
     static boolean goLeft;
     static int LEVEL = 0;
-    static int flippersNumber = 6;
+    static int flippersNumber = 1;
     static int tankersNumber = 0;
-    static int spikersNumber = 1;
+    static int spikersNumber = 0;
 
     static double bigSideLength;
 
@@ -58,7 +58,7 @@ public class Main {
     static String testMap2 = "testsquareKTORYDZIALA.svg";
     static String testMap3 = "mapa 3.svg";
     static String testMap4 = "testoctagon.svg";
-    static String testMap5 = "map12.svg";
+    static String testMap5 = "mapheart.svg";
     static String testShip = "ship1.svg";
     static double scale = 1;
     static double a = 1.017;
@@ -143,7 +143,7 @@ public class Main {
                 Enemy.updateSeeds();
             }
             player.shotTimer--;
-            if (isLevelFinished()) nextLevel();
+//            if (isLevelFinished()) nextLevel();
 //            for (int i = 0; i < player.getCurrentPanel().getFlippers().size(); i++) {
 //                System.out.println(player.getCurrentPanel().getFlippers().get(i).reachedTheEdge);
 //            }
