@@ -154,7 +154,7 @@ public class Panel {
         }
         for(Spiker spiker : spikers){
             if(!spiker.move()){
-                spiker.switchToTanker();
+                spikersToDestroy.add(spiker);
             }
         }
         updatePlayerBullets(nextLevel);
@@ -163,7 +163,7 @@ public class Panel {
             tanker.destroy();
         }
         for (Spiker spiker : spikersToDestroy){
-            spiker.destroy();
+            spiker.switchToTanker();
         }
     }
 

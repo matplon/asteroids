@@ -31,14 +31,16 @@ public class Flipper extends Enemy {
     private double pivotX, pivotY;
     private int step;
     private boolean left;
+    Circle circle1, circle2;
+    BetterPolygon polygon = new BetterPolygon(null);
 
     public Flipper(Panel startPanel) {
-        super(startPanel);
+        super(Main.panels.get(1));
 
-        double panelToHorizontalAngle = Math.toDegrees(Math.atan((startPanel.getSmallSide().getPoints().get(3) - startPanel.getSmallSide().getPoints().get(1))
-                / (startPanel.getSmallSide().getPoints().get(2) - startPanel.getSmallSide().getPoints().get(0))));
+        double panelToHorizontalAngle = Math.toDegrees(Math.atan((currentPanel.getSmallSide().getPoints().get(3) - currentPanel.getSmallSide().getPoints().get(1))
+                / (currentPanel.getSmallSide().getPoints().get(2) - currentPanel.getSmallSide().getPoints().get(0))));
         if (Double.toString(panelToHorizontalAngle).equals("-0.0")) panelToHorizontalAngle = 180;
-        else if (startPanel.isBottomPanel()) {
+        else if (currentPanel.isBottomPanel()) {
             panelToHorizontalAngle += 180;
         }
         defPoints = BetterPolygon.rotate(new BetterPolygon(defFlipper.getPoints()), panelToHorizontalAngle).getPoints();
@@ -51,6 +53,12 @@ public class Flipper extends Enemy {
 
         currentPanel.addFlipper(this);
         setStroke(flipperColor);
+
+        circle1 = new Circle(getPointsOnSides().get(0), getPointsOnSides().get(1), 5, Color.GOLD);
+        Main.root.getChildren().add(circle1);
+        circle2 = new Circle(getPointsOnSides().get(2), getPointsOnSides().get(3), 5, Color.GREEN);
+        Main.root.getChildren().add(circle2);
+        polygon.setStroke(Color.BLUEVIOLET);
     }
 
     public void move() {
@@ -62,6 +70,12 @@ public class Flipper extends Enemy {
             bulletTimer--;
             if (bulletTimer <= 0) shoot();
         }
+        circle1.setCenterX(getPointsOnSides().get(0));
+        circle1.setCenterY(getPointsOnSides().get(1));
+        circle2.setCenterX(getPointsOnSides().get(2));
+        circle2.setCenterY(getPointsOnSides().get(3));
+        currentPanel.changeColorSmallSide(Color.WHITE);
+        System.out.println(getPointsOnSides());
     }
 
     @Override

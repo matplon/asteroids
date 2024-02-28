@@ -60,7 +60,7 @@ public class Main {
     static String testMap2 = "testsquareKTORYDZIALA.svg";
     static String testMap3 = "mapa 3.svg";
     static String testMap4 = "testoctagon.svg";
-    static String testMap5 = "mapa8.svg";
+    static String testMap5 = "map12.svg";
     static String testShip = "ship1.svg";
     static double scale = 1;
     static double a = 1.017;
