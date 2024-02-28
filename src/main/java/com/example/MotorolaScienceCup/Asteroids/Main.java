@@ -126,7 +126,7 @@ public class Main {
         back.setOnMouseClicked(mouseEvent -> {
             try {
                 Menu.resetMenu();
-            } catch (IOException e) {
+            } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
                 throw new RuntimeException(e);
             }
         });
