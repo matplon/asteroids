@@ -15,9 +15,12 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -209,6 +212,19 @@ public class Main {
             }
             player.shotTimer--;
         }));
+        Text back = new Text("←");
+        back.setFill(Color.RED);
+        back.setFont(Font.font("Public Pixel", 40));
+        back.setLayoutX(300);
+        back.setLayoutY(100);
+        back.setOnMouseClicked(mouseEvent -> {
+            try {
+                Menu.resetMenu();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        root.getChildren().add(back);
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }

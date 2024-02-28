@@ -11,6 +11,7 @@ import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -19,6 +20,8 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import javax.sound.sampled.Clip;
@@ -116,6 +119,18 @@ public class Main {
                 player.stopRotation(); // Stop rotating
             if (keyEvent.getCode() == KeyCode.X) canShoot = true;
         });
+
+        Text back = new Text("f");
+        back.setLayoutX(300);
+        back.setLayoutY(100);
+        back.setOnMouseClicked(mouseEvent -> {
+            try {
+                Menu.resetMenu();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        root.getChildren().add(back);
 
         // Spawn the big asteroids
         Asteroid.spawnAsteroids(ASTEROID_COUNT);
@@ -285,6 +300,19 @@ public class Main {
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+        Text back = new Text("←");
+        back.setFill(Color.RED);
+        back.setFont(Font.font("Public Pixel", 40));
+        back.setLayoutX(300);
+        back.setLayoutY(100);
+        back.setOnMouseClicked(mouseEvent -> {
+            try {
+                Menu.resetMenu();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        root.getChildren().add(back);
 
 
     }
