@@ -1,7 +1,6 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.Menu;
-import com.example.MotorolaScienceCup.Util;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -14,12 +13,12 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
@@ -115,6 +114,9 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.X) shoot = false;
         });
         start();
+        for(Clip clip:Menu.clips){
+            clip.close();
+        }
     }
 
     public static void start() {
@@ -232,6 +234,7 @@ public class Main {
         root.getChildren().add(back);
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+
     }
 
     public static void highlightPanel(Player player) {
