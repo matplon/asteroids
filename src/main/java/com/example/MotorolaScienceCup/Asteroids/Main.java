@@ -128,6 +128,10 @@ public class Main {
                 Menu.resetMenu();
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            } catch (UnsupportedAudioFileException e) {
+                throw new RuntimeException(e);
+            } catch (LineUnavailableException e) {
+                throw new RuntimeException(e);
             }
         });
         root.getChildren().add(back);
@@ -306,11 +310,19 @@ public class Main {
         back.setLayoutX(300);
         back.setLayoutY(100);
         back.setOnMouseClicked(mouseEvent -> {
+
             try {
                 Menu.resetMenu();
+                timeline.stop();
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            } catch (UnsupportedAudioFileException e) {
+                throw new RuntimeException(e);
+            } catch (LineUnavailableException e) {
+                throw new RuntimeException(e);
             }
+
         });
         root.getChildren().add(back);
 

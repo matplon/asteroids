@@ -20,6 +20,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -220,6 +222,10 @@ public class Main {
             try {
                 Menu.resetMenu();
             } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (UnsupportedAudioFileException e) {
+                throw new RuntimeException(e);
+            } catch (LineUnavailableException e) {
                 throw new RuntimeException(e);
             }
         });

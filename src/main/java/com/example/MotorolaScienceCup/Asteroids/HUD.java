@@ -124,7 +124,7 @@ public class HUD {
         menu.setOnAction(actionEvent -> {
             try {
                 Menu.resetMenu();
-            } catch (IOException e) {
+            } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
                 throw new RuntimeException(e);
             }
         });
