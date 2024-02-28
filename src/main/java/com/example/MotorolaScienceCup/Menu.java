@@ -9,6 +9,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +26,12 @@ public class Menu extends Application {
     public static Scene scene;
     public static List<Clip> clips = new ArrayList();
 
-    public static void resetMenu() throws IOException {
+    public static void resetMenu() throws IOException, UnsupportedAudioFileException, LineUnavailableException {
         root = FXMLLoader.load(Menu.class.getResource("Main.fxml"));
         scene = new Scene(root, WIDTH,HEIGHT);
         stage.setScene(scene);
         stage.show();
+        Sound.loopPlay("8-bit-background-music-for-arcade-game-come-on-mario-164702.wav");
     }
     @Override
     public void start(Stage stage1) throws Exception {

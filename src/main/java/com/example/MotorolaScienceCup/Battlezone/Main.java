@@ -1055,6 +1055,10 @@ public class Main {
                 Menu.resetMenu();
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            } catch (UnsupportedAudioFileException e) {
+                throw new RuntimeException(e);
+            } catch (LineUnavailableException e) {
+                throw new RuntimeException(e);
             }
         });
         root.getChildren().add(back);
@@ -1205,6 +1209,10 @@ public class Main {
             try {
                 Menu.resetMenu();
             } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (UnsupportedAudioFileException e) {
+                throw new RuntimeException(e);
+            } catch (LineUnavailableException e) {
                 throw new RuntimeException(e);
             }
         });
