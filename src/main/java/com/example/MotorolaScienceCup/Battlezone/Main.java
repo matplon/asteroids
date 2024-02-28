@@ -1,19 +1,13 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
 
-import com.example.MotorolaScienceCup.Asteroids.Asteroid;
-import com.example.MotorolaScienceCup.Asteroids.Enemy;
-import com.example.MotorolaScienceCup.Asteroids.HUD;
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Menu;
 import com.example.MotorolaScienceCup.Sound;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
@@ -22,15 +16,19 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import javax.sound.sampled.*;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Scanner;
 
 public class Main {
 
@@ -495,7 +493,7 @@ public class Main {
     public static void drawStatusText(){
         if(enemyInRange&&TEXT_TICK>15) {
             Text t = new Text("Enemy in range");
-            t.setFont(Font.font(50));
+            t.setFont(Menu.font);
             t.setX(100);
             t.setY(300);
             t.setFill(Color.RED);
@@ -504,7 +502,7 @@ public class Main {
         }
         if(!enemyDir.isEmpty() &&TEXT_TICK > 15){
             Text t = new Text("Enemy to "+enemyDir);
-            t.setFont(Font.font(50));
+            t.setFont(Menu.font);
             t.setX(100);
             t.setY(400);
             t.setFill(Color.RED);
@@ -526,14 +524,14 @@ public class Main {
             root.getChildren().add(t);
         }
         Text s = new Text("Score      " + score);
-        s.setFont(Font.font(30));
+        s.setFont(Menu.font);
         s.setX(WIDTH-WIDTH/8);
         s.setY(HEIGHT/10);
         s.setFill(Color.RED);
         textList.add(s);
         root.getChildren().add(s);
         Text h = new Text("HiScore   "+hiScore);
-        h.setFont(Font.font(30));
+        h.setFont(Menu.font);
         h.setX(WIDTH-WIDTH/8);
         h.setY(HEIGHT/7);
         h.setFill(Color.RED);
@@ -1030,7 +1028,7 @@ public class Main {
         }));
         Text back = new Text("←");
         back.setFill(Color.RED);
-        back.setFont(Font.font("Public Pixel", 40));
+        back.setFont(Menu.font);
         back.setLayoutX(300);
         back.setLayoutY(100);
         back.setOnMouseClicked(mouseEvent -> {
@@ -1183,7 +1181,7 @@ public class Main {
             isIdling = null;
         }
         Text gameOverText = new Text("Game Over");
-        gameOverText.setFont(Font.font(100));
+        gameOverText.setFont(Menu.font);
         gameOverText.setFill(Color.GREEN);
 
         gameOverText.setX(WIDTH/2 - gameOverText.getLayoutBounds().getWidth()/2);
@@ -1195,14 +1193,14 @@ public class Main {
         newRoot.getChildren().add(gameOverText);
         Button restart = new Button("Restart");
         restart.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
-        restart.setFont(Font.font(50));
+        restart.setFont(Menu.font);
         restart.setLayoutX(WIDTH/2 - 275 - restart.getWidth()/2);
         restart.setLayoutY(HEIGHT/2 + 100);
 
 
         Button menu = new Button("Menu");
         menu.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
-        menu.setFont(Font.font(50));
+        menu.setFont(Menu.font);
         menu.setLayoutX(WIDTH/2 + 75 + menu.getWidth()/2);
         menu.setLayoutY(HEIGHT/2 + 100);
         menu.setOnAction(actionEvent -> {
