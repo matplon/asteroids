@@ -15,6 +15,9 @@ public class Vector {
         this.x = magnitude * Math.cos(Math.toRadians(direction));
         this.y = magnitude * Math.sin(Math.toRadians(direction));
     }
+    public Vector (){
+
+    }
 
     public double getX() {
         return x;

@@ -76,11 +76,11 @@ public class Main {
 
         Graphics.drawMap(testMap3, defaultPanelColor, 1);
 
-        double bigSideLengthX = panels.get(0).getBigSide().getPoints().getFirst() - panels.get(0).getBigSide().getPoints().get(2);
-        double bigSideLengthY = panels.get(0).getBigSide().getPoints().get(1) - panels.get(0).getBigSide().getPoints().getLast();
+        double bigSideLengthX = panels.get(0).getBigSide().getPoints().get(0) - panels.get(0).getBigSide().getPoints().get(2);
+        double bigSideLengthY = panels.get(0).getBigSide().getPoints().get(1) - panels.get(0).getBigSide().getPoints().get(3);
         bigSideLength = Math.sqrt(Math.pow(bigSideLengthX, 2) + Math.pow(bigSideLengthY, 2));
 
-        player = new Player(panels.getFirst());
+        player = new Player(panels.get(0));
         root.getChildren().add(player);
 
         double x1 = panels.get(0).getBigSide().getPoints().get(0);
@@ -114,9 +114,13 @@ public class Main {
     public static void start() {
 
         Enemy.spawnSeeds(flippersNumber, tankersNumber, spikersNumber);
+        FuseBall fuseBall = new FuseBall(panels.get(4));
+        root.getChildren().add(fuseBall);
 
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
             highlightPanel(player);
+                fuseBall.moveUP();
+                fuseBall.moveOnTop();
             double bulletsNumber = 0;
             for (Panel panel : panels) {
                 panel.update(false);

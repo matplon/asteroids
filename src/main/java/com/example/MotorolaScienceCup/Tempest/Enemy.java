@@ -81,8 +81,8 @@ public class Enemy extends BetterPolygon {
     }
 
     protected void updatePointer() {
-        double x = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
-        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast()) / 2;
+        double x = (currentPanel.getSmallSide().getPoints().get(0) + currentPanel.getSmallSide().getPoints().get(2)) / 2;
+        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().get(3)) / 2;
         Vector tempVector = new Vector(h, currentPanel.getAngle());
         pointer.moveTo(x + tempVector.getX(), y + tempVector.getY());
     }
@@ -348,8 +348,9 @@ public class Enemy extends BetterPolygon {
                 if (!spiral) {
                     List<Double> points = chosenPanel.getSmallSide().getPoints();
                     double randomT = Math.random();
-                    DEST_X = points.getFirst() + randomT * (points.get(2) - points.getFirst());
-                    DEST_Y = points.get(1) + randomT * (points.getLast() - points.get(1));
+                    System.out.println(points);
+                    DEST_X = points.get(0) + randomT * (points.get(2) - points.get(0));
+                    DEST_Y = points.get(1) + randomT * (points.get(3) - points.get(1));
                     double angle = Math.toDegrees(Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX()));
                     seed.setVelocity(new Vector(linearSpeed, angle));
                     seed.setAngle(angle);

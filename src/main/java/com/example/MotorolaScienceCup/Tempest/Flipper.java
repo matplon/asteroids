@@ -35,16 +35,16 @@ public class Flipper extends Enemy {
     public Flipper(Panel startPanel) {
         super(startPanel);
 
-        double panelToHorizontalAngle = Math.toDegrees(Math.atan((startPanel.getSmallSide().getPoints().getLast() - startPanel.getSmallSide().getPoints().get(1))
-                / (startPanel.getSmallSide().getPoints().get(2) - startPanel.getSmallSide().getPoints().getFirst())));
+        double panelToHorizontalAngle = Math.toDegrees(Math.atan((startPanel.getSmallSide().getPoints().get(3) - startPanel.getSmallSide().getPoints().get(1))
+                / (startPanel.getSmallSide().getPoints().get(2) - startPanel.getSmallSide().getPoints().get(0))));
         if (Double.toString(panelToHorizontalAngle).equals("-0.0")) panelToHorizontalAngle = 180;
         else if (startPanel.isBottomPanel()) {
             panelToHorizontalAngle += 180;
         }
         defPoints = BetterPolygon.rotate(new BetterPolygon(defFlipper.getPoints()), panelToHorizontalAngle).getPoints();
 
-        double x = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
-        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast()) / 2;
+        double x = (currentPanel.getSmallSide().getPoints().get(0) + currentPanel.getSmallSide().getPoints().get(2)) / 2;
+        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().get(3)) / 2;
         pointer.moveTo(x, y);
         acceleration = getPointerAcceleration();
         getPoints().setAll(getFlipperPoints());
@@ -76,14 +76,14 @@ public class Flipper extends Enemy {
     }
 
     private List<Double> getPointsOnSides() {
-        double minX1 = currentPanel.getRightSide().getPoints().getFirst();
+        double minX1 = currentPanel.getRightSide().getPoints().get(0);
         double minY1 = currentPanel.getRightSide().getPoints().get(1);
-        double minX2 = currentPanel.getLeftSide().getPoints().getFirst();
+        double minX2 = currentPanel.getLeftSide().getPoints().get(0);
         double minY2 = currentPanel.getLeftSide().getPoints().get(1);
         double maxX1 = currentPanel.getRightSide().getPoints().get(2);
-        double maxY1 = currentPanel.getRightSide().getPoints().getLast();
+        double maxY1 = currentPanel.getRightSide().getPoints().get(3);
         double maxX2 = currentPanel.getLeftSide().getPoints().get(2);
-        double maxY2 = currentPanel.getLeftSide().getPoints().getLast();
+        double maxY2 = currentPanel.getLeftSide().getPoints().get(3);
 
         double gradX1 = (maxX1 - minX1) / maxH;
         double gradY1 = (maxY1 - minY1) / maxH;
@@ -100,10 +100,10 @@ public class Flipper extends Enemy {
 
     private List<Double> getFlipperPoints() {
         List<Double> top = getPointsOnSides();
-        double v8 = top.getFirst();
+        double v8 = top.get(0);
         double v9 = top.get(1);
         double v12 = top.get(2);
-        double v13 = top.getLast();
+        double v13 = top.get(3);
 
         double topLength = Math.sqrt(Math.pow(v8 - v12, 2) + Math.pow(v9 - v13, 2));
         double defTopLength = Math.sqrt(Math.pow(defPoints.get(8) - defPoints.get(12), 2) + Math.pow(defPoints.get(9) - defPoints.get(13), 2));
@@ -142,7 +142,7 @@ public class Flipper extends Enemy {
         double ratio8 = defLeftCenterToLeftBottomLengthY / defTopLength;
         double v5 = v7 - ratio8 * topLength;
 
-        double defRightCenterToRightBottomLengthX = defPoints.get(14) - defPoints.getFirst();
+        double defRightCenterToRightBottomLengthX = defPoints.get(14) - defPoints.get(0);
         double ratio9 = defRightCenterToRightBottomLengthX / defTopLength;
         double v0 = v14 - ratio9 * topLength;
 
@@ -243,8 +243,8 @@ public class Flipper extends Enemy {
             maxH = currentPanel.getLength();
             h = percentage * maxH;
 
-            double panelToHorizontalAngle = Math.toDegrees(Math.atan((currentPanel.getSmallSide().getPoints().getLast() - currentPanel.getSmallSide().getPoints().get(1))
-                    / (currentPanel.getSmallSide().getPoints().get(2) - currentPanel.getSmallSide().getPoints().getFirst())));
+            double panelToHorizontalAngle = Math.toDegrees(Math.atan((currentPanel.getSmallSide().getPoints().get(3) - currentPanel.getSmallSide().getPoints().get(1))
+                    / (currentPanel.getSmallSide().getPoints().get(2) - currentPanel.getSmallSide().getPoints().get(0))));
             if (Double.toString(panelToHorizontalAngle).equals("-0.0")) panelToHorizontalAngle = 180;
             else if (currentPanel.isBottomPanel()) {
                 panelToHorizontalAngle += 180;

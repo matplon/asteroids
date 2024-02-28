@@ -69,8 +69,8 @@ public class Player extends BetterPolygon {
     }
 
     protected void updatePointer() {
-        double x = (currentPanel.getSmallSide().getPoints().getFirst() + currentPanel.getSmallSide().getPoints().get(2)) / 2;
-        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().getLast()) / 2;
+        double x = (currentPanel.getSmallSide().getPoints().get(0) + currentPanel.getSmallSide().getPoints().get(2)) / 2;
+        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().get(3)) / 2;
         Vector tempVector = new Vector(h, currentPanel.getAngle());
         pointer.setCenterX(x + tempVector.getX());
         pointer.setCenterY(y + tempVector.getY());
@@ -95,14 +95,14 @@ public class Player extends BetterPolygon {
     }
 
     private List<Double> getPointsOnSides() {
-        double minX1 = currentPanel.getRightSide().getPoints().getFirst();
+        double minX1 = currentPanel.getRightSide().getPoints().get(0);
         double minY1 = currentPanel.getRightSide().getPoints().get(1);
-        double minX2 = currentPanel.getLeftSide().getPoints().getFirst();
+        double minX2 = currentPanel.getLeftSide().getPoints().get(0);
         double minY2 = currentPanel.getLeftSide().getPoints().get(1);
         double maxX1 = currentPanel.getRightSide().getPoints().get(2);
-        double maxY1 = currentPanel.getRightSide().getPoints().getLast();
+        double maxY1 = currentPanel.getRightSide().getPoints().get(3);
         double maxX2 = currentPanel.getLeftSide().getPoints().get(2);
-        double maxY2 = currentPanel.getLeftSide().getPoints().getLast();
+        double maxY2 = currentPanel.getLeftSide().getPoints().get(3);
 
         double gradX1 = (maxX1 - minX1) / currentPanel.getLength();
         double gradY1 = (maxY1 - minY1) / currentPanel.getLength();
@@ -183,7 +183,7 @@ public class Player extends BetterPolygon {
     private void checkIfSideClose(boolean left) {
         if (left) {
             double xDiff = pointer.getCenterX() - currentPanel.getLeftSide().getPoints().get(2);
-            double yDiff = pointer.getCenterY() - currentPanel.getLeftSide().getPoints().getLast();
+            double yDiff = pointer.getCenterY() - currentPanel.getLeftSide().getPoints().get(3);
             if (xDiff < 0.5 && xDiff > -0.5 && yDiff < 0.5 && yDiff > -0.5) {
                 pointer.setCenterX(currentPanel.getLeftSide().getPoints().get(2));
                 pointer.setCenterY(currentPanel.getLeftSide().getPoints().get(3));
@@ -191,7 +191,7 @@ public class Player extends BetterPolygon {
             }
         } else {
             double xDiff = pointer.getCenterX() - currentPanel.getRightSide().getPoints().get(2);
-            double yDiff = pointer.getCenterY() - currentPanel.getRightSide().getPoints().getLast();
+            double yDiff = pointer.getCenterY() - currentPanel.getRightSide().getPoints().get(3);
             if (xDiff < 0.5 && xDiff > -0.5 && yDiff < 0.5 && yDiff > -0.5) {
                 pointer.setCenterX(currentPanel.getRightSide().getPoints().get(2));
                 pointer.setCenterY(currentPanel.getRightSide().getPoints().get(3));

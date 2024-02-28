@@ -27,6 +27,7 @@ public class Panel {
     private List<Flipper> flippers = new ArrayList<>();
     private List<Tanker> tankers = new ArrayList<>();
     private List<Spiker> spikers = new ArrayList<>();
+    private List<FuseBall> fuseBalls = new ArrayList<>();
     public Polyline spikerLine;
 
     private double length;
@@ -158,6 +159,7 @@ public class Panel {
     public void addSPiker(Spiker spiker) {
         spikers.add(spiker);
     }
+    public void addFuseBall(FuseBall fuseBall){fuseBalls.add(fuseBall);}
 
     public void addPlayerBullet(Player.Bullet bullet) {
         playerBullets.add(bullet);
