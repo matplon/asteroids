@@ -72,7 +72,6 @@ public class Panel {
             if (spikers.isEmpty() && !bulletsToDestroy.contains(bullet)){
                 if(destroyLine(bullet, bullet.getRadius() * 3.5)){
                     bulletsToDestroy.add(bullet);
-                    spikerLine = null;
                 }
             }
             for (Flipper flipper : flippersToDestroy){
