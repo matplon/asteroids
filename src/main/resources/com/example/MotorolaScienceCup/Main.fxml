@@ -1,42 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #15133b;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MotorolaScienceCup.MainController">
+
+<VBox alignment="CENTER" prefHeight="391.0" prefWidth="602.0" spacing="10.0" style="-fx-background-color: #15133b;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MotorolaScienceCup.MainController">
    <children>
-      <Button fx:id="Asteroids" layoutX="750.0" layoutY="466.0" mnemonicParsing="false" onAction="#asteroids" prefHeight="34.0" prefWidth="400.0" style="-fx-background-color: #15133b;" text="ASTEROIDS" textFill="WHITE">
+      <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="FC PO NALEWCE" textAlignment="CENTER" wrappingWidth="581.3366851806641">
+         <font>
+            <Font name="Public Pixel" size="25.0" />
+         </font>
+      </Text>
+      <Button fx:id="Asteroids" mnemonicParsing="false" onAction="#asteroids" prefHeight="34.0" prefWidth="400.0" style="-fx-background-color: #15133b;" text="ASTEROIDS" textFill="WHITE">
          <font>
             <Font name="Public Pixel" size="12.0" />
          </font>
          <cursor>
             <Cursor fx:constant="CROSSHAIR" />
-         </cursor></Button>
-      <Button fx:id="Battlezone" layoutX="750.0" layoutY="575.0" mnemonicParsing="false" onAction="#battlezone" prefHeight="34.0" prefWidth="400.0" style="-fx-background-color: #15133b;" text="BATTLEZONE" textFill="WHITE">
+         </cursor>
+      </Button>
+      <Button fx:id="Battlezone" mnemonicParsing="false" onAction="#battlezone" prefHeight="34.0" prefWidth="400.0" style="-fx-background-color: #15133b;" text="BATTLEZONE" textFill="WHITE">
          <font>
             <Font name="Public Pixel" size="12.0" />
          </font>
          <cursor>
             <Cursor fx:constant="CROSSHAIR" />
-         </cursor></Button>
-      <Button fx:id="Tempest" layoutX="750.0" layoutY="522.0" mnemonicParsing="false" onAction="#tempest" prefHeight="34.0" prefWidth="400.0" style="-fx-background-color: #15133b;" text="TEMPEST" textFill="WHITE">
+         </cursor>
+      </Button>
+      <Button fx:id="Tempest" mnemonicParsing="false" onAction="#tempest" prefHeight="34.0" prefWidth="400.0" style="-fx-background-color: #15133b;" text="TEMPEST" textFill="WHITE">
          <font>
             <Font name="Public Pixel" size="12.0" />
          </font>
          <cursor>
             <Cursor fx:constant="CROSSHAIR" />
-         </cursor></Button>
-      <Button fx:id="Exit" layoutX="750.0" layoutY="522.0" mnemonicParsing="false" onAction="#exit" prefHeight="34.0" prefWidth="400.0" style="-fx-background-color: #15133b;" text="EXIT" textFill="WHITE">
+         </cursor>
+      </Button>
+      <Button fx:id="Exit" mnemonicParsing="false" onAction="#exit" prefHeight="34.0" prefWidth="400.0" style="-fx-background-color: #15133b;" text="EXIT" textFill="WHITE">
          <font>
             <Font name="Public Pixel" size="12.0" />
          </font>
          <cursor>
             <Cursor fx:constant="CROSSHAIR" />
-         </cursor></Button>
+         </cursor>
+      </Button>
    </children>
-   <cursor>
-      <Cursor fx:constant="CROSSHAIR" />
-   </cursor>
-</AnchorPane>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>
