@@ -220,8 +220,9 @@ public class Enemy extends Particle {
             Main.root.getChildren().remove(bullet);
             enemyBullets.remove(bullet);
         }
-        if (playerKilled)
+        if (playerKilled) {
             player.explode();
+        }
     }
 
     public void explode() {

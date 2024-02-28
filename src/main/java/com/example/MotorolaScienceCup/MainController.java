@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.example.MotorolaScienceCup.Asteroids.Main;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -14,6 +15,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class MainController {
 
+    public Button Exit;
     @FXML
     private ResourceBundle resources;
 
@@ -54,6 +56,12 @@ public class MainController {
 
         Battlezone.setLayoutX(((double) Menu.WIDTH / 3) + 60);
         Battlezone.setLayoutY(((double) Menu.HEIGHT / 3) + 80);
+        Exit.setLayoutX(((double) Menu.WIDTH /2));
+        Exit.setLayoutY(((double) Menu.HEIGHT /2));
 
+    }
+
+    public void exit(ActionEvent actionEvent) {
+        Platform.exit();
     }
 }

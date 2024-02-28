@@ -144,8 +144,7 @@ public class Main {
     public static void init(){
         score = 0;
         resetData();
-        scene.setFill(Color.BLACK);
-        root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
+        root.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         AnchorPane rootLoad = new AnchorPane();
         Scene sceneLoad = new Scene(rootLoad,WIDTH,HEIGHT);
         Rectangle rectangle = new Rectangle(0,0,WIDTH,HEIGHT);
@@ -693,7 +692,7 @@ public class Main {
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
             fullTankList.addAll(missileList);
-            if(fullTankList.isEmpty()&&Math.random()*120<1){
+            if(fullTankList.isEmpty()&&Math.random()*200<1){
                 double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
                 int count = 0;
                 for (int i = 0; i < enemyCount; i++) {
@@ -710,7 +709,7 @@ public class Main {
                     }
                 }
             }
-            if(ufoList.isEmpty()&&Math.random()*1<1){
+            if(ufoList.isEmpty()&&Math.random()*480<1){
                 spawnUfo();
             }
             TEXT_TICK++;
@@ -855,6 +854,13 @@ public class Main {
 
                     collisionDir = false;
                     textList.clear();
+                    try {
+                        isIdling = Sound.getClip("playerIdle.wav",-10.0f);
+                    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                        throw new RuntimeException(e);
+                    }
+                    isIdling.loop(Clip.LOOP_CONTINUOUSLY);
+                    isIdling.start();
                     Vertex preDeathCamPos = new Vertex(camera.getX(), camera.getY(), camera.getZ());
                     camera.moveToRandom();
                     //camera.rotY(Math.random()*360);
@@ -1128,8 +1134,9 @@ public class Main {
         }
         Text gameOverText = new Text("Game Over");
         gameOverText.setFont(Font.font(100));
-        gameOverText.setStroke(Color.RED);
-        gameOverText.setX(WIDTH/2-(WIDTH/10) - gameOverText.getLayoutBounds().getWidth()/2);
+        gameOverText.setFill(Color.GREEN);
+
+        gameOverText.setX(WIDTH/2 - gameOverText.getLayoutBounds().getWidth()/2);
         gameOverText.setY(HEIGHT/2);
 
 
@@ -1137,15 +1144,17 @@ public class Main {
         AnchorPane newRoot = new AnchorPane();
         newRoot.getChildren().add(gameOverText);
         Button restart = new Button("Restart");
-        restart.setLayoutX(400);
-        restart.setLayoutY(700);
+        restart.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         restart.setFont(Font.font(50));
+        restart.setLayoutX(WIDTH/2 - 275 - restart.getWidth()/2);
+        restart.setLayoutY(HEIGHT/2 + 100);
 
 
         Button menu = new Button("Menu");
-        menu.setLayoutX(1300);
-        menu.setLayoutY(700);
+        menu.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         menu.setFont(Font.font(50));
+        menu.setLayoutX(WIDTH/2 + 75 + menu.getWidth()/2);
+        menu.setLayoutY(HEIGHT/2 + 100);
         menu.setOnAction(actionEvent -> {
             try {
                 Menu.resetMenu();
@@ -1160,6 +1169,7 @@ public class Main {
         newRoot.getChildren().addAll(restart, menu);
         Scene newScene = new Scene(newRoot, WIDTH, HEIGHT);
         newScene.setFill(Color.BLACK);
+        newRoot.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         Menu.stage.setScene(newScene);
 
         Scanner scanner = null;

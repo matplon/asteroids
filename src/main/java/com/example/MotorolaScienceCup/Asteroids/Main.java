@@ -134,17 +134,6 @@ public class Main {
 
     public static void start() {
         timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / FPS), actionEvent -> {
-            if (HP <= 0) {
-                try {
-                    gameOver();
-                } catch (UnsupportedAudioFileException e) {
-                    throw new RuntimeException(e);
-                } catch (LineUnavailableException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
 
             if (!isAlive.get())
                 respawnTimer++;
@@ -285,6 +274,13 @@ public class Main {
                 }
             }
             Asteroid.updateAndCheck();
+            if (HP <= 0) {
+                try {
+                    gameOver();
+                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -296,6 +292,10 @@ public class Main {
     public static void resetData() {
         root = new AnchorPane();
         scene = new Scene(root, WIDTH, HEIGHT);
+        if(playerEngine!=null){
+            playerEngine.stop();
+            playerEngine=null;
+        }
         scene.setFill(Color.BLACK);
         root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
         timeline = new Timeline();
@@ -319,7 +319,6 @@ public class Main {
     }
 
     public static void gameOver() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
-        timeline.stop();
         if(playerEngine!=null){
             playerEngine.stop();
             playerEngine=null;
@@ -328,6 +327,7 @@ public class Main {
             Enemy.clip.stop();
             Enemy.clip = null;
         }
+        timeline.stop();
         HUD.gameOver();
 
     }
