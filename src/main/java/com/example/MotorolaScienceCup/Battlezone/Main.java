@@ -514,14 +514,14 @@ public class Main {
         }
         Text s = new Text("Score      " + score);
         s.setFont(Menu.font);
-        s.setX(WIDTH-WIDTH/8);
+        s.setX(WIDTH-WIDTH/4);
         s.setY(HEIGHT/10);
         s.setFill(Color.RED);
         textList.add(s);
         root.getChildren().add(s);
         Text h = new Text("HiScore   "+hiScore);
         h.setFont(Menu.font);
-        h.setX(WIDTH-WIDTH/8);
+        h.setX(WIDTH-WIDTH/4);
         h.setY(HEIGHT/7);
         h.setFill(Color.RED);
         textList.add(h);
@@ -949,7 +949,7 @@ public class Main {
             root.getChildren().removeAll(hearts);
             hearts.clear();
             for (int i = 0; i < playerHP; i++) {
-                double x = WIDTH-WIDTH/6.25 + i*40;
+                double x = WIDTH-WIDTH/4.25 + i*100;
                 addHeart(x);
             }
             RADAR_ROT+=1;
@@ -1016,7 +1016,7 @@ public class Main {
         Text back = new Text("←");
         back.setFill(Color.RED);
         back.setFont(Menu.font);
-        back.setLayoutX(300);
+        back.setLayoutX(WIDTH/20);
         back.setLayoutY(100);
         back.setOnMouseClicked(mouseEvent -> {
             try {
@@ -1251,6 +1251,7 @@ public class Main {
         heart.setStroke(Color.RED);
         heart.setLayoutX(x);
         heart.setLayoutY((double) HEIGHT /20);
+        heart.scale(2);
         hearts.add(heart);
         root.getChildren().add(heart);
     }

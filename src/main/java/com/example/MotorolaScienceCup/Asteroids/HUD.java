@@ -34,7 +34,7 @@ public class HUD {
     private static List<BetterPolygon> hearts;
 
     public static final int pointsTextX = 15;
-    public static final int pointsTextY = 100;
+    public static final int pointsTextY = HEIGHT/7;
     private static final int fontSize = 50;
     private static final String fontStyle = "Public Pixel";
     private static List<Double> pointsHeart;
@@ -45,10 +45,11 @@ public class HUD {
         BetterPolygon heart = new Particle(pointsHeart, 0, 0, 0, 0);
         heart.setStroke(Color.RED);
         if(hearts.size() > 0)
-            heart.setLayoutX(hearts.get(hearts.size()-1).getLayoutX() + hearts.get(hearts.size() - 1).getRadius() + 20);
+            heart.setLayoutX(hearts.get(hearts.size()-1).getLayoutX() + hearts.get(hearts.size() - 1).getRadius() + 50);
         else
-            heart.setLayoutX(1000);
+            heart.setLayoutX(WIDTH/100);
         heart.setLayoutY(pointsTextY - fontSize - 40 );
+        heart.scale(2);
         hearts.add(heart);
         Main.root.getChildren().add(heart);
     }
@@ -61,21 +62,21 @@ public class HUD {
         pointsText = new Text(points+"");
         pointsText.setFont(font);
         pointsText.setLayoutX(WIDTH/2 - pointsText.getLayoutBounds().getWidth()/2);
-        pointsText.setLayoutY(pointsTextY);
+        pointsText.setLayoutY(pointsTextY/2);
         pointsText.setFill(Color.RED);
 
         highScore = new Text("HiScore  "+previousHighScore);
         highScore.setFont(font);
         highScore.setTextAlignment(TextAlignment.CENTER);
-        highScore.setLayoutX(pointsTextX+highScore.getLayoutBounds().getWidth()/4);
-        highScore.setLayoutY(pointsTextY+HEIGHT/8);
+        highScore.setLayoutX(pointsTextX+highScore.getLayoutBounds().getWidth()/10);
+        highScore.setLayoutY(pointsTextY);
         highScore.setFill(Color.RED);
 
         Text back = new Text("←");
         back.setFill(Color.RED);
         back.setFont(Font.font("Public Pixel", 40));
-        back.setLayoutX(pointsTextX+highScore.getLayoutBounds().getWidth()/4);
-        back.setLayoutY(100);
+        back.setLayoutX(WIDTH/30);
+        back.setLayoutY(HEIGHT/20);
         back.setOnMouseClicked(mouseEvent -> {
             try {
                 Main.timeline.stop();
