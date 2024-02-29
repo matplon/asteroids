@@ -150,6 +150,7 @@ public class Main {
         text10.setLayoutX(WIDTH/2-(text10.getLayoutBounds().getWidth()/2));
         text10.setLayoutY(HEIGHT/2-(text10.getLayoutBounds().getHeight()/2));
         text10.setFill(Color.GREEN);
+        text10.setFont(Menu.font);
         rootLoad.getChildren().addAll(rectangle, text10);
         Menu.stage.setScene(sceneLoad);
         ArrayList<Vertex> camHitbox = new ArrayList<>();
