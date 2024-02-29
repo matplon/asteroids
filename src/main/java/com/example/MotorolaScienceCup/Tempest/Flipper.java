@@ -248,13 +248,6 @@ public class Flipper extends Enemy {
             defPoints = new ArrayList<>(defFlipper.getPoints());
 
             pointer.moveTo((getPointsOnSides().get(0) + getPointsOnSides().get(2)) / 2, (getPointsOnSides().get(1) + getPointsOnSides().get(3)) / 2);
-            if(Main.root.getChildren().contains(defFlipper)){
-                Main.root.getChildren().remove(defFlipper);
-            }
-            defFlipper.setStroke(Color.RED);
-            defFlipper.moveTo(200, 800);
-
-            Main.root.getChildren().add(defFlipper);
             fullRotationAngle = 0;
             step = 0;
 
