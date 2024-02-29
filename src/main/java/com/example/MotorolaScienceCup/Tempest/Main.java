@@ -61,7 +61,7 @@ public class Main {
     static int HEARTS = 3;
     static int POINTS = 0;
     static boolean superZapper;
-    static int flippersNumber = 5;
+    static int flippersNumber = 8;
     static int tankersNumber = 0;
     static int spikersNumber = 0;
     static int fuseballNumber = 0;
