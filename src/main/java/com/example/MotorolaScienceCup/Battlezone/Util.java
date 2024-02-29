@@ -1,6 +1,7 @@
 package com.example.MotorolaScienceCup.Battlezone;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
+import com.example.MotorolaScienceCup.Menu;
 import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Sound;
 import javafx.scene.paint.Color;
@@ -645,19 +646,7 @@ public class Util {
     }
 
     public static int getHiScore(){
-        InputStream in = Sound.class.getResourceAsStream("battlescore.txt");
-        InputStream of = new BufferedInputStream(in);
-        Scanner scanner = null;
-        scanner = new Scanner(of);
-       
-        if (scanner.hasNextLine()) {
-
-            int highscore = Integer.parseInt(scanner.nextLine());
-           
-            return highscore;
-        }else{
-            return 0;
-        }
+        return Menu.BattlezoneHigh;
     }
 
 }

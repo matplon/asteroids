@@ -524,7 +524,7 @@ public class Main {
         s.setFill(Color.RED);
         textList.add(s);
         root.getChildren().add(s);
-        Text h = new Text("HiScore   "+hiScore);
+        Text h = new Text("HiScore    "+hiScore);
         h.setFont(Menu.font);
         h.setX(WIDTH-WIDTH/4);
         h.setY(HEIGHT/7);
@@ -993,8 +993,10 @@ public class Main {
             }else{
                 Util.drawUnscopedReticle();
             }
-            for (Mine mine : mineList){
-                mine.checkCamera();
+            if(!mineList.isEmpty()) {
+                for (int i = 0; i < mineList.size(); i++) {
+                    mineList.get(i).checkCamera();
+                }
             }
             for (Chunk chunk:chunkList){
                 chunk.checkHasPlayer();
@@ -1014,7 +1016,7 @@ public class Main {
             }
             chunkList.addAll(tempChunk);
             tempChunk.clear();
-            if(wasHit){
+            if(wasHit&&!isDying){
                 onGotShot();
             }
 
@@ -1026,6 +1028,9 @@ public class Main {
         back.setLayoutY(100);
         back.setOnMouseClicked(mouseEvent -> {
             try {
+                if (score > Menu.BattlezoneHigh) {
+                    Menu.BattlezoneHigh = score;
+                }
                 timeline.stop();
                 resetData();
                 if(Ufo.ambient!=null){
@@ -1209,46 +1214,14 @@ public class Main {
         newScene.setFill(Color.BLACK);
         newRoot.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         Menu.stage.setScene(newScene);
-        InputStream in = Sound.class.getResourceAsStream("battlescore.txt");
-        InputStream of = new BufferedInputStream(in);
 
-        Scanner scanner = null;
-        scanner = new Scanner(of);
-       
-        if (scanner.hasNextLine()) {
 
-            int highscore = Integer.parseInt(scanner.nextLine());
-           
-            /*if (score > highscore) {
-                Writer writer = null;
-                try {
-                    writer = new FileWriter(new File("src/main/resources/com/example/MotorolaScienceCup/battlescore.txt"));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                try {
-                    writer.write(score + "");
-                    writer.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }*/
-        }
-        /*else {
-           
-            Writer writer = null;
-            try {
-                writer = new FileWriter(new File("src/main/resources/com/example/MotorolaScienceCup/battlescore.txt"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+
+
+            if (score > Menu.BattlezoneHigh) {
+                Menu.BattlezoneHigh = score;
             }
-            try {
-                writer.write(score + "");
-                writer.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }*/
+
     }
     public static void addHeart(double x) {
         BetterPolygon heart = new com.example.MotorolaScienceCup.Particle(com.example.MotorolaScienceCup.Util.SVGconverter("heart.svg"), 0, 0, 0, 0);

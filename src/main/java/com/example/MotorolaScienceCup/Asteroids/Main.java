@@ -334,18 +334,7 @@ public class Main {
 
     public static int highscore() {
 
-        InputStream in = Sound.class.getResourceAsStream("highscore.txt");
-        InputStream of = new BufferedInputStream(in);
-        Scanner scanner = new Scanner(of);
-        if (scanner.hasNextLine()) {
-
-            int highscore1 = Integer.parseInt(scanner.nextLine());
-
-            return highscore1;
-        }
-        else {
-            return 0;
-        }
+        return Menu.AsteroidsHigh;
     }
 
 }

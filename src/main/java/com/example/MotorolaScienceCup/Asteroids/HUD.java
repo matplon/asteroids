@@ -80,6 +80,9 @@ public class HUD {
         back.setLayoutY(HEIGHT/20);
         back.setOnMouseClicked(mouseEvent -> {
             try {
+                if (HUD.getPoints() > Menu.AsteroidsHigh) {
+                    Menu.AsteroidsHigh = HUD.getPoints();
+                }
                 Main.timeline.stop();
                 if(Enemy.clip!=null){
                     Enemy.clip.close();
@@ -167,48 +170,10 @@ public class HUD {
         newScene.setFill(Color.BLACK);
         newRoot.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         Menu.stage.setScene(newScene);
-        InputStream in = Sound.class.getResourceAsStream("highscore.txt");
-        InputStream of = new BufferedInputStream(in);
+        if(HUD.getPoints() > Menu.AsteroidsHigh){
+            Menu.AsteroidsHigh = HUD.getPoints();
 
-        Scanner scanner = null;
-        scanner = new Scanner(of);
-       
-        if (scanner.hasNextLine()) {
-
-            int highscore = Integer.parseInt(scanner.nextLine());
-           
-            /*if (HUD.getPoints() > highscore) {
-                Writer writer = null;
-                try {
-                    writer = new FileWriter(new File("highscore.txt"));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                try {
-                    writer.write(HUD.getPoints() + "");
-                    writer.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        else {
-           
-            Writer writer = null;
-            try {
-                writer = new FileWriter(new File("highscore.txt"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                writer.write(HUD.getPoints() + "");
-                writer.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }*/
-
-    }}
+        }}
 
 
     public static void drawMap(BetterPolygon base){
