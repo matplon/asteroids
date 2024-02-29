@@ -24,8 +24,10 @@ public class Graphics {
     static BetterPolygon mapShape;
 
     public static void drawMap(String filepath, Color color, double scale) {
+        baseOffset = 20;
+        bigOffset = 0;
+
         connectors = new ArrayList<>();
-        List<Panel> oldPanels = new ArrayList<>(panels);
         panels = new ArrayList<>();
 
         double bigShapeRadius = HEIGHT / 2 - 30;
@@ -36,7 +38,6 @@ public class Graphics {
             baseOffset = -80;
             bigOffset = 200;
         }
-
 
         BetterPolygon tempSmallShape = new BetterPolygon(smallShapePoints);
         tempSmallShape.scale((bigShapeRadius * scale / 10) / tempSmallShape.getRadius());

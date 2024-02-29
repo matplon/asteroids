@@ -41,16 +41,6 @@ public class Player extends BetterPolygon {
         updatePoints();
     }
 
-    private boolean checkForSpiker() {
-        for (Spiker spiker : currentPanel.getSpikers()) {
-            if (spiker.intersects(this.getLayoutBounds())) {
-                Main.gameOver();
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void updatePoints() {
         Vector vector = new Vector(outerTriangleOffset, currentPanel.getAngle());
         double xTriangle1 = pointer.getCenterX() + vector.getX();

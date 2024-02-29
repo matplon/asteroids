@@ -81,6 +81,9 @@ public class Spiker extends Enemy {
     protected void uniqueDestroyMethod() {
         currentPanel.getSpikers().remove(this);
         Main.root.getChildren().remove(this);
+        double lineLength = Math.sqrt(Math.pow(currentPanel.spikerLine.getPoints().get(0) - currentPanel.spikerLine.getPoints().get(2), 2) +
+                Math.pow(currentPanel.spikerLine.getPoints().get(1) - currentPanel.spikerLine.getPoints().get(3), 2));
+        currentPanel.spikerLinePercentage = lineLength / currentPanel.getLength();
     }
 
     public void switchToTanker() {

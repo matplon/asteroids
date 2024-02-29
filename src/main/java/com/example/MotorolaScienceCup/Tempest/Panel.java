@@ -29,6 +29,7 @@ public class Panel {
     private List<Spiker> spikers = new ArrayList<>();
     private List<Fuseball> fuseBalls = new ArrayList<>();
     public Polyline spikerLine;
+    public double spikerLinePercentage;
 
     private double length;
     private double angle;
@@ -146,7 +147,7 @@ public class Panel {
             bullet.move();
             if (bullet.checkIfOutside()) {
                 bulletsToDestroy.add(bullet);
-                if (Main.player.getCurrentPanel().equals(this)) Main.gameOver();
+                if (Main.player.getCurrentPanel().equals(this)) Main.gameOver(false);
             }
         }
         for (Enemy.Bullet bullet : bulletsToDestroy) {
@@ -175,7 +176,7 @@ public class Panel {
                 fuseBallsToRemove.add(fuseBall);
             }
             if (!fuseBall.move()) {
-                Main.gameOver();
+                Main.gameOver(false);
             }
         }
         updatePlayerBullets(nextLevel);
@@ -190,7 +191,7 @@ public class Panel {
             flippers.remove(flipper);
         }
         for (Tanker tanker : tankersToDestroy) {
-            tanker.destroy();
+            tanker.switchToFlipper();
         }
         for (Spiker spiker : spikersToDestroy) {
             spiker.switchToTanker();
@@ -205,19 +206,21 @@ public class Panel {
                 Main.panels.get(Main.tempPanels.indexOf(this)).getSmallSide().getPoints().get(2)) / 2;
         double newStartY = (Main.panels.get(Main.tempPanels.indexOf(this)).getSmallSide().getPoints().get(1) +
                 Main.panels.get(Main.tempPanels.indexOf(this)).getSmallSide().getPoints().get(3)) / 2;
-        double magnitude = Math.sqrt(Math.pow(newStartX - spikerLine.getPoints().get(0), 2) +
-                Math.pow(newStartY - spikerLine.getPoints().get(1), 2));
-        double lineAngle = Math.toDegrees(Math.atan2(newStartY - spikerLine.getPoints().get(1),
-                newStartX - spikerLine.getPoints().get(0)));
+
+        double lineLength = Math.sqrt(Math.pow(spikerLine.getPoints().get(2) - spikerLine.getPoints().get(0), 2) +
+                Math.pow(spikerLine.getPoints().get(3) - spikerLine.getPoints().get(1), 2));
+        spikerLinePercentage = lineLength / Main.panels.get(Main.tempPanels.indexOf(this)).getLength();
+
+        double magnitude = spikerLinePercentage * panels.get(tempPanels.indexOf(this)).getLength();
+
+        double lineAngle = panels.get(tempPanels.indexOf(this)).getAngle();
         Vector vector = new Vector(magnitude, lineAngle);
-        double newEndX = spikerLine.getPoints().get(2) + vector.getX();
-        double newEndY = spikerLine.getPoints().get(3) + vector.getY();
         spikerLine = new Polyline();
-        spikerLine.getPoints().setAll(newStartX, newStartY, newEndX, newEndY);
+        spikerLine.getPoints().setAll(newStartX, newStartY, newStartX + vector.getX(), newStartY+vector.getY());
         spikerLine.setStroke(Spiker.spikerColor);
         root.getChildren().add(spikerLine);
         if(Shape.intersect(spikerLine, player).getLayoutBounds().getWidth() > 0){
-            Main.gameOver();
+            Main.gameOver(true);
             return;
         }
         List<Player.Bullet> bulletsToDestroy = new ArrayList<>();

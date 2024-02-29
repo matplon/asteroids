@@ -242,6 +242,7 @@ public class Enemy extends BetterPolygon {
     }
 
     public static void spawnSeeds(int flippers, int tankers, int spikers, int fuseballs) {
+        seedsDone = false;
         int flipperCounter = flippers;
         int tankerCounter = tankers;
         int spikerCounter = spikers;

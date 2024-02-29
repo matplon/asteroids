@@ -50,7 +50,9 @@ public class Tanker extends Enemy {
     protected void uniqueDestroyMethod() {
         Main.root.getChildren().remove(this);
         currentPanel.getTankers().remove(this);
+    }
 
+    public void switchToFlipper(){
         Flipper flipper1 = new Flipper(currentPanel.getLeftPanel());
         Flipper flipper2 = new Flipper(currentPanel.getRightPanel());
 
@@ -66,6 +68,7 @@ public class Tanker extends Enemy {
         flipper2.updatePoints();
 
         Main.root.getChildren().addAll(flipper1, flipper2);
+        destroy();
     }
 
     public void remove(){

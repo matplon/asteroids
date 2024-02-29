@@ -36,7 +36,7 @@ public class Main {
     static Stage stage = Menu.stage;
     static Timeline timeline;
     static Color defaultPanelColor = Color.BLUE;
-    static Color activePanelColor = new Color(1.0 - defaultPanelColor.getRed(), 1.0 -defaultPanelColor.getGreen(), 1.0 - defaultPanelColor.getBlue(), 1.0);
+    static Color activePanelColor = new Color(1.0 - defaultPanelColor.getRed(), 1.0 - defaultPanelColor.getGreen(), 1.0 - defaultPanelColor.getBlue(), 1.0);
     static final double glowV = 0.9;
     static Player player;
     static double nextLevelSpikelineSpeed = 8;
@@ -51,9 +51,11 @@ public class Main {
     static boolean goRight;
     static boolean goLeft;
     static int LEVEL = 1;
-    static int flippersNumber = 1;
+    static int HEARTS = 3;
+    static boolean superZapper;
+    static int flippersNumber = 10;
     static int tankersNumber = 0;
-    static int spikersNumber = 1;
+    static int spikersNumber = 0;
     static int fuseballNumber = 0;
 
     static int maxFlipper = 4;
@@ -89,9 +91,12 @@ public class Main {
     static double mapDistanceCovered = 0;
 
     public static void init() {
-        if(timeline != null){
+
+        if (timeline != null) {
             timeline.stop();
         }
+        scale = 1;
+        superZapper = true;
         connectors = new ArrayList<>();
         bigShape = new ArrayList<>();
         smallShape = new ArrayList<>();
@@ -106,14 +111,21 @@ public class Main {
         goLeft = false;
         goRight = false;
 
-        if(LEVEL <= 13){
-            map = "map"+LEVEL+".svg";
-        }
-        else{
+        if (LEVEL <= 13) {
+            map = "map" + LEVEL + ".svg";
+
+        } else {
             Random random = new Random();
-            map = "map"+random.nextInt(1, 15)+".svg";
+            map = "map" + random.nextInt(1, 15) + ".svg";
             defaultPanelColor = new Color(Math.random(), Math.random(), Math.random(), 1.0);
-            activePanelColor = new Color(1.0 - defaultPanelColor.getRed(), 1.0 -defaultPanelColor.getGreen(), 1.0 - defaultPanelColor.getBlue(), 1.0);
+            activePanelColor = new Color(1.0 - defaultPanelColor.getRed(), 1.0 - defaultPanelColor.getGreen(), 1.0 - defaultPanelColor.getBlue(), 1.0);
+        }
+        if (LEVEL >= 3) {
+            spikersNumber++;
+            tankersNumber++;
+        }
+        if (LEVEL >= 4) {
+            fuseballNumber++;
         }
 
         Graphics.drawMap(map, defaultPanelColor, 1);
@@ -136,7 +148,7 @@ public class Main {
         points.add(10.0);
         points.add(x1);
         points.add(10.0);
-        
+
         scene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = true;
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = true;
@@ -150,7 +162,7 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.X) shoot = false;
         });
         start();
-        for(Clip clip:Menu.clips){
+        for (Clip clip : Menu.clips) {
             clip.close();
         }
     }
@@ -167,10 +179,19 @@ public class Main {
                 bulletsNumber += panel.getPlayerBullets().size();
             }
             if (goRight) {
-                player.move(false);
+                if (isMapOpen.get(maps.indexOf(map))) {
+                    player.move(true);
+                } else {
+                    player.move(false);
+                }
+
             }
             if (goLeft) {
-                player.move(true);
+                if (isMapOpen.get(maps.indexOf(map))) {
+                    player.move(false);
+                } else {
+                    player.move(true);
+                }
             }
             if (shoot && bulletsNumber < 5) {
                 player.shoot(false);
@@ -179,28 +200,30 @@ public class Main {
                 Enemy.updateSeeds();
             }
             player.shotTimer--;
-            if (isLevelFinished()) nextLevel();
-//            for (int i = 0; i < player.getCurrentPanel().getFlippers().size(); i++) {
-//                System.out.println(player.getCurrentPanel().getFlippers().get(i).reachedTheEdge);
-//            }
+            if (isLevelFinished()) {
+                System.out.println("pls dzialaj");
+                nextLevel();
+            }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
 
-    public static void gameOver() {
-        System.out.println("you died");
+    public static void gameOver(boolean nextLevel) {
+        HEARTS--;
+        if (!nextLevel) init();
+        else nextLevel();
     }
 
-    public static void addPoints() {
+    public static void addPoints(double points) {
         System.out.println("add points");
     }
 
     public static boolean isLevelFinished() {
-        if(!Enemy.seedsDone) return false;
+        if (!Enemy.seedsDone) return false;
         for (Panel panel : panels) {
             if (!panel.getTankers().isEmpty()) return false;
-            if(!panel.getSpikers().isEmpty()) return false;
+            if (!panel.getSpikers().isEmpty()) return false;
             for (Flipper flipper : panel.getFlippers()) {
                 if (!flipper.reachedTheEdge) return false;
             }
@@ -212,24 +235,20 @@ public class Main {
         timeline.stop();
         removeAllEnemies();
         mapDistanceCovered = 0;
+        scale = 1;
         tempPanels = new ArrayList<>(panels);
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
             root.getChildren().clear();
             root.getChildren().add(player);
-            for (Panel panel : tempPanels){
-                if(panel.spikerLine != null) root.getChildren().add(panel.spikerLine);
-                for (Player.Bullet bullet1 : panel.playerBullets){
+            for (Panel panel : tempPanels) {
+                if (panel.spikerLine != null) root.getChildren().add(panel.spikerLine);
+                for (Player.Bullet bullet1 : panel.playerBullets) {
                     root.getChildren().add(bullet1);
                 }
             }
             Graphics.drawMap(map, defaultPanelColor, scale);
             highlightPanel(player);
-            if(isMapOpen.get(map.indexOf(map))){
-                scale *= a;
-            }
-            else{
-                moveMap();
-            }
+            scale *= a;
             double bulletsNumber = 0;
             for (Panel panel : tempPanels) {
                 panel.update(true);
@@ -268,7 +287,7 @@ public class Main {
 
     }
 
-    public static void newLevel(){
+    public static void newLevel() {
         init();
     }
 
@@ -282,34 +301,37 @@ public class Main {
         player.getCurrentPanel().changeColor(activePanelColor);
     }
 
-    public static void removeAllEnemies(){
+    public static void removeAllEnemies() {
         List<Flipper> flippersToDestroy = new ArrayList<>();
         List<Tanker> tankersToDestroy = new ArrayList<>();
         List<Fuseball> fuseballsToDestroy = new ArrayList<>();
-        for (Panel panel : panels){
+        for (Panel panel : panels) {
             for (Flipper flipper : panel.getFlippers()) flippersToDestroy.add(flipper);
             for (Tanker tanker : panel.getTankers()) tankersToDestroy.add(tanker);
             for (Fuseball fuseball : panel.getFuseBalls()) fuseballsToDestroy.add(fuseball);
         }
-        for(Flipper flipper : flippersToDestroy) flipper.currentPanel.getFlippers().remove(flipper);
-        for(Tanker tanker : tankersToDestroy) tanker.currentPanel.getTankers().remove(tanker);
+        for (Flipper flipper : flippersToDestroy) flipper.currentPanel.getFlippers().remove(flipper);
+        for (Tanker tanker : tankersToDestroy) tanker.currentPanel.getTankers().remove(tanker);
         for (Fuseball fuseball : fuseballsToDestroy) fuseball.currentPanel.getFuseBalls().remove(fuseball);
     }
 
-    public static void moveMap(){
-        Vector vector = new Vector(mapSpeed, 90);
-        for (Panel panel : panels){
-            moveLine(panel.smallSide, vector);
-            moveLine(panel.bigSide, vector);
-            moveLine(panel.leftSide, vector);
-            moveLine(panel.rightSide, vector);
-        }
-        mapDistanceCovered += mapSpeed;
-    }
-
-    public static void moveLine(Polyline line, Vector vector){
+    public static void moveLine(Polyline line, Vector vector) {
         List<Double> tempPoints = line.getPoints();
         line.getPoints().setAll(tempPoints.get(0) + vector.getX(), tempPoints.get(1) + vector.getY(),
                 tempPoints.get(2) + vector.getX(), tempPoints.get(3) + vector.getY());
+    }
+
+    public static void useZapper() {
+        superZapper = false;
+        List<Flipper> flippersToDestroy = new ArrayList<>();
+        List<Tanker> tankersToDestroy = new ArrayList<>();
+        List<Spiker> spikersToDestroy = new ArrayList<>();
+        List<Fuseball> fuseballsToDestroy = new ArrayList<>();
+
+        for (Panel panel : panels) {
+            for (Flipper flipper : panel.getFlippers()) {
+                flippersToDestroy.add(flipper);
+            }
+        }
     }
 }
