@@ -105,7 +105,7 @@ public class Object3D {
             }
             if (!(object.equals(current))&&!flying&&!((current instanceof Camera)&&(object instanceof Mine))) {
                 double dist = Math.sqrt(Math.pow((this.getX() - object.getX()), 2) + Math.pow((this.getZ() - object.getZ()), 2));
-                System.out.println(dist + " TROLOLOLOLOL");
+               
                 if (dist < range) {
                     if(!(object instanceof EnemyTank)){
                         ArrayList<Vertex> res = Util.hitBoxIntersect(object.getHitBox2D(), myHitBox);
@@ -160,24 +160,24 @@ public class Object3D {
         int zeroedArrCount = 0;
         ArrayList<Vertex> arrlist = new ArrayList<>();
         for (int i = 0; i < this.points3D.size(); i++) {
-            System.out.println(this.points3D.get(i).toString()+"0");
+           
         }
         for (int i = 0; i < this.points3D.size(); i++) {
 
             double [][] camMatrixMatrix = Main.camera.getCamMatrix();
             double [] arr = new double[4];
             double[] arr1 = this.points3D.get(i).toArray();
-            System.out.println(Arrays.toString(arr1)+"1");
+           
             for (int j = 0; j < arr.length; j++) {
                 arr[j] = arr1[j];
             }
             arr = Util.multiplyTransform(Util.getRotationYMatrix(0), arr);
-            System.out.println(Arrays.toString(arr)+"2");
+           
             arr = Util.multiplyTransform(camMatrixMatrix, arr);
-            System.out.println(Arrays.toString(arr)+"3");
+           
             double [][] projectionMatrix = Main.camera.getProjectionMatrix();
             arr = Util.multiplyTransform(projectionMatrix, arr);
-            System.out.println(Arrays.toString(arr)+"4");
+           
             for (int j = 0; j < arr.length; j++) {
                 arr[j] = arr[j] / arr[arr.length-1];
             }
@@ -185,10 +185,10 @@ public class Object3D {
                 zeroedArrCount++;
                 Arrays.fill(arr,0);
             }
-            System.out.println(Arrays.toString(arr)+"5");
+           
             double [][] displayMatrix = Util.getDisplayMatrix();
             arr = Util.multiplyTransform(displayMatrix, arr);
-            System.out.println(Arrays.toString(arr)+"6");
+           
             arrlist.add(Util.arrToVert(arr));
         }
         if(zeroedArrCount == 0 || zeroedArrCount == arrlist.size()){
@@ -210,7 +210,7 @@ public class Object3D {
     public void displayObject(){
         ArrayList<Vertex> arrlist=this.toScreen();
         for (int i = 0; i < arrlist.size(); i++) {
-            System.out.println(arrlist.get(i).toString()+"heh");
+           
         }
         for (int i = 0; i < this.faces3D.size(); i++) {
             Face face = this.faces3D.get(i);
@@ -261,16 +261,16 @@ public class Object3D {
             double [][] translationMatrix = Util.getTranslationMatrix(x,y,z);
             double [] arr = this.points3D.get(i).toArray();
             arr = Util.multiplyTransform(translationMatrix, arr);
-            System.out.println(Arrays.toString(arr)+"nice");
+           
             this.points3D.set(i,Util.arrToVert(arr));
 
         }
         for (int i = 0; i < this.hitBox2D.size(); i++) {
             double [][] translationMatrix = Util.getTranslationMatrix(x,y,z);
             double [] arr = this.hitBox2D.get(i).toArray();
-            System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+           
             arr = Util.multiplyTransform(translationMatrix, arr);
-            System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+           
             this.hitBox2D.set(i,Util.arrToVert(arr));
 
         }
@@ -278,9 +278,9 @@ public class Object3D {
             for (int i = 0; i < ((EnemyTank) this).getCollideHitBox().size(); i++) {
                 double [][] translationMatrix = Util.getTranslationMatrix(x,y,z);
                 double [] arr = ((EnemyTank) this).getCollideHitBox().get(i).toArray();
-                System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+               
                 arr = Util.multiplyTransform(translationMatrix, arr);
-                System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+               
                 ((EnemyTank) this).getCollideHitBox().set(i,Util.arrToVert(arr));
 
             }
@@ -295,8 +295,8 @@ public class Object3D {
         double tx = x - this.getCenterX();
         double ty = y - this.getCenterY();
         double tz = z - this.getCenterZ();
-        System.out.println(tx+" "+ty+" "+tz + " CFFF");
-        System.out.println(x+" "+y+" "+z);
+       
+       
         translate(tx,ty,tz);
     }
 
@@ -304,7 +304,7 @@ public class Object3D {
         double x = this.getCenterX();
         double y = this.getCenterY();
         double z = this.getCenterZ();
-        System.out.println(rotation+" HHHHHHHHHHHHHHHHHHHH");
+       
         this.moveTo(0,0,0);
         for (int i = 0; i < this.points3D.size(); i++) {
             double [][] translationMatrix = Util.getRotationXMatrix(angle);
@@ -323,7 +323,7 @@ public class Object3D {
         double y = this.getCenterY();
         double z = this.getCenterZ();
         this.updateRotation(angle);
-        System.out.println(rotation+" HHHHHHHHHHHHHHHHHHHH");
+       
         this.moveTo(0,0,0);
         for (int i = 0; i < this.points3D.size(); i++) {
             double [][] translationMatrix = Util.getRotationYMatrix(angle);
@@ -335,9 +335,9 @@ public class Object3D {
         for (int i = 0; i < this.hitBox2D.size(); i++) {
             double [][] translationMatrix = Util.getRotationYMatrix(angle);
             double [] arr = this.hitBox2D.get(i).toArray();
-            System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+           
             arr = Util.multiplyTransform(translationMatrix, arr);
-            System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+           
             this.hitBox2D.set(i,Util.arrToVert(arr));
 
         }
@@ -345,9 +345,9 @@ public class Object3D {
             for (int i = 0; i < ((EnemyTank) this).getCollideHitBox().size(); i++) {
                 double [][] translationMatrix = Util.getRotationYMatrix(angle);
                 double [] arr = ((EnemyTank) this).getCollideHitBox().get(i).toArray();
-                System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+               
                 arr = Util.multiplyTransform(translationMatrix, arr);
-                System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+               
                 ((EnemyTank) this).getCollideHitBox().set(i,Util.arrToVert(arr));
 
             }
@@ -361,7 +361,7 @@ public class Object3D {
         double x = this.getCenterX();
         double y = this.getCenterY();
         double z = this.getCenterZ();
-        System.out.println(rotation+" HHHHHHHHHHHHHHHHHHHH");
+       
         this.moveTo(0,0,0);
         for (int i = 0; i < this.points3D.size(); i++) {
             double [][] translationMatrix = Util.getRotationZMatrix(angle);
@@ -386,9 +386,9 @@ public class Object3D {
         for (int i = 0; i < this.hitBox2D.size(); i++) {
             double [][] translationMatrix = Util.getScaleMatrix(x,y,z);
             double [] arr = this.hitBox2D.get(i).toArray();
-            System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+           
             arr = Util.multiplyTransform(translationMatrix, arr);
-            System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+           
             this.hitBox2D.set(i,Util.arrToVert(arr));
 
         }

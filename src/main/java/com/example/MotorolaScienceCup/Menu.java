@@ -23,6 +23,8 @@ public class Menu extends Application {
     public static int HEIGHT = (int) screenBounds.getHeight();
     public static final int FPS = 60;
     public static VBox root;
+    public static int AsteroidsHigh = 0;
+    public static int BattlezoneHigh = 0;
     public static Stage stage;
     public static Scene scene;
     public static List<Clip> clips = new ArrayList();
@@ -38,8 +40,8 @@ public class Menu extends Application {
 
     @Override
     public void start(Stage stage1) throws Exception {
-        root = FXMLLoader.load(getClass().getResource("Main.fxml"));
-        System.out.println();
+        root = FXMLLoader.load(Menu.class.getResource("Main.fxml"));
+       
         scene = new Scene(root, WIDTH, HEIGHT);
         stage = stage1;
         stage1.setScene(scene);

@@ -6,11 +6,13 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 
+import static com.example.MotorolaScienceCup.Battlezone.Main.FPS_OFFSET;
+
 public class Missile extends EnemyTank {
 
 
-    public static double MISSILE_SPEED = 0.6;
-    public static double MISSILE_ROT_SPEED = 10;
+    public static double MISSILE_SPEED = 0.6*FPS_OFFSET;
+    public static double MISSILE_ROT_SPEED = 10*FPS_OFFSET;
 
     private boolean isFlying;
 
@@ -59,7 +61,7 @@ public class Missile extends EnemyTank {
             arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX()*2,direction.getY()*2,direction.getZ()*2),arr);
             lol.add(Util.arrToVert(arr));
         }
-        System.out.println("hihihi");
+       
         ArrayList<Object3D> array = this.runCollisionCheck(5,lol,this);
         boolean hasMine = false;
         for (Object3D object3D:array){
@@ -67,7 +69,7 @@ public class Missile extends EnemyTank {
                 hasMine = true;
             }
         }
-            System.out.println(getRotation() + " HHHHHHHHHHHHHHHHHHHH");
+           
             Vertex vert = this.getCenter();
             double[] arr1 = vert.toArray();
             arr1 = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX(),direction.getY(),direction.getZ()),arr1);
@@ -82,18 +84,18 @@ public class Missile extends EnemyTank {
             for (int i = 0; i < this.getHitBox2D().size(); i++) {
                 double[][] translationMatrix = Util.getTranslationMatrix(direction.getX(), direction.getY(), direction.getZ());
                 double[] arr = this.getHitBox2D().get(i).toArray();
-                System.out.println(Arrays.toString(arr) + "ZZZZZZZZZZ");
+               
                 arr = Util.multiplyTransform(translationMatrix, arr);
-                System.out.println(Arrays.toString(arr) + "XXXXXXXX");
+               
                 this.getHitBox2D().set(i, Util.arrToVert(arr));
 
             }
             for (int i = 0; i < this.getCollideHitBox().size(); i++) {
                 double [][] translationMatrix = Util.getTranslationMatrix(direction.getX(), direction.getY(), direction.getZ());
                 double [] arr = this.getCollideHitBox().get(i).toArray();
-                System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+               
                 arr = Util.multiplyTransform(translationMatrix, arr);
-                System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+               
                 this.getCollideHitBox().set(i,Util.arrToVert(arr));
 
             }
@@ -143,9 +145,9 @@ public class Missile extends EnemyTank {
     }
 
     public void enemyBehavior(){
-        System.out.println("6969696969691");
+       
         if(isMoving()){
-            System.out.println("QQQQQQQQQQQQQQ");
+           
             if(getPoints3D().get(1).getY() > 1 && hasSpawned){
                 moveTank(new Vertex(0,-MISSILE_SPEED,0));
             }else if(getPoints3D().get(1).getY() < 1 && getPoints3D().get(1).getY() !=0 && hasSpawned){
@@ -159,12 +161,12 @@ public class Missile extends EnemyTank {
                 setMoving(false);
                 setWaitTimer(0);
             }else{
-                System.out.println("YOYOOYY");
+               
                 moveTank(new Vertex(this.getForward().getX()*MISSILE_SPEED*getMoveDir(),0,this.getForward().getZ()*MISSILE_SPEED*getMoveDir()));
             }
         }
         if(isWaiting()){
-            System.out.println("RRRRRRRRRRR");
+           
             setWaitTimer(getWaitTimer()-1);
             if(getWaitTimer()<0){
                 setWaitTimer(-1);
@@ -217,7 +219,7 @@ public class Missile extends EnemyTank {
             }
         }
         if(isRotating()){
-            System.out.println("?????????????");
+           
             if(getTargetRotation() < getRotation() + 12 && getTargetRotation() > getRotation() - 12){
                 rotateTank(getRotDifference());
                 setTargetRotation(getRotation());

@@ -333,20 +333,8 @@ public class Main {
     }
 
     public static int highscore() {
-        try {
-            Scanner scanner = new Scanner(new File("highscore.txt"));
-            if (scanner.hasNextLine()) {
 
-                int highscore1 = Integer.parseInt(scanner.nextLine());
-
-                return highscore1;
-            }
-            else {
-                return 0;
-            }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        return Menu.AsteroidsHigh;
     }
 
 }

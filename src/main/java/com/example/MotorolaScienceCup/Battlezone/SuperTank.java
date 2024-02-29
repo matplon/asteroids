@@ -3,12 +3,14 @@ package com.example.MotorolaScienceCup.Battlezone;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import static com.example.MotorolaScienceCup.Battlezone.Main.FPS_OFFSET;
+
 public class SuperTank extends EnemyTank{
 
     private int HP;
     
-    public static double SUPER_SPEED = 0.13*1.3;
-    public static double SUPER_ROT_SPEED = 1;
+    public static double SUPER_SPEED = 0.13*1.3*FPS_OFFSET;
+    public static double SUPER_ROT_SPEED = 1*FPS_OFFSET;
     public SuperTank(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
         super(points3D, faces3D);
     }
@@ -36,13 +38,13 @@ public class SuperTank extends EnemyTank{
     
     public void enemyBehavior(){
         if(isMoving()){
-            System.out.println("KOKOKOKKO");
+           
             if(Util.getDistance(getTarget(), this.getCenter())<5){
                 setWaiting(true);
                 setMoving(false);
                 setWaitTimer(Math.random()*50);
             }else{
-                System.out.println("YOYOOYY");
+               
                 moveTank(new Vertex(this.getForward().getX()*SUPER_SPEED*getMoveDir(),0,this.getForward().getZ()*SUPER_SPEED*getMoveDir()));
                 Vertex vert1 = getCenter();
                 double[] arr = vert1.toArray();

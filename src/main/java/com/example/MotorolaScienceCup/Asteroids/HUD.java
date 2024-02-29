@@ -3,6 +3,7 @@ package com.example.MotorolaScienceCup.Asteroids;
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Menu;
 import com.example.MotorolaScienceCup.Particle;
+import com.example.MotorolaScienceCup.Sound;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -79,6 +80,9 @@ public class HUD {
         back.setLayoutY(HEIGHT/20);
         back.setOnMouseClicked(mouseEvent -> {
             try {
+                if (HUD.getPoints() > Menu.AsteroidsHigh) {
+                    Menu.AsteroidsHigh = HUD.getPoints();
+                }
                 Main.timeline.stop();
                 if(Enemy.clip!=null){
                     Enemy.clip.close();
@@ -166,50 +170,10 @@ public class HUD {
         newScene.setFill(Color.BLACK);
         newRoot.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         Menu.stage.setScene(newScene);
+        if(HUD.getPoints() > Menu.AsteroidsHigh){
+            Menu.AsteroidsHigh = HUD.getPoints();
 
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(new File("highscore.txt"));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(scanner.hasNextLine());
-        if (scanner.hasNextLine()) {
-
-            int highscore = Integer.parseInt(scanner.nextLine());
-            System.out.println(highscore);
-            if (HUD.getPoints() > highscore) {
-                Writer writer = null;
-                try {
-                    writer = new FileWriter(new File("highscore.txt"));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                try {
-                    writer.write(HUD.getPoints() + "");
-                    writer.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        else {
-            System.out.println(HUD.getPoints());
-            Writer writer = null;
-            try {
-                writer = new FileWriter(new File("highscore.txt"));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                writer.write(HUD.getPoints() + "");
-                writer.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-    }
+        }}
 
 
     public static void drawMap(BetterPolygon base){

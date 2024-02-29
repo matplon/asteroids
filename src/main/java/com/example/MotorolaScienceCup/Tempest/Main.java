@@ -50,7 +50,7 @@ public class Main {
     static boolean shoot;
     static boolean goRight;
     static boolean goLeft;
-    static int LEVEL = 11;
+    static int LEVEL = 1;
     static int flippersNumber = 1;
     static int tankersNumber = 0;
     static int spikersNumber = 1;
@@ -180,6 +180,9 @@ public class Main {
             }
             player.shotTimer--;
             if (isLevelFinished()) nextLevel();
+//            for (int i = 0; i < player.getCurrentPanel().getFlippers().size(); i++) {
+//                System.out.println(player.getCurrentPanel().getFlippers().get(i).reachedTheEdge);
+//            }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
