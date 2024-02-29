@@ -50,7 +50,7 @@ public class EnemyTank extends Object3D{
 
     public static double TANK_SPEED = 0.25*0.25*1.3;
 
-    public static double TANK_ROT_SPEED = 0.75*1.1;
+    public static double TANK_ROT_SPEED = 0.75;
 
 
     public EnemyTank(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){
@@ -473,7 +473,7 @@ public class EnemyTank extends Object3D{
                     setTargetRotation(getLookAt(getTarget()));
                     setRotateDir(getExactRotationDir());
                 }
-                if(targetRotation < getRotation() + 1 && targetRotation > getRotation() - 1){
+                if(targetRotation < getRotation() + 2 && targetRotation > getRotation() - 2){
                     rotateTank(getRotDifference()+offset);
                     setTargetRotation(getTargetRotation()+getRotDifference()+offset);
                     setRotating(false);

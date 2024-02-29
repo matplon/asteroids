@@ -10,7 +10,7 @@
 
 <VBox alignment="CENTER" prefHeight="391.0" prefWidth="602.0" spacing="10.0" style="-fx-background-color: #15133b;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.MotorolaScienceCup.MainController">
    <children>
-      <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="FC PO NALEWCE" textAlignment="CENTER" wrappingWidth="581.3366851806641">
+      <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="AC PAJACE" textAlignment="CENTER" wrappingWidth="581.3366851806641">
          <font>
             <Font name="Public Pixel" size="25.0" />
          </font>
