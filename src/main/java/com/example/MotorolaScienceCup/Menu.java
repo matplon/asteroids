@@ -38,7 +38,7 @@ public class Menu extends Application {
 
     @Override
     public void start(Stage stage1) throws Exception {
-        root = FXMLLoader.load(getClass().getResource("Main.fxml"));
+        root = FXMLLoader.load(Menu.class.getResource("Main.fxml"));
         System.out.println();
         scene = new Scene(root, WIDTH, HEIGHT);
         stage = stage1;
