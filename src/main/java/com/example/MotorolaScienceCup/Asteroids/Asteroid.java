@@ -64,7 +64,7 @@ public class Asteroid extends Particle {
 
             // Random, higher velocity
             Random random = new Random();
-            com.example.MotorolaScienceCup.Vector newVelocity1 = new com.example.MotorolaScienceCup.Vector(random.nextDouble(getVelocity().getMagnitude() * 1.2, getVelocity().getMagnitude() * 2), asteroid1.getAngle());
+            com.example.MotorolaScienceCup.Vector newVelocity1 = new Vector(random.nextDouble(getVelocity().getMagnitude() * 1.2, getVelocity().getMagnitude() * 2), asteroid1.getAngle());
             com.example.MotorolaScienceCup.Vector newVelocity2 = new Vector(random.nextDouble(getVelocity().getMagnitude() * 1.2, getVelocity().getMagnitude() * 2), asteroid2.getAngle());
 
             asteroid1.setVelocity(newVelocity1);
