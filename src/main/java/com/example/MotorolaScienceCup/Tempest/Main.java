@@ -175,7 +175,7 @@ public class Main {
             player.shotTimer--;
             if (isLevelFinished()) nextLevel();
 //            for (int i = 0; i < player.getCurrentPanel().getFlippers().size(); i++) {
-//                System.out.println(player.getCurrentPanel().getFlippers().get(i).reachedTheEdge);
+//               
 //            }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -183,11 +183,11 @@ public class Main {
     }
 
     public static void gameOver() {
-        System.out.println("you died");
+       
     }
 
     public static void addPoints() {
-        System.out.println("add points");
+       
     }
 
     public static boolean isLevelFinished() {

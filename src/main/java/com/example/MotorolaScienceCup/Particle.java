@@ -45,7 +45,7 @@ public class Particle extends BetterPolygon {
         if (isAccelerating && velocity.getMagnitude() < terminalVelocity) {
             velocity.setX(velocity.getX() + acceleration * Math.cos(Math.toRadians(angle)) / FPS);  // Update X component of velocity
             velocity.setY(velocity.getY() - acceleration * Math.sin(Math.toRadians(angle)) / FPS);  // Update Y component of velocity
-            System.out.println(velocity);
+           
             if (velocity.getMagnitude() > terminalVelocity) {
                 velocity.scale(terminalVelocity / velocity.getMagnitude());
             }

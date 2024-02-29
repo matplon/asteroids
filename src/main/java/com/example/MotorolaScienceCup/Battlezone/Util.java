@@ -77,7 +77,7 @@ public class Util {
         ArrayList<Vertex> points = object.getPoints3D();
         for (int i = 0; i < points.size(); i+=2) {
             if(i!=22){
-                System.out.println(i);
+               
                 ArrayList<Vertex> arr = new ArrayList<>();
                 for (int j = 0; j < 3; j++) {
                     arr.add(points.get(i+j));
@@ -109,7 +109,7 @@ public class Util {
         return finalArr;
     }
     public static com.example.MotorolaScienceCup.Battlezone.Bullet generateBullet(double[] dir, double firingAngle, double x, double y, double z){
-        System.out.println("PPPPPPPPP");
+       
         Object3D object3D = Util.convertOBJ("Pyramid.txt");
         Bullet bullet = new Bullet(object3D.getPoints3D(),object3D.getFaces3D());
 
@@ -125,7 +125,7 @@ public class Util {
     }
 
     public static Mine generateMine(double x,double z){
-        System.out.println("PPPPPPPPP");
+       
         Object3D object = convertOBJ("Pyramid.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
         ArrayList<Vertex> triangleHitbox = new ArrayList<>();
@@ -156,7 +156,7 @@ public class Util {
     }
 
     public static Ufo generateUfo(double x, double z){
-        System.out.println("PPPPPPPPP");
+       
         Object3D object = convertOBJ("UFO.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
         Object3D ring = convertOBJ("ufoRing.txt");
@@ -186,7 +186,7 @@ public class Util {
     }
 
     public static EnemyTank generateEnemyTank(double x, double z){
-        System.out.println("PPPPPPPPP");
+       
         Object3D object = convertOBJ("normalTank.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
         EnemyTank enemy = new EnemyTank(object.getPoints3D(),object.getFaces3D());
@@ -228,7 +228,7 @@ public class Util {
     }
 
     public static Missile generateMissile(double x, double z){
-        System.out.println("PPPPPPPPP");
+       
         Object3D object = convertOBJ("missile.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
         Missile enemy = new Missile(object.getPoints3D(),object.getFaces3D());
@@ -274,7 +274,7 @@ public class Util {
     }
 
     public static SuperTank generateSuperTank(double x, double z){
-        System.out.println("PPPPPPPPP");
+       
         Object3D object = convertOBJ("superTank.txt");
         ArrayList<Vertex> points3D = object.getPoints3D();
         SuperTank enemy = new SuperTank(object.getPoints3D(),object.getFaces3D());
@@ -306,7 +306,9 @@ public class Util {
         enemy.setColor(Color.GREEN);
         enemy.setAttackMode(true);
         enemy.setWillShoot(false);
-        enemy.setRotating(true);
+        enemy.setRotating(false);
+        enemy.setWaiting(true);
+        enemy.setWaitTimer(100);
         enemy.setMoving(false);
         enemy.setMoveDir(1);
         enemy.setRotateDir(enemy.getExactRotationDir());
@@ -318,7 +320,7 @@ public class Util {
     }
 
     public static Object3D generateCube(double x, double z){
-        System.out.println("PPPPPPPPP");
+       
         Object3D object = convertOBJ("Cube.txt");
         ArrayList<Vertex> cubeHitbox = new ArrayList<>();
         cubeHitbox.add(new Vertex(1.05,0,-1.05));
@@ -332,7 +334,7 @@ public class Util {
         return object;
     }
     public static Object3D generateCone(double x, double z){
-        System.out.println("PPPPPPPPP");
+       
         Object3D object = convertOBJ("Pyramid.txt");
         ArrayList<Vertex> triangleHitbox = new ArrayList<>();
         triangleHitbox.add(new Vertex(0.6,0,-0.6));
@@ -346,7 +348,7 @@ public class Util {
         return object;
     }
     public static Object3D generateHalfCube(double x, double z){
-        System.out.println("PPPPPPPPP");
+       
         Object3D object = convertOBJ("Half-Cube.txt");
         ArrayList<Vertex> cubeHitbox = new ArrayList<>();
         cubeHitbox.add(new Vertex(1.05,0,-1.05));
@@ -579,7 +581,7 @@ public class Util {
         //obj.scale(1,1,5);
         Main.objectList.add(obj);
         obj.setColor(color);
-        System.out.println(Arrays.toString(obj.getHitBox2D().get(0).toArray())+"{{{{{{{");
+       
         return obj;
     }
 
@@ -593,35 +595,35 @@ public class Util {
         Scanner scanner = new Scanner(of);
         while (scanner.hasNextLine()) {
             String nextLine = scanner.nextLine();
-            System.out.println(nextLine);
+           
             if(nextLine.startsWith("v ")){
                 String line = nextLine.replace("v ", "");
-                System.out.println(line);
+               
                 String [] cords = line.split(" ");
-                System.out.println(Arrays.toString(cords) +" JJJJJJJJJ");
+               
                 double x = Double.parseDouble(cords[0]);
                 double y = Double.parseDouble(cords[1]);
                 double z = Double.parseDouble(cords[2]);
                 if(path.equals("untitled.txt")){
-                    System.out.println(x+ " " + y + " " + z + " coords");
+                   
                     /*y = y*5;
                     z = z*5;
                     x = x*5;*/
                 }
                 Vertex vertex = new Vertex(x,y,z);
-                System.out.println(vertex.getW()+"WWWW");
+               
                 vertices.add(vertex);
             }
             if(nextLine.startsWith("f")){
                 String line = nextLine.replace("f ","");
                 String [] prepFaces = line.split(" ");
-                System.out.println(Arrays.toString(prepFaces));
+               
                 if(prepFaces.length != 0){
                     ArrayList<Integer> list = new ArrayList<>();
                     for (int i = 0; i < prepFaces.length;i++) {
                         String [] finalFace = prepFaces[i].split("/");
-                        System.out.println(Arrays.toString(finalFace));
-                        System.out.println("lol");
+                       
+                       
                         int result = Integer.parseInt(finalFace[0])-1;
                         list.add(result);
                     }
@@ -647,11 +649,11 @@ public class Util {
         InputStream of = new BufferedInputStream(in);
         Scanner scanner = null;
         scanner = new Scanner(of);
-        System.out.println(scanner.hasNextLine());
+       
         if (scanner.hasNextLine()) {
 
             int highscore = Integer.parseInt(scanner.nextLine());
-            System.out.println(highscore);
+           
             return highscore;
         }else{
             return 0;

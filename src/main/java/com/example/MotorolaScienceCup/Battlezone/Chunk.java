@@ -112,13 +112,13 @@ public class Chunk {
     }
 
     public void checkHasPlayer(){
-        System.out.println("_______________");
+       
         if(Main.camera.getX()<x+ (double) sideLength /2 && Main.camera.getX()>x- (double) sideLength /2 && Main.camera.getZ()<z+ (double) sideLength /2 && Main.camera.getZ()>z- (double) sideLength /2){
                if(!this.equals(center)){
                    setOldCenter(center);
                    setCenter(this);
                }
-            System.out.println("^^^^^^^^^");
+           
 
         }
     }

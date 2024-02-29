@@ -63,13 +63,13 @@ public class Ufo extends EnemyTank{
             if(isMoving()){
                 rotY(1);
                 setRotation(getRotation()-1);
-                System.out.println("KOKOKOKKO");
+               
                 if(Util.getDistance(getTarget(), this.getCenter())<7){
                     setWaiting(true);
                     setMoving(false);
                     setWaitTimer(Math.random()*100);
                 }else{
-                    System.out.println("YOYOOYY");
+                   
                     moveTank(new Vertex(this.getForward().getX()*UFO_SPEED*getMoveDir(),0,this.getForward().getZ()*UFO_SPEED*getMoveDir()));
                 }
             }

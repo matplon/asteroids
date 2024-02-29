@@ -38,13 +38,13 @@ public class SuperTank extends EnemyTank{
     
     public void enemyBehavior(){
         if(isMoving()){
-            System.out.println("KOKOKOKKO");
+           
             if(Util.getDistance(getTarget(), this.getCenter())<5){
                 setWaiting(true);
                 setMoving(false);
                 setWaitTimer(Math.random()*50);
             }else{
-                System.out.println("YOYOOYY");
+               
                 moveTank(new Vertex(this.getForward().getX()*SUPER_SPEED*getMoveDir(),0,this.getForward().getZ()*SUPER_SPEED*getMoveDir()));
                 Vertex vert1 = getCenter();
                 double[] arr = vert1.toArray();

@@ -92,7 +92,7 @@ public class Camera extends Object3D{
         double a = 2/(RIGHT - LEFT);
         double b = 2/(TOP - BOTTOM);
 
-        System.out.println((V_FOV/2));
+       
         double c = (far+near)/(far-near);
         double d = (-2 * near * far) / (far - near);
         double [][] matrix = {

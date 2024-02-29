@@ -40,7 +40,7 @@ public class Main {
 
     public static int score = 0;
 
-    public static double FPS_OFFSET = 2;
+    public static double FPS_OFFSET = 1;
 
     public static int hiScore = Util.getHiScore();
 
@@ -217,7 +217,7 @@ public class Main {
                 rotLeftPressed = true;
             };
             if (keyEvent.getCode() == KeyCode.SPACE && !isDying){
-                System.out.println("EEEEEEEEEEEEEEE");
+               
                 camera.shootBullet();
             };
 
@@ -243,14 +243,14 @@ public class Main {
                 rotLeftPressed = false;
             };
         });
-        System.out.println("LLLLLLLLLLLL");
+       
         //System.out.println(camera.getPosition().toString());
-        System.out.println(camera.getForward().toString());
-        System.out.println(camera.getUp().toString());
-        System.out.println(camera.getRight().toString());
-        System.out.println("WWWWWWWWWWWWW");
+       
+       
+       
+       
         if (rearPressed&&!rightPressed&&!leftPressed){
-            System.out.println("lol");
+           
             ArrayList<Vertex> hitbox = camera.getHitBox2D();
             ArrayList<Vertex> lol = new ArrayList<>();
             for (int i = 0; i < hitbox.size(); i++) {
@@ -259,10 +259,10 @@ public class Main {
                 arr = Util.multiplyTransform(Util.getTranslationMatrix(-camF[0]*CAMERA_SPEED, -camF[1]*CAMERA_SPEED, -camF[2]*CAMERA_SPEED),arr);
                 lol.add(Util.arrToVert(arr));
             }
-            System.out.println("hihihi");
+           
             ArrayList<Object3D> array = camera.runCollisionCheck(7,lol,camera);
             if(array.size()==0) {
-                System.out.println("LALALALA");
+               
                 camera.translate(-camF[0] * CAMERA_SPEED, -camF[1] * CAMERA_SPEED, -camF[2] * CAMERA_SPEED);
                 collisionDir = false;
             }else{
@@ -295,7 +295,7 @@ public class Main {
         }; // Thrust forward
         if (rightPressed){
             camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
-            System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
+           
             camera.setForward(Util.arrToVert(camF));
             camR = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camR);
             camera.setRight(Util.arrToVert(camR));
@@ -323,7 +323,7 @@ public class Main {
         };   // Rotate right
         if (leftPressed){
             camF = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camF);
-            System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
+           
             camera.setForward(Util.arrToVert(camF));
             camR = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camR);
             camera.setRight(Util.arrToVert(camR));
@@ -351,7 +351,7 @@ public class Main {
         }; // Rotate left
         if (rotRightPressed&&!rightPressed&&!leftPressed){
             camF = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camF);
-            System.out.println(Arrays.toString(camF)+ " 1MMMMMMMMMMMMM");
+           
             camera.setForward(Util.arrToVert(camF));
             camR = Util.multiplyTransform(Util.getRotationYMatrix(CAMERA_ROT_SPEED), camR);
             camera.setRight(Util.arrToVert(camR));
@@ -362,7 +362,7 @@ public class Main {
         };
         if (rotLeftPressed&&!rightPressed&&!leftPressed){
             camF = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camF);
-            System.out.println(Arrays.toString(camF)+ " MMMMMMMMMMMMM");
+           
             camera.setForward(Util.arrToVert(camF));
             camR = Util.multiplyTransform(Util.getRotationYMatrix(-CAMERA_ROT_SPEED), camR);
             camera.setRight(Util.arrToVert(camR));
@@ -458,7 +458,7 @@ public class Main {
             if(angle < 0){
                 angle+=360;
             }
-            System.out.println(angle + " angle");
+           
             if(angle >= 150 && angle <= 210){
                 enemyDir = "rear";
             }else if(angle > 210 && angle < 315){
@@ -615,8 +615,9 @@ public class Main {
             spawned = true;
             Clip clip;
             try {
-                File music = new File("missileHum.wav");
-                AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+                InputStream in = Sound.class.getResourceAsStream("missileHum.wav");
+                InputStream of = new BufferedInputStream(in);
+                AudioInputStream inputStream = AudioSystem.getAudioInputStream(of);
                 clip = AudioSystem.getClip();
                 clip.open(inputStream);
                 clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -875,7 +876,7 @@ public class Main {
             root.getChildren().add(polyline);
             for (int i = 0 ; i<allBullets.size() ; i++) {
                 Bullet bullet = allBullets.get(i);
-                    System.out.println(">>>>>>>>>>>>>>>>>>");
+                   
                     bullet.translate(bullet.getDirection().getX()*FPS_OFFSET,0,bullet.getDirection().getZ()*FPS_OFFSET);
                     double travelled = Math.sqrt(bullet.getDirection().getX()*FPS_OFFSET*bullet.getDirection().getX()*FPS_OFFSET+bullet.getDirection().getZ()*FPS_OFFSET*bullet.getDirection().getZ()*FPS_OFFSET);
                     bullet.setDistanceCovered(bullet.getDistanceCovered()+travelled);
@@ -883,7 +884,7 @@ public class Main {
                     if(bullet.getDistanceCovered()>MAX_BULLET_DISTANCE){
                         allBullets.remove(bullet);
                     }
-                    System.out.println("<<<<<<<<<<<<<<<<<<");
+                   
             }
             //System.out.println(objectList.get(10).getPoints3D().size() + " " + objectList.get(10).getFaces3D().size() + " GGGGGG");
             //objectList.get(10).rotY(1);
@@ -909,7 +910,7 @@ public class Main {
                     for (int j = 0; j < allBullets.size(); j++) {
                         if(!allBullets.get(j).getParent().equals(object)){
                         double dist = Math.sqrt(Math.pow((allBullets.get(j).getX()-object.getX()),2)+Math.pow((allBullets.get(j).getZ()-object.getZ()),2));
-                        System.out.println(dist + " TROLOLOLOLOL");
+                       
                         if(dist<3){
                             Vertex vertex = allBullets.get(j).checkForHits(object);
                             if(vertex!=null){
@@ -920,7 +921,7 @@ public class Main {
                                         throw new RuntimeException(e);
                                     }
                                 }
-                                System.out.println("YYYYYYYYY");
+                               
                                 if(object instanceof EnemyTank){
                                     ((EnemyTank) object).takeHit(allBullets.get(j).getParent());
                                 }
@@ -969,7 +970,7 @@ public class Main {
                     double [][] translationMatrix = Util.getTranslationMatrix(camera.getX()-previousCamPos.getX(),0,camera.getZ()-previousCamPos.getZ());
                     double [] arr = object3D.getPoints3D().get(i).toArray();
                     arr = Util.multiplyTransform(translationMatrix, arr);
-                    System.out.println(Arrays.toString(arr)+"nice");
+                   
                     object3D.getPoints3D().set(i,Util.arrToVert(arr));
 
                 }
@@ -1213,11 +1214,11 @@ public class Main {
 
         Scanner scanner = null;
         scanner = new Scanner(of);
-        System.out.println(scanner.hasNextLine());
+       
         if (scanner.hasNextLine()) {
 
             int highscore = Integer.parseInt(scanner.nextLine());
-            System.out.println(highscore);
+           
             /*if (score > highscore) {
                 Writer writer = null;
                 try {
@@ -1234,7 +1235,7 @@ public class Main {
             }*/
         }
         /*else {
-            System.out.println(score);
+           
             Writer writer = null;
             try {
                 writer = new FileWriter(new File("src/main/resources/com/example/MotorolaScienceCup/battlescore.txt"));

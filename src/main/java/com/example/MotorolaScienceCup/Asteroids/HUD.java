@@ -172,11 +172,11 @@ public class HUD {
 
         Scanner scanner = null;
         scanner = new Scanner(of);
-        System.out.println(scanner.hasNextLine());
+       
         if (scanner.hasNextLine()) {
 
             int highscore = Integer.parseInt(scanner.nextLine());
-            System.out.println(highscore);
+           
             /*if (HUD.getPoints() > highscore) {
                 Writer writer = null;
                 try {
@@ -193,7 +193,7 @@ public class HUD {
             }
         }
         else {
-            System.out.println(HUD.getPoints());
+           
             Writer writer = null;
             try {
                 writer = new FileWriter(new File("highscore.txt"));

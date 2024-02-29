@@ -115,7 +115,7 @@ public class EnemyTank extends Object3D{
         arr1 = Util.multiplyTransform(Util.getRotationYMatrix(angle), arr1);
         this.setForward(Util.arrToVert(arr1));
         this.updateRotation(angle);
-        System.out.println(getRotation()+" HHHHHHHHHHHHHHHHHHHH");
+       
         this.moveTo(0,0,0);
         for (int i = 0; i < this.getPoints3D().size(); i++) {
             double [][] translationMatrix = Util.getRotationYMatrix(angle);
@@ -127,20 +127,20 @@ public class EnemyTank extends Object3D{
         for (int i = 0; i < this.getHitBox2D().size(); i++) {
             double [][] translationMatrix = Util.getRotationYMatrix(angle);
             double [] arr = this.getHitBox2D().get(i).toArray();
-            System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+           
             arr = Util.multiplyTransform(translationMatrix, arr);
-            System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+           
             this.getHitBox2D().set(i,Util.arrToVert(arr));
 
         }
         for (int i = 0; i < this.getCollideHitBox().size(); i++) {
             double [][] translationMatrix = Util.getRotationYMatrix(angle);
             double [] arr = this.getCollideHitBox().get(i).toArray();
-            System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+           
             arr = Util.multiplyTransform(Util.getTranslationMatrix(-center.getX(),-center.getY(), -center.getZ()), arr);
             arr = Util.multiplyTransform(translationMatrix, arr);
             arr = Util.multiplyTransform(Util.getTranslationMatrix(center.getX(),center.getY(), center.getZ()), arr);
-            System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+           
             this.getCollideHitBox().set(i,Util.arrToVert(arr));
 
         }
@@ -161,18 +161,18 @@ public class EnemyTank extends Object3D{
             for (int i = 0; i < this.getHitBox2D().size(); i++) {
                 double [][] translationMatrix = Util.getScaleMatrix(x,y,z);
                 double [] arr = this.getHitBox2D().get(i).toArray();
-                System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+               
                 arr = Util.multiplyTransform(translationMatrix, arr);
-                System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+               
                 this.getHitBox2D().set(i,Util.arrToVert(arr));
 
             }
                 for (int i = 0; i < this.getCollideHitBox().size(); i++) {
                     double [][] translationMatrix = Util.getScaleMatrix(x,y,z);
                     double [] arr = this.getCollideHitBox().get(i).toArray();
-                    System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+                   
                     arr = Util.multiplyTransform(translationMatrix, arr);
-                    System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+                   
                     this.getCollideHitBox().set(i,Util.arrToVert(arr));
 
                 }
@@ -220,10 +220,10 @@ public class EnemyTank extends Object3D{
             arr = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX(),direction.getY(),direction.getZ()),arr);
             lol.add(Util.arrToVert(arr));
         }
-        System.out.println("hihihi");
+       
         ArrayList<Object3D> array = this.runCollisionCheck(10,lol,this);
         if(array.isEmpty()) {
-            System.out.println(getRotation() + " HHHHHHHHHHHHHHHHHHHH");
+           
             Vertex vert = this.getCenter();
             double[] arr1 = vert.toArray();
             arr1 = Util.multiplyTransform(Util.getTranslationMatrix(direction.getX(),direction.getY(),direction.getZ()),arr1);
@@ -238,18 +238,18 @@ public class EnemyTank extends Object3D{
             for (int i = 0; i < this.getHitBox2D().size(); i++) {
                 double[][] translationMatrix = Util.getTranslationMatrix(direction.getX(), direction.getY(), direction.getZ());
                 double[] arr = this.getHitBox2D().get(i).toArray();
-                System.out.println(Arrays.toString(arr) + "ZZZZZZZZZZ");
+               
                 arr = Util.multiplyTransform(translationMatrix, arr);
-                System.out.println(Arrays.toString(arr) + "XXXXXXXX");
+               
                 this.getHitBox2D().set(i, Util.arrToVert(arr));
 
             }
             for (int i = 0; i < this.getCollideHitBox().size(); i++) {
                 double [][] translationMatrix = Util.getTranslationMatrix(direction.getX(), direction.getY(), direction.getZ());
                 double [] arr = this.getCollideHitBox().get(i).toArray();
-                System.out.println(Arrays.toString(arr)+"ZZZZZZZZZZ");
+               
                 arr = Util.multiplyTransform(translationMatrix, arr);
-                System.out.println(Arrays.toString(arr)+"XXXXXXXX");
+               
                 this.getCollideHitBox().set(i,Util.arrToVert(arr));
 
             }
@@ -257,7 +257,7 @@ public class EnemyTank extends Object3D{
             this.setY(this.getCenter().getY());
             this.setZ(this.getCenter().getZ());
         }else{
-                System.out.println("]]]]]]]]]]]]]]]]]]");
+               
                 if(!array.contains(Main.camera)||this instanceof Ufo) {
                     this.setTarget(new Vertex(this.getCenter().getX() - this.getForward().getX() * 10, 0, this.getCenter().getZ() - this.getForward().getZ() * 10));
                     this.setAttackMode(true);
@@ -327,10 +327,10 @@ public class EnemyTank extends Object3D{
 
     public void explode(){
         ArrayList<Face> faces = this.getFaces3D();
-        System.out.println(faces.size()+"///////////////");
+       
         for (int i = 0; i < 5; i++) {
             int pick = new Random().nextInt(faces.size());
-            System.out.println(faces.size());
+           
             Face face = faces.get(pick);
             faces.remove(pick);
             ArrayList<Vertex> points = new ArrayList<>();
@@ -354,27 +354,27 @@ public class EnemyTank extends Object3D{
         }
     }
     public void takeHit(Object3D object3D){
-        System.out.println("###########");
+       
         Main.enemyTankList.remove(this);
         Main.fullTankList.remove(this);
         Main.objectList.remove(this);
         if(object3D instanceof Camera) {
-            System.out.println("============");
+           
             Main.score += 1000;
         }
         explode();
     }
     public void enemyBehavior(){
-        System.out.println(this.getForward().toString() + " {{{{{{{{{");
+       
         if(!attackMode){
             if(isMoving){
-                System.out.println("KOKOKOKKO");
+               
                 if(Util.getDistance(target, this.getCenter())<5){
                     setWaiting(true);
                     setMoving(false);
                     setWaitTimer(Math.random()*200);
                 }else{
-                    System.out.println("YOYOOYY");
+                   
                     moveTank(new Vertex(this.getForward().getX()*TANK_SPEED*moveDir,0,this.getForward().getZ()*TANK_SPEED*moveDir));
                 }
             }
@@ -426,13 +426,13 @@ public class EnemyTank extends Object3D{
             }
         }else{
             if(isMoving){
-                System.out.println("KOKOKOKKO");
+               
                 if(Util.getDistance(target, this.getCenter())<5){
                     setWaiting(true);
                     setMoving(false);
                     setWaitTimer(Math.random()*100);
                 }else{
-                    System.out.println("YOYOOYY");
+                   
                     moveTank(new Vertex(this.getForward().getX()*TANK_SPEED*moveDir,0,this.getForward().getZ()*TANK_SPEED*moveDir));
                 }
             }
