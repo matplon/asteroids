@@ -506,7 +506,7 @@ public class Main {
                 throw new RuntimeException(e);
             }
             Text t = new Text("Movement blocked by object");
-            t.setFont(Font.font(50));
+            t.setFont(Menu.font);
             t.setX(100);
             t.setY(500);
             t.setFill(Color.RED);
@@ -683,7 +683,7 @@ public class Main {
             fullTankList.addAll(enemyTankList);
             fullTankList.addAll(superTankList);
             fullTankList.addAll(missileList);
-            if(fullTankList.isEmpty()&&Math.random()*200<1){
+            if(fullTankList.isEmpty()&&Math.random()*100<1){
                 double enemyCount = Math.floor(score/20000)+1 < 3 ? Math.floor(score/20000)+1 : 3;
                 int count = 0;
                 for (int i = 0; i < enemyCount; i++) {
@@ -837,7 +837,8 @@ public class Main {
                     superTankList.clear();
                     objectList.removeAll(ufoList);
                     ufoList.clear();
-                    enemyDir = "";
+                    fullTankList.clear();
+                    enemyDir = new String();
 
                     enemyInRange = false;
 
@@ -855,7 +856,6 @@ public class Main {
                     for(Object3D object3D:horizon){
                         object3D.translate(camera.getX()-preDeathCamPos.getX(),0, camera.getZ()-preDeathCamPos.getZ());
                     }
-                    //camera.rotY(Math.random()*360);
                     justDied = true;
                     if(playerHP<=0){
                         gameOver();

@@ -124,7 +124,7 @@ public class HUD {
     public static void gameOver() {
         Main.resetData();
         Text gameOverText = new Text("Game Over");
-        gameOverText.setFont(Font.font(100));
+        gameOverText.setFont(Menu.font);
         gameOverText.setFill(Color.GREEN);
 
         gameOverText.setX(WIDTH/2 - gameOverText.getLayoutBounds().getWidth()/2);
@@ -136,14 +136,14 @@ public class HUD {
         newRoot.getChildren().add(gameOverText);
         Button restart = new Button("Restart");
         restart.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
-        restart.setFont(Font.font(50));
+        restart.setFont(Menu.font);
         restart.setLayoutX(WIDTH/2 - 275 - restart.getWidth()/2);
         restart.setLayoutY(HEIGHT/2 + 100);
 
 
         Button menu = new Button("Menu");
         menu.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
-        menu.setFont(Font.font(50));
+        menu.setFont(Menu.font);
         menu.setLayoutX(WIDTH/2 + 75 + menu.getWidth()/2);
         menu.setLayoutY(HEIGHT/2 + 100);
         menu.setOnAction(actionEvent -> {

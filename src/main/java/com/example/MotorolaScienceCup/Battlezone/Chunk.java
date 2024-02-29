@@ -99,7 +99,7 @@ public class Chunk {
             }
         }
         int random2 = new Random().nextInt(chunkMineCount+1);
-        for (int i = 0; i < random2; i++) {
+        for (int i = 0; i < chunkMineCount; i++) {
             double x = getX()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
             double z = getZ()+Math.random()*(getSideLength()-4)-(getSideLength()-4)/2;
             Mine object3D = Util.generateMine(x,z);
