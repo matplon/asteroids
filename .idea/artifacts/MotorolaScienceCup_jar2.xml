@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="MotorolaScienceCup:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/MotorolaScienceCup_jar</output-path>
+  <artifact type="jar" name="MotorolaScienceCup:jar2">
+    <output-path>$PROJECT_DIR$/out/artifacts/MotorolaScienceCup_jar2</output-path>
     <root id="archive" name="MotorolaScienceCup.jar">
       <element id="module-output" name="MotorolaScienceCup" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-media/22-ea+16/javafx-media-22-ea+16.jar" path-in-jar="/" />

@@ -2,6 +2,7 @@ package com.example.MotorolaScienceCup.Battlezone;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Particle;
+import com.example.MotorolaScienceCup.Sound;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 
@@ -585,53 +586,51 @@ public class Util {
 
 
     public static Object3D convertOBJ(String path){
+        InputStream in = Sound.class.getResourceAsStream(path);
+        InputStream of = new BufferedInputStream(in);
         ArrayList<Vertex> vertices = new ArrayList<>();
         ArrayList<Face> faces = new ArrayList<>();
-        try {
-            Scanner scanner = new Scanner(new File(path));
-            while (scanner.hasNextLine()) {
-                String nextLine = scanner.nextLine();
-                System.out.println(nextLine);
-                if(nextLine.startsWith("v ")){
-                    String line = nextLine.replace("v ", "");
-                    System.out.println(line);
-                    String [] cords = line.split(" ");
-                    System.out.println(Arrays.toString(cords) +" JJJJJJJJJ");
-                    double x = Double.parseDouble(cords[0]);
-                    double y = Double.parseDouble(cords[1]);
-                    double z = Double.parseDouble(cords[2]);
-                    if(path.equals("untitled.txt")){
-                        System.out.println(x+ " " + y + " " + z + " coords");
-                        /*y = y*5;
-                        z = z*5;
-                        x = x*5;*/
-                    }
-                    Vertex vertex = new Vertex(x,y,z);
-                    System.out.println(vertex.getW()+"WWWW");
-                    vertices.add(vertex);
+        Scanner scanner = new Scanner(of);
+        while (scanner.hasNextLine()) {
+            String nextLine = scanner.nextLine();
+            System.out.println(nextLine);
+            if(nextLine.startsWith("v ")){
+                String line = nextLine.replace("v ", "");
+                System.out.println(line);
+                String [] cords = line.split(" ");
+                System.out.println(Arrays.toString(cords) +" JJJJJJJJJ");
+                double x = Double.parseDouble(cords[0]);
+                double y = Double.parseDouble(cords[1]);
+                double z = Double.parseDouble(cords[2]);
+                if(path.equals("untitled.txt")){
+                    System.out.println(x+ " " + y + " " + z + " coords");
+                    /*y = y*5;
+                    z = z*5;
+                    x = x*5;*/
                 }
-                if(nextLine.startsWith("f")){
-                    String line = nextLine.replace("f ","");
-                    String [] prepFaces = line.split(" ");
-                    System.out.println(Arrays.toString(prepFaces));
-                    if(prepFaces.length != 0){
-                        ArrayList<Integer> list = new ArrayList<>();
-                        for (int i = 0; i < prepFaces.length;i++) {
-                            String [] finalFace = prepFaces[i].split("/");
-                            System.out.println(Arrays.toString(finalFace));
-                            System.out.println("lol");
-                            int result = Integer.parseInt(finalFace[0])-1;
-                            list.add(result);
-                        }
-                        Face face;
-                        face = new Face(list);
-                        faces.add(face);
-                    }
-
-                }
+                Vertex vertex = new Vertex(x,y,z);
+                System.out.println(vertex.getW()+"WWWW");
+                vertices.add(vertex);
             }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            if(nextLine.startsWith("f")){
+                String line = nextLine.replace("f ","");
+                String [] prepFaces = line.split(" ");
+                System.out.println(Arrays.toString(prepFaces));
+                if(prepFaces.length != 0){
+                    ArrayList<Integer> list = new ArrayList<>();
+                    for (int i = 0; i < prepFaces.length;i++) {
+                        String [] finalFace = prepFaces[i].split("/");
+                        System.out.println(Arrays.toString(finalFace));
+                        System.out.println("lol");
+                        int result = Integer.parseInt(finalFace[0])-1;
+                        list.add(result);
+                    }
+                    Face face;
+                    face = new Face(list);
+                    faces.add(face);
+                }
+
+            }
         }
 
         Object3D object3D = new Object3D(vertices,faces);
@@ -644,12 +643,10 @@ public class Util {
     }
 
     public static int getHiScore(){
+        InputStream in = Sound.class.getResourceAsStream("battlescore.txt");
+        InputStream of = new BufferedInputStream(in);
         Scanner scanner = null;
-        try {
-            scanner = new Scanner(new File("battlescore.txt"));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        scanner = new Scanner(of);
         System.out.println(scanner.hasNextLine());
         if (scanner.hasNextLine()) {
 

@@ -2,9 +2,7 @@ package com.example.MotorolaScienceCup;
 
 import com.example.MotorolaScienceCup.Asteroids.Main;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
 import javax.sound.sampled.*;
 
@@ -27,8 +25,10 @@ public class Sound {
     public static Clip getClip(String filepath,float volume) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 
 
-        File file = new File(filepath);
-        AudioInputStream stream = getAudioInputStream(file);
+        InputStream in = Sound.class.getResourceAsStream(filepath);
+        InputStream of = new BufferedInputStream(in);
+
+        AudioInputStream stream = getAudioInputStream(of);
         Clip clip = AudioSystem.getClip();
         clip.open(stream);
         FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
@@ -37,8 +37,10 @@ public class Sound {
     }
     public static void play(String filepath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 
-        File file = new File(filepath);
-        AudioInputStream stream = getAudioInputStream(file);
+        InputStream in = Sound.class.getResourceAsStream(filepath);
+        InputStream of = new BufferedInputStream(in);
+
+        AudioInputStream stream = getAudioInputStream(of);
         Clip clip = AudioSystem.getClip();
         clip.open(stream);
         clip.start();
@@ -46,9 +48,10 @@ public class Sound {
     }
 
     public static void play(String filepath, float volume) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        InputStream in = Sound.class.getResourceAsStream(filepath);
+        InputStream of = new BufferedInputStream(in);
 
-        File file = new File(filepath);
-        AudioInputStream stream = getAudioInputStream(file);
+        AudioInputStream stream = getAudioInputStream(of);
         Clip clip = AudioSystem.getClip();
         clip.open(stream);
         FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
@@ -59,9 +62,9 @@ public class Sound {
 
 
     public static void loopPlay(String filepath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-
-        File music = new File(filepath);
-        AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+        InputStream in = Sound.class.getResourceAsStream(filepath);
+        InputStream of = new BufferedInputStream(in);
+        AudioInputStream inputStream = AudioSystem.getAudioInputStream(of);
         Clip clip = AudioSystem.getClip();
         clip.open(inputStream);
         FloatControl gainControl =
@@ -76,7 +79,7 @@ public class Sound {
 
     public static void loopPlay(String filepath, int count) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 
-        File music = new File(filepath);
+        File music = new File("src/main/resources/com/example/MotorolaScienceCup/"+filepath);
         AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
         Clip clip = AudioSystem.getClip();
         clip.open(inputStream);

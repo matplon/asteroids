@@ -370,8 +370,9 @@ public class Main {
         };
         if((forwardPressed||rearPressed||rightPressed||leftPressed||rotRightPressed||rotLeftPressed)&&isMoving==null) {
             try {
-                File music = new File("playerMove.wav");
-                AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+                InputStream in = Sound.class.getResourceAsStream("playerMove.wav");
+                InputStream of = new BufferedInputStream(in);
+                AudioInputStream inputStream = AudioSystem.getAudioInputStream(of);
                 Clip clip = AudioSystem.getClip();
                 clip.open(inputStream);
                 FloatControl gainControl =
@@ -392,8 +393,9 @@ public class Main {
             }
             if(isIdling==null){
             try {
-                File music = new File("playerIdle.wav");
-                AudioInputStream inputStream = AudioSystem.getAudioInputStream(music);
+                InputStream in = Sound.class.getResourceAsStream("playerIdle.wav");
+                InputStream of = new BufferedInputStream(in);
+                AudioInputStream inputStream = AudioSystem.getAudioInputStream(of);
                 Clip clip = AudioSystem.getClip();
                 clip.open(inputStream);
                 FloatControl gainControl =
@@ -1204,22 +1206,20 @@ public class Main {
         newScene.setFill(Color.BLACK);
         newRoot.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
         Menu.stage.setScene(newScene);
+        InputStream in = Sound.class.getResourceAsStream("battlescore.txt");
+        InputStream of = new BufferedInputStream(in);
 
         Scanner scanner = null;
-        try {
-            scanner = new Scanner(new File("battlescore.txt"));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        scanner = new Scanner(of);
         System.out.println(scanner.hasNextLine());
         if (scanner.hasNextLine()) {
 
             int highscore = Integer.parseInt(scanner.nextLine());
             System.out.println(highscore);
-            if (score > highscore) {
+            /*if (score > highscore) {
                 Writer writer = null;
                 try {
-                    writer = new FileWriter(new File("battlescore.txt"));
+                    writer = new FileWriter(new File("src/main/resources/com/example/MotorolaScienceCup/battlescore.txt"));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -1229,13 +1229,13 @@ public class Main {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            }
+            }*/
         }
-        else {
+        /*else {
             System.out.println(score);
             Writer writer = null;
             try {
-                writer = new FileWriter(new File("battlescore.txt"));
+                writer = new FileWriter(new File("src/main/resources/com/example/MotorolaScienceCup/battlescore.txt"));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -1245,7 +1245,7 @@ public class Main {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
+        }*/
     }
     public static void addHeart(double x) {
         BetterPolygon heart = new com.example.MotorolaScienceCup.Particle(com.example.MotorolaScienceCup.Util.SVGconverter("heart.svg"), 0, 0, 0, 0);
