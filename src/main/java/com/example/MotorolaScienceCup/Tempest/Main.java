@@ -1,6 +1,7 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.Menu;
+import com.example.MotorolaScienceCup.Vector;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -22,10 +23,7 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Main {
     final static double WIDTH = Menu.WIDTH;
@@ -38,7 +36,7 @@ public class Main {
     static Stage stage = Menu.stage;
     static Timeline timeline;
     static Color defaultPanelColor = Color.BLUE;
-    static Color activePanelColor = Color.RED;
+    static Color activePanelColor = new Color(1.0 - defaultPanelColor.getRed(), 1.0 -defaultPanelColor.getGreen(), 1.0 - defaultPanelColor.getBlue(), 1.0);
     static final double glowV = 0.9;
     static Player player;
     static double nextLevelSpikelineSpeed = 8;
@@ -52,7 +50,7 @@ public class Main {
     static boolean shoot;
     static boolean goRight;
     static boolean goLeft;
-    static int LEVEL = 1;
+    static int LEVEL = 11;
     static int flippersNumber = 1;
     static int tankersNumber = 0;
     static int spikersNumber = 1;
@@ -66,9 +64,9 @@ public class Main {
     static double bigSideLength;
     static String map;
 
-    List<String> maps = Arrays.asList("map1.svg", "map2.svg", "map3.svg", "map4.svg", "map5.svg", "map6.svg", "map7.svg", "map8.svg", "map9.svg", "map10.svg",
+    static List<String> maps = Arrays.asList("map1.svg", "map2.svg", "map3.svg", "map4.svg", "map5.svg", "map6.svg", "map7.svg", "map8.svg", "map9.svg", "map10.svg",
             "map11.svg", "map12.svg", "map13.svg", "map14.svg");
-    HashMap<Integer, Boolean> isMapOpen = new HashMap<>() {{
+    static HashMap<Integer, Boolean> isMapOpen = new HashMap<>() {{
         put(0, false);
         put(1, false);
         put(2, false);
@@ -87,6 +85,8 @@ public class Main {
 
     static double scale = 1;
     static double a = 1.006;
+    static double mapSpeed = 4;
+    static double mapDistanceCovered = 0;
 
     public static void init() {
         if(timeline != null){
@@ -108,6 +108,12 @@ public class Main {
 
         if(LEVEL <= 13){
             map = "map"+LEVEL+".svg";
+        }
+        else{
+            Random random = new Random();
+            map = "map"+random.nextInt(1, 15)+".svg";
+            defaultPanelColor = new Color(Math.random(), Math.random(), Math.random(), 1.0);
+            activePanelColor = new Color(1.0 - defaultPanelColor.getRed(), 1.0 -defaultPanelColor.getGreen(), 1.0 - defaultPanelColor.getBlue(), 1.0);
         }
 
         Graphics.drawMap(map, defaultPanelColor, 1);
@@ -174,9 +180,6 @@ public class Main {
             }
             player.shotTimer--;
             if (isLevelFinished()) nextLevel();
-//            for (int i = 0; i < player.getCurrentPanel().getFlippers().size(); i++) {
-//                System.out.println(player.getCurrentPanel().getFlippers().get(i).reachedTheEdge);
-//            }
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
@@ -205,6 +208,7 @@ public class Main {
     public static void nextLevel() {
         timeline.stop();
         removeAllEnemies();
+        mapDistanceCovered = 0;
         tempPanels = new ArrayList<>(panels);
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
             root.getChildren().clear();
@@ -216,9 +220,13 @@ public class Main {
                 }
             }
             Graphics.drawMap(map, defaultPanelColor, scale);
-            scale *= a;
             highlightPanel(player);
-
+            if(isMapOpen.get(map.indexOf(map))){
+                scale *= a;
+            }
+            else{
+                moveMap();
+            }
             double bulletsNumber = 0;
             for (Panel panel : tempPanels) {
                 panel.update(true);
@@ -262,13 +270,13 @@ public class Main {
     }
 
     public static void highlightPanel(Player player) {
-        if (player.getCurrentPanel().getLeftPanel().getColor() == Color.YELLOW) {
-            player.getCurrentPanel().getLeftPanel().changeColor(Color.BLUE);
+        if (player.getCurrentPanel().getLeftPanel() != null && player.getCurrentPanel().getLeftPanel().getColor() == activePanelColor) {
+            player.getCurrentPanel().getLeftPanel().changeColor(defaultPanelColor);
         }
-        if (player.getCurrentPanel().getRightPanel().getColor() == Color.YELLOW) {
-            player.getCurrentPanel().getRightPanel().changeColor(Color.BLUE);
+        if (player.getCurrentPanel().getRightPanel() != null && player.getCurrentPanel().getRightPanel().getColor() == activePanelColor) {
+            player.getCurrentPanel().getRightPanel().changeColor(defaultPanelColor);
         }
-        player.getCurrentPanel().changeColor(Color.YELLOW);
+        player.getCurrentPanel().changeColor(activePanelColor);
     }
 
     public static void removeAllEnemies(){
@@ -283,5 +291,22 @@ public class Main {
         for(Flipper flipper : flippersToDestroy) flipper.currentPanel.getFlippers().remove(flipper);
         for(Tanker tanker : tankersToDestroy) tanker.currentPanel.getTankers().remove(tanker);
         for (Fuseball fuseball : fuseballsToDestroy) fuseball.currentPanel.getFuseBalls().remove(fuseball);
+    }
+
+    public static void moveMap(){
+        Vector vector = new Vector(mapSpeed, 90);
+        for (Panel panel : panels){
+            moveLine(panel.smallSide, vector);
+            moveLine(panel.bigSide, vector);
+            moveLine(panel.leftSide, vector);
+            moveLine(panel.rightSide, vector);
+        }
+        mapDistanceCovered += mapSpeed;
+    }
+
+    public static void moveLine(Polyline line, Vector vector){
+        List<Double> tempPoints = line.getPoints();
+        line.getPoints().setAll(tempPoints.get(0) + vector.getX(), tempPoints.get(1) + vector.getY(),
+                tempPoints.get(2) + vector.getX(), tempPoints.get(3) + vector.getY());
     }
 }

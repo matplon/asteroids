@@ -15,12 +15,12 @@ import static com.example.MotorolaScienceCup.Tempest.Main.*;
 
 
 public class Panel {
-    private Polyline smallSide;
-    private Polyline bigSide;
-    private Polyline leftSide;
-    private Polyline rightSide;
-    private Panel leftPanel;
-    private Panel rightPanel;
+    public Polyline smallSide;
+    public Polyline bigSide;
+    public Polyline leftSide;
+    public Polyline rightSide;
+    public Panel leftPanel;
+    public Panel rightPanel;
 
     public List<Player.Bullet> playerBullets = new ArrayList<>();
     private List<Enemy.Bullet> enemyBullets = new ArrayList<>();
@@ -121,16 +121,20 @@ public class Panel {
                 return true;
             }
         }
-        for (int i = 0; i < leftPanel.getFlippers().size(); i++) {
-            if (leftPanel.getFlippers().get(i).reachedTheEdge) {
-                leftPanel.getFlippers().get(i).destroy();
-                return true;
+        if(leftPanel != null){
+            for (int i = 0; i < leftPanel.getFlippers().size(); i++) {
+                if (leftPanel.getFlippers().get(i).reachedTheEdge) {
+                    leftPanel.getFlippers().get(i).destroy();
+                    return true;
+                }
             }
         }
-        for (int i = 0; i < rightPanel.getFlippers().size(); i++) {
-            if (rightPanel.getFlippers().get(i).reachedTheEdge) {
-                rightPanel.getFlippers().get(i).destroy();
-                return true;
+        if(rightPanel != null){
+            for (int i = 0; i < rightPanel.getFlippers().size(); i++) {
+                if (rightPanel.getFlippers().get(i).reachedTheEdge) {
+                    rightPanel.getFlippers().get(i).destroy();
+                    return true;
+                }
             }
         }
         return false;

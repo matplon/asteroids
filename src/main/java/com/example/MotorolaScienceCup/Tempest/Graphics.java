@@ -16,7 +16,8 @@ import static com.example.MotorolaScienceCup.Tempest.Main.*;
 
 public class Graphics {
     private static final int CONNECTORS_NUMBER = 16;
-    private final static double baseOffset = 20;
+    private static double baseOffset = 20;
+    private static double bigOffset = 0;
     private static List<Polyline> connectors = Main.connectors;
     static double mapCenterX;
     static double mapCenterY;
@@ -31,8 +32,13 @@ public class Graphics {
 
         List<Double> smallShapePoints = Util.getMapPoints(filepath);
 
+        if(isMapOpen.get(maps.indexOf(filepath))){
+            baseOffset = -80;
+            bigOffset = 200;
+        }
+
+
         BetterPolygon tempSmallShape = new BetterPolygon(smallShapePoints);
-        tempSmallShape.setStroke(Color.GREEN);
         tempSmallShape.scale((bigShapeRadius * scale / 10) / tempSmallShape.getRadius());
         tempSmallShape.moveTo(WIDTH / 2, HEIGHT / 2 + baseOffset);
         smallShapePoints = tempSmallShape.getPoints();
@@ -41,21 +47,32 @@ public class Graphics {
         mapShape = new BetterPolygon(tempSmallShape.getPoints());
 
         BetterPolygon tempPolygon = BetterPolygon.scale(tempSmallShape, 10);
-        tempPolygon.moveTo(WIDTH / 2, HEIGHT / 2);
+        tempPolygon.moveTo(WIDTH / 2, HEIGHT / 2 + bigOffset);
         List<Double> bigShapePoints = tempPolygon.getPoints();
-        drawConnectors(oldPanels, smallShapePoints, bigShapePoints, color, new Glow(Main.glowV));
+        drawConnectors(smallShapePoints, bigShapePoints, color, new Glow(Main.glowV), isMapOpen.get(maps.indexOf(filepath)));
+
+        if(isMapOpen.get(maps.indexOf(filepath))){
+            removePanel();
+        }
     }
 
-    private static void drawConnectors(List<Panel> oldPanels, List<Double> smallShapePoints, List<Double> bigShapePoints, Color color, Glow glow) {
+    private static void removePanel(){
+        if(panels.get(0).getLeftPanel() == panels.getLast()) panels.get(0).leftPanel = null;
+        else if(panels.get(0).getRightPanel() == panels.getLast()) panels.get(0).rightPanel = null;
+        if(panels.get(panels.size()-2).getLeftPanel() == panels.getLast()) panels.get(panels.size()-2).leftPanel = null;
+        else if(panels.get(panels.size()-2).getRightPanel() == panels.getLast()) panels.get(panels.size()-2).rightPanel = null;
+    }
+
+    private static void drawConnectors(List<Double> smallShapePoints, List<Double> bigShapePoints, Color color, Glow glow, boolean open) {
         for (int i = 0; i < smallShapePoints.size(); i += 2) {
             Polyline polyline = new Polyline(smallShapePoints.get(i), smallShapePoints.get(i + 1), bigShapePoints.get(i), bigShapePoints.get(i + 1));
             polyline.setFill(color);
-            polyline.setStroke(Color.BLUE);
+            polyline.setStroke(color);
             polyline.setEffect(glow);
             connectors.add(polyline);
         }
         int n = CONNECTORS_NUMBER - smallShapePoints.size() / 2;
-        n /= (int) ((double) smallShapePoints.size() / 2);
+        if(!open) n /= (int) ((double) smallShapePoints.size() / 2);
         for (int i = 0; i < smallShapePoints.size(); i += 2) {
             double xDiffSmall, yDiffSmall, xDiffBig, yDiffBig;
             if (i + 2 >= smallShapePoints.size()) {
@@ -81,13 +98,14 @@ public class Graphics {
                 Polyline polyline = new Polyline(xSmall, ySmall, xBig, yBig);
                 polyline.setStroke(color);
                 polyline.setFill(color);
+                polyline.setEffect(new Glow(glowV));
                 connectors.add(polyline);
             }
         }
-        createPanels(oldPanels, smallShapePoints.size() / 2, n, color, new Glow(Main.glowV));
+        createPanels(smallShapePoints.size() / 2, n, color, new Glow(Main.glowV));
     }
 
-    private static void createPanels(List<Panel> oldPanels, int vertices, int connectorsBetweenVertices, Color color, Glow glow) {
+    private static void createPanels(int vertices, int connectorsBetweenVertices, Color color, Glow glow) {
         List<Polyline> newConnectors = new ArrayList<>();
         for (int i = 0; i < vertices; i++) {    // Order connectors the correct way
             newConnectors.add(connectors.get(i));
@@ -148,12 +166,6 @@ public class Graphics {
             panel.setLength(length);
 
             panel.setAngle(Math.toDegrees(Math.atan2(y2 - y1, x2 - x1)));
-
-            if(!oldPanels.isEmpty()){
-                if(oldPanels.get(i).spikerLine != null) drawSpikerLine(oldPanels.get(i), panel);
-                if(!oldPanels.get(i).getPlayerBullets().isEmpty()) retrieveBullets(oldPanels.get(i), panel);
-            }
-
         }
 
         for (int i = 0; i < panels.size(); i++) {

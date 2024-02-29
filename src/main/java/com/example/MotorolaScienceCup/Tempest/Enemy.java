@@ -114,16 +114,24 @@ public class Enemy extends BetterPolygon {
     }
 
     protected boolean chooseDirection() {
+        if(currentPanel.getLeftPanel() == null){
+            return false;
+        }
+        if(currentPanel.getRightPanel() == null){
+            return true;
+        }
         int distLeft = 0;
         Panel nextPanel = currentPanel.getLeftPanel();
         while (!nextPanel.equals(Main.player.getCurrentPanel())) {
             distLeft++;
+            if(nextPanel.getLeftPanel() == null) return false;
             nextPanel = nextPanel.getLeftPanel();
         }
         int distRight = 0;
         nextPanel = currentPanel.getRightPanel();
         while (!nextPanel.equals(Main.player.getCurrentPanel())) {
             distRight++;
+            if(nextPanel.getRightPanel() == null) return true;
             nextPanel = nextPanel.getRightPanel();
         }
         if (distLeft < distRight) return true;

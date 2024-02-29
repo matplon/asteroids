@@ -114,19 +114,27 @@ public class Player extends BetterPolygon {
             if (leftRightDiffX > 0 && pointer.getCenterX() < points.get(2)) {
                 pointer.setCenterX(points.get(2));
                 pointer.setCenterY(points.get(3));
-                currentPanel = currentPanel.getLeftPanel();
+                if(currentPanel.getLeftPanel() != null){
+                    currentPanel = currentPanel.getLeftPanel();
+                }
             } else if (leftRightDiffX < 0 && pointer.getCenterX() > points.get(2)) {
                 pointer.setCenterX(points.get(2));
                 pointer.setCenterY(points.get(3));
-                currentPanel = currentPanel.getLeftPanel();
+                if(currentPanel.getLeftPanel() != null){
+                    currentPanel = currentPanel.getLeftPanel();
+                }
             } else if (leftRightDiffY > 0 && pointer.getCenterY() < points.get(3)) {
                 pointer.setCenterX(points.get(2));
                 pointer.setCenterY(points.get(3));
-                currentPanel = currentPanel.getLeftPanel();
+                if(currentPanel.getLeftPanel() != null){
+                    currentPanel = currentPanel.getLeftPanel();
+                }
             } else if (leftRightDiffY < 0 && pointer.getCenterY() > points.get(3)) {
                 pointer.setCenterX(points.get(2));
                 pointer.setCenterY(points.get(3));
-                currentPanel = currentPanel.getLeftPanel();
+                if(currentPanel.getLeftPanel() != null){
+                    currentPanel = currentPanel.getLeftPanel();
+                }
             }
         } else {
             rights++;
@@ -135,19 +143,27 @@ public class Player extends BetterPolygon {
             if (leftRightDiffX > 0 && getCenterX() > points.get(0)) {
                 pointer.setCenterX(points.get(0));
                 pointer.setCenterY(points.get(1));
-                currentPanel = currentPanel.getRightPanel();
+                if(currentPanel.getRightPanel() != null){
+                    currentPanel = currentPanel.getRightPanel();
+                }
             } else if (leftRightDiffX < 0 && getCenterX() < points.get(0)) {
                 pointer.setCenterX(points.get(0));
                 pointer.setCenterY(points.get(1));
-                currentPanel = currentPanel.getRightPanel();
+                if(currentPanel.getRightPanel() != null){
+                    currentPanel = currentPanel.getRightPanel();
+                }
             } else if (leftRightDiffY > 0 && getCenterY() > points.get(1)) {
                 pointer.setCenterX(points.get(0));
                 pointer.setCenterY(points.get(1));
-                currentPanel = currentPanel.getRightPanel();
+                if(currentPanel.getRightPanel() != null){
+                    currentPanel = currentPanel.getRightPanel();
+                }
             } else if (leftRightDiffY < 0 && getCenterY() < points.get(1)) {
                 pointer.setCenterX(points.get(0));
                 pointer.setCenterY(points.get(1));
-                currentPanel = currentPanel.getRightPanel();
+                if(currentPanel.getRightPanel() != null){
+                    currentPanel = currentPanel.getRightPanel();
+                }
             }
         }
         checkIfSideClose(left);
@@ -162,7 +178,9 @@ public class Player extends BetterPolygon {
             if (xDiff < 0.5 && xDiff > -0.5 && yDiff < 0.5 && yDiff > -0.5) {
                 pointer.setCenterX(currentPanel.getLeftSide().getPoints().get(2));
                 pointer.setCenterY(currentPanel.getLeftSide().getPoints().get(3));
-                currentPanel = currentPanel.getLeftPanel();
+                if(currentPanel.getLeftPanel() != null){
+                    currentPanel = currentPanel.getLeftPanel();
+                }
             }
         } else {
             double xDiff = pointer.getCenterX() - currentPanel.getRightSide().getPoints().get(2);
@@ -170,7 +188,9 @@ public class Player extends BetterPolygon {
             if (xDiff < 0.5 && xDiff > -0.5 && yDiff < 0.5 && yDiff > -0.5) {
                 pointer.setCenterX(currentPanel.getRightSide().getPoints().get(2));
                 pointer.setCenterY(currentPanel.getRightSide().getPoints().get(3));
-                currentPanel = currentPanel.getRightPanel();
+                if(currentPanel.getRightPanel() != null){
+                    currentPanel = currentPanel.getRightPanel();
+                }
             }
         }
     }
