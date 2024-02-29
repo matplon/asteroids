@@ -44,6 +44,11 @@ public class MainController {
 
     @FXML
     void tempest(ActionEvent event) {
+        if(!Menu.clips.isEmpty()){
+            for (int i = 0; i < Menu.clips.size(); i++) {
+                Menu.clips.get(i).close();
+            }
+        }
         com.example.MotorolaScienceCup.Tempest.Main.init();
     }
     @FXML

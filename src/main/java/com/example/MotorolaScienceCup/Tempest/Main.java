@@ -135,7 +135,7 @@ public class Main {
         scene = new Scene(root, WIDTH, HEIGHT);
         stage.setScene(scene);
         scene.setFill(Color.BLACK);
-        root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(0), new Insets(0))));
+        root.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
 
         shoot = false;
         goLeft = false;
@@ -190,9 +190,6 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = false;
             if (keyEvent.getCode() == KeyCode.X) shoot = false;
         });
-        for (Clip clip : Menu.clips) {
-            clip.close();
-        }
         com.example.MotorolaScienceCup.Tempest.HUD.init(Menu.TempestHigh, Util.SVGconverter("heart.svg"));
         if(flipperCounter != -1){
             start(flipperCounter, tankerCounter, spikerCounter, fuseballCounter);
@@ -261,6 +258,7 @@ public class Main {
 
     public static void gameOver(boolean nextLevel) {
         HEARTS--;
+        timeline.stop();
         if (HEARTS == 0) {
             com.example.MotorolaScienceCup.Tempest.HUD.gameOver();
         } else if (!nextLevel) {
