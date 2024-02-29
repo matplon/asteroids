@@ -8,10 +8,12 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static com.example.MotorolaScienceCup.Battlezone.Main.FPS_OFFSET;
+
 public class Ufo extends EnemyTank{
 
-    public static double UFO_SPEED = 0.075;
-    public static double UFO_ROT_SPEED = 1;
+    public static double UFO_SPEED = 0.075*FPS_OFFSET;
+    public static double UFO_ROT_SPEED = 1*FPS_OFFSET;
 
     public static Clip ambient;
 

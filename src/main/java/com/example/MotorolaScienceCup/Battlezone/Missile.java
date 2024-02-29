@@ -6,11 +6,13 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 
+import static com.example.MotorolaScienceCup.Battlezone.Main.FPS_OFFSET;
+
 public class Missile extends EnemyTank {
 
 
-    public static double MISSILE_SPEED = 0.6;
-    public static double MISSILE_ROT_SPEED = 10;
+    public static double MISSILE_SPEED = 0.6*FPS_OFFSET;
+    public static double MISSILE_ROT_SPEED = 10*FPS_OFFSET;
 
     private boolean isFlying;
 

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import static com.example.MotorolaScienceCup.Battlezone.Main.FPS_OFFSET;
 import static java.lang.Math.abs;
 
 public class EnemyTank extends Object3D{
@@ -48,9 +49,9 @@ public class EnemyTank extends Object3D{
 
 
 
-    public static double TANK_SPEED = 0.25*0.25*1.3;
+    public static double TANK_SPEED = 0.25*0.25*1.3*FPS_OFFSET;
 
-    public static double TANK_ROT_SPEED = 0.75;
+    public static double TANK_ROT_SPEED = 0.75*FPS_OFFSET;
 
 
     public EnemyTank(ArrayList<Vertex> points3D, ArrayList<Face> faces3D){

@@ -40,10 +40,12 @@ public class Main {
 
     public static int score = 0;
 
+    public static double FPS_OFFSET = 2;
+
     public static int hiScore = Util.getHiScore();
 
-    static double CAMERA_SPEED = 0.1;
-    static double CAMERA_ROT_SPEED = 0.5;
+    static double CAMERA_SPEED = 0.1*FPS_OFFSET;
+    static double CAMERA_ROT_SPEED = 0.5*FPS_OFFSET;
 
     static long frameCount=0;
     
@@ -125,9 +127,9 @@ public class Main {
     public static ArrayList<Particle> particles = new ArrayList<>();
     public static int MAX_PARTICLE_TICKS = 30;
 
-    public static double PARTICLE_SPEED = 0.05;
+    public static double PARTICLE_SPEED = 0.05*FPS_OFFSET;
 
-    public static double PARTICLE_ROT_SPEED = 1;
+    public static double PARTICLE_ROT_SPEED = 1*FPS_OFFSET;
 
 
     public static Camera camera;
@@ -659,8 +661,8 @@ public class Main {
     }
 
     public static void start() {
-        timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS)), actionEvent -> {
-            frameCount++;
+        timeline = new Timeline(new KeyFrame(Duration.millis(1000.0 / (Menu.FPS/FPS_OFFSET)), actionEvent -> {
+            frameCount+=FPS_OFFSET;
             boolean justDied = false;
             if((frameCount%120)==0){
                 try {
@@ -670,9 +672,9 @@ public class Main {
                 }
             }
             if(loadTimer<30){
-                loadTimer++;
+                loadTimer+=FPS_OFFSET;
             }else{
-                loadTimer++;
+                loadTimer+=FPS_OFFSET;
                 Menu.stage.setScene(scene);
             }
             if(isDying){
@@ -705,13 +707,13 @@ public class Main {
             if(ufoList.isEmpty()&&Math.random()*480<1){
                 spawnUfo();
             }
-            TEXT_TICK++;
+            TEXT_TICK+=FPS_OFFSET;
             if(camera.magTimer>=0){
-                camera.magTimer--;
+                camera.magTimer-=FPS_OFFSET;
             }
             for (EnemyTank enemyTank:fullTankList) {
                 if(enemyTank.getMagTimer()>=0 && !(enemyTank instanceof Missile || enemyTank instanceof Ufo)) {
-                    enemyTank.setMagTimer(enemyTank.getMagTimer() - 1);
+                    enemyTank.setMagTimer(enemyTank.getMagTimer() - FPS_OFFSET);
                 }
             }
             if(TEXT_TICK>30){
@@ -756,13 +758,13 @@ public class Main {
                     has_collided = false;
                     camera.moveTo(camera.getX(),0,camera.getZ());
                 }
-                impact_ticks++;
+                impact_ticks+=FPS_OFFSET;
             }else{
                 polyline = new Polyline( 0,(HEIGHT/2), WIDTH,(HEIGHT/2));
                 polyline.setStroke(Color.GREEN);
             }
             if(isDying){
-                death_ticks++;
+                death_ticks+=FPS_OFFSET;
                 if(isIdling!=null){
                     isIdling.close();
                     isIdling=null;
@@ -829,8 +831,8 @@ public class Main {
                     }
                 } else if (death_ticks == 100) {
                     wasHit = false;
-                    CAMERA_SPEED = 0.1;
-                    CAMERA_ROT_SPEED = 0.5;
+                    CAMERA_SPEED = 0.1*FPS_OFFSET;
+                    CAMERA_ROT_SPEED = 0.5*FPS_OFFSET;
                     isDying = false;
                     death_ticks=0;
                     objectList.removeAll(fullTankList);
@@ -874,8 +876,8 @@ public class Main {
             for (int i = 0 ; i<allBullets.size() ; i++) {
                 Bullet bullet = allBullets.get(i);
                     System.out.println(">>>>>>>>>>>>>>>>>>");
-                    bullet.translate(bullet.getDirection().getX(),0,bullet.getDirection().getZ());
-                    double travelled = Math.sqrt(bullet.getDirection().getX()*bullet.getDirection().getX()+bullet.getDirection().getZ()*bullet.getDirection().getZ());
+                    bullet.translate(bullet.getDirection().getX()*FPS_OFFSET,0,bullet.getDirection().getZ()*FPS_OFFSET);
+                    double travelled = Math.sqrt(bullet.getDirection().getX()*FPS_OFFSET*bullet.getDirection().getX()*FPS_OFFSET+bullet.getDirection().getZ()*FPS_OFFSET*bullet.getDirection().getZ()*FPS_OFFSET);
                     bullet.setDistanceCovered(bullet.getDistanceCovered()+travelled);
                     bullet.displayObject();
                     if(bullet.getDistanceCovered()>MAX_BULLET_DISTANCE){
@@ -1069,8 +1071,8 @@ public class Main {
 
            score = 0;
 
-          CAMERA_SPEED = 0.1;
-          CAMERA_ROT_SPEED = 0.5;
+          CAMERA_SPEED = 0.1*FPS_OFFSET;
+          CAMERA_ROT_SPEED = 0.4*FPS_OFFSET;
 
           RADAR_ROT = 0;
 
@@ -1087,7 +1089,7 @@ public class Main {
           frameCount = 0;
 
           impact_ticks = 0;
-          impact_skip = 0.01;
+          impact_skip = 0.01*FPS_OFFSET;
 
          objectList = new ArrayList<>();
 
@@ -1140,9 +1142,9 @@ public class Main {
        particles = new ArrayList<>();
        MAX_PARTICLE_TICKS = 30;
 
-           PARTICLE_SPEED = 0.05;
+           PARTICLE_SPEED = 0.05*FPS_OFFSET;
 
-           PARTICLE_ROT_SPEED = 1;
+           PARTICLE_ROT_SPEED = 1*FPS_OFFSET;
 
 
     }
