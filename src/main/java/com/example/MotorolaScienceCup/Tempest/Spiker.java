@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polyline;
 
 import java.util.List;
+import java.util.Random;
 
 public class Spiker extends Enemy {
     private static final String filepath = "spiker.txt";
@@ -47,11 +48,16 @@ public class Spiker extends Enemy {
             maxH = lineLength;
             previousLine = true;
         }
+
+        Random random = new Random();
+        double panelPercentage = random.nextDouble(0.5, 1.0);
+        maxH = panelPercentage * currentPanel.getLength();
     }
 
     public boolean move() {
         if (h < maxH && !reachedTheEdge) {
             moveUp();
+            if(h >= maxH) reachedTheEdge = true;
             drawLine();
         } else if (h >= maxH && !destroyed && !goingDown) {
             h = 0;

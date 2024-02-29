@@ -25,6 +25,7 @@ public class Menu extends Application {
     public static VBox root;
     public static int AsteroidsHigh = 0;
     public static int BattlezoneHigh = 0;
+    public static int TempestHigh = 0;
     public static Stage stage;
     public static Scene scene;
     public static List<Clip> clips = new ArrayList();

@@ -22,7 +22,7 @@ public class Enemy extends BetterPolygon {
     protected final double radiusOffset = 5;
     protected double initVelocity = 0.1;
     protected static final List<Double> pointerPoints = Arrays.asList(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0);
-    private static List<Seed> seedList = new ArrayList<>();
+    public static List<Seed> seedList = new ArrayList<>();
     private static int seedTimer = 0;
     static boolean seedsDone = false;
     protected Panel currentPanel;
@@ -243,6 +243,7 @@ public class Enemy extends BetterPolygon {
 
     public static void spawnSeeds(int flippers, int tankers, int spikers, int fuseballs) {
         seedsDone = false;
+        seedList = new ArrayList<>();
         int flipperCounter = flippers;
         int tankerCounter = tankers;
         int spikerCounter = spikers;
@@ -316,18 +317,14 @@ public class Enemy extends BetterPolygon {
         seedTimer--;
     }
 
-    private static class Seed {
+    public static class Seed {
         public BetterPolygon seedPath;
         private int spikerTimer = 120;
         private Particle seed;
-        private double speed;
         public boolean done = false;
         public Panel chosenPanel;
-        private double distToCover;
-        private double distCovered = 0;
-        private int enemyType;
+        public int enemyType;
         private int pointOfPath;
-        private Vector moveVector;
 
         public Seed(int enemyType) {
             this.enemyType = enemyType;

@@ -1,12 +1,16 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.BetterPolygon;
+import com.example.MotorolaScienceCup.Sound;
 import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -187,6 +191,15 @@ public class Player extends BetterPolygon {
 
     public void shoot(boolean nextLevel) {
         if (shotTimer <= 0) {
+            try {
+                Sound.play("151015__bubaproducer__laser-shot-big-2.wav", -30);
+            } catch (UnsupportedAudioFileException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (LineUnavailableException e) {
+                throw new RuntimeException(e);
+            }
             Bullet bullet = new Bullet();
             if(nextLevel){
                 tempPanels.get(tempPanels.indexOf(currentPanel)).addPlayerBullet(bullet);

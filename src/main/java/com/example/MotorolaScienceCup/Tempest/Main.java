@@ -1,6 +1,7 @@
 package com.example.MotorolaScienceCup.Tempest;
 
 import com.example.MotorolaScienceCup.Menu;
+import com.example.MotorolaScienceCup.Util;
 import com.example.MotorolaScienceCup.Vector;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -41,6 +42,12 @@ public class Main {
     static Player player;
     static double nextLevelSpikelineSpeed = 8;
 
+    static int FLIPPER_POINTS = 10;
+    static int TANKER_POINTS = 15;
+    static int SPIKER_POINTS = 20;
+    static int FUSEBALL_POINTS = 25;
+    static int SPIKELINE_POINTS = 2;
+
     static List<Polyline> smallShape;
     static List<Polyline> bigShape;
     static List<Polyline> connectors;
@@ -52,8 +59,9 @@ public class Main {
     static boolean goLeft;
     static int LEVEL = 1;
     static int HEARTS = 3;
+    static int POINTS = 0;
     static boolean superZapper;
-    static int flippersNumber = 10;
+    static int flippersNumber = 5;
     static int tankersNumber = 0;
     static int spikersNumber = 0;
     static int fuseballNumber = 0;
@@ -64,10 +72,10 @@ public class Main {
     static int maxFuseball = 4;
 
     static double bigSideLength;
-    static String map;
+    static List<String> maps = Arrays.asList("map1.svg", "map2.svg", "map3.svg", "map4.svg", "map5.svg", "map6.svg","map7.svg","map8.svg");
+    static String map = maps.get(0);
 
-    static List<String> maps = Arrays.asList("map1.svg", "map2.svg", "map3.svg", "map4.svg", "map5.svg", "map6.svg", "map7.svg", "map8.svg", "map9.svg", "map10.svg",
-            "map11.svg", "map12.svg", "map13.svg", "map14.svg");
+
     static HashMap<Integer, Boolean> isMapOpen = new HashMap<>() {{
         put(0, false);
         put(1, false);
@@ -75,26 +83,48 @@ public class Main {
         put(3, false);
         put(4, false);
         put(5, false);
-        put(6, true);
+        put(6, false);
         put(7, false);
-        put(8, true);
-        put(9, false);
-        put(10, true);
-        put(11, true);
-        put(12, true);
-        put(13, true);
     }};
 
     static double scale = 1;
     static double a = 1.006;
-    static double mapSpeed = 4;
     static double mapDistanceCovered = 0;
 
     public static void init() {
-
         if (timeline != null) {
             timeline.stop();
         }
+        int flipperCounter = -1, tankerCounter = -1, spikerCounter = -1, fuseballCounter = -1;
+        if (panels != null) {
+            flipperCounter = 0;
+            tankerCounter = 0;
+            spikerCounter = 0;
+            fuseballCounter = 0;
+            for (Panel panel : panels) {
+                if (panel.getFlippers() != null) flipperCounter += panel.getFlippers().size();
+                if (panel.getTankers() != null) tankerCounter += panel.getTankers().size();
+                if (panel.getSpikers() != null) spikerCounter += panel.getSpikers().size();
+                if (panel.getFuseBalls() != null) fuseballCounter += panel.getFuseBalls().size();
+            }
+            for (Enemy.Seed seed : Enemy.seedList){
+                switch (seed.enemyType){
+                    case 0:
+                        flipperCounter++;
+                        break;
+                    case 1:
+                        tankerCounter++;
+                        break;
+                    case 2:
+                        spikerCounter++;
+                        break;
+                    case 3:
+                        fuseballCounter++;
+                        break;
+                }
+            }
+        }
+
         scale = 1;
         superZapper = true;
         connectors = new ArrayList<>();
@@ -111,12 +141,12 @@ public class Main {
         goLeft = false;
         goRight = false;
 
-        if (LEVEL <= 13) {
+        if (LEVEL <= 8) {
             map = "map" + LEVEL + ".svg";
 
         } else {
             Random random = new Random();
-            map = "map" + random.nextInt(1, 15) + ".svg";
+            map = "map" + random.nextInt(1, 8) + ".svg";
             defaultPanelColor = new Color(Math.random(), Math.random(), Math.random(), 1.0);
             activePanelColor = new Color(1.0 - defaultPanelColor.getRed(), 1.0 - defaultPanelColor.getGreen(), 1.0 - defaultPanelColor.getBlue(), 1.0);
         }
@@ -128,7 +158,7 @@ public class Main {
             fuseballNumber++;
         }
 
-        Graphics.drawMap(map, defaultPanelColor, 1);
+        Graphics.drawMap(map, defaultPanelColor, scale);
 
         double bigSideLengthX = panels.get(0).getBigSide().getPoints().get(0) - panels.get(0).getBigSide().getPoints().get(2);
         double bigSideLengthY = panels.get(0).getBigSide().getPoints().get(1) - panels.get(0).getBigSide().getPoints().get(3);
@@ -153,26 +183,47 @@ public class Main {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = true;
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = true;
             if (keyEvent.getCode() == KeyCode.X) shoot = true;
-            if (keyEvent.getCode() == KeyCode.S) timeline.stop();
-            if (keyEvent.getCode() == KeyCode.R) timeline.play();
+            if (keyEvent.getCode() == KeyCode.E && superZapper) useZapper();
         });
         scene.setOnKeyReleased(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.RIGHT) goRight = false;
             if (keyEvent.getCode() == KeyCode.LEFT) goLeft = false;
             if (keyEvent.getCode() == KeyCode.X) shoot = false;
         });
-        start();
         for (Clip clip : Menu.clips) {
             clip.close();
         }
+        com.example.MotorolaScienceCup.Tempest.HUD.init(Menu.TempestHigh, Util.SVGconverter("heart.svg"));
+        if(flipperCounter != -1){
+            start(flipperCounter, tankerCounter, spikerCounter, fuseballCounter);
+        }
+        else{
+            start(flippersNumber, tankersNumber, spikersNumber, fuseballNumber);
+        }
     }
 
-    public static void start() {
+    public static void resetData() {
+        Main.HEARTS = 3;
+        Main.POINTS = 0;
+        Main.LEVEL = 1;
+        maxFlipper = 4;
+        maxTanker = 4;
+        maxSpiker = 4;
+        maxFuseball = 4;
+        flippersNumber = 10;
+        tankersNumber = 0;
+        spikersNumber = 0;
+        fuseballNumber = 0;
+        panels = null;
+        HUD.points = 0;
+    }
 
-        Enemy.spawnSeeds(flippersNumber, tankersNumber, spikersNumber, fuseballNumber);
+    public static void start(int flippers, int tankers, int spikers, int fuseballs) {
+
+        Enemy.spawnSeeds(flippers, tankers, spikers, fuseballs);
 
         timeline = new Timeline(new KeyFrame(Duration.millis((double) 1000 / Menu.FPS), actionEvent -> {
-            highlightPanel(player);
+            highlightPanel(player, false);
             double bulletsNumber = 0;
             for (Panel panel : panels) {
                 panel.update(false);
@@ -201,7 +252,6 @@ public class Main {
             }
             player.shotTimer--;
             if (isLevelFinished()) {
-                System.out.println("pls dzialaj");
                 nextLevel();
             }
         }));
@@ -211,12 +261,16 @@ public class Main {
 
     public static void gameOver(boolean nextLevel) {
         HEARTS--;
-        if (!nextLevel) init();
-        else nextLevel();
+        if (HEARTS == 0) {
+            com.example.MotorolaScienceCup.Tempest.HUD.gameOver();
+        } else if (!nextLevel) {
+            com.example.MotorolaScienceCup.Tempest.HUD.removeHeart();
+            init();
+        } else nextLevel();
     }
 
-    public static void addPoints(double points) {
-        System.out.println("add points");
+    public static void addPoints(int points) {
+        com.example.MotorolaScienceCup.Tempest.HUD.addPoints(points);
     }
 
     public static boolean isLevelFinished() {
@@ -247,7 +301,7 @@ public class Main {
                 }
             }
             Graphics.drawMap(map, defaultPanelColor, scale);
-            highlightPanel(player);
+            highlightPanel(player, true);
             scale *= a;
             double bulletsNumber = 0;
             for (Panel panel : tempPanels) {
@@ -288,17 +342,20 @@ public class Main {
     }
 
     public static void newLevel() {
+        panels = null;
+        LEVEL++;
         init();
     }
 
-    public static void highlightPanel(Player player) {
-        if (player.getCurrentPanel().getLeftPanel() != null && player.getCurrentPanel().getLeftPanel().getColor() == activePanelColor) {
-            player.getCurrentPanel().getLeftPanel().changeColor(defaultPanelColor);
+    public static void highlightPanel(Player player, boolean nextLevel) {
+        for(Panel panel : panels){
+            panel.changeColor(defaultPanelColor);
         }
-        if (player.getCurrentPanel().getRightPanel() != null && player.getCurrentPanel().getRightPanel().getColor() == activePanelColor) {
-            player.getCurrentPanel().getRightPanel().changeColor(defaultPanelColor);
+        if(!nextLevel) player.currentPanel.changeColor(activePanelColor);
+        else{
+            int indexPlayerPanel = tempPanels.indexOf(player.currentPanel);
+            panels.get(indexPlayerPanel).changeColor(activePanelColor);
         }
-        player.getCurrentPanel().changeColor(activePanelColor);
     }
 
     public static void removeAllEnemies() {
@@ -323,6 +380,7 @@ public class Main {
 
     public static void useZapper() {
         superZapper = false;
+        HUD.removeZapper();
         List<Flipper> flippersToDestroy = new ArrayList<>();
         List<Tanker> tankersToDestroy = new ArrayList<>();
         List<Spiker> spikersToDestroy = new ArrayList<>();
@@ -332,6 +390,20 @@ public class Main {
             for (Flipper flipper : panel.getFlippers()) {
                 flippersToDestroy.add(flipper);
             }
+            for (Tanker tanker : panel.getTankers()) {
+                tankersToDestroy.add(tanker);
+            }
+            for (Spiker spiker : panel.getSpikers()) {
+                spikersToDestroy.add(spiker);
+            }
+            for (Fuseball fuseball : panel.getFuseBalls()) {
+                fuseballsToDestroy.add(fuseball);
+            }
         }
+
+        for (Flipper flipper : flippersToDestroy) flipper.destroy();
+        for (Tanker tanker : tankersToDestroy) tanker.destroy();
+        for (Spiker spiker : spikersToDestroy) spiker.destroy();
+        for (Fuseball fuseball : fuseballsToDestroy) fuseball.destroy();
     }
 }

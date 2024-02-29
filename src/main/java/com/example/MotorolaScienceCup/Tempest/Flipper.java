@@ -59,8 +59,8 @@ public class Flipper extends Enemy {
             bulletTimer--;
             if (bulletTimer <= 0) shoot();
         }
-        if (!(Main.LEVEL == 1 && !reachedTheEdge)){
-            if(changePanel()) return false;
+        if (!(Main.LEVEL == 1 && !reachedTheEdge)) {
+            if (changePanel()) return false;
         }
         return true;
     }
@@ -72,7 +72,7 @@ public class Flipper extends Enemy {
 
     @Override
     protected void uniqueDestroyMethod() {
-        if(Main.root.getChildren().contains(this)) Main.root.getChildren().remove(this);
+        if (Main.root.getChildren().contains(this)) Main.root.getChildren().remove(this);
         currentPanel.getFlippers().remove(this);
     }
 
@@ -168,16 +168,15 @@ public class Flipper extends Enemy {
         double angle = Math.acos(dotProduct / (initMagnitude * endMagnitude));
 
         Point2D leftPoint, rightPoint, middlePoint;
-        if(left){
+        if (left) {
             leftPoint = new Point2D(initialPoints.get(0), initialPoints.get(1));
             rightPoint = new Point2D(endPoints.get(0), endPoints.get(1));
-        }
-        else{
+        } else {
             rightPoint = new Point2D(initialPoints.get(0), initialPoints.get(1));
             leftPoint = new Point2D(endPoints.get(0), endPoints.get(1));
         }
         middlePoint = new Point2D(pivotX, pivotY);
-        if(isReflex(rightPoint, middlePoint, leftPoint)){
+        if (isReflex(rightPoint, middlePoint, leftPoint)) {
             angle = 2 * Math.PI - angle;
         }
         if (Double.isNaN(angle)) angle = Math.PI;
@@ -208,7 +207,7 @@ public class Flipper extends Enemy {
             List<Double> endPoints = tempFlipper.getPoints();
             tempFlipper.destroy();
             fullRotationAngle = findChangeAngle(left, pivotX, pivotY, initPoints, endPoints);
-            if (left){
+            if (left) {
                 fullRotationAngle *= -1;
             }
         } else {
@@ -248,9 +247,17 @@ public class Flipper extends Enemy {
 
             defPoints = new ArrayList<>(defFlipper.getPoints());
 
-            pointer.moveTo((getPointsOnSides().get(0) + getPointsOnSides().get(2))/2, (getPointsOnSides().get(1) + getPointsOnSides().get(3))/2);
+            pointer.moveTo((getPointsOnSides().get(0) + getPointsOnSides().get(2)) / 2, (getPointsOnSides().get(1) + getPointsOnSides().get(3)) / 2);
+            if(Main.root.getChildren().contains(defFlipper)){
+                Main.root.getChildren().remove(defFlipper);
+            }
+            defFlipper.setStroke(Color.RED);
+            defFlipper.moveTo(200, 800);
+
+            Main.root.getChildren().add(defFlipper);
             fullRotationAngle = 0;
             step = 0;
+
             return true;
         }
         return false;

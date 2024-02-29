@@ -48,6 +48,7 @@ public class Panel {
 
         for (Player.Bullet bullet : playerBullets) {
             if (checkEdgeFlipper() && bullet.h == length) {
+                Main.addPoints(FLIPPER_POINTS);
                 bulletsToDestroy.add(bullet);
             }
             if (!bullet.move(nextLevel)) {
@@ -55,30 +56,35 @@ public class Panel {
             }
             for (Flipper flipper : flippers) {
                 if (bullet.intersects(flipper.getLayoutBounds()) && !bulletsToDestroy.contains(bullet)) {
+                    Main.addPoints(FLIPPER_POINTS);
                     flippersToDestroy.add(flipper);
                     bulletsToDestroy.add(bullet);
                 }
             }
             for (Tanker tanker : tankers) {
                 if (bullet.intersects(tanker.getLayoutBounds()) && !bulletsToDestroy.contains(bullet)) {
+                    Main.addPoints(TANKER_POINTS);
                     tankersToDestroy.add(tanker);
                     bulletsToDestroy.add(bullet);
                 }
             }
             for (Spiker spiker : spikers) {
                 if (!spikers.isEmpty() && bullet.intersects(spiker.getLayoutBounds()) && !bulletsToDestroy.contains(bullet)) {
+                    Main.addPoints(SPIKER_POINTS);
                     spikersToDestroy.add(spiker);
                     bulletsToDestroy.add(bullet);
                 }
             }
             for (Fuseball fuseBall : fuseBalls) {
                 if (bullet.intersects(fuseBall.getLayoutBounds()) && !bulletsToDestroy.contains(bullet)) {
+                    Main.addPoints(FUSEBALL_POINTS);
                     fuseballsToDestroy.add(fuseBall);
                     bulletsToDestroy.add(bullet);
                 }
             }
             if (spikers.isEmpty() && !bulletsToDestroy.contains(bullet)) {
                 if (destroyLine(bullet, bullet.getRadius() * 3.5)) {
+                    Main.addPoints(SPIKELINE_POINTS);
                     bulletsToDestroy.add(bullet);
                 }
             }
@@ -161,8 +167,14 @@ public class Panel {
         List<Tanker> tankersToDestroy = new ArrayList<>();
         List<Spiker> spikersToDestroy = new ArrayList<>();
         List<Fuseball> fuseBallsToRemove = new ArrayList<>();
-        for (Flipper flipper : flippers)
+        for (Flipper flipper : flippers){
             if (!flipper.move()) flippersToRemove.add(flipper);
+            if(flipper.reachedTheEdge){
+                if(this == player.currentPanel){
+                    Main.gameOver(false);
+                }
+            }
+        }
         for (Tanker tanker : tankers) {
             if (!tanker.move()) tankersToDestroy.add(tanker);
         }

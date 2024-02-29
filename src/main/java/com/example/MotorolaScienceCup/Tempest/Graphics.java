@@ -47,7 +47,7 @@ public class Graphics {
         mapCenterY = tempSmallShape.getCenterY();
         mapShape = new BetterPolygon(tempSmallShape.getPoints());
 
-        BetterPolygon tempPolygon = BetterPolygon.scale(tempSmallShape, 10);
+        BetterPolygon tempPolygon = BetterPolygon.scale(tempSmallShape, 8.5);
         tempPolygon.moveTo(WIDTH / 2, HEIGHT / 2 + bigOffset);
         List<Double> bigShapePoints = tempPolygon.getPoints();
         drawConnectors(smallShapePoints, bigShapePoints, color, new Glow(Main.glowV), isMapOpen.get(maps.indexOf(filepath)));
