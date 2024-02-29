@@ -59,13 +59,17 @@ public class Tanker extends Enemy {
         double targetH1 = currentPanel.getLeftPanel().getLength() * hPercentage;
         double targetH2 = currentPanel.getRightPanel().getLength() * hPercentage;
 
-        while (Math.round(flipper1.h) != Math.round(targetH1)) {
-            flipper1.moveUp();
-        }
-        while (Math.round(flipper2.h) != Math.round(targetH2)) {
-            flipper2.moveUp();
-        }
+        flipper1.h = targetH1;
+        flipper2.h = targetH2;
+
+        flipper1.updatePoints();
+        flipper2.updatePoints();
 
         Main.root.getChildren().addAll(flipper1, flipper2);
+    }
+
+    public void remove(){
+        currentPanel.getTankers().remove(this);
+        if(Main.root.getChildren().contains(this)) Main.root.getChildren().remove(this);
     }
 }

@@ -3,22 +3,25 @@ package com.example.MotorolaScienceCup.Tempest;
 import com.example.MotorolaScienceCup.BetterPolygon;
 import com.example.MotorolaScienceCup.Particle;
 import com.example.MotorolaScienceCup.Vector;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.PathTransition;
 import javafx.geometry.Point2D;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
 import java.util.*;
 
 public class Enemy extends BetterPolygon {
     private static List<Panel> panelsWithSpiker = new ArrayList<>();
-    protected static final int FRAMES_PER_MOVE = 360;
+    protected static int FRAMES_PER_MOVE = 360;
     protected final int bulletCooldown = 90;
-    private static final int seedCooldown = 8;
+    private static final int seedCooldown = 20;
     protected final double radiusOffset = 5;
     protected double initVelocity = 0.1;
     protected static final List<Double> pointerPoints = Arrays.asList(0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0);
-    private static Queue<Seed> seedQueue = new LinkedList<>();
     private static List<Seed> seedList = new ArrayList<>();
     private static int seedTimer = 0;
     static boolean seedsDone = false;
@@ -73,7 +76,7 @@ public class Enemy extends BetterPolygon {
 
         double bigSideLength = Math.sqrt(Math.pow(currentPanel.getBigSide().getPoints().get(0) - currentPanel.getBigSide().getPoints().get(2), 2) +
                 Math.pow(currentPanel.getBigSide().getPoints().get(1) - currentPanel.getBigSide().getPoints().get(3), 2));
-        double maxRadius = bigSideLength / 2 - radiusOffset;
+        double maxRadius = bigSideLength / 4 - radiusOffset;
 
         double radiusGrad = (maxRadius - minRadius) / maxH;
 
@@ -107,6 +110,28 @@ public class Enemy extends BetterPolygon {
             Bullet bullet = new Bullet();
             currentPanel.addEnemyBullet(bullet);
             bulletTimer = bulletCooldown;
+        }
+    }
+
+    protected boolean chooseDirection() {
+        int distLeft = 0;
+        Panel nextPanel = currentPanel.getLeftPanel();
+        while (!nextPanel.equals(Main.player.getCurrentPanel())) {
+            distLeft++;
+            nextPanel = nextPanel.getLeftPanel();
+        }
+        int distRight = 0;
+        nextPanel = currentPanel.getRightPanel();
+        while (!nextPanel.equals(Main.player.getCurrentPanel())) {
+            distRight++;
+            nextPanel = nextPanel.getRightPanel();
+        }
+        if (distLeft < distRight) return true;
+        else if (distRight < distLeft) return false;
+        else {
+            Random random = new Random();
+            int dirChooser = random.nextInt(2);
+            return (dirChooser == 0);
         }
     }
 
@@ -208,10 +233,11 @@ public class Enemy extends BetterPolygon {
         }
     }
 
-    public static void spawnSeeds(int flippers, int tankers, int spikers) {
+    public static void spawnSeeds(int flippers, int tankers, int spikers, int fuseballs) {
         int flipperCounter = flippers;
         int tankerCounter = tankers;
         int spikerCounter = spikers;
+        int fuseballCounter = fuseballs;
 
         List<Integer> possibilities = new ArrayList<>();
 
@@ -222,6 +248,7 @@ public class Enemy extends BetterPolygon {
             if (flipperCounter > 0) possibilities.add(0);
             if (tankerCounter > 0) possibilities.add(1);
             if (spikerCounter > 0) possibilities.add(2);
+            if (fuseballCounter > 0) possibilities.add(3);
 
             int choiceIndex = random.nextInt(possibilities.size());
             int choice = possibilities.get(choiceIndex);
@@ -231,79 +258,73 @@ public class Enemy extends BetterPolygon {
             if (choice == 0) flipperCounter--;
             else if (choice == 1) tankerCounter--;
             else if (choice == 2) spikerCounter--;
+            else if (choice == 3) fuseballCounter--;
         }
     }
 
     public static void updateSeeds() {
         List<Seed> seedsToRemove = new ArrayList<>();
-        for (Seed seed : seedList) {
-            if (!seed.done) seed.move();
-            else {
-                seedQueue.add(seed);
-                seedsToRemove.add(seed);
-            }
-        }
-        for (Seed seed : seedsToRemove) {
-            seedList.remove(seed);
-        }
-        if (seedTimer <= 0) {
-            seedTimer = seedCooldown;
-            Seed topSeed = seedQueue.poll();
-            if (topSeed != null) {
-                seedList.remove(topSeed);
-                topSeed.remove();
+        for (Seed topSeed : seedList) {
+            topSeed.move();
+            if (seedTimer <= 0) {
+                seedTimer = seedCooldown;
 
-                if (topSeed.enemyType == 0) {
+                int flipperNumber = 0;
+                int tankerNumber = 0;
+                int spikerNumber = 0;
+                int fuseballNumber = 0;
+
+                for (Panel panel : Main.panels) {
+                    flipperNumber += panel.getFlippers().size();
+                    tankerNumber += panel.getTankers().size();
+                    spikerNumber += panel.getSpikers().size();
+                    fuseballNumber += panel.getFuseBalls().size();
+                }
+
+                if (topSeed.enemyType == 0 && flipperNumber < Main.maxFlipper) {
                     Flipper flipper = new Flipper(topSeed.chosenPanel);
                     Main.root.getChildren().add(flipper);
-                } else if (topSeed.enemyType == 1) {
+                    seedsToRemove.add(topSeed);
+                } else if (topSeed.enemyType == 1 && tankerNumber < Main.maxTanker) {
                     Tanker tanker = new Tanker(topSeed.chosenPanel);
                     Main.root.getChildren().add(tanker);
-                } else if (topSeed.enemyType == 2) {
+                    seedsToRemove.add(topSeed);
+                } else if (topSeed.enemyType == 2 && spikerNumber < Main.maxSpiker && topSeed.done) {
                     Spiker spiker = new Spiker(topSeed.chosenPanel);
                     Main.root.getChildren().add(spiker);
+                    seedsToRemove.add(topSeed);
+                } else if (topSeed.enemyType == 3 && fuseballNumber < Main.maxFuseball) {
+                    Fuseball fuseball = new Fuseball(topSeed.chosenPanel);
+                    Main.root.getChildren().add(fuseball);
+                    seedsToRemove.add(topSeed);
                 }
             }
         }
-        if (seedList.isEmpty() && seedQueue.isEmpty()) seedsDone = true;
+        for (Seed seed : seedsToRemove) {
+            seed.remove();
+        }
+        if (seedList.isEmpty()) seedsDone = true;
         seedTimer--;
     }
 
     private static class Seed {
-        private final int spiralCooldown = 20;
-        private final double CENTER_X = Graphics.mapCenterX;
-        private final double CENTER_Y = Graphics.mapCenterY;
-        private double RADIUS = 0;
-        private final double linearSpeed = 0.5;
-        private double DEST_X;
-        private double DEST_Y;
-        private double ANGLE = 0;
-        private double ANGLE_INC;
-        private double RADIUS_INC;
-        private int spiralTimer = 20;
+        public BetterPolygon seedPath;
         private int spikerTimer = 120;
         private Particle seed;
-        private boolean spiral = true;
+        private double speed;
         public boolean done = false;
         public Panel chosenPanel;
-        private double T;
+        private double distToCover;
+        private double distCovered = 0;
         private int enemyType;
+        private int pointOfPath;
+        private Vector moveVector;
 
         public Seed(int enemyType) {
             this.enemyType = enemyType;
             choosePanel();
-            Circle bounds = new Circle(Graphics.mapCenterX, Graphics.mapCenterY, 15);
             Random random = new Random();
-            double x = random.nextDouble(Main.WIDTH);
-            double y = random.nextDouble(Main.HEIGHT);
-            Point2D point2D = new Point2D(x, y);
-            while (!bounds.contains(point2D)) {
-                x = random.nextDouble(Main.WIDTH);
-                y = random.nextDouble(Main.HEIGHT);
-                point2D = new Point2D(x, y);
-            }
             seed = new Particle(Flipper.pointerPoints, 0, 0, 0, 0);
-            seed.moveTo(x, y);
             if (enemyType == 0) seed.setStroke(Flipper.flipperColor);
             else if (enemyType == 1) seed.setStroke(Tanker.tankerColor);
             else if (enemyType == 2) {
@@ -311,73 +332,71 @@ public class Enemy extends BetterPolygon {
                 seed.moveTo((chosenPanel.getSmallSide().getPoints().get(0) + chosenPanel.getSmallSide().getPoints().get(2)) / 2,
                         (chosenPanel.getSmallSide().getPoints().get(1) + chosenPanel.getSmallSide().getPoints().get(3)) / 2);
                 spikerTimer += random.nextInt(120);
+            } else if (enemyType == 3) {
+                seed.setStroke(new Color(Math.random(), Math.random(), Math.random(), 1));
             }
             Main.root.getChildren().add(seed);
+            if (enemyType != 2) {
+                spawn();
+            } else {
+                seed.moveTo((chosenPanel.getSmallSide().getPoints().get(0) + chosenPanel.getSmallSide().getPoints().get(2)) / 2,
+                        (chosenPanel.getSmallSide().getPoints().get(1) + chosenPanel.getSmallSide().getPoints().get(3)) / 2);
+            }
+        }
 
-            RADIUS_INC = random.nextDouble(0.1, 0.2);
-            ANGLE_INC = random.nextDouble(0.02, 0.1);
-            int negativeAngle = random.nextInt(2);
-            if (negativeAngle == 0) ANGLE_INC *= -1;
+        private void spawn() {
+            seedPath = new BetterPolygon(Graphics.mapShape.getPoints());
+
+
+            Random random = new Random();
+            double pathScale = random.nextDouble(0.05, 0.85);
+            seedPath.scale(pathScale);
+
+            pointOfPath = random.nextInt(seedPath.getPoints().size() / 2);
+            seed.moveTo(seedPath.getPoints().get(pointOfPath * 2), seedPath.getPoints().get(pointOfPath * 2 + 1));
+
+            double duration = random.nextDouble(2000, 4000);
+
+            PathTransition pathTransition = new PathTransition();
+            pathTransition.setNode(seed);
+            pathTransition.setPath(seedPath);
+            pathTransition.setCycleCount(Animation.INDEFINITE);
+            pathTransition.setDuration(Duration.millis(duration));
+            pathTransition.setDelay(Duration.ZERO);
+            pathTransition.setInterpolator(Interpolator.LINEAR);
+            pathTransition.play();
         }
 
         private void choosePanel() {
             Random random = new Random();
             int panelIndex = random.nextInt(Main.panels.size());
             chosenPanel = Main.panels.get(panelIndex);
-            if(enemyType == 2){
-                while(panelsWithSpiker.contains(chosenPanel)){
-                    panelIndex = random.nextInt(Main.panels.size());
-                    chosenPanel = Main.panels.get(panelIndex);
+            if (enemyType == 2) {
+                if(panelsWithSpiker.size() == Main.panels.size()){
+                    int index = random.nextInt(Main.panels.size());
+                    chosenPanel = Main.panels.get(index);
                 }
-                panelsWithSpiker.add(chosenPanel);
+                else{
+                    while (panelsWithSpiker.contains(chosenPanel)) {
+                        panelIndex = random.nextInt(Main.panels.size());
+                        chosenPanel = Main.panels.get(panelIndex);
+                    }
+                    panelsWithSpiker.add(chosenPanel);
+                }
             }
         }
 
         public void move() {
-            if(enemyType == 2){
+            if (enemyType == 2) {
                 spikerTimer--;
-                if(spikerTimer <= 0){
+                if (spikerTimer <= 0) {
                     done = true;
                 }
-                return;
-            }
-            if (spiral && spiralTimer <= 0) {
-                Random random = new Random();
-                double randomDouble = Math.random();
-                spiral = (randomDouble < 0.86);
-                if (!spiral) {
-                    List<Double> points = chosenPanel.getSmallSide().getPoints();
-                    double randomT = Math.random();
-                    DEST_X = points.get(0) + randomT * (points.get(2) - points.get(0));
-                    DEST_Y = points.get(1) + randomT * (points.get(3) - points.get(1));
-                    double angle = Math.toDegrees(Math.atan2(DEST_Y - seed.getCenterY(), DEST_X - seed.getCenterX()));
-                    seed.setVelocity(new Vector(linearSpeed, angle));
-                    seed.setAngle(angle);
-
-                    double s = Math.sqrt(Math.pow(DEST_Y - seed.getCenterY(), 2) + Math.pow(DEST_X - seed.getCenterX(), 2));
-                    T = s / linearSpeed;
-                } else {
-                    spiralTimer = spiralCooldown;
-                }
-            }
-            if (spiral) {
-                double x = CENTER_X + RADIUS * Math.cos(ANGLE);
-                double y = CENTER_Y + RADIUS * Math.sin(ANGLE);
-
-                seed.moveTo(x, y);
-
-                ANGLE += ANGLE_INC;
-                RADIUS += RADIUS_INC;
-
-                spiralTimer--;
-            } else {
-                seed.updatePosition();
-                T--;
-                if (T <= 0) done = true;
             }
         }
 
         public void remove() {
+            seedList.remove(this);
             Main.root.getChildren().remove(seed);
         }
     }

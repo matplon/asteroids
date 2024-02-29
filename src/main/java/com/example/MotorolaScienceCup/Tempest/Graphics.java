@@ -20,24 +20,28 @@ public class Graphics {
     private static List<Polyline> connectors = Main.connectors;
     static double mapCenterX;
     static double mapCenterY;
+    static BetterPolygon mapShape;
 
     public static void drawMap(String filepath, Color color, double scale) {
         connectors = new ArrayList<>();
         List<Panel> oldPanels = new ArrayList<>(panels);
         panels = new ArrayList<>();
 
+        double bigShapeRadius = HEIGHT / 2 - 30;
+
         List<Double> smallShapePoints = Util.getMapPoints(filepath);
 
         BetterPolygon tempSmallShape = new BetterPolygon(smallShapePoints);
         tempSmallShape.setStroke(Color.GREEN);
-        tempSmallShape.scale(scale);
-        tempSmallShape.moveTo((double) WIDTH / 2, (double) HEIGHT / 2 + baseOffset);
+        tempSmallShape.scale((bigShapeRadius * scale / 10) / tempSmallShape.getRadius());
+        tempSmallShape.moveTo(WIDTH / 2, HEIGHT / 2 + baseOffset);
         smallShapePoints = tempSmallShape.getPoints();
         mapCenterX = tempSmallShape.getCenterX();
         mapCenterY = tempSmallShape.getCenterY();
+        mapShape = new BetterPolygon(tempSmallShape.getPoints());
 
-        BetterPolygon tempPolygon = BetterPolygon.scale(tempSmallShape, 10 + scale);
-        tempPolygon.moveTo((double) WIDTH / 2, (double) HEIGHT / 2);
+        BetterPolygon tempPolygon = BetterPolygon.scale(tempSmallShape, 10);
+        tempPolygon.moveTo(WIDTH / 2, HEIGHT / 2);
         List<Double> bigShapePoints = tempPolygon.getPoints();
         drawConnectors(oldPanels, smallShapePoints, bigShapePoints, color, new Glow(Main.glowV));
     }

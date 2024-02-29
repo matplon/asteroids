@@ -59,7 +59,7 @@ public class Flipper extends Enemy {
             bulletTimer--;
             if (bulletTimer <= 0) shoot();
         }
-        if (!(Main.LEVEL == 0 && !reachedTheEdge)){
+        if (!(Main.LEVEL == 1 && !reachedTheEdge)){
             if(changePanel()) return false;
         }
         return true;
@@ -72,9 +72,8 @@ public class Flipper extends Enemy {
 
     @Override
     protected void uniqueDestroyMethod() {
-        Main.root.getChildren().remove(this);
+        if(Main.root.getChildren().contains(this)) Main.root.getChildren().remove(this);
         currentPanel.getFlippers().remove(this);
-        Main.root.getChildren().remove(defFlipper);
     }
 
     private List<Double> getPointsOnSides() {
@@ -184,28 +183,6 @@ public class Flipper extends Enemy {
         if (Double.isNaN(angle)) angle = Math.PI;
 
         return Math.toDegrees(angle);
-    }
-
-    private boolean chooseDirection() {
-        int distLeft = 0;
-        Panel nextPanel = currentPanel.getLeftPanel();
-        while (!nextPanel.equals(Main.player.getCurrentPanel())) {
-            distLeft++;
-            nextPanel = nextPanel.getLeftPanel();
-        }
-        int distRight = 0;
-        nextPanel = currentPanel.getRightPanel();
-        while (!nextPanel.equals(Main.player.getCurrentPanel())) {
-            distRight++;
-            nextPanel = nextPanel.getRightPanel();
-        }
-        if (distLeft < distRight) return true;
-        else if (distRight < distLeft) return false;
-        else {
-            Random random = new Random();
-            int dirChooser = random.nextInt(2);
-            return (dirChooser == 0);
-        }
     }
 
     private boolean changePanel() {

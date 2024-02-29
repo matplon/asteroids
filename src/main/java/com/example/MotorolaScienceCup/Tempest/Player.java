@@ -5,6 +5,7 @@ import com.example.MotorolaScienceCup.Vector;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,12 +21,12 @@ public class Player extends BetterPolygon {
     private double xStepLeft, xStepRight;
     private double yStepLeft, yStepRight;
     private double leftRightDiffX, leftRightDiffY;
-    private double hStep = 2;
+    private double hStep = 0.5;
     public double h;
-    private int panelIndex;
     private Circle pointer = new Circle(1);
-    private static Panel currentPanel;
+    public Panel currentPanel;
     public int shotTimer = 0;
+    public int lefts = 0, rights = 0;
 
 
     public Player(Panel startPanel) {
@@ -33,24 +34,11 @@ public class Player extends BetterPolygon {
         currentPanel = startPanel;
         calculateSteps();
         h = currentPanel.getLength();
-        panelIndex = currentPanel.getIndex();
         pointer.setCenterX((currentPanel.getBigSide().getPoints().get(0) + currentPanel.getBigSide().getPoints().get(2)) / 2);
         pointer.setCenterY((currentPanel.getBigSide().getPoints().get(1) + currentPanel.getBigSide().getPoints().get(3)) / 2);
         setStroke(Color.RED);
         setEffect(new Glow(glowV));
         updatePoints();
-    }
-
-    public void moveDown() {
-        currentPanel = panels.get(panelIndex);
-        h -= hStep;
-        updatePointer();
-        updatePoints();
-//        outerTriangleOffset = getTriangleOffset();
-        root.getChildren().add(this);
-        if (!checkForSpiker() && h <= 0) {
-            Main.temp();
-        }
     }
 
     private boolean checkForSpiker() {
@@ -63,20 +51,7 @@ public class Player extends BetterPolygon {
         return false;
     }
 
-    private double getTriangleOffset() {
-        double triangleOffsetGrad = (maxTriangleOffset - minTriangleOffset) / currentPanel.getLength();
-        return minTriangleOffset + h * triangleOffsetGrad;
-    }
-
-    protected void updatePointer() {
-        double x = (currentPanel.getSmallSide().getPoints().get(0) + currentPanel.getSmallSide().getPoints().get(2)) / 2;
-        double y = (currentPanel.getSmallSide().getPoints().get(1) + currentPanel.getSmallSide().getPoints().get(3)) / 2;
-        Vector tempVector = new Vector(h, currentPanel.getAngle());
-        pointer.setCenterX(x + tempVector.getX());
-        pointer.setCenterY(y + tempVector.getY());
-    }
-
-    private void updatePoints() {
+    public void updatePoints() {
         Vector vector = new Vector(outerTriangleOffset, currentPanel.getAngle());
         double xTriangle1 = pointer.getCenterX() + vector.getX();
         double yTriangle1 = pointer.getCenterY() + vector.getY();
@@ -133,6 +108,7 @@ public class Player extends BetterPolygon {
         calculateSteps();
         List<Double> points = getPointsOnSides();
         if (left) {
+            lefts++;
             pointer.setCenterX(pointer.getCenterX() + xStepLeft);
             pointer.setCenterY(pointer.getCenterY() + yStepLeft);
             if (leftRightDiffX > 0 && pointer.getCenterX() < points.get(2)) {
@@ -153,6 +129,7 @@ public class Player extends BetterPolygon {
                 currentPanel = currentPanel.getLeftPanel();
             }
         } else {
+            rights++;
             pointer.setCenterX(pointer.getCenterX() + xStepRight);
             pointer.setCenterY(pointer.getCenterY() + yStepRight);
             if (leftRightDiffX > 0 && getCenterX() > points.get(0)) {
@@ -173,8 +150,6 @@ public class Player extends BetterPolygon {
                 currentPanel = currentPanel.getRightPanel();
             }
         }
-        panelIndex = currentPanel.getIndex();
-        currentPanel = panels.get(panelIndex);
         checkIfSideClose(left);
         h = currentPanel.getLength() * hPercentage;
         updatePoints();
@@ -200,10 +175,15 @@ public class Player extends BetterPolygon {
         }
     }
 
-    public void shoot() {
+    public void shoot(boolean nextLevel) {
         if (shotTimer <= 0) {
             Bullet bullet = new Bullet();
-            currentPanel.addPlayerBullet(bullet);
+            if(nextLevel){
+                tempPanels.get(tempPanels.indexOf(currentPanel)).addPlayerBullet(bullet);
+            }
+            else{
+                currentPanel.addPlayerBullet(bullet);
+            }
             root.getChildren().add(bullet);
             shotTimer = shotCooldown;
         }
@@ -214,8 +194,7 @@ public class Player extends BetterPolygon {
     }
 
     public class Bullet extends Circle {
-        private final double normalSpeed = 10;
-        private final double nextLevelSpeed = 20;
+        private final double speed = 10;
         private double maxRadius;
         private double minRadius;
         private double grad;
@@ -237,17 +216,32 @@ public class Player extends BetterPolygon {
             grad = (maxRadius - minRadius) / currentPanel.getLength();
             this.setCenterX((panel.getBigSide().getPoints().get(0) + panel.getBigSide().getPoints().get(2)) / 2);
             this.setCenterY((panel.getBigSide().getPoints().get(1) + panel.getBigSide().getPoints().get(3)) / 2);
-            velocity = new Vector(normalSpeed, 180 + currentPanel.getAngle());
+            velocity = new Vector(speed, 180 + currentPanel.getAngle());
             updatePoints();
             this.setStroke(Color.MAGENTA);
             this.setEffect(new Glow(glowV));
         }
 
         public boolean move(boolean nextLevel) {
-            if (!nextLevel) h -= normalSpeed;
-            else h -= 5;
+            h -= speed;
             updatePoints();
-            return (h > 0);
+            if(nextLevel){
+                if(Shape.intersect(this, panels.get(tempPanels.indexOf(panel)).getSmallSide()).getLayoutBounds().getWidth() > 0){
+                    return false;
+                }
+            }
+            if(h <= 0 && !nextLevel){
+                if(panel.spikerLine != null){
+                    double spikerLineLength = Math.sqrt(Math.pow(panel.spikerLine.getPoints().get(0) - panel.spikerLine.getPoints().get(2), 2) +
+                            Math.pow(panel.spikerLine.getPoints().get(1) - panel.spikerLine.getPoints().get(3), 2));
+                    if(spikerLineLength <= h + 10){
+                        root.getChildren().remove(panel.spikerLine);
+                        panel.spikerLine = null;
+                    }
+                }
+                return false;
+            }
+            return true;
         }
 
         private void updatePoints() {

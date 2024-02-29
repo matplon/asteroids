@@ -15,6 +15,7 @@ public class Spiker extends Enemy {
     private BetterPolygon defSpiker = new BetterPolygon(Util.transformPointsToList(filepath));
     private List<Double> defPoints;
     private boolean goingDown = false;
+    boolean previousLine = false;
     private Polyline line = new Polyline();
 
     public Spiker(Panel startPanel) {
@@ -39,15 +40,22 @@ public class Spiker extends Enemy {
         Main.root.getChildren().add(line);
         line.setStroke(spikerColor);
         line.setEffect(new Glow(Main.glowV));
+
+        if(currentPanel.spikerLine != null){
+            double lineLength = Math.sqrt(Math.pow(currentPanel.spikerLine.getPoints().get(2) - currentPanel.spikerLine.getPoints().get(0), 2) +
+                    Math.pow(currentPanel.spikerLine.getPoints().get(3) - currentPanel.spikerLine.getPoints().get(1), 2));
+            maxH = lineLength;
+            previousLine = true;
+        }
     }
 
     public boolean move() {
         if (h < maxH && !reachedTheEdge) {
             moveUp();
             drawLine();
-        } else if (frameOfMovement >= FRAMES_PER_MOVE && !destroyed && !goingDown) {
+        } else if (h >= maxH && !destroyed && !goingDown) {
             h = 0;
-            frameOfMovement = 0;
+            frameOfMovement = FRAMES_PER_MOVE - frameOfMovement;
             acceleration = getPointerAcceleration();
             goingDown = true;
             bulletTimer++;
@@ -63,6 +71,7 @@ public class Spiker extends Enemy {
         } else if (frameOfMovement >= 360) {
             return false;
         }
+        rotate(50);
         bulletTimer--;
         if (bulletTimer <= 0) shoot();
         return true;
@@ -90,12 +99,9 @@ public class Spiker extends Enemy {
         double xEnd = pointer.getCenterX();
         double yEnd = pointer.getCenterY();
 
-        line.getPoints().setAll(xStart, yStart, xEnd, yEnd);
-        currentPanel.spikerLine = line;
-    }
-
-    public double getLineLength() {
-        return Math.sqrt(Math.pow(line.getPoints().get(0) - line.getPoints().get(2), 2) +
-                Math.pow(line.getPoints().get(1) - line.getPoints().get(3), 2));
+        if(!previousLine){
+            line.getPoints().setAll(xStart, yStart, xEnd, yEnd);
+            currentPanel.spikerLine = line;
+        }
     }
 }
