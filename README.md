@@ -33,3 +33,5 @@ Rekonstrukcja gry Tempest.
 Replika gry Battlezone, z dodanymi minami przeciwpancernymi.
 
 ![Battlezone](https://i.imgur.com/dqtbKWa.png)
+
+Link do krótkiego Let's Playu : https://www.youtube.com/watch?v=rr6PB9AC5Is
